@@ -93,5 +93,5 @@ install(DIRECTORY
   )
 
 install(FILES
-  ${CMAKE_BINARY_DIR}/include/csUtil/csutil_config.h DESTINATION include/csUtil
+  ${CMAKE_CURRENT_BINARY_DIR}/include/csUtil/csutil_config.h DESTINATION include/csUtil
   )
