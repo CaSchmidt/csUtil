@@ -26,6 +26,9 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Build Tests?
+option(ENABLE_TESTS "Enable tests" OFF)
+
 ### 3rd Party ################################################################
 
 add_subdirectory(3rdparty/double-conversion)
@@ -95,3 +98,9 @@ install(DIRECTORY
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/include/csUtil/csutil_config.h DESTINATION include/csUtil
   )
+
+### Tests ####################################################################
+
+if(ENABLE_TESTS)
+  add_subdirectory(tests)
+endif()
