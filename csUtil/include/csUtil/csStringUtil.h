@@ -63,9 +63,7 @@ namespace cs {
       return count;
     }
 
-    const T  *ptr = s;
-    const T *last = ptr + maxCount;
-    for(; ptr < last; count++, ptr++) {
+    for(const T *ptr = s; ptr < s + maxCount; count++, ptr++) {
       if( *ptr == glyph<T>::null ) {
         break;
       }
@@ -84,32 +82,15 @@ namespace cs {
 
   template<typename T>
   inline if_char_bool<T> equals(const T *s1, const T *s2,
-                                const std::size_t _count = MAX_SIZE_T) noexcept
+                                const std::size_t _count = MAX_SIZE_T,
+                                const bool ignoreCase = false) noexcept
   {
     const std::size_t count = _count == MAX_SIZE_T
         ? std::min(length(s1), length(s2))
         : _count;
-    return std::char_traits<T>::compare(s1, s2, count) == 0;
-  }
-
-  template<typename T>
-  inline if_char_bool<T> greater(const T *s1, const T *s2,
-                                 const std::size_t _count = MAX_SIZE_T) noexcept
-  {
-    const std::size_t count = _count == MAX_SIZE_T
-        ? std::min(length(s1), length(s2))
-        : _count;
-    return std::char_traits<T>::compare(s1, s2, count) > 0;
-  }
-
-  template<typename T>
-  if_char_bool<T> less(const T *s1, const T *s2,
-                       const std::size_t _count = MAX_SIZE_T) noexcept
-  {
-    const std::size_t count = _count == MAX_SIZE_T
-        ? std::min(length(s1), length(s2))
-        : _count;
-    return std::char_traits<T>::compare(s1, s2, count) < 0;
+    return std::equal(s1, s1 + count, s2, ignoreCase
+                      ? [](const T& a, const T& b) -> bool { return toLower(a) == toLower(b); }
+                      : [](const T& a, const T& b) -> bool { return a == b; });
   }
 
   template<typename T>
