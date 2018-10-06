@@ -83,7 +83,7 @@ namespace cs {
   }
 
   template<typename T>
-  inline if_char_bool<T> equals(const T *s1, const char *s2,
+  inline if_char_bool<T> equals(const T *s1, const T *s2,
                                 const std::size_t _count = MAX_SIZE_T) noexcept
   {
     const std::size_t count = _count == MAX_SIZE_T
@@ -93,7 +93,7 @@ namespace cs {
   }
 
   template<typename T>
-  inline if_char_bool<T> greater(const T *s1, const char *s2,
+  inline if_char_bool<T> greater(const T *s1, const T *s2,
                                  const std::size_t _count = MAX_SIZE_T) noexcept
   {
     const std::size_t count = _count == MAX_SIZE_T
@@ -103,7 +103,7 @@ namespace cs {
   }
 
   template<typename T>
-  if_char_bool<T> less(const T *s1, const char *s2,
+  if_char_bool<T> less(const T *s1, const T *s2,
                        const std::size_t _count = MAX_SIZE_T) noexcept
   {
     const std::size_t count = _count == MAX_SIZE_T
@@ -113,7 +113,7 @@ namespace cs {
   }
 
   template<typename T>
-  inline if_string_t<T> simplified(const std::basic_string<T>& s)
+  inline if_string_t<T> simplified(const std::basic_string<T>& s) noexcept
   {
     using SizeT = typename std::basic_string<T>::size_type;
     constexpr T ch_space = static_cast<T>(' ');
@@ -172,7 +172,7 @@ namespace cs {
   }
 
   template<typename T>
-  inline if_string_t<T> trimmed(const std::basic_string<T>& s)
+  inline if_string_t<T> trimmed(const std::basic_string<T>& s) noexcept
   {
     using const_iter = typename std::basic_string<T>::const_iterator;
 
