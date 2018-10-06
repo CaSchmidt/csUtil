@@ -59,16 +59,28 @@ namespace cs {
 
     static constexpr auto zero = static_cast<T>('0');
     static constexpr auto nine = static_cast<T>('9');
+
+    static constexpr auto a = static_cast<T>('a');
+    static constexpr auto z = static_cast<T>('z');
+
+    static constexpr auto A = static_cast<T>('A');
+    static constexpr auto Z = static_cast<T>('Z');
   };
 
   template<typename T>
-  constexpr if_char_bool<T> isDigit(const T& c)
+  constexpr if_char_bool<T> isDigit(const T& c) noexcept
   {
     return glyph<T>::zero <= c  &&  c <= glyph<T>::nine;
   }
 
   template<typename T>
-  constexpr if_char_bool<T> isSpace(const T& c)
+  constexpr if_char_bool<T> isLower(const T& c) noexcept
+  {
+    return glyph<T>::a <= c  &&  c <= glyph<T>::z;
+  }
+
+  template<typename T>
+  constexpr if_char_bool<T> isSpace(const T& c) noexcept
   {
     return
         c == glyph<T>::space  ||
@@ -77,6 +89,28 @@ namespace cs {
         c == glyph<T>::cr     ||
         c == glyph<T>::ht     ||
         c == glyph<T>::vt;
+  }
+
+  template<typename T>
+  constexpr if_char_bool<T> isUpper(const T& c) noexcept
+  {
+    return glyph<T>::A <= c  &&  c <= glyph<T>::Z;
+  }
+
+  template<typename T>
+  constexpr T toLower(const T& c) noexcept
+  {
+    return isUpper(c)
+        ? c - glyph<T>::A + glyph<T>::a
+        : c;
+  }
+
+  template<typename T>
+  constexpr T toUpper(const T& c) noexcept
+  {
+    return isLower(c)
+        ? c - glyph<T>::a + glyph<T>::A
+        : c;
   }
 
 } // namespace cs
