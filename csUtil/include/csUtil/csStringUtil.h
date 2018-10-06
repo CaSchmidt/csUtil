@@ -96,9 +96,9 @@ namespace cs {
       return false;
     }
 
-    return std::equal(s1 + l1 - l2, s1 + l1, s2, ignoreCase
-                      ? [](const T& a, const T& b) -> bool { return toLower(a) == toLower(b); }
-                      : [](const T& a, const T& b) -> bool { return a == b; });
+    return ignoreCase
+        ? std::equal(s1 + l1 - l2, s1 + l1, s2, [](const T& a, const T& b) -> bool { return toLower(a) == toLower(b); })
+        : std::equal(s1 + l1 - l2, s1 + l1, s2, [](const T& a, const T& b) -> bool { return a == b; });
   }
 
   template<typename T>
@@ -109,9 +109,9 @@ namespace cs {
     const std::size_t count = _count == MAX_SIZE_T
         ? std::min(length(s1), length(s2))
         : _count;
-    return std::equal(s1, s1 + count, s2, ignoreCase
-                      ? [](const T& a, const T& b) -> bool { return toLower(a) == toLower(b); }
-                      : [](const T& a, const T& b) -> bool { return a == b; });
+    return ignoreCase
+        ? std::equal(s1, s1 + count, s2, [](const T& a, const T& b) -> bool { return toLower(a) == toLower(b); })
+        : std::equal(s1, s1 + count, s2, [](const T& a, const T& b) -> bool { return a == b; });
   }
 
   template<typename T>
@@ -189,9 +189,9 @@ namespace cs {
       return false;
     }
 
-    return std::equal(s1, s1 + l2, s2, ignoreCase
-                      ? [](const T& a, const T& b) -> bool { return toLower(a) == toLower(b); }
-                      : [](const T& a, const T& b) -> bool { return a == b; });
+    return ignoreCase
+        ? std::equal(s1, s1 + l2, s2, [](const T& a, const T& b) -> bool { return toLower(a) == toLower(b); })
+        : std::equal(s1, s1 + l2, s2, [](const T& a, const T& b) -> bool { return a == b; });
   }
 
   template<typename T>
