@@ -81,6 +81,27 @@ namespace cs {
   }
 
   template<typename T>
+  inline if_char_bool<T> endsWith(const T *s1, const std::size_t _l1,
+                                  const T *s2, const std::size_t _l2,
+                                  const bool ignoreCase = false) noexcept
+  {
+    const std::size_t l1 = _l1 == MAX_SIZE_T
+        ? length(s1)
+        : _l1;
+    const std::size_t l2 = _l2 == MAX_SIZE_T
+        ? length(s2)
+        : _l2;
+
+    if( l1 < 1  ||  l2 < 1  ||  l1 < l2 ) {
+      return false;
+    }
+
+    return std::equal(s1 + l1 - l2, s1 + l1, s2, ignoreCase
+                      ? [](const T& a, const T& b) -> bool { return toLower(a) == toLower(b); }
+                      : [](const T& a, const T& b) -> bool { return a == b; });
+  }
+
+  template<typename T>
   inline if_char_bool<T> equals(const T *s1, const T *s2,
                                 const std::size_t _count = MAX_SIZE_T,
                                 const bool ignoreCase = false) noexcept
@@ -150,6 +171,27 @@ namespace cs {
     }
 
     return result;
+  }
+
+  template<typename T>
+  inline if_char_bool<T> startsWith(const T *s1, const std::size_t _l1,
+                                    const T *s2, const std::size_t _l2,
+                                    const bool ignoreCase = false) noexcept
+  {
+    const std::size_t l1 = _l1 == MAX_SIZE_T
+        ? length(s1)
+        : _l1;
+    const std::size_t l2 = _l2 == MAX_SIZE_T
+        ? length(s2)
+        : _l2;
+
+    if( l1 < 1  ||  l2 < 1  ||  l1 < l2 ) {
+      return false;
+    }
+
+    return std::equal(s1, s1 + l2, s2, ignoreCase
+                      ? [](const T& a, const T& b) -> bool { return toLower(a) == toLower(b); }
+                      : [](const T& a, const T& b) -> bool { return a == b; });
   }
 
   template<typename T>
