@@ -1,18 +1,14 @@
-include_directories(
-  ${csUtil_BINARY_DIR}/include
-  ${csUtil_SOURCE_DIR}/include
-  )
+macro(cs_test target sources)
+  add_executable(${target} ${sources})
+  format_output_name(${target} ${target})
+  target_include_directories(${target} PRIVATE
+    ${csUtil_BINARY_DIR}/include
+    ${csUtil_SOURCE_DIR}/include
+    )
+  target_link_libraries(${target} csUtil)
+  set_target_properties(${target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${csUtil_BINARY_DIR})
+endmacro()
 
-### csStringUtil #############################################################
+### Tests ####################################################################
 
-add_executable(test_stringutil
-  src/test_stringutil.cpp
-  )
-
-format_output_name(test_stringutil "test_stringutil")
-
-target_link_libraries(test_stringutil csUtil)
-
-set_target_properties(test_stringutil PROPERTIES
-  RUNTIME_OUTPUT_DIRECTORY ${csUtil_BINARY_DIR}
-  )
+cs_test(test_stringutil src/test_stringutil.cpp)
