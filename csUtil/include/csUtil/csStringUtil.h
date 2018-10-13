@@ -141,6 +141,45 @@ namespace cs {
   }
 
   template<typename T>
+  inline void replaceAll(std::basic_string<T>& s,
+                         const T& needle,
+                         const T *text, const std::size_t lenText = MAX_SIZE_T)
+  {
+    const std::size_t lt = lenText == MAX_SIZE_T
+        ? length(text)
+        : lenText;
+
+    if( s.size() < 1  ||  lt < 1 ) {
+      return;
+    }
+
+    for(std::size_t pos = 0; (pos = s.find(needle, pos)) != s.npos; pos += lt) {
+      s.replace(pos, 1, text, lt);
+    }
+  }
+
+  template<typename T>
+  inline void replaceAll(std::basic_string<T>& s,
+                         const T *needle, const std::size_t lenNeedle,
+                         const T *text, const std::size_t lenText = MAX_SIZE_T)
+  {
+    const std::size_t ln = lenNeedle == MAX_SIZE_T
+        ? length(needle)
+        : lenNeedle;
+    const std::size_t lt = lenText == MAX_SIZE_T
+        ? length(text)
+        : lenText;
+
+    if( s.size() < 1  ||  ln < 1  ||  lt < 1  ||  s.size() < ln ) {
+      return;
+    }
+
+    for(std::size_t pos = 0; (pos = s.find(needle, pos, ln)) != s.npos; pos += lt) {
+      s.replace(pos, ln, text, lt);
+    }
+  }
+
+  template<typename T>
   inline if_string_t<T> simplified(const std::basic_string<T>& s) noexcept
   {
     using SizeT = typename std::basic_string<T>::size_type;

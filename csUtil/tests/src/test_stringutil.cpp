@@ -46,6 +46,22 @@ void test_starts(const char *hay, const char *needle, const bool ignoreCase)
          cs::startsWith(hay, cs::MAX_SIZE_T, needle, cs::MAX_SIZE_T, ignoreCase) ? "true" : "false");
 }
 
+void test_replaceAll(const char *old, const char needle, const char *text)
+{
+  std::string s(old);
+  cs::replaceAll(s, needle, text);
+  printf("replaceAll(\"%s\", '%c', \"%s\") -> \"%s\"\n",
+         old, needle, text, s.data());
+}
+
+void test_replaceAll(const char *old, const char *needle, const char *text)
+{
+  std::string s(old);
+  cs::replaceAll(s, needle, cs::MAX_SIZE_T, text);
+  printf("replaceAll(\"%s\", \"%s\", \"%s\") -> \"%s\"\n",
+         old, needle, text, s.data());
+}
+
 int main(int /*argc*/, char ** /*argv*/)
 {
   const std::string null;
@@ -91,6 +107,23 @@ int main(int /*argc*/, char ** /*argv*/)
   test_starts("abcxyz", "abc", true);
   test_starts("abcxyz", "ABC", false);
   test_starts("abcxyz", "ABC", true);
+
+  printf("\n---------\n\n");
+
+  test_replaceAll("xyzxyz", 'x', "a.");
+  test_replaceAll("xyzxyz", 'y', ".b.");
+  test_replaceAll("xyzxyz", 'z', ".c");
+  test_replaceAll("xyzxyz", 'X', "a.");
+
+  printf("\n---------\n\n");
+
+  test_replaceAll("xyzxyz", "xy", "ab.");
+  test_replaceAll("xyzxyz", "y", ".b.");
+  test_replaceAll("xyzxyz", "yz", ".bc");
+  test_replaceAll("xyzxyz", "abc", "abc.");
+  test_replaceAll("xyzxyz", "xyz", "abc");
+  test_replaceAll("xyzxyz", "xyzxyz", "abc");
+  test_replaceAll("xyzxyz", "xyzxyzxyz", "abc");
 
   return EXIT_SUCCESS;
 }
