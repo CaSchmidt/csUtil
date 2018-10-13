@@ -222,10 +222,8 @@ namespace cs {
       // (2) Setup ///////////////////////////////////////////////////////////
 
       // cf. http://en.cppreference.com/w/cpp/io/c/fprintf
-      if(        precision <  0 ) {
+      if( precision < 0 ) {
         precision = 6;
-      } else if( precision == 0 ) {
-        precision = 1;
       }
 
       double_conversion::StringBuilder builder(first, length(first, last));
