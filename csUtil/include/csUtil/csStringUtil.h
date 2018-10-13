@@ -109,9 +109,35 @@ namespace cs {
     const std::size_t count = _count == MAX_SIZE_T
         ? std::min(length(s1), length(s2))
         : _count;
+
+    if( count < 1 ) {
+      return false;
+    }
+
     return ignoreCase
         ? std::equal(s1, s1 + count, s2, [](const T& a, const T& b) -> bool { return toLower(a) == toLower(b); })
         : std::equal(s1, s1 + count, s2);
+  }
+
+  template<typename T>
+  inline if_char_bool<T> equals(const T *s1, const std::size_t len1,
+                                const T *s2, const std::size_t len2,
+                                const bool ignoreCase = false)
+  {
+    const std::size_t l1 = len1 == MAX_SIZE_T
+        ? length(s1)
+        : len1;
+    const std::size_t l2 = len2 == MAX_SIZE_T
+        ? length(s2)
+        : len2;
+
+    if( l1 < 1  ||  l2 < 1  ||  l1 != l2 ) {
+      return false;
+    }
+
+    return ignoreCase
+        ? std::equal(s1, s1 + l1, s2, [](const T& a, const T& b) -> bool { return toLower(a) == toLower(b); })
+        : std::equal(s1, s1 + l1, s2);
   }
 
   template<typename T>
