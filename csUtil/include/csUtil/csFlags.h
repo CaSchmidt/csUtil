@@ -83,6 +83,13 @@ namespace cs {
   }
 
   template<typename T>
+  constexpr if_flags_bool<T> testFlags(const T& x)
+  {
+    using data_t = safe_underlying_type_t<T>;
+    return static_cast<data_t>(x) != 0;
+  }
+
+  template<typename T>
   constexpr if_flags_bool<T> testMask(const T& x, const T& mask)
   {
     using data_t = safe_underlying_type_t<T>;
