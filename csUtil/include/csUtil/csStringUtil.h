@@ -260,6 +260,34 @@ namespace cs {
   }
 
   template<typename T>
+  inline void toLower(T *s, const std::size_t len = cs::MAX_SIZE_T)
+  {
+    const std::size_t l = len == cs::MAX_SIZE_T
+        ? length(s)
+        : len;
+
+    if( l < 1 ) {
+      return;
+    }
+
+    std::for_each(s, s + l, [](T& c) -> void { c = cs::toLower(c); });
+  }
+
+  template<typename T>
+  inline void toUpper(T *s, const std::size_t len = cs::MAX_SIZE_T)
+  {
+    const std::size_t l = len == cs::MAX_SIZE_T
+        ? length(s)
+        : len;
+
+    if( l < 1 ) {
+      return;
+    }
+
+    std::for_each(s, s + l, [](T& c) -> void { c = cs::toUpper(c); });
+  }
+
+  template<typename T>
   inline if_string_t<T> trimmed(const std::basic_string<T>& s) noexcept
   {
     using const_iter = typename std::basic_string<T>::const_iterator;
