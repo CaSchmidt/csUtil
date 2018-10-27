@@ -36,6 +36,12 @@
 
 namespace cs {
 
+  enum TrieMatch {
+    NoMatch = 0,
+    PartialMatch,
+    ExactMatch
+  };
+
   template<typename T>
   constexpr const T& clamp(const T& v, const T& lo, const T& hi)
   {

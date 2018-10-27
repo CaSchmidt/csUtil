@@ -50,8 +50,10 @@ list(APPEND csUtil_HEADERS
   include/csUtil/csRawConverter.h
   include/csUtil/csStringUtil.h
   include/csUtil/csTextConverter.h
+  include/csUtil/csTrie.h
   include/csUtil/csTypeTraits.h
   include/internal/csutil_internal.h
+  include/internal/csTrieNode.h
   )
 
 list(APPEND csUtil_SOURCES
@@ -62,6 +64,7 @@ list(APPEND csUtil_SOURCES
   src/csILogger.cpp
   src/csLogger.cpp
   src/csTextConverter.cpp
+  src/csTrie.cpp
   )
 
 ### Target ###################################################################
