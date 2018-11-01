@@ -85,6 +85,10 @@ target_include_directories(csUtil PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include)
 target_include_directories(csUtil PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(csUtil PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+if(WIN32)
+  target_compile_options(csUtil PRIVATE /wd4251)
+endif()
+
 # ICU
 target_compile_definitions(csUtil PRIVATE ${icu_DEFINES})
 target_include_directories(csUtil PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/icu-ucnv/src)
