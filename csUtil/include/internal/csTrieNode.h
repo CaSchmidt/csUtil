@@ -40,6 +40,7 @@
 #include <type_traits>
 
 #include "csUtil/csNamespace.h"
+#include "internal/csFlatTrieUtil.h"
 
 class csTrieNode {
 private:
@@ -111,9 +112,8 @@ public:
     return idxMatch->find(idxStr + 1, str);
   }
 
-  /*
-  void flattened(QVector<quint32>& link, QVector<ushort>& data,
-                 int& cntNodes, const int baseIndex) const
+  void flattened(csFlatTrie::Links& links, csFlatTrie::Letters& letters,
+                 std::size_t& cntNodes, const std::size_t baseIndex) const
   {
     if( childCount() < 1 ) {
       return;
@@ -121,25 +121,24 @@ public:
 
     cntNodes += childCount();
 
-    for(int i = 0; i < childCount(); i++) {
-      data[baseIndex+i] = _children[i]->letter();
+    for(std::size_t i = 0; i < childCount(); i++) {
+      letters[baseIndex + i] = _children[i].letter();
 
-      if( _children[i]->childCount() > 0 ) {
-        link[baseIndex+i] = cntNodes;
+      if( _children[i].childCount() > 0 ) {
+        links[baseIndex + i] = static_cast<csFlatTrie::link_type>(cntNodes);
       } else {
-        link[baseIndex+i] = 0;
+        links[baseIndex + i] = 0;
       }
 
-      if( _children[i]->isMatch() ) {
-        link[baseIndex+i] |= LINK_MASK_EOW;
+      if( _children[i].isMatch() ) {
+        links[baseIndex + i] |= priv::Mask_EOW;
       }
 
-      _children[i]->flattened(link, data, cntNodes, cntNodes);
+      _children[i].flattened(links, letters, cntNodes, cntNodes);
     }
 
-    link[baseIndex+childCount()-1] |= LINK_MASK_EOL;
+    links[baseIndex + childCount() - 1] |= priv::Mask_EOL;
   }
-  */
 
   template<typename T>
   void insert(const std::size_t idxStr, const std::basic_string<T>& str,

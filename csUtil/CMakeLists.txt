@@ -42,6 +42,7 @@ list(APPEND csUtil_HEADERS
   include/csUtil/csEndian.h
   include/csUtil/csFileIO.h
   include/csUtil/csFlags.h
+  include/csUtil/csFlatTrie.h
   include/csUtil/csFormat.h
   include/csUtil/csILogger.h
   include/csUtil/csLogger.h
@@ -53,6 +54,7 @@ list(APPEND csUtil_HEADERS
   include/csUtil/csTrie.h
   include/csUtil/csTypeTraits.h
   include/internal/csutil_internal.h
+  include/internal/csFlatTrieUtil.h
   include/internal/csTrieNode.h
   )
 
@@ -60,6 +62,7 @@ list(APPEND csUtil_SOURCES
   src/csCharConv-fp.cpp
   src/csCharConv.cpp
   src/csFileIO.cpp
+  src/csFlatTrie.cpp
   src/csFormat.cpp
   src/csILogger.cpp
   src/csLogger.cpp

@@ -123,23 +123,21 @@ void csTrie::clear()
   _root = std::make_unique<csTrieNode>(0);
 }
 
-/*
 csFlatTrie csTrie::flattened() const
 {
-  const int numNodes = nodeCount()-1; // Don't count 'root'!
+  const std::size_t numNodes = nodeCount() - 1; // Don't count 'root'!
   if( numNodes < 1 ) {
     return csFlatTrie();
   }
 
-  QVector<quint32> link(numNodes);
-  QVector<ushort>  data(numNodes);
+  csFlatTrie::Links     links(numNodes);
+  csFlatTrie::Letters letters(numNodes);
 
-  int cntNodes = 0;
-  _root->flattened(link, data, cntNodes, 0);
+  std::size_t cntNodes = 0;
+  _root->flattened(links, letters, cntNodes, 0);
 
-  return csFlatTrie(link, data);
+  return csFlatTrie(std::move(links), std::move(letters));
 }
-*/
 
 bool csTrie::isNull() const
 {
