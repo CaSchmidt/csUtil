@@ -117,6 +117,8 @@ csTrie::csTrie()
   _root = std::make_unique<csTrieNode>(0);
 }
 
+csTrie::~csTrie() = default;
+
 void csTrie::clear()
 {
   _root.reset();

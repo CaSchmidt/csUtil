@@ -45,7 +45,7 @@ class csTrieNode;
 class CS_UTIL_EXPORT csTrie {
 public:
   csTrie();
-  ~csTrie() = default;
+  ~csTrie();
 
   void clear();
 
