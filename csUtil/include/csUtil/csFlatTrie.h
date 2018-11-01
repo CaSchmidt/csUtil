@@ -62,6 +62,15 @@ public:
   std::size_t nodeCount() const;
   std::size_t size() const;
 
+  template<typename T>
+  std::list<std::basic_string<T>> complete(const std::basic_string<T>& str) const;
+
+  template<typename T>
+  cs::TrieMatch find(const std::basic_string<T>& str) const;
+
+  template<typename T>
+  std::list<std::basic_string<T>> list() const;
+
 private:
   csFlatTrie(const csFlatTrie&) = delete;
   csFlatTrie& operator=(const csFlatTrie&) = delete;
@@ -69,5 +78,27 @@ private:
   Letters _letters;
   Links   _links;
 };
+
+// char methods //////////////////////////////////////////////////////////////
+
+template<>
+CS_UTIL_EXPORT std::list<std::string> csFlatTrie::complete(const std::string& str) const;
+
+template<>
+CS_UTIL_EXPORT cs::TrieMatch csFlatTrie::find(const std::string& str) const;
+
+template<>
+CS_UTIL_EXPORT std::list<std::string> csFlatTrie::list() const;
+
+// char16_t methods //////////////////////////////////////////////////////////
+
+template<>
+CS_UTIL_EXPORT std::list<std::u16string> csFlatTrie::complete(const std::u16string& str) const;
+
+template<>
+CS_UTIL_EXPORT cs::TrieMatch csFlatTrie::find(const std::u16string& str) const;
+
+template<>
+CS_UTIL_EXPORT std::list<std::u16string> csFlatTrie::list() const;
 
 #endif // CSFLATTRIE_H
