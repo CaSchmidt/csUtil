@@ -93,6 +93,10 @@ endif()
 target_compile_definitions(csUtil PRIVATE ${icu_DEFINES})
 target_include_directories(csUtil PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/icu-ucnv/src)
 
+if(BUILD_SHARED_LIBS AND UNIX)
+  target_link_libraries(csUtil dl)
+endif()
+
 install(TARGETS csUtil
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib

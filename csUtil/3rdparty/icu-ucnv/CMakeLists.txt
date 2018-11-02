@@ -166,3 +166,7 @@ target_compile_definitions(icu PRIVATE ${icu_DEFINES})
 target_include_directories(icu PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 set(icu_DEFINES ${icu_DEFINES} PARENT_SCOPE)
+
+if(BUILD_SHARED_LIBS AND UNIX)
+  set_target_properties(icu PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()

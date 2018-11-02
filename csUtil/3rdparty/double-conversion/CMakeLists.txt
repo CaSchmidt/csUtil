@@ -24,3 +24,7 @@ add_library(dblcnv OBJECT
   )
 
 target_include_directories(dblcnv PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+if(BUILD_SHARED_LIBS AND UNIX)
+  set_target_properties(dblcnv PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
