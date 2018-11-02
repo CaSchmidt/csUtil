@@ -3,6 +3,7 @@
 
 #include <array>
 #include <iostream>
+#include <limits>
 #include <string>
 
 #include <csUtil/csCharConv.h>
@@ -172,16 +173,18 @@ void test_from_fp(const cs::chars_format fmt = cs::chars_format::general,
 
 int main(int /*argc*/, char ** /*argv*/)
 {
-  std::array<char,10> s{"z42"};
+  using FixedString = std::array<char,10>;
+
+  FixedString s{"z42"};
   print_from<uint8_t>(s.data(), s.data()+s.size());
 
-  s = {"ff"};
+  s = FixedString{"ff"};
   print_from<uint8_t>(s.data(), s.data()+s.size(), 16);
 
-  s = {"FF"};
+  s = FixedString{"FF"};
   print_from<uint8_t>(s.data(), s.data()+s.size(), 16);
 
-  s = {"377"};
+  s = FixedString{"377"};
   print_from<uint8_t>(s.data(), s.data()+s.size(), 8);
 
   printf("---------------------\n");
