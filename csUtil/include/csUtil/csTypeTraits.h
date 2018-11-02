@@ -50,7 +50,7 @@ namespace cs {
 
   template<typename T>
   using safe_underlying_type_t =
-  typename std::enable_if<std::is_enum_v<T>,std::underlying_type_t<T>>::type;
+  typename std::enable_if<std::is_enum<T>::value,std::underlying_type_t<T>>::type;
 
   constexpr auto MAX_SIZE_T = std::numeric_limits<std::size_t>::max();
 
