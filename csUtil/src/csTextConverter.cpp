@@ -153,6 +153,14 @@ namespace priv {
 
 ////// csTextConverterData ///////////////////////////////////////////////////
 
+/*
+ * NOTE:
+ * Although csTextConverterData's destructor will be called whenever the enclosing
+ * unique_ptr<> is destroyed, ICU specific memory leaks may be reported.
+ * See the documentation of u_cleanup() for further information and the means to
+ * mitigate the situation.
+ */
+
 class csTextConverterData {
 public:
   csTextConverterData(const char *_name, UErrorCode *err)
