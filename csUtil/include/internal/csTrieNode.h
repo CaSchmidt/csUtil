@@ -113,11 +113,13 @@ public:
   }
 
   void flattened(csFlatTrie::Links& links, csFlatTrie::Letters& letters,
-                 std::size_t& cntNodes, const std::size_t baseIndex) const
+                 std::size_t& cntNodes) const
   {
     if( childCount() < 1 ) {
       return;
     }
+
+    const std::size_t baseIndex = cntNodes;
 
     cntNodes += childCount();
 
@@ -134,7 +136,7 @@ public:
         links[baseIndex + i] |= priv::Mask_EOW;
       }
 
-      _children[i].flattened(links, letters, cntNodes, cntNodes);
+      _children[i].flattened(links, letters, cntNodes);
     }
 
     links[baseIndex + childCount() - 1] |= priv::Mask_EOL;

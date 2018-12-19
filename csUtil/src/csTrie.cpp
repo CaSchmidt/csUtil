@@ -136,7 +136,7 @@ csFlatTrie csTrie::flattened() const
   csFlatTrie::Letters letters(numNodes);
 
   std::size_t cntNodes = 0;
-  _root->flattened(links, letters, cntNodes, 0);
+  _root->flattened(links, letters, cntNodes);
 
   return csFlatTrie(std::move(links), std::move(letters));
 }
