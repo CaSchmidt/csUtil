@@ -103,8 +103,8 @@ install(TARGETS csUtil
   RUNTIME DESTINATION bin
   )
 
-install(DIRECTORY
-  include/ DESTINATION include
+install(DIRECTORY include/
+  DESTINATION include
   PATTERN "config" EXCLUDE
   PATTERN "internal" EXCLUDE
   )
