@@ -54,6 +54,8 @@ namespace cs {
 
   constexpr auto MAX_SIZE_T = std::numeric_limits<std::size_t>::max();
 
+  constexpr auto qNaN = std::numeric_limits<double>::quiet_NaN();
+
 } // namespace cs
 
 #endif // CSTYPETRAITS_H
