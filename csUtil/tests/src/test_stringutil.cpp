@@ -8,13 +8,13 @@
 void simplify(const std::string& s)
 {
   const std::string x = cs::simplified(s);
-  printf("<%s> -> <%s>\n", s.data(), x.data());
+  printf("simplify: <%s> -> <%s>\n", s.data(), x.data());
 }
 
 void trim(const std::string& s)
 {
   const std::string x = cs::trimmed(s);
-  printf("<%s> -> <%s>\n", s.data(), x.data());
+  printf("trim: <%s> -> <%s>\n", s.data(), x.data());
 }
 
 void test_length(const std::array<char,4>& s, const char *name)

@@ -180,62 +180,18 @@ namespace cs {
   }
 
   template<typename T>
-  inline if_string_t<T> simplified(const std::basic_string<T>& s) noexcept
+  inline if_string_t<T> simplified(std::basic_string<T> s) noexcept
   {
-    using SizeT = typename std::basic_string<T>::size_type;
-    constexpr T ch_space = static_cast<T>(' ');
-
-    // (1) Get size //////////////////////////////////////////////////////////
-
-    SizeT numWords = 0;
-    SizeT  numSize = 0;
-    T prev = ch_space;
-    for(const T& curr : s) {
-      if( !isSpace(curr) ) { // count characters in WORD only
-        numSize++;
-
-        if( isSpace(prev) ) { // transition WHITESPACE -> WORD
-          numWords++;
-        }
-      }
-
-      prev = curr;
-    }
-
-    // (2) Create result /////////////////////////////////////////////////////
-
-    std::basic_string<T> result;
-    if( numSize < 1 ) {
-      return result;
-    }
-
-    const SizeT numSpaces = numWords - 1;
-    try {
-      result.reserve(numSize + numSpaces);
-    } catch(...) {
-      result.clear();
-      return result;
-    }
-
-    // (3) Copy //////////////////////////////////////////////////////////////
-
-    SizeT cntSpacesWritten = 0;
-    prev = ch_space;
-    for(const T& curr : s) {
-      if( !isSpace(curr) ) {
-        result += curr;
-      } else {
-        // transition WORD -> WHITESPACE; insert SPACE if necessary
-        if( !isSpace(prev)  &&  cntSpacesWritten < numSpaces ) {
-          result += ch_space;
-          cntSpacesWritten++;
-        }
-      }
-
-      prev = curr;
-    }
-
-    return result;
+    // (1) remove duplicate whitespace
+    auto last = std::unique(s.begin(), s.end(),
+                            [](const T& a, const T& b) -> bool { return isSpace(a)  &&  isSpace(b); });
+    s.erase(last, s.end());
+    // (2) replace single whitespace characters with space
+    std::replace_if(s.begin(), s.end(),
+                    [](const T& ch) -> bool { return isSpace(ch); },
+                    glyph<T>::space);
+    // (3) return trimmed result
+    return trimmed(s);
   }
 
   template<typename T>
@@ -288,50 +244,17 @@ namespace cs {
   }
 
   template<typename T>
-  inline if_string_t<T> trimmed(const std::basic_string<T>& s) noexcept
+  inline if_string_t<T> trimmed(std::basic_string<T> s) noexcept
   {
-    using const_iter = typename std::basic_string<T>::const_iterator;
-
-    std::basic_string<T> result;
-
-    // (1) Scan begin ////////////////////////////////////////////////////////
-
-    const_iter beg = s.cend();
-    for(const_iter it = s.cbegin(); it != s.cend(); it++) {
-      if( !isSpace(*it) ) {
-        beg = it;
-        break;
-      }
-    }
-
-    if( beg == s.cend() ) {
-      return result;
-    }
-
-    // (2) Scan end //////////////////////////////////////////////////////////
-
-    const_iter end = s.cend();
-    for(const_iter it = s.cend(); it != beg; it--) {
-      if( !isSpace(*(it - 1)) ) {
-        end = it;
-        break;
-      }
-    }
-
-    if( end == beg ) {
-      return result;
-    }
-
-    // (3) Copy //////////////////////////////////////////////////////////////
-
-    try {
-      result.assign(beg, end);
-    } catch(...) {
-      result.clear();
-      return result;
-    }
-
-    return result;
+    // trim left
+    s.erase(s.begin(),
+            std::find_if(s.begin(), s.end(),
+                         [](const T& ch) -> bool { return !isSpace(ch); }));
+    // trim right
+    s.erase(std::find_if(s.rbegin(), s.rend(),
+                         [](const T& ch) -> bool { return !isSpace(ch); }).base(),
+            s.end());
+    return s;
   }
 
 } // namespace cs
