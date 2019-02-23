@@ -65,6 +65,8 @@ namespace cs {
 
     static constexpr auto A = static_cast<T>('A');
     static constexpr auto Z = static_cast<T>('Z');
+
+    static constexpr auto under = static_cast<T>('_');
   };
 
   template<typename T>
@@ -95,6 +97,12 @@ namespace cs {
   constexpr if_char_bool<T> isUpper(const T& c) noexcept
   {
     return glyph<T>::A <= c  &&  c <= glyph<T>::Z;
+  }
+
+  template<typename T>
+  constexpr if_char_bool<T> isIdent(const T& c) noexcept
+  {
+    return isLower(c)  ||  isUpper(c)  ||  isDigit(c)  ||  c == glyph<T>::under;
   }
 
   template<typename T>
