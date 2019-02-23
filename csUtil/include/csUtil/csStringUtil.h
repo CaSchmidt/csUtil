@@ -141,6 +141,17 @@ namespace cs {
   }
 
   template<typename T>
+  inline if_char_bool<T> isBlank(const T *s, const std::size_t len = MAX_SIZE_T)
+  {
+    const std::size_t l = len == MAX_SIZE_T
+        ? length(s)
+        : len;
+    const auto numSpace = std::count_if(s, s + l,
+                                        [](const T& ch) -> bool { return isSpace(ch); });
+    return static_cast<std::size_t>(numSpace) == l;
+  }
+
+  template<typename T>
   inline void replaceAll(std::basic_string<T>& s,
                          const T& needle,
                          const T *text, const std::size_t lenText = MAX_SIZE_T)
