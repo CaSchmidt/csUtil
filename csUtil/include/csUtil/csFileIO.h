@@ -35,6 +35,7 @@
 #include <cstdint>
 
 #include <fstream>
+#include <list>
 #include <string>
 #include <vector>
 
@@ -42,6 +43,8 @@
 
 CS_UTIL_EXPORT std::fstream csOpenFile(const std::string& filename_utf8,
                                        const std::ios_base::openmode mode);
+
+CS_UTIL_EXPORT std::list<std::string> csReadLines(const std::string& filename_utf8, const bool trim = false);
 
 CS_UTIL_EXPORT std::string csReadTextFile(const std::string& filename_utf8, bool *ok = nullptr);
 

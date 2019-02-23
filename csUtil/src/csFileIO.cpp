@@ -29,11 +29,13 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <sstream>
 #include <type_traits>
 
 #include "csUtil/csFileIO.h"
 
 #include "internal/csutil_internal.h"
+#include "csUtil/csStringUtil.h"
 #include "csUtil/csTextConverter.h"
 
 ////// Private ///////////////////////////////////////////////////////////////
@@ -99,6 +101,29 @@ CS_UTIL_EXPORT std::fstream csOpenFile(const std::string& filename_utf8,
   file.open(filename_utf8, mode);
 #endif
   return file;
+}
+
+CS_UTIL_EXPORT std::list<std::string> csReadLines(const std::string& filename_utf8, const bool trim)
+{
+  std::list<std::string> result;
+
+  const std::string lines = csReadTextFile(filename_utf8);
+  if( lines.empty() ) {
+    return result;
+  }
+
+  std::istringstream input(lines);
+  for(std::string line; std::getline(input, line, '\n'); ) {
+    if( cs::isBlank(line.data(), line.size()) ) {
+      continue;
+    }
+    if( trim ) {
+      line = cs::trimmed(line);
+    }
+    result.push_back(std::move(line));
+  }
+
+  return result;
 }
 
 CS_UTIL_EXPORT std::string csReadTextFile(const std::string& filename_utf8, bool *ok)

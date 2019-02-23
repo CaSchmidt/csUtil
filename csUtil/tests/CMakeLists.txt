@@ -15,6 +15,7 @@ endmacro()
 
 cs_test(test_charconv src/test_charconv.cpp)
 cs_test(test_endian src/test_endian.cpp src/data.cpp include/data.h)
+cs_test(test_fileio src/test_fileio.cpp)
 cs_test(test_flags src/test_flags.cpp)
 cs_test(test_format src/test_format.cpp)
 cs_test(test_rawconverter src/test_rawconverter.cpp)
