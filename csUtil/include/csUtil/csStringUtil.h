@@ -141,7 +141,7 @@ namespace cs {
   }
 
   template<typename T>
-  inline if_char_bool<T> isBlank(const T *s, const std::size_t len = MAX_SIZE_T)
+  inline if_char_bool<T> isSpace(const T *s, const std::size_t len = MAX_SIZE_T)
   {
     const std::size_t l = len == MAX_SIZE_T
         ? length(s)

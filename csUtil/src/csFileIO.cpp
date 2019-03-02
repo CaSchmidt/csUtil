@@ -114,7 +114,7 @@ CS_UTIL_EXPORT std::list<std::string> csReadLines(const std::string& filename_ut
 
   std::istringstream input(lines);
   for(std::string line; std::getline(input, line, '\n'); ) {
-    if( cs::isBlank(line.data(), line.size()) ) {
+    if( cs::isSpace(line.data(), line.size()) ) {
       continue;
     }
     if( trim ) {
