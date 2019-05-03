@@ -106,7 +106,7 @@ namespace cs {
   }
 
   template<typename T>
-  constexpr T toLower(const T& c) noexcept
+  constexpr if_char_t<T> toLower(const T& c) noexcept
   {
     return isUpper(c)
         ? c - glyph<T>::A + glyph<T>::a
@@ -114,7 +114,7 @@ namespace cs {
   }
 
   template<typename T>
-  constexpr T toUpper(const T& c) noexcept
+  constexpr if_char_t<T> toUpper(const T& c) noexcept
   {
     return isLower(c)
         ? c - glyph<T>::a + glyph<T>::A
