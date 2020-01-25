@@ -23,6 +23,7 @@ configure_file(include/config/csutil_config.h.in
 
 # Build Tests?
 option(ENABLE_TESTS "Enable tests" OFF)
+option(ENABLE_UNITTESTS "Enable unit tests" OFF)
 
 ### 3rd Party ################################################################
 
@@ -114,4 +115,8 @@ install(FILES
 
 if(ENABLE_TESTS)
   add_subdirectory(tests)
+endif()
+
+if(ENABLE_UNITTESTS)
+  add_subdirectory(unittests)
 endif()
