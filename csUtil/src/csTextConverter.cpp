@@ -34,8 +34,8 @@
 #include <algorithm>
 #include <set>
 
-#include "3rdparty/icu-ucnv/src/unicode/ucnv.h"
-#include "3rdparty/icu-ucnv/src/unicode/ustring.h"
+#include <unicode/ucnv.h>
+#include <unicode/ustring.h>
 
 #include "csUtil/csTextConverter.h"
 

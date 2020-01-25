@@ -73,25 +73,27 @@ list(APPEND csUtil_SOURCES
 ### Target ###################################################################
 
 add_library(csUtil
-  ${csUtil_HEADERS} ${csUtil_SOURCES}
-  $<TARGET_OBJECTS:dblcnv>
-  $<TARGET_OBJECTS:icu>
+  ${csUtil_HEADERS}
+  ${csUtil_SOURCES}
   )
 
 format_output_name(csUtil "csUtil")
 
-target_compile_definitions(csUtil PRIVATE CS_BUILD_UTIL_LIB)
-target_include_directories(csUtil PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include)
-target_include_directories(csUtil PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(csUtil PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_compile_definitions(csUtil
+  PRIVATE CS_BUILD_UTIL_LIB
+  )
+target_include_directories(csUtil
+  PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include
+  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+  )
+target_link_libraries(csUtil
+  PUBLIC dblcnv
+  PUBLIC icu
+  )
 
 if(WIN32)
   target_compile_options(csUtil PRIVATE /wd4251)
 endif()
-
-# ICU
-target_compile_definitions(csUtil PRIVATE ${icu_DEFINES})
-target_include_directories(csUtil PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/icu-ucnv/src)
 
 if(BUILD_SHARED_LIBS AND UNIX)
   target_link_libraries(csUtil dl)

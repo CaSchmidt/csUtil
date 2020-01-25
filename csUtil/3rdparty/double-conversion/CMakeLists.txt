@@ -19,11 +19,13 @@ list(APPEND dblcnv_FILES
   src/utils.h
   )
 
-add_library(dblcnv OBJECT
+add_library(dblcnv STATIC
   ${dblcnv_FILES}
   )
 
-target_include_directories(dblcnv PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_include_directories(dblcnv
+  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
+  )
 
 if(BUILD_SHARED_LIBS AND UNIX)
   set_target_properties(dblcnv PROPERTIES POSITION_INDEPENDENT_CODE ON)
