@@ -1,0 +1,40 @@
+Reducing the Size of ICU's Data: Conversion Tables
+
+The size of the ICU data file in the standard build configuration is about 8 MB.
+The majority of this is used for conversion tables. ICU comes with so many conversion
+tables because many ICU users need to support many encodings from many platforms.
+There are conversion tables for EBCDIC and DOS codepages, for ISO 2022 variants,
+and for small variations of popular encodings.
+
+Important: ICU provides full internationalization functionality without any conversion
+table data. The common library contains code to handle several important encodings
+algorithmically: US-ASCII, ISO-8859-1, UTF-7/8/16/32, SCSU, BOCU-1, CESU-8, and
+IMAP-mailbox-name (i.e., US-ASCII, ISO-8859-1, and all Unicode charsets; see
+source/data/mappings/convrtrs.txt for the current list).
+
+Therefore, the easiest way to reduce the size of ICU's data by a lot (without limitation
+of I18N support) is to reduce the number of conversion tables that are built into the data file.
+
+The conversion tables are listed for the build process in several makefiles
+source/data/mappings/ucm*.mk, roughly grouped by how commonly they are used.
+If you remove or rename any of these files, then the ICU build will exclude
+the conversion tables that are listed in that file. Beginning with ICU 2.0,
+all of these makefiles including the main one are optional. If you remove all of them,
+then ICU will include only very few conversion tables for "fallback" encodings (see note below).
+
+If you remove or rename all ucm*.mk files, then ICU's data is reduced to about 3.6 MB.
+If you remove all these files except for ucmcore.mk, then ICU's data is reduced to about 4.7 MB,
+while keeping support for a core set of common MIME/Unix/Windows encodings.
+
+Note
+If you remove the conversion table for an encoding that could be a default encoding on one of your platforms,
+then ICU will not be able to instantiate a default converter. In this case, ICU 2.0 and up will automatically
+fall back to a "lowest common denominator" and load a converter for US-ASCII (or, on EBCDIC platforms,
+for codepages 37 or 1047). This will be good enough for converting strings that contain only "ASCII" characters
+(see the comment about "invariant characters" in utypes.h).
+
+When ICU is built with a reduced set of conversion tables, then some tests will fail that test the behavior of
+the converters based on known features of some encodings. Also, building the testdata will fail if you remove
+some conversion tables that are necessary for that (to test non-ASCII/Unicode resource bundle source files,
+for example). You can ignore these failures. Build with the standard set of conversion tables,
+if you want to run the tests.

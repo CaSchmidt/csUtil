@@ -27,7 +27,7 @@ option(ENABLE_TESTS "Enable tests" OFF)
 ### 3rd Party ################################################################
 
 add_subdirectory(3rdparty/double-conversion)
-add_subdirectory(3rdparty/icu-ucnv)
+add_subdirectory(3rdparty/icu-651)
 
 ### csUtil ###################################################################
 

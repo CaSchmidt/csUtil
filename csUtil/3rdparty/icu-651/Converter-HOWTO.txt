@@ -1,0 +1,30 @@
+0.) Naming convention:
+
+ICU stores its data/resources in a separate file, eg.
+
+source/data/in/icudt65l.dat
+
+The "65" indicates ICU's version, "l" indicates the endianness.
+
+1.) Obtaining the conversion data:
+
+Use ICU's icupkg tool to list (-l) or extract (-x) the desired information.
+
+NOTE: Mind setting the endianness with -tl !!!
+
+2.) Import the necessary files:
+
+Import cnvalias.icu and the converters in data/mappings/ucmcore.mk
+
+3.) Packaging a new data file:
+
+pkgdata -m common -p icudt65l -e icudt65 -s files converters.txt
+
+Where
+
+-p icudt65l  is the search path ICU will use when resolving data
+-e icudt65   is the linker's entry point for the data
+
+4.) Creating C code to include in a program:
+
+Just run ICU's genccode on the created data file.
