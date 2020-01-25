@@ -6,7 +6,6 @@
 
 #include <csUtil/csFileIO.h>
 #include <csUtil/csFlatTrie.h>
-#include <csUtil/csTextConverter.h>
 #include <csUtil/csTrie.h>
 
 #undef HAVE_REVERSE
