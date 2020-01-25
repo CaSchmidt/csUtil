@@ -8,7 +8,6 @@ macro(cs_test target)
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     )
   target_link_libraries(${target} csUtil)
-  set_target_properties(${target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${csUtil_BINARY_DIR})
 endmacro()
 
 ### Tests ####################################################################
