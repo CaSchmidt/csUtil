@@ -21,11 +21,6 @@ configure_file(include/config/csutil_config.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/include/csUtil/csutil_config.h @ONLY
   )
 
-# C++
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
 # Build Tests?
 option(ENABLE_TESTS "Enable tests" OFF)
 
