@@ -23,6 +23,8 @@ add_library(dblcnv STATIC
   ${dblcnv_FILES}
   )
 
+format_output_name(dblcnv "dblcnv")
+
 target_include_directories(dblcnv
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
   )

@@ -413,6 +413,8 @@ add_library(icu STATIC
   ${icu_FILES}
   )
 
+format_output_name(icu "icu")
+
 if(MSVC)
   target_compile_definitions(icu PRIVATE _CRT_SECURE_NO_WARNINGS)
   target_compile_options(icu PRIVATE /source-charset:UTF-8 /execution-charset:UTF-8 /validate-charset)
