@@ -87,7 +87,7 @@ target_link_libraries(csUtil
   PUBLIC icu
   )
 
-if(WIN32)
+if(MSVC)
   target_compile_options(csUtil PRIVATE /wd4251)
 endif()
 

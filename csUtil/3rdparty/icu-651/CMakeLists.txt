@@ -415,6 +415,10 @@ add_library(icu STATIC
 
 format_output_name(icu "icu")
 
+if(MINGW)
+  target_compile_definitions(icu PRIVATE _WIN32_WINNT=0x0601 WINVER=0x0601)
+endif()
+
 if(MSVC)
   target_compile_definitions(icu PRIVATE _CRT_SECURE_NO_WARNINGS)
   target_compile_options(icu PRIVATE /source-charset:UTF-8 /execution-charset:UTF-8 /validate-charset)
