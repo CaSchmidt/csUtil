@@ -42,8 +42,8 @@ class csTextConverterData;
 
 class CS_UTIL_EXPORT csTextConverter {
 public:
-  csTextConverter(csTextConverterData *ptr = nullptr);
-  ~csTextConverter();
+  csTextConverter(csTextConverterData *ptr = nullptr) noexcept;
+  ~csTextConverter() noexcept;
 
   csTextConverter(csTextConverter&&) noexcept;
   csTextConverter& operator=(csTextConverter&&) noexcept;

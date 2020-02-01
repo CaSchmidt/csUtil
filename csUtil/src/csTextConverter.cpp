@@ -58,7 +58,7 @@ namespace priv {
     }
 
     UErrorCode err = U_ZERO_ERROR;
-    const int32_t requiredSize = ucnv_fromUChars(cnv, NULL, 0, s, static_cast<int32_t>(len), &err);
+    const int32_t requiredSize = ucnv_fromUChars(cnv, nullptr, 0, s, static_cast<int32_t>(len), &err);
 
     try {
       result.resize(static_cast<std::string::size_type>(requiredSize), 0);
@@ -85,7 +85,7 @@ namespace priv {
 
     UErrorCode err = U_ZERO_ERROR;
     UConverter *cnv = ucnv_open(name, &err);
-    if( cnv == NULL  ||  U_FAILURE(err) ) {
+    if( cnv == nullptr  ||  U_FAILURE(err) ) {
       return result;
     }
 
@@ -111,7 +111,7 @@ namespace priv {
     }
 
     UErrorCode err = U_ZERO_ERROR;
-    const int32_t requiredSize = ucnv_toUChars(cnv, NULL, 0, s, static_cast<int32_t>(len), &err);
+    const int32_t requiredSize = ucnv_toUChars(cnv, nullptr, 0, s, static_cast<int32_t>(len), &err);
 
     try {
       result.resize(static_cast<std::u16string::size_type>(requiredSize), 0);
@@ -138,7 +138,7 @@ namespace priv {
 
     UErrorCode err = U_ZERO_ERROR;
     UConverter *cnv = ucnv_open(name, &err);
-    if( cnv == NULL  ||  U_FAILURE(err) ) {
+    if( cnv == nullptr  ||  U_FAILURE(err) ) {
       return result;
     }
 
@@ -163,17 +163,17 @@ namespace priv {
 
 class csTextConverterData {
 public:
-  csTextConverterData(const char *_name, UErrorCode *err)
-    : cnv(NULL)
+  csTextConverterData(const char *_name, UErrorCode *err) noexcept
+    : cnv(nullptr)
     , name(_name)
   {
     *err = U_ZERO_ERROR;
     cnv = ucnv_open(_name, err);
   }
 
-  ~csTextConverterData()
+  ~csTextConverterData() noexcept
   {
-    if( cnv != NULL ) {
+    if( cnv != nullptr ) {
       ucnv_close(cnv);
     }
   }
@@ -184,12 +184,12 @@ public:
 
 ////// public ////////////////////////////////////////////////////////////////
 
-csTextConverter::csTextConverter(csTextConverterData *ptr)
+csTextConverter::csTextConverter(csTextConverterData *ptr) noexcept
   : d(ptr)
 {
 }
 
-csTextConverter::~csTextConverter() = default;
+csTextConverter::~csTextConverter() noexcept = default;
 csTextConverter::csTextConverter(csTextConverter&&) noexcept = default;
 csTextConverter& csTextConverter::operator=(csTextConverter&&) noexcept = default;
 
@@ -236,7 +236,7 @@ csTextConverter csTextConverter::create(const char *name)
     return result;
   }
 
-  if( result.d->cnv == NULL  ||  U_FAILURE(err) ) {
+  if( result.d->cnv == nullptr  ||  U_FAILURE(err) ) {
     result.clear();
     return result;
   }
@@ -278,7 +278,7 @@ std::list<std::string> csTextConverter::listAvailable()
     UErrorCode err;
 
     const char *name = ucnv_getAvailableName(i);
-    if( name == NULL  ||  std::strlen(name) < 1 ) {
+    if( name == nullptr  ||  std::strlen(name) < 1 ) {
       continue;
     }
 
@@ -293,7 +293,7 @@ std::list<std::string> csTextConverter::listAvailable()
     for(uint16_t i = 0; i < numAliases; i++) {
       err = U_ZERO_ERROR;
       const char *alias = ucnv_getAlias(name, i, &err);
-      if( U_FAILURE(err)  ||  alias == NULL  ||  std::strlen(alias) < 1 ) {
+      if( U_FAILURE(err)  ||  alias == nullptr  ||  std::strlen(alias) < 1 ) {
         continue;
       }
 
