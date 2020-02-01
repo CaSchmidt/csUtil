@@ -21,7 +21,7 @@ template<typename T>
 T do_swap(const T& value)
 {
   const T swapped = cs::swap<true>(value);
-  print(value, swapped);
+  // print(value, swapped);
   return swapped;
 }
 

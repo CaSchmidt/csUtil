@@ -44,32 +44,32 @@ namespace cs {
   namespace impl {
 
 #if defined(_MSC_VER)
-    inline uint16_t impl_swap16(const uint16_t& value)
+    inline uint16_t impl_swap(const uint16_t& value)
     {
       return _byteswap_ushort(value);
     }
 
-    inline uint32_t impl_swap32(const uint32_t& value)
+    inline uint32_t impl_swap(const uint32_t& value)
     {
       return _byteswap_ulong(value);
     }
 
-    inline uint64_t impl_swap64(const uint64_t& value)
+    inline uint64_t impl_swap(const uint64_t& value)
     {
       return _byteswap_uint64(value);
     }
 #elif defined(__GNUC__)
-    inline uint16_t impl_swap16(const uint16_t& value)
+    inline uint16_t impl_swap(const uint16_t& value)
     {
       return __builtin_bswap16(value);
     }
 
-    inline uint32_t impl_swap32(const uint32_t& value)
+    inline uint32_t impl_swap(const uint32_t& value)
     {
       return __builtin_bswap32(value);
     }
 
-    inline uint64_t impl_swap64(const uint64_t& value)
+    inline uint64_t impl_swap(const uint64_t& value)
     {
       return __builtin_bswap64(value);
     }
@@ -77,31 +77,38 @@ namespace cs {
 # error Compiler not supported!
 #endif
 
-    template<typename T>
-    inline std::enable_if_t<sizeof(T) == 2,T> swap(const T& value)
-    {
-      const uint16_t swapped = impl_swap16(*reinterpret_cast<const uint16_t*>(&value));
-      return *reinterpret_cast<const T*>(&swapped);
-    }
+    template<int SIZE>
+    struct SwapType {
+      // SFINAE
+    };
+
+    template<>
+    struct SwapType<2> {
+      using swap_type = uint16_t;
+    };
+
+    template<>
+    struct SwapType<4> {
+      using swap_type = uint32_t;
+    };
+
+    template<>
+    struct SwapType<8> {
+      using swap_type = uint64_t;
+    };
 
     template<typename T>
-    inline std::enable_if_t<sizeof(T) == 4,T> swap(const T& value)
+    inline T do_swap(const T& value)
     {
-      const uint32_t swapped = impl_swap32(*reinterpret_cast<const uint32_t*>(&value));
-      return *reinterpret_cast<const T*>(&swapped);
-    }
-
-    template<typename T>
-    inline std::enable_if_t<sizeof(T) == 8,T> swap(const T& value)
-    {
-      const uint64_t swapped = impl_swap64(*reinterpret_cast<const uint64_t*>(&value));
+      using S = typename SwapType<sizeof(T)>::swap_type;
+      const S swapped = impl_swap(*reinterpret_cast<const S*>(&value));
       return *reinterpret_cast<const T*>(&swapped);
     }
 
     template<bool SWAP, typename T>
     inline std::enable_if_t<SWAP == true,T> dispatch(const T& value)
     {
-      return swap<T>(value);
+      return do_swap<T>(value);
     }
 
     template<bool SWAP, typename T>
