@@ -90,9 +90,17 @@ target_include_directories(csUtil
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
   )
 
-target_link_libraries(csUtil
+list(APPEND csUtil_LIBS
   PUBLIC dblcnv
   PUBLIC icu
+  )
+if(UNIX)
+  list(APPEND csUtil_LIBS
+    PUBLIC pthread # For std::unique_ptr<>
+    )
+endif()
+target_link_libraries(csUtil
+  ${csUtil_LIBS}
   )
 
 ### Install ##################################################################
