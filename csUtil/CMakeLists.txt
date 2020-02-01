@@ -78,22 +78,24 @@ format_output_name(csUtil "csUtil")
 target_compile_definitions(csUtil
   PRIVATE CS_BUILD_UTIL_LIB
   )
+
+if(MSVC)
+  target_compile_options(csUtil
+    PRIVATE /wd4251
+    )
+endif()
+
 target_include_directories(csUtil
   PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
   )
+
 target_link_libraries(csUtil
   PUBLIC dblcnv
   PUBLIC icu
   )
 
-if(MSVC)
-  target_compile_options(csUtil PRIVATE /wd4251)
-endif()
-
-if(BUILD_SHARED_LIBS AND UNIX)
-  target_link_libraries(csUtil dl)
-endif()
+### Install ##################################################################
 
 install(TARGETS csUtil
   ARCHIVE DESTINATION lib
