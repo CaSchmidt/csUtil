@@ -32,62 +32,92 @@
 #ifndef CSENDIAN_H
 #define CSENDIAN_H
 
+#ifdef _MSC_VER
+# include <cstdlib>
+#endif
+#include <cstdint>
+
 #include <type_traits>
 
 namespace cs {
 
-  namespace endian {
+  namespace impl {
 
-    ////// Swap Meta Program /////////////////////////////////////////////////
+#if defined(_MSC_VER)
+    inline uint16_t impl_swap16(const uint16_t& value)
+    {
+      return _byteswap_ushort(value);
+    }
 
-    template<int i, int COUNT>
-    struct swap {
-      inline static void run(unsigned char *dest, const unsigned char *src)
-      {
-        dest[COUNT-1-i] = src[i];
-        swap<i-1,COUNT>::run(dest, src);
-      }
-    };
+    inline uint32_t impl_swap32(const uint32_t& value)
+    {
+      return _byteswap_ulong(value);
+    }
 
-    template<int COUNT>
-    struct swap<0,COUNT> {
-      inline static void run(unsigned char *dest, const unsigned char *src)
-      {
-        dest[COUNT-1] = src[0];
-      }
-    };
+    inline uint64_t impl_swap64(const uint64_t& value)
+    {
+      return _byteswap_uint64(value);
+    }
+#elif defined(__GNUC__)
+    inline uint16_t impl_swap16(const uint16_t& value)
+    {
+      return __builtin_bswap16(value);
+    }
 
-    ////// Dispatch //////////////////////////////////////////////////////////
+    inline uint32_t impl_swap32(const uint32_t& value)
+    {
+      return __builtin_bswap32(value);
+    }
 
-    template<bool SWAP, typename T>
-    struct dispatch {
-      inline static void run(T *dest, const void *src)
-      {
-        swap<sizeof(T)-1,sizeof(T)>::run(reinterpret_cast<unsigned char*>(dest),
-                                         reinterpret_cast<const unsigned char *>(src));
-      }
-    };
+    inline uint64_t impl_swap64(const uint64_t& value)
+    {
+      return __builtin_bswap64(value);
+    }
+#else
+# error Compiler not supported!
+#endif
 
     template<typename T>
-    struct dispatch<false,T> {
-      inline static void run(T *dest, const void *src)
-      {
-        *dest = *reinterpret_cast<const T*>(src);
-      }
-    };
+    inline std::enable_if_t<sizeof(T) == 2,T> swap(const T& value)
+    {
+      const uint16_t swapped = impl_swap16(*reinterpret_cast<const uint16_t*>(&value));
+      return *reinterpret_cast<const T*>(&swapped);
+    }
 
-  } // namespace endian
+    template<typename T>
+    inline std::enable_if_t<sizeof(T) == 4,T> swap(const T& value)
+    {
+      const uint32_t swapped = impl_swap32(*reinterpret_cast<const uint32_t*>(&value));
+      return *reinterpret_cast<const T*>(&swapped);
+    }
+
+    template<typename T>
+    inline std::enable_if_t<sizeof(T) == 8,T> swap(const T& value)
+    {
+      const uint64_t swapped = impl_swap64(*reinterpret_cast<const uint64_t*>(&value));
+      return *reinterpret_cast<const T*>(&swapped);
+    }
+
+    template<bool SWAP, typename T>
+    inline std::enable_if_t<SWAP == true,T> dispatch(const T& value)
+    {
+      return swap<T>(value);
+    }
+
+    template<bool SWAP, typename T>
+    inline std::enable_if_t<SWAP == false,T> dispatch(const T& value)
+    {
+      return value;
+    }
+
+  } // namespace impl
+
+  template<bool SWAP, typename T>
+  inline std::enable_if_t<std::is_arithmetic<T>::value,T> swap(const T& value)
+  {
+    return impl::dispatch<SWAP  &&  sizeof(T) >= 2,T>(value);
+  }
 
 } // namespace cs
-
-////// User Interface ////////////////////////////////////////////////////////
-
-template<bool SWAP, typename T>
-inline void csCopy(T *dest, const void *src,
-                   typename std::enable_if<std::is_arithmetic<T>::value>::type * = 0)
-{
-  using namespace cs::endian;
-  dispatch<SWAP,T>::run(dest, src);
-}
 
 #endif // CSENDIAN_H
