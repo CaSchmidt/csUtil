@@ -7,13 +7,15 @@
 
 #include <csUtil/csEndian.h>
 
+#include "util.h"
+
 template<typename T>
 void print(const T& from, const T& to)
 {
   std::cout
-      << "0x" << std::setfill('0') << std::setw(sizeof(T)*2) << std::hex << from
+      << "0x" << FormatInt<char,T>(from, sizeof(T)*2, 16, '0')
       << " -> "
-      << "0x" << std::setfill('0') << std::setw(sizeof(T)*2) << std::hex << to
+      << "0x" << FormatInt<char,T>(to, sizeof(T)*2, 16, '0')
       << std::endl;
 }
 

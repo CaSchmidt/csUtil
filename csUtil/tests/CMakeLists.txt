@@ -11,7 +11,7 @@ endmacro()
 ### Tests ####################################################################
 
 cs_test(test_charconv src/test_charconv.cpp)
-cs_test(test_endian src/test_endian.cpp)
+cs_test(test_endian src/test_endian.cpp include/util.h)
 cs_test(test_fileio src/test_fileio.cpp)
 cs_test(test_flags src/test_flags.cpp)
 cs_test(test_format src/test_format.cpp)
