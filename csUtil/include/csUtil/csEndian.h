@@ -41,6 +41,9 @@
 
 namespace cs {
 
+  template<typename T>
+  using if_swap_t = std::enable_if_t<std::is_arithmetic<T>::value,T>;
+
   namespace impl {
 
 #if defined(_MSC_VER)
@@ -106,13 +109,13 @@ namespace cs {
     }
 
     template<bool SWAP, typename T>
-    constexpr std::enable_if_t<SWAP == true,T> dispatch(const T& value)
+    constexpr std::enable_if_t<SWAP,T> dispatch(const T& value)
     {
       return do_swap<T>(value);
     }
 
     template<bool SWAP, typename T>
-    constexpr std::enable_if_t<SWAP == false,T> dispatch(const T& value)
+    constexpr std::enable_if_t<!SWAP,T> dispatch(const T& value)
     {
       return value;
     }
@@ -120,7 +123,7 @@ namespace cs {
   } // namespace impl
 
   template<bool SWAP, typename T>
-  constexpr std::enable_if_t<std::is_arithmetic<T>::value,T> swap(const T& value)
+  constexpr if_swap_t<T> swap(const T& value)
   {
     return impl::dispatch<SWAP  &&  sizeof(T) >= 2,T>(value);
   }
