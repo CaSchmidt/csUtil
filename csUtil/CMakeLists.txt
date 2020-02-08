@@ -96,7 +96,7 @@ list(APPEND csUtil_LIBS
   )
 if(UNIX)
   list(APPEND csUtil_LIBS
-    PUBLIC pthread # For std::unique_ptr<>
+    PUBLIC pthread # std::unique_ptr<>
     )
 endif()
 target_link_libraries(csUtil
