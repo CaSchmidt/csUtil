@@ -123,9 +123,15 @@ namespace cs {
   } // namespace impl
 
   template<bool SWAP, typename T>
-  constexpr if_swap_t<T> swap(const T& value)
+  constexpr if_swap_t<T> copy(const T& value)
   {
     return impl::dispatch<SWAP  &&  sizeof(T) >= 2,T>(value);
+  }
+
+  template<typename T>
+  constexpr if_swap_t<T> swap(const T& value)
+  {
+    return impl::dispatch<sizeof(T) >= 2,T>(value);
   }
 
 } // namespace cs
