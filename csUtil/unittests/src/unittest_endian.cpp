@@ -8,27 +8,57 @@
 
 namespace test_integral {
 
+  // Prototypes //////////////////////////////////////////////////////////////
+
+  uint16_t test_swap(const uint16_t& value);
+
+  uint32_t test_swap(const uint32_t& value);
+
+  uint64_t test_swap(const uint64_t& value);
+
+  // Implementation //////////////////////////////////////////////////////////
+
   uint16_t test_swap(const uint16_t& value)
   {
-    return cs::swap<true>(value);
+    return cs::swap(value);
   }
 
   uint32_t test_swap(const uint32_t& value)
   {
-    return cs::swap<true>(value);
+    return cs::swap(value);
   }
 
   uint64_t test_swap(const uint64_t& value)
   {
-    return cs::swap<true>(value);
+    return cs::swap(value);
   }
 
+  // Inputs & Results ////////////////////////////////////////////////////////
+
+  const uint16_t     in16{0x0102};
+  const uint16_t result16{0x0201};
+
+  const uint32_t     in32{0x01020304};
+  const uint32_t result32{0x04030201};
+
+  const uint64_t     in64{0x0102030405060708};
+  const uint64_t result64{0x0807060504030201};
+
+  volatile uint16_t out16;
+  volatile uint32_t out32;
+  volatile uint64_t out64;
+
+  // Tests ///////////////////////////////////////////////////////////////////
+
   TEST_CASE("Swap endianness of integral values.", "[integral]") {
-    REQUIRE( uint16_t(0x0201) == test_swap(uint16_t(0x0102)) );
+    out16 = test_swap(in16);
+    REQUIRE( out16 == result16 );
 
-    REQUIRE( uint32_t(0x04030201) == test_swap(uint32_t(0x01020304)) );
+    out32 = test_swap(in32);
+    REQUIRE( out32 == result32 );
 
-    REQUIRE( uint64_t(0x0807060504030201) == test_swap(uint64_t(0x0102030405060708)) );
+    out64 = test_swap(in64);
+    REQUIRE( out64 == result64 );
   }
 
 } // namespace test_integral
