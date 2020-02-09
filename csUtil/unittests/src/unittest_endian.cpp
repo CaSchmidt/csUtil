@@ -1,29 +1,16 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include <csUtil/csEndian.h>
-
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
 
 namespace test_integral {
 
-  // Implementation //////////////////////////////////////////////////////////
+  // Prototypes //////////////////////////////////////////////////////////////
 
-  uint16_t test_swap(const uint16_t& value)
-  {
-    return cs::swap(value);
-  }
-
-  uint32_t test_swap(const uint32_t& value)
-  {
-    return cs::swap(value);
-  }
-
-  uint64_t test_swap(const uint64_t& value)
-  {
-    return cs::swap(value);
-  }
+  extern uint16_t test_swap(const uint16_t& value);
+  extern uint32_t test_swap(const uint32_t& value);
+  extern uint64_t test_swap(const uint64_t& value);
 
   // Inputs & Results ////////////////////////////////////////////////////////
 

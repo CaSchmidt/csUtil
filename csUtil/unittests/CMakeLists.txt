@@ -16,5 +16,5 @@ endmacro()
 
 ### Unit Tests ###############################################################
 
-cs_unittest(unittest_endian src/unittest_endian.cpp)
+cs_unittest(unittest_endian src/unittest_endian.cpp src/unittest_endian_impl.cpp)
 cs_unittest(unittest_textconverter src/unittest_textconverter.cpp)
