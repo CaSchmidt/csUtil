@@ -81,7 +81,7 @@ target_compile_definitions(csUtil
 
 if(MSVC)
   target_compile_options(csUtil
-    PRIVATE /wd4251
+    PRIVATE /wd4251 /std:c++latest
     )
 endif()
 
