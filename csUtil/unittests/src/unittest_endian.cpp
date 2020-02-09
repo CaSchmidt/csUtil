@@ -8,14 +8,6 @@
 
 namespace test_integral {
 
-  // Prototypes //////////////////////////////////////////////////////////////
-
-  uint16_t test_swap(const uint16_t& value);
-
-  uint32_t test_swap(const uint32_t& value);
-
-  uint64_t test_swap(const uint64_t& value);
-
   // Implementation //////////////////////////////////////////////////////////
 
   uint16_t test_swap(const uint16_t& value)
@@ -43,6 +35,8 @@ namespace test_integral {
 
   const uint64_t     in64{0x0102030405060708};
   const uint64_t result64{0x0807060504030201};
+
+  // Output //////////////////////////////////////////////////////////////////
 
   volatile uint16_t out16;
   volatile uint32_t out32;
