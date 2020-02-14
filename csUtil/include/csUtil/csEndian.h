@@ -44,7 +44,7 @@ namespace cs {
   template<typename T>
   using if_swap_t = std::enable_if_t<std::is_arithmetic<T>::value,T>;
 
-  namespace impl {
+  namespace endian {
 
 #if defined(_MSC_VER)
     inline uint16_t impl_swap(const uint16_t& value)
@@ -120,18 +120,18 @@ namespace cs {
       return value;
     }
 
-  } // namespace impl
+  } // namespace endian
 
   template<bool SWAP, typename T>
   constexpr if_swap_t<T> copy(const T& value)
   {
-    return impl::dispatch<SWAP  &&  sizeof(T) >= 2,T>(value);
+    return endian::dispatch<SWAP  &&  sizeof(T) >= 2,T>(value);
   }
 
   template<typename T>
   constexpr if_swap_t<T> swap(const T& value)
   {
-    return impl::dispatch<sizeof(T) >= 2,T>(value);
+    return endian::dispatch<sizeof(T) >= 2,T>(value);
   }
 
 } // namespace cs
