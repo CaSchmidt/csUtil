@@ -134,6 +134,36 @@ namespace cs {
     return endian::dispatch<sizeof(T) >= 2,T>(value);
   }
 
+  /*
+   * Convert endianness between host byte order and 'peer' byte order.
+   *
+   * NOTE: C++20 requires std::endian to reside in <bit>, not in <type_traits>!
+   */
+
+  template<typename T>
+  constexpr if_swap_t<T> fromBigEndian(const T& peerValue)
+  {
+    return copy<std::endian::native != std::endian::big>(peerValue);
+  }
+
+  template<typename T>
+  constexpr if_swap_t<T> fromLittleEndian(const T& peerValue)
+  {
+    return copy<std::endian::native != std::endian::little>(peerValue);
+  }
+
+  template<typename T>
+  constexpr if_swap_t<T> toBigEndian(const T& hostValue)
+  {
+    return copy<std::endian::native != std::endian::big>(hostValue);
+  }
+
+  template<typename T>
+  constexpr if_swap_t<T> toLittleEndian(const T& hostValue)
+  {
+    return copy<std::endian::native != std::endian::little>(hostValue);
+  }
+
 } // namespace cs
 
 #endif // CSENDIAN_H
