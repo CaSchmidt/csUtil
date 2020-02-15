@@ -53,7 +53,6 @@ namespace impl {
   inline T read(const std::string& filename_utf8, bool *ok,
                 typename std::enable_if<is_compatible<T>::value>::type * = nullptr)
   {
-    using DataT = typename T::value_type;
     T result;
 
     if( ok != nullptr ) {
@@ -72,8 +71,7 @@ namespace impl {
 
       result.resize(static_cast<typename T::size_type>(size));
 
-      DataT *dest = const_cast<DataT*>(result.data()); // C++17
-      file.read(reinterpret_cast<char*>(dest), size);
+      file.read(reinterpret_cast<char*>(result.data()), size);
     } catch(...) {
       result.clear();
       return result;
