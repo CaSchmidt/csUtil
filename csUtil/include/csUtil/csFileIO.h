@@ -41,6 +41,16 @@
 
 #include <csUtil/csutil_config.h>
 
+namespace cs {
+
+  constexpr std::ios_base::openmode CREATE_BINARY_FILE =
+      std::ios_base::out | std::ios_base::binary | std::ios_base::trunc;
+
+  constexpr std::ios_base::openmode READ_BINARY_FILE =
+      std::ios_base::in | std::ios_base::binary;
+
+} // namespace cs
+
 CS_UTIL_EXPORT std::fstream csOpenFile(const std::string& filename_utf8,
                                        const std::ios_base::openmode mode);
 

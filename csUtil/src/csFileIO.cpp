@@ -60,7 +60,7 @@ namespace impl {
     }
 
     try {
-      std::fstream file = csOpenFile(filename_utf8, std::ios_base::in | std::ios_base::binary);
+      std::fstream file = csOpenFile(filename_utf8, cs::READ_BINARY_FILE);
       if( !file.is_open() ) {
         return result;
       }
