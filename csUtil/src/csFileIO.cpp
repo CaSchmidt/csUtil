@@ -138,6 +138,7 @@ CS_UTIL_EXPORT bool csWrite(std::fstream& file, const void *data, const std::siz
 {
   try {
     file.write(reinterpret_cast<const char*>(data), size);
+    file.flush();
   } catch(...) {
     return false;
   }
