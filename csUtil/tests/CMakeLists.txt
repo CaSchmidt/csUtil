@@ -4,7 +4,7 @@ macro(cs_test target)
   format_output_name(${target} ${target})
   target_include_directories(${target}
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../testutils/include
+    PRIVATE ${csUtil_SOURCE_DIR}/testutils/include
     )
   target_link_libraries(${target} csUtil)
 endmacro()
