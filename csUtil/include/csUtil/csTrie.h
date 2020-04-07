@@ -47,6 +47,9 @@ public:
   csTrie();
   ~csTrie();
 
+  csTrie(csTrie&&);
+  csTrie& operator=(csTrie&&);
+
   void clear();
 
   csFlatTrie flattened() const;

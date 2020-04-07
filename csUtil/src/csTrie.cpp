@@ -117,6 +117,9 @@ csTrie::csTrie()
 
 csTrie::~csTrie() = default;
 
+csTrie::csTrie(csTrie&&) = default;
+csTrie& csTrie::operator=(csTrie&&) = default;
+
 void csTrie::clear()
 {
   _root.reset();
