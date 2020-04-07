@@ -6,12 +6,12 @@
 #include <type_traits>
 
 template<typename CharT, typename T>
-class FormatInt {
+class FormatInteger {
 public:
-  FormatInt(const std::enable_if_t<std::is_integral<T>::value,T>& value,
-            const int   width = 1,
-            const int    base = 10,
-            const CharT& fill = static_cast<CharT>(' ')) noexcept
+  FormatInteger(const std::enable_if_t<std::is_integral<T>::value,T>& value,
+                const int   width = 1,
+                const int    base = 10,
+                const CharT& fill = static_cast<CharT>(' ')) noexcept
     : _base{base}
     , _fill{fill}
     , _value{value}
@@ -19,7 +19,7 @@ public:
   {
   }
 
-  ~FormatInt() noexcept = default;
+  ~FormatInteger() noexcept = default;
 
   constexpr const int& base() const
   {
@@ -42,13 +42,13 @@ public:
   }
 
 private:
-  FormatInt() noexcept = delete;
+  FormatInteger() noexcept = delete;
 
-  FormatInt(const FormatInt&) noexcept = delete;
-  FormatInt& operator=(const FormatInt&) noexcept = delete;
+  FormatInteger(const FormatInteger&) noexcept = delete;
+  FormatInteger& operator=(const FormatInteger&) noexcept = delete;
 
-  FormatInt(FormatInt&&) noexcept = delete;
-  FormatInt& operator=(FormatInt&&) noexcept = delete;
+  FormatInteger(FormatInteger&&) noexcept = delete;
+  FormatInteger& operator=(FormatInteger&&) noexcept = delete;
 
   const int   _base{};
   const CharT _fill{};
@@ -58,7 +58,7 @@ private:
 
 template<typename CharT, typename T, class Traits>
 constexpr std::basic_ostream<CharT,Traits>& operator<<(std::basic_ostream<CharT,Traits>& os,
-                                                       const FormatInt<CharT,T>& fmt)
+                                                       const FormatInteger<CharT,T>& fmt)
 {
   return ( os
            << std::setfill(fmt.fill())

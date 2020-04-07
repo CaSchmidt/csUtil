@@ -4,6 +4,7 @@ macro(cs_test target)
   format_output_name(${target} ${target})
   target_include_directories(${target}
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../testutils/include
     )
   target_link_libraries(${target} csUtil)
 endmacro()
@@ -11,7 +12,7 @@ endmacro()
 ### Tests ####################################################################
 
 cs_test(test_charconv src/test_charconv.cpp)
-cs_test(test_endian src/test_endian.cpp include/util.h)
+cs_test(test_endian src/test_endian.cpp ../testutils/include/util.h)
 cs_test(test_fileio src/test_fileio.cpp)
 cs_test(test_flags src/test_flags.cpp)
 cs_test(test_format src/test_format.cpp)

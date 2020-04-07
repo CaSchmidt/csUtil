@@ -13,16 +13,16 @@ template<typename T>
 void print(const T& from, const T& to)
 {
   std::cout
-      << "0x" << FormatInt<char,T>(from, sizeof(T)*2, 16, '0')
+      << "0x" << FormatInteger<char,T>(from, sizeof(T)*2, 16, '0')
       << " -> "
-      << "0x" << FormatInt<char,T>(to, sizeof(T)*2, 16, '0')
+      << "0x" << FormatInteger<char,T>(to, sizeof(T)*2, 16, '0')
       << std::endl;
 }
 
 template<typename T>
 T do_swap(const T& value)
 {
-  const T swapped = cs::swap<true>(value);
+  const T swapped = cs::copy<true>(value);
   print(value, swapped);
   return swapped;
 }
