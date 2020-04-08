@@ -36,12 +36,16 @@ namespace priv {
     return result;
   }
 
-  void waitKeyEnter()
+  StringList readWords()
   {
-    printf("Press <ENTER> to continue...");
-    fflush(stdin);
-    fgetc(stdin);
-    fflush(stdin);
+    StringList result = csReadLines(WORD_LIST, true);
+    if( result.empty() ) {
+      return result;
+    }
+    const StringList::value_type front = result.front();
+    result.pop_front();
+    std::cout << "File I/O: " << front << "/" << result.size() << " words" << std::endl;
+    return result;
   }
 
 } // namespace priv
@@ -59,25 +63,47 @@ namespace test_basic {
   TEST_CASE("Basic trie functionality.", "[basic]") {
     // (1) File I/O //////////////////////////////////////////////////////////
 
-    StringList words = csReadLines(WORD_LIST, true);
-    REQUIRE(words.size() > 1);
+    const StringList words = priv::readWords();
 
-    {
-      const std::string front = words.front();
-      words.pop_front();
-      std::cout << "Words: " << words.size() << "/" << front << std::endl;
-    }
+    REQUIRE( !words.empty() );
 
     // (2) Insertion /////////////////////////////////////////////////////////
 
-    csTrie trie = priv::insertAll(words);
+    const csTrie trie = priv::insertAll(words);
+    std::cout << "size(trie): " << trie.size() << std::endl;
 
-    REQUIRE(priv::findAll(trie, words) == words.size());
-
-    // (3) Memory usage //////////////////////////////////////////////////////
-
-    words.clear();
-    // priv::waitKeyEnter();
+    REQUIRE( priv::findAll(trie, words) == words.size() );
   }
 
 } // namespace test_basic
+
+namespace test_flat {
+
+  TEST_CASE("Flat trie functionality.", "[flat]") {
+    // (1) File I/O //////////////////////////////////////////////////////////
+
+    const StringList words = priv::readWords();
+
+    REQUIRE( !words.empty() );
+
+    // (2) Insertion /////////////////////////////////////////////////////////
+
+    const csTrie trie = priv::insertAll(words);
+    std::cout << "size(trie): " << trie.size() << std::endl;
+
+    REQUIRE( priv::findAll(trie, words) == words.size() );
+
+    // (3) Flatten ///////////////////////////////////////////////////////////
+
+    const csFlatTrie flat = trie.flattened();
+    std::cout << "size(flat): " << flat.size() << std::endl;
+
+    REQUIRE( priv::findAll(flat, words) == words.size() );
+
+    // (4) Output ////////////////////////////////////////////////////////////
+
+    const double ratio = static_cast<double>(flat.size())/static_cast<double>(trie.size());
+    std::cout << "flat vs. trie: " << ratio*100.0 << "%" << std::endl;
+  }
+
+} // namespace test_flat
