@@ -70,7 +70,7 @@ namespace test_basic {
     // (2) Insertion /////////////////////////////////////////////////////////
 
     const csTrie trie = priv::insertAll(words);
-    std::cout << "size(trie): " << trie.size() << std::endl;
+    std::cout << "size(trie): " << trie.size() << ", nodes: " << trie.nodeCount() << std::endl;
 
     REQUIRE( priv::findAll(trie, words) == words.size() );
   }
@@ -89,14 +89,14 @@ namespace test_flat {
     // (2) Insertion /////////////////////////////////////////////////////////
 
     const csTrie trie = priv::insertAll(words);
-    std::cout << "size(trie): " << trie.size() << std::endl;
+    std::cout << "size(trie): " << trie.size() << ", nodes: " << trie.nodeCount() << std::endl;
 
     REQUIRE( priv::findAll(trie, words) == words.size() );
 
     // (3) Flatten ///////////////////////////////////////////////////////////
 
     const csFlatTrie flat = trie.flattened();
-    std::cout << "size(flat): " << flat.size() << std::endl;
+    std::cout << "size(flat): " << flat.size() << ", nodes: " << flat.nodeCount() << std::endl;
 
     REQUIRE( priv::findAll(flat, words) == words.size() );
 
