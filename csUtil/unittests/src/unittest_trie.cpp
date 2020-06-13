@@ -138,9 +138,17 @@ namespace test_basic {
 
     REQUIRE( priv::findAll(trie, words) );
 
+    BENCHMARK("priv::findAll(trie)") {
+      return priv::findAll(trie, words);
+    };
+
     // (3) Completion ////////////////////////////////////////////////////////
 
     REQUIRE( priv::complete(trie, priv::occur_THE) );
+
+    BENCHMARK("priv::complete(trie)") {
+      return priv::complete(trie, priv::occur_THE);
+    };
   }
 
 } // namespace test_basic
@@ -170,9 +178,17 @@ namespace test_flat {
 
     REQUIRE( priv::findAll(flat, words) );
 
+    BENCHMARK("priv::findAll(flat)") {
+      return priv::findAll(flat, words);
+    };
+
     // (4) Completion ////////////////////////////////////////////////////////
 
     REQUIRE( priv::complete(flat, priv::occur_THE) );
+
+    BENCHMARK("priv::complete(flat)") {
+      return priv::complete(flat, priv::occur_THE);
+    };
 
     // (5) Output ////////////////////////////////////////////////////////////
 
@@ -199,9 +215,17 @@ namespace test_flatset {
 
     REQUIRE( priv::findAll(flatset, words) );
 
+    BENCHMARK("priv::findAll(flatset)") {
+      return priv::findAll(flatset, words);
+    };
+
     // (3) Completion ////////////////////////////////////////////////////////
 
     REQUIRE( priv::complete(flatset, priv::occur_THE) );
+
+    BENCHMARK("priv::complete(flatset)") {
+      return priv::complete(flatset, priv::occur_THE);
+    };
   }
 
 } // namespace test_flatset
