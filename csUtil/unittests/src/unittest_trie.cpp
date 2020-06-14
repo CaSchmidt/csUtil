@@ -15,14 +15,15 @@
 
 class FlatSet {
 public:
-  using      Store = std::vector<std::string>;
-  using       Iter = Store::iterator;
+  using     String = std::string;
+  using      Store = std::vector<String>;
   using  ConstIter = Store::const_iterator;
   using      Range = std::pair<ConstIter,ConstIter>;
-  using StringList = std::list<std::string>;
+  using StringList = std::list<String>;
 
-  FlatSet(const std::vector<std::string>& v) noexcept
-    : _v{v.begin(), v.end()}
+  template<typename InputIt>
+  FlatSet(InputIt first, InputIt last) noexcept
+    : _v{first, last}
   {
     std::sort(_v.begin(), _v.end());
     const ConstIter it = std::unique(_v.begin(), _v.end());
@@ -31,13 +32,13 @@ public:
 
   ~FlatSet() noexcept = default;
 
-  StringList complete(const std::string& s) const
+  StringList complete(const String& s) const
   {
     const Range r = range(s);
     return StringList{r.first, r.second};
   }
 
-  cs::TrieMatch find(const std::string& s) const
+  cs::TrieMatch find(const String& s) const
   {
     const Range r = range(s);
     const auto diff = std::distance(r.first, r.second);
@@ -51,11 +52,19 @@ public:
     return cs::NoMatch;
   }
 
+  std::size_t size() const
+  {
+    return std::accumulate(_v.cbegin(), _v.cend(), sizeof(Store),
+                           [](const std::size_t& init, const String& elem) -> std::size_t {
+      return init + sizeof(String) + sizeof(String::value_type)*elem.size();
+    });
+  }
+
 private:
-  Range range(const std::string& s) const
+  Range range(const String& s) const
   {
     return std::equal_range(_v.cbegin(), _v.cend(), s,
-                            [&](const std::string& a, const std::string& b) -> bool {
+                            [&](const String& a, const String& b) -> bool {
       return a.substr(0, s.size()) < b.substr(0, s.size());
     });
   }
@@ -231,7 +240,7 @@ namespace test_flatset {
 
     // (2) Insertion /////////////////////////////////////////////////////////
 
-    const FlatSet flatset(FlatSet::Store{words.cbegin(), words.cend()});
+    const FlatSet flatset{words.cbegin(), words.cend()};
 
     REQUIRE( priv::findAll(flatset, words) );
 
@@ -250,6 +259,10 @@ namespace test_flatset {
       return priv::complete(flatset, priv::occur_THE);
     };
 #endif
+
+    // (4) Output ////////////////////////////////////////////////////////////
+
+    std::cout << "size(flatset): " << flatset.size() << std::endl;
   }
 
 } // namespace test_flatset
