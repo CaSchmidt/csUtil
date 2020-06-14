@@ -1,3 +1,5 @@
+#include <unordered_set>
+
 #include <csUtil/csFileIO.h>
 #include <csUtil/csTrie.h>
 
@@ -74,6 +76,8 @@ private:
 
 using Occurrence = std::pair<std::string,std::size_t>;
 
+using Set = std::unordered_set<std::string>;
+
 using StringList = std::list<std::string>;
 
 namespace priv {
@@ -89,13 +93,24 @@ namespace priv {
   template<typename TrieT>
   inline bool findAll(const TrieT& trie, const StringList& words)
   {
-    std::size_t result = 0;
+    std::size_t count = 0;
     for(const StringList::value_type& word : words) {
       if( trie.find(word) == cs::ExactMatch ) {
-        result++;
+        count++;
       }
     }
-    return result == words.size();
+    return count == words.size();
+  }
+
+  inline bool findAll(const Set& set, const StringList& words)
+  {
+    std::size_t count = 0;
+    for(const StringList::value_type& word : words) {
+      if( set.count(word) == 1 ) {
+        count++;
+      }
+    }
+    return count == words.size();
   }
 
   csTrie insertAll(const StringList& words)
@@ -143,7 +158,7 @@ namespace test_compiler {
 
 namespace test_basic {
 
-  TEST_CASE("Basic trie functionality.", "[basic]") {
+  TEST_CASE("csTrie functionality.", "[trie]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
     // (1) File I/O //////////////////////////////////////////////////////////
@@ -160,7 +175,7 @@ namespace test_basic {
     REQUIRE( priv::findAll(trie, words) );
 
 #ifdef HAVE_BENCHMARK
-    BENCHMARK("priv::findAll(trie)") {
+    BENCHMARK("findAll(trie)") {
       return priv::findAll(trie, words);
     };
 #endif
@@ -170,7 +185,7 @@ namespace test_basic {
     REQUIRE( priv::complete(trie, priv::occur_THE) );
 
 #ifdef HAVE_BENCHMARK
-    BENCHMARK("priv::complete(trie)") {
+    BENCHMARK("complete(trie)") {
       return priv::complete(trie, priv::occur_THE);
     };
 #endif
@@ -180,7 +195,7 @@ namespace test_basic {
 
 namespace test_flat {
 
-  TEST_CASE("Flat trie functionality.", "[flat]") {
+  TEST_CASE("csFlatTrie functionality.", "[flattrie]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
     // (1) File I/O //////////////////////////////////////////////////////////
@@ -204,7 +219,7 @@ namespace test_flat {
     REQUIRE( priv::findAll(flat, words) );
 
 #ifdef HAVE_BENCHMARK
-    BENCHMARK("priv::findAll(flat)") {
+    BENCHMARK("findAll(flat)") {
       return priv::findAll(flat, words);
     };
 #endif
@@ -214,7 +229,7 @@ namespace test_flat {
     REQUIRE( priv::complete(flat, priv::occur_THE) );
 
 #ifdef HAVE_BENCHMARK
-    BENCHMARK("priv::complete(flat)") {
+    BENCHMARK("complete(flat)") {
       return priv::complete(flat, priv::occur_THE);
     };
 #endif
@@ -229,7 +244,7 @@ namespace test_flat {
 
 namespace test_flatset {
 
-  TEST_CASE("Flat set functionality.", "[flatset]") {
+  TEST_CASE("FlatSet functionality.", "[flatset]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
     // (1) File I/O //////////////////////////////////////////////////////////
@@ -245,7 +260,7 @@ namespace test_flatset {
     REQUIRE( priv::findAll(flatset, words) );
 
 #ifdef HAVE_BENCHMARK
-    BENCHMARK("priv::findAll(flatset)") {
+    BENCHMARK("findAll(flatset)") {
       return priv::findAll(flatset, words);
     };
 #endif
@@ -255,7 +270,7 @@ namespace test_flatset {
     REQUIRE( priv::complete(flatset, priv::occur_THE) );
 
 #ifdef HAVE_BENCHMARK
-    BENCHMARK("priv::complete(flatset)") {
+    BENCHMARK("complete(flatset)") {
       return priv::complete(flatset, priv::occur_THE);
     };
 #endif
@@ -266,3 +281,29 @@ namespace test_flatset {
   }
 
 } // namespace test_flatset
+
+namespace test_unordered_set {
+
+  TEST_CASE("std::unordered_set<> functionality.", "[unordered_set]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    // (1) File I/O //////////////////////////////////////////////////////////
+
+    const StringList words = priv::readWords();
+
+    REQUIRE( !words.empty() );
+
+    // (2) Insertion /////////////////////////////////////////////////////////
+
+    const Set set{words.cbegin(), words.cend()};
+
+    REQUIRE( priv::findAll(set, words) );
+
+#ifdef HAVE_BENCHMARK
+    BENCHMARK("findAll(set)") {
+      return priv::findAll(set, words);
+    };
+#endif
+  }
+
+} // namespace test_unordered_set
