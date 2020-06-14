@@ -118,6 +118,16 @@ namespace test_compiler {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
     std::cout << "sizeof(csTrieNode): " << sizeof(csTrieNode) << std::endl;
+
+    std::cout << "sizeof(std::string): " << sizeof(std::string) << std::endl;
+
+    std::cout << "sizeof(std::list<int>): " << sizeof(std::list<int>) << std::endl;
+
+    std::cout << "sizeof(std::list<std::string>): " << sizeof(std::list<std::string>) << std::endl;
+
+    std::cout << "sizeof(std::vector<int>): " << sizeof(std::vector<int>) << std::endl;
+
+    std::cout << "sizeof(std::vector<std::string>): " << sizeof(std::vector<std::string>) << std::endl;
   }
 
 } // namespace test_compiler
