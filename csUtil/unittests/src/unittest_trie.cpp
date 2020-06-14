@@ -9,6 +9,8 @@
 
 #include "util.h"
 
+#undef HAVE_BENCHMARK
+
 #define WORD_LIST  "../../csUtil/csUtil/testutils/data/Word-List.txt"
 
 class FlatSet {
@@ -138,17 +140,21 @@ namespace test_basic {
 
     REQUIRE( priv::findAll(trie, words) );
 
+#ifdef HAVE_BENCHMARK
     BENCHMARK("priv::findAll(trie)") {
       return priv::findAll(trie, words);
     };
+#endif
 
     // (3) Completion ////////////////////////////////////////////////////////
 
     REQUIRE( priv::complete(trie, priv::occur_THE) );
 
+#ifdef HAVE_BENCHMARK
     BENCHMARK("priv::complete(trie)") {
       return priv::complete(trie, priv::occur_THE);
     };
+#endif
   }
 
 } // namespace test_basic
@@ -178,17 +184,21 @@ namespace test_flat {
 
     REQUIRE( priv::findAll(flat, words) );
 
+#ifdef HAVE_BENCHMARK
     BENCHMARK("priv::findAll(flat)") {
       return priv::findAll(flat, words);
     };
+#endif
 
     // (4) Completion ////////////////////////////////////////////////////////
 
     REQUIRE( priv::complete(flat, priv::occur_THE) );
 
+#ifdef HAVE_BENCHMARK
     BENCHMARK("priv::complete(flat)") {
       return priv::complete(flat, priv::occur_THE);
     };
+#endif
 
     // (5) Output ////////////////////////////////////////////////////////////
 
@@ -215,17 +225,21 @@ namespace test_flatset {
 
     REQUIRE( priv::findAll(flatset, words) );
 
+#ifdef HAVE_BENCHMARK
     BENCHMARK("priv::findAll(flatset)") {
       return priv::findAll(flatset, words);
     };
+#endif
 
     // (3) Completion ////////////////////////////////////////////////////////
 
     REQUIRE( priv::complete(flatset, priv::occur_THE) );
 
+#ifdef HAVE_BENCHMARK
     BENCHMARK("priv::complete(flatset)") {
       return priv::complete(flatset, priv::occur_THE);
     };
+#endif
   }
 
 } // namespace test_flatset
