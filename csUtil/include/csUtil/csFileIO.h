@@ -60,12 +60,12 @@ CS_UTIL_EXPORT std::string csReadTextFile(const std::string& filename_utf8, bool
 
 CS_UTIL_EXPORT std::vector<uint8_t> csReadBinaryFile(const std::string& filename_utf8, bool *ok = nullptr);
 
-CS_UTIL_EXPORT bool csRead(std::istream& stream, void *data, const std::streamsize size);
+CS_UTIL_EXPORT bool csRead(std::istream& stream, void *data, const std::size_t size);
 
 CS_UTIL_EXPORT std::size_t csSize(std::istream& stream, bool *ok = nullptr);
 
 CS_UTIL_EXPORT std::size_t csSize(std::ostream& stream, bool *ok = nullptr);
 
-CS_UTIL_EXPORT bool csWrite(std::ostream& stream, const void *data, const std::streamsize size);
+CS_UTIL_EXPORT bool csWrite(std::ostream& stream, const void *data, const std::size_t size);
 
 #endif // CSFILEIO_H
