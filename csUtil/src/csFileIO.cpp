@@ -140,6 +140,50 @@ CS_UTIL_EXPORT bool csRead(std::istream& stream, void *data, const std::streamsi
   return true;
 }
 
+CS_UTIL_EXPORT std::size_t csSize(std::istream& stream, bool *ok)
+{
+  using stream_type = std::remove_reference_t<decltype(stream)>;
+  static_assert(sizeof(stream_type::char_type) == 1);
+  if( ok != nullptr ) {
+    *ok = false;
+  }
+  std::size_t size = 0;
+  try {
+    const stream_type::pos_type old = stream.tellg();
+    stream.seekg(0, std::ios_base::end);
+    size = static_cast<std::size_t>(stream.tellg());
+    stream.seekg(old);
+  } catch(...) {
+    return 0;
+  }
+  if( ok != nullptr ) {
+    *ok = true;
+  }
+  return size;
+}
+
+CS_UTIL_EXPORT std::size_t csSize(std::ostream& stream, bool *ok)
+{
+  using stream_type = std::remove_reference_t<decltype(stream)>;
+  static_assert(sizeof(stream_type::char_type) == 1);
+  if( ok != nullptr ) {
+    *ok = false;
+  }
+  std::size_t size = 0;
+  try {
+    const stream_type::pos_type old = stream.tellp();
+    stream.seekp(0, std::ios_base::end);
+    size = static_cast<std::size_t>(stream.tellp());
+    stream.seekp(old);
+  } catch(...) {
+    return 0;
+  }
+  if( ok != nullptr ) {
+    *ok = true;
+  }
+  return size;
+}
+
 CS_UTIL_EXPORT bool csWrite(std::ostream& stream, const void *data, const std::streamsize size)
 {
   using char_type = std::ostream::char_type;
