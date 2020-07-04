@@ -128,7 +128,19 @@ CS_UTIL_EXPORT std::vector<uint8_t> csReadBinaryFile(const std::string& filename
   return impl::read<std::vector<uint8_t>>(filename_utf8, ok);
 }
 
-CS_UTIL_EXPORT bool csWrite(std::ostream& stream, const void *data, const std::size_t size)
+CS_UTIL_EXPORT bool csRead(std::istream& stream, void *data, const std::streamsize size)
+{
+  using char_type = std::istream::char_type;
+  static_assert(sizeof(char_type) == 1);
+  try {
+    stream.read(reinterpret_cast<char_type*>(data), size);
+  } catch(...) {
+    return false;
+  }
+  return true;
+}
+
+CS_UTIL_EXPORT bool csWrite(std::ostream& stream, const void *data, const std::streamsize size)
 {
   using char_type = std::ostream::char_type;
   static_assert(sizeof(char_type) == 1);
