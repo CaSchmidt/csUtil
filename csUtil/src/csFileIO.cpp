@@ -43,16 +43,10 @@
 namespace impl {
 
   template<typename T>
-  struct is_compatible {
-    enum : bool {
-      value = sizeof(std::fstream::char_type) == sizeof(typename T::value_type)
-    };
-  };
-
-  template<typename T>
-  inline T read(const std::string& filename_utf8, bool *ok,
-                typename std::enable_if<is_compatible<T>::value>::type * = nullptr)
+  inline T read(const std::string& filename_utf8, bool *ok)
   {
+    static_assert(sizeof(typename T::value_type) == 1);
+
     T result;
 
     if( ok != nullptr ) {
