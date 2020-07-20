@@ -55,29 +55,17 @@ namespace cs {
   }
 
   template<typename T>
-  inline std::size_t lengthN(const T *s, const std::size_t maxCount) noexcept
-  {
-    std::size_t count = 0;
-
-    if( s == nullptr ) {
-      return count;
-    }
-
-    for(const T *ptr = s; ptr < s + maxCount; count++, ptr++) {
-      if( *ptr == glyph<T>::null ) {
-        break;
-      }
-    }
-
-    return count;
-  }
-
-  template<typename T>
   inline std::size_t lengthDiff(const T *first, const T *last) noexcept
   {
     return first != nullptr  &&  first < last
-        ? lengthN(first, static_cast<std::size_t>(last - first))
+        ? static_cast<std::size_t>(std::find(first, last, glyph<T>::null) - first)
         : 0;
+  }
+
+  template<typename T>
+  inline std::size_t lengthN(const T *s, const std::size_t maxCount) noexcept
+  {
+    return lengthDiff(s, s + maxCount);
   }
 
   template<typename T>
