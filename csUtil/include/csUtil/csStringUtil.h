@@ -179,6 +179,13 @@ namespace cs {
   }
 
   template<typename T>
+  inline void shrink(std::basic_string<T>& str)
+  {
+    str.resize(lengthDiff(str.cbegin(), str.cend()));
+    str.shrink_to_fit();
+  }
+
+  template<typename T>
   inline if_string_t<T> simplified(std::basic_string<T> s) noexcept
   {
     // (1) remove duplicate whitespace
