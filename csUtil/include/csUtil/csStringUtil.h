@@ -181,7 +181,7 @@ namespace cs {
   template<typename T>
   inline void shrink(std::basic_string<T>& str)
   {
-    str.resize(lengthDiff(str.cbegin(), str.cend()));
+    str.resize(lengthDiff(str.data(), str.data() + str.size()));
     str.shrink_to_fit();
   }
 
