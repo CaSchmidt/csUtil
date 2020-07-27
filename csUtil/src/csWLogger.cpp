@@ -58,6 +58,7 @@ namespace priv {
 
 csWLogger::csWLogger(QWidget *parent)
   : QTextBrowser(parent)
+  , csILogger()
 {
   setReadOnly(true);
 }
