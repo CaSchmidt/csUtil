@@ -25,6 +25,13 @@ configure_file(include/config/csutil_config.h.in
 option(ENABLE_TESTS "Enable tests" OFF)
 option(ENABLE_UNITTESTS "Enable unit tests" OFF)
 
+# Qt support
+option(ENABLE_QT "Enable support for Qt" OFF)
+
+if(ENABLE_QT)
+  find_package(Qt5Widgets 5.6 REQUIRED)
+endif()
+
 ### 3rd Party ################################################################
 
 add_subdirectory(3rdparty/double-conversion)
@@ -66,6 +73,15 @@ list(APPEND csUtil_SOURCES
   src/csTrie.cpp
   )
 
+if(ENABLE_QT)
+  list(APPEND csUtil_HEADERS
+    include/csUtil/csWLogger.h
+    )
+  list(APPEND csUtil_SOURCES
+    src/csWLogger.cpp
+    )
+endif()
+
 ### Target ###################################################################
 
 add_library(csUtil
@@ -74,6 +90,12 @@ add_library(csUtil
   )
 
 format_output_name(csUtil "csUtil")
+
+if(ENABLE_QT)
+  set_target_properties(csUtil PROPERTIES
+    AUTOMOC ON
+    )
+endif()
 
 target_compile_definitions(csUtil
   PRIVATE CS_BUILD_UTIL_LIB
@@ -94,6 +116,11 @@ list(APPEND csUtil_LIBS
   PUBLIC dblcnv
   PUBLIC icu
   )
+if(ENABLE_QT)
+  list(APPEND csUtil_LIBS
+    PUBLIC Qt5::Widgets
+    )
+endif()
 if(UNIX)
   list(APPEND csUtil_LIBS
     PUBLIC pthread # std::unique_ptr<>
