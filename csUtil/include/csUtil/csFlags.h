@@ -51,17 +51,20 @@ namespace cs {
   };
 
   template<typename T>
-  using if_flags_t = typename std::enable_if<
-  std::is_enum<T>::value  &&
-  std::is_unsigned<safe_underlying_type_t<T>>::value  &&
-  is_flags<T>::value,
-  T>::type;
+  inline constexpr bool is_flags_v = is_flags<T>::value;
+
+  template<typename T>
+  using if_flags_t = std::enable_if_t<
+  std::is_enum_v<T>  &&
+  std::is_unsigned_v<safe_underlying_type_t<T>>  &&
+  is_flags_v<T>,
+  T>;
 
   template<typename T>
   using if_flags_bool = typename std::enable_if<
-  std::is_enum<T>::value  &&
-  std::is_unsigned<safe_underlying_type_t<T>>::value  &&
-  is_flags<T>::value,
+  std::is_enum_v<T>  &&
+  std::is_unsigned_v<safe_underlying_type_t<T>>  &&
+  is_flags_v<T>,
   bool>::type;
 
   template<typename T>

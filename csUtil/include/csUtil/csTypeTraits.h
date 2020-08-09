@@ -41,20 +41,20 @@ namespace cs {
   struct is_char {
     enum : bool {
       value =
-      std::is_same<T,char>::value      ||
-      std::is_same<T,char16_t>::value  ||
-      std::is_same<T,char32_t>::value  ||
-      std::is_same<T,wchar_t>::value
+      std::is_same_v<T,char>      ||
+      std::is_same_v<T,char16_t>  ||
+      std::is_same_v<T,char32_t>  ||
+      std::is_same_v<T,wchar_t>
     };
   };
 
   template<typename T>
   using safe_underlying_type_t =
-  typename std::enable_if<std::is_enum<T>::value,std::underlying_type_t<T>>::type;
+  std::enable_if_t<std::is_enum_v<T>,std::underlying_type_t<T>>;
 
-  constexpr auto MAX_SIZE_T = std::numeric_limits<std::size_t>::max();
+  inline constexpr auto MAX_SIZE_T = std::numeric_limits<std::size_t>::max();
 
-  constexpr auto qNaN = std::numeric_limits<double>::quiet_NaN();
+  inline constexpr auto qNaN = std::numeric_limits<double>::quiet_NaN();
 
 } // namespace cs
 
