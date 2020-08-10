@@ -44,11 +44,7 @@
 namespace cs {
 
   template<typename T>
-  struct is_flags {
-    enum : bool {
-      value = false
-    };
-  };
+  struct is_flags : std::false_type {};
 
   template<typename T>
   inline constexpr bool is_flags_v = is_flags<T>::value;
@@ -163,14 +159,7 @@ constexpr cs::if_flags_t<T>& operator^=(T& result, const T& a)
 
 // Macros ////////////////////////////////////////////////////////////////////
 
-#define CS_ENABLE_FLAGS(T) \
-  namespace cs {           \
-    template<>             \
-    struct is_flags<T> {   \
-      enum : bool {        \
-        value = true       \
-      };                   \
-    };                     \
-  }
+#define CS_ENABLE_FLAGS(T)  \
+  template<> struct ::cs::is_flags<T> : std::true_type {};
 
 #endif // CSFLAGS_H
