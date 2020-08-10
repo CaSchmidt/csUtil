@@ -44,24 +44,17 @@
 namespace cs {
 
   template<typename T>
-  struct is_flags : std::false_type {};
+  struct is_flags_enabled : std::false_type {};
 
   template<typename T>
-  inline constexpr bool is_flags_v = is_flags<T>::value;
+  inline constexpr bool is_flags_v = std::is_enum_v<T>  &&
+      std::is_unsigned_v<safe_underlying_type_t<T>>     &&  is_flags_enabled<T>::value;
 
   template<typename T>
-  using if_flags_t = std::enable_if_t<
-  std::is_enum_v<T>  &&
-  std::is_unsigned_v<safe_underlying_type_t<T>>  &&
-  is_flags_v<T>,
-  T>;
+  using if_flags_t = std::enable_if_t<is_flags_v<T>,T>;
 
   template<typename T>
-  using if_flags_bool = typename std::enable_if<
-  std::is_enum_v<T>  &&
-  std::is_unsigned_v<safe_underlying_type_t<T>>  &&
-  is_flags_v<T>,
-  bool>::type;
+  using if_flags_bool = typename std::enable_if<is_flags_v<T>,bool>::type;
 
   template<typename T>
   constexpr if_flags_t<T>& setFlags(T& result, const T& flags, const bool on = true)
@@ -160,6 +153,6 @@ constexpr cs::if_flags_t<T>& operator^=(T& result, const T& a)
 // Macros ////////////////////////////////////////////////////////////////////
 
 #define CS_ENABLE_FLAGS(T)  \
-  template<> struct ::cs::is_flags<T> : std::true_type {};
+  template<> struct ::cs::is_flags_enabled<T> : std::true_type {};
 
 #endif // CSFLAGS_H
