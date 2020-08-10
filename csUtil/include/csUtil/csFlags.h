@@ -102,15 +102,15 @@ namespace cs {
 template<typename T>
 constexpr cs::if_flags_t<T> operator&(const T& a, const T& b)
 {
-  using data_t = cs::safe_underlying_type_t<T>;
-  return static_cast<T>(static_cast<data_t>(a) & static_cast<data_t>(b));
+  using value_type = cs::safe_underlying_type_t<T>;
+  return static_cast<T>(static_cast<value_type>(a) & static_cast<value_type>(b));
 }
 
 template<typename T>
 constexpr cs::if_flags_t<T>& operator&=(T& result, const T& a)
 {
-  using data_t = cs::safe_underlying_type_t<T>;
-  result = static_cast<T>(static_cast<data_t>(result) & static_cast<data_t>(a));
+  using value_type = cs::safe_underlying_type_t<T>;
+  result = static_cast<T>(static_cast<value_type>(result) & static_cast<value_type>(a));
   return result;
 }
 
@@ -119,8 +119,8 @@ constexpr cs::if_flags_t<T>& operator&=(T& result, const T& a)
 template<typename T>
 constexpr cs::if_flags_t<T> operator~(const T& a)
 {
-  using data_t = cs::safe_underlying_type_t<T>;
-  return static_cast<T>(~static_cast<data_t>(a));
+  using value_type = cs::safe_underlying_type_t<T>;
+  return static_cast<T>(~static_cast<value_type>(a));
 }
 
 // OR ////////////////////////////////////////////////////////////////////////
@@ -128,15 +128,15 @@ constexpr cs::if_flags_t<T> operator~(const T& a)
 template<typename T>
 constexpr cs::if_flags_t<T> operator|(const T& a, const T& b)
 {
-  using data_t = cs::safe_underlying_type_t<T>;
-  return static_cast<T>(static_cast<data_t>(a) | static_cast<data_t>(b));
+  using value_type = cs::safe_underlying_type_t<T>;
+  return static_cast<T>(static_cast<value_type>(a) | static_cast<value_type>(b));
 }
 
 template<typename T>
 constexpr cs::if_flags_t<T>& operator|=(T& result, const T& a)
 {
-  using data_t = cs::safe_underlying_type_t<T>;
-  result = static_cast<T>(static_cast<data_t>(result) | static_cast<data_t>(a));
+  using value_type = cs::safe_underlying_type_t<T>;
+  result = static_cast<T>(static_cast<value_type>(result) | static_cast<value_type>(a));
   return result;
 }
 
@@ -145,15 +145,15 @@ constexpr cs::if_flags_t<T>& operator|=(T& result, const T& a)
 template<typename T>
 constexpr cs::if_flags_t<T> operator^(const T& a, const T& b)
 {
-  using data_t = cs::safe_underlying_type_t<T>;
-  return static_cast<T>(static_cast<data_t>(a) ^ static_cast<data_t>(b));
+  using value_type = cs::safe_underlying_type_t<T>;
+  return static_cast<T>(static_cast<value_type>(a) ^ static_cast<value_type>(b));
 }
 
 template<typename T>
 constexpr cs::if_flags_t<T>& operator^=(T& result, const T& a)
 {
-  using data_t = cs::safe_underlying_type_t<T>;
-  result = static_cast<T>(static_cast<data_t>(result) ^ static_cast<data_t>(a));
+  using value_type = cs::safe_underlying_type_t<T>;
+  result = static_cast<T>(static_cast<value_type>(result) ^ static_cast<value_type>(a));
   return result;
 }
 
