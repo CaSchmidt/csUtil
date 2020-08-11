@@ -91,6 +91,11 @@ add_library(csUtil
 
 format_output_name(csUtil "csUtil")
 
+set_target_properties(csUtil PROPERTIES
+  CXX_STANDARD 17
+  CXX_STANDARD_REQUIRED ON
+  )
+
 if(ENABLE_QT)
   set_target_properties(csUtil PROPERTIES
     AUTOMOC ON
@@ -103,7 +108,7 @@ target_compile_definitions(csUtil
 
 if(MSVC)
   target_compile_options(csUtil
-    PRIVATE /wd4251 /std:c++latest
+    PRIVATE /wd4251
     )
 endif()
 

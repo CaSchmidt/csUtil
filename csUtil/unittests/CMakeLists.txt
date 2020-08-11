@@ -2,6 +2,10 @@ macro(cs_unittest target)
   set(sources ${ARGN})
   add_executable(${target} ${sources})
   format_output_name(${target} ${target})
+  set_target_properties(${target} PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    )
   if(MSVC)
     target_compile_options(${target}
       PRIVATE /source-charset:UTF-8 /execution-charset:UTF-8 /validate-charset
