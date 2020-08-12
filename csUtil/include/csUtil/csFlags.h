@@ -172,7 +172,7 @@ public:
     return static_cast<value_type>(_flags);
   }
 
-  inline bool testFlags(const enum_type f) const
+  inline bool testFlag(const enum_type f) const
   {
     return static_cast<value_type>(_flags & f) != 0;
   }

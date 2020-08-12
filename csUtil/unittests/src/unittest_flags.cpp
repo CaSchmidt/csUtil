@@ -40,22 +40,22 @@ namespace flags {
     bits.set(Bit0);
     print(bits);
     REQUIRE(  bits == Bit0 );
-    REQUIRE(  bits.testFlags(Bit0) );
-    REQUIRE( !bits.testFlags(Bit3) );
-    REQUIRE(  bits.testFlags(AllBits) );
+    REQUIRE(  bits.testFlag(Bit0) );
+    REQUIRE( !bits.testFlag(Bit3) );
+    REQUIRE(  bits.testFlag(AllBits) );
     REQUIRE( !bits.testMask(AllBits) );
 
     bits.set(Bit1 | Bit2 | Bit3);
     print(bits);
     REQUIRE( AllBits == bits );
-    REQUIRE( bits.testFlags(Bit3) );
+    REQUIRE( bits.testFlag(Bit3) );
     REQUIRE( bits.testMask(Bit0 | Bit3) );
     REQUIRE( bits.testMask(AllBits) );
 
     bits.reset(Bit0 | Bit1);
     print(bits);
     REQUIRE(  bits == (Bit2 | Bit3) );
-    REQUIRE( !bits.testFlags(Bit0 | Bit1) );
+    REQUIRE( !bits.testFlag(Bit0 | Bit1) );
     REQUIRE(  bits.testMask(Bit2 | Bit3) );
   }
 
