@@ -35,7 +35,9 @@
 #include <QtCore/QFutureWatcher>
 #include <QtWidgets/QDialog>
 
-#include <csUtil/csILogger.h>
+#include <csUtil/csutil_config.h>
+
+class csILogger;
 
 namespace Ui {
   class csWProgressLogger;
