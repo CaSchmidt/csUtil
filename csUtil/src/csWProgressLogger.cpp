@@ -61,6 +61,7 @@ csWProgressLogger::csWProgressLogger(QWidget *parent, Qt::WindowFlags f)
   // User Interface //////////////////////////////////////////////////////////
 
   setWindowFlag(Qt::WindowCloseButtonHint, false);
+  setWindowFlag(Qt::WindowContextHelpButtonHint, false);
 
   priv::removeAllButtons(ui->buttonBox);
 
