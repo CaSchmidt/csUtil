@@ -74,11 +74,16 @@ list(APPEND csUtil_SOURCES
   )
 
 if(ENABLE_QT)
+  list(APPEND csUtil_FORMS
+    forms/csWProgressLogger.ui
+    )
   list(APPEND csUtil_HEADERS
     include/csUtil/csWLogger.h
+    include/csUtil/csWProgressLogger.h
     )
   list(APPEND csUtil_SOURCES
     src/csWLogger.cpp
+    src/csWProgressLogger.cpp
     )
 endif()
 
@@ -88,6 +93,12 @@ add_library(csUtil
   ${csUtil_HEADERS}
   ${csUtil_SOURCES}
   )
+
+if(ENABLE_QT)
+  target_sources(csUtil
+    PRIVATE ${csUtil_FORMS}
+    )
+endif()
 
 format_output_name(csUtil "csUtil")
 
@@ -99,6 +110,8 @@ set_target_properties(csUtil PROPERTIES
 if(ENABLE_QT)
   set_target_properties(csUtil PROPERTIES
     AUTOMOC ON
+    AUTOUIC ON
+    AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/forms
     )
 endif()
 
