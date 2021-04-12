@@ -41,6 +41,8 @@ public:
   csLogger(FILE *file = stderr);
   ~csLogger();
 
+  void logFlush() const;
+
   void logText(const char *s) const final;
   void logText(const std::string& s) const final;
 

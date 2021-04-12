@@ -42,6 +42,11 @@ csLogger::~csLogger()
 {
 }
 
+void csLogger::logFlush() const
+{
+  fflush(_file);
+}
+
 void csLogger::logText(const char *s) const
 {
   fprintf(_file, "%s\n", s);
