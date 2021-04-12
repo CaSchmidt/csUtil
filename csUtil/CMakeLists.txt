@@ -48,6 +48,7 @@ list(APPEND csUtil_HEADERS
   include/csUtil/csFlatTrie.h
   include/csUtil/csFormat.h
   include/csUtil/csILogger.h
+  include/csUtil/csIProgress.h
   include/csUtil/csLogger.h
   include/csUtil/csNamespace.h
   include/csUtil/csPointer.h
@@ -68,6 +69,7 @@ list(APPEND csUtil_SOURCES
   src/csFlatTrie.cpp
   src/csFormat.cpp
   src/csILogger.cpp
+  src/csIProgress.cpp
   src/csLogger.cpp
   src/csTextConverter.cpp
   src/csTrie.cpp

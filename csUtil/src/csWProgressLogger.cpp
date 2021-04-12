@@ -81,7 +81,10 @@ csWProgressLogger::csWProgressLogger(QWidget *parent, Qt::WindowFlags f)
 
   // Signals & Slots /////////////////////////////////////////////////////////
 
-  connect(ui->progressBar, &QProgressBar::valueChanged, this, &csWProgressLogger::valueChanged);
+  connect(ui->progressBar, &QProgressBar::valueChanged,
+          this, &csWProgressLogger::valueChanged);
+  connect(this, &csWProgressLogger::valueChanged,
+          this, &csWProgressLogger::monitorProgress);
 }
 
 csWProgressLogger::~csWProgressLogger()
@@ -107,6 +110,31 @@ int csWProgressLogger::minimum() const
 int csWProgressLogger::value() const
 {
   return ui->progressBar->value();
+}
+
+void csWProgressLogger::progressFlush() const
+{
+  QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+}
+
+void csWProgressLogger::setProgressMaximum(const int max)
+{
+  setMaximum(max);
+}
+
+void csWProgressLogger::setProgressMinimum(const int min)
+{
+  setMinimum(min);
+}
+
+void csWProgressLogger::setProgressRange(const int min, const int max)
+{
+  setRange(min, max);
+}
+
+void csWProgressLogger::setProgressValue(const int val)
+{
+  setValue(val);
 }
 
 ////// public slots //////////////////////////////////////////////////////////
@@ -157,4 +185,13 @@ void csWProgressLogger::stepValue(int dir)
       ? 1
       : -1;
   setValue(qBound<int>(minimum(), value() + inc, maximum()));
+}
+
+////// private slots /////////////////////////////////////////////////////////
+
+void csWProgressLogger::monitorProgress(int value)
+{
+  if( value >= maximum() ) {
+    finish();
+  }
 }

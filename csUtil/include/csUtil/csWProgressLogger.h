@@ -35,7 +35,7 @@
 #include <QtCore/QFutureWatcher>
 #include <QtWidgets/QDialog>
 
-#include <csUtil/csutil_config.h>
+#include <csUtil/csIProgress.h>
 
 class csILogger;
 
@@ -43,7 +43,9 @@ namespace Ui {
   class csWProgressLogger;
 } // namespace Ui
 
-class CS_UTIL_EXPORT csWProgressLogger : public QDialog {
+class CS_UTIL_EXPORT csWProgressLogger
+    : public QDialog
+    , public csIProgress {
   Q_OBJECT
 public:
   csWProgressLogger(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
@@ -58,6 +60,12 @@ public:
   template<typename T>
   void setFutureWatcher(QFutureWatcher<T> *watcher);
 
+  void progressFlush() const;
+  void setProgressMaximum(const int max);
+  void setProgressMinimum(const int min);
+  void setProgressRange(const int min, const int max);
+  void setProgressValue(const int val);
+
 public slots:
   void finish();
   void setMaximum(int maximum);
@@ -65,6 +73,9 @@ public slots:
   void setRange(int minimum, int maximum);
   void setValue(int value);
   void stepValue(int dir = 1);
+
+private slots:
+  void monitorProgress(int value);
 
 private:  
   Ui::csWProgressLogger *ui{nullptr};
@@ -82,6 +93,9 @@ void csWProgressLogger::setFutureWatcher(QFutureWatcher<T> *watcher)
   if( watcher == nullptr ) {
     return;
   }
+
+  disconnect(this, &csWProgressLogger::valueChanged,
+             this, &csWProgressLogger::monitorProgress);
 
   connect(this, &csWProgressLogger::canceled,
           watcher, &QFutureWatcher<T>::cancel);
