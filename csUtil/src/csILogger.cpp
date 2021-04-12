@@ -33,10 +33,14 @@
 
 ////// public ////////////////////////////////////////////////////////////////
 
-csILogger::csILogger()
+csILogger::csILogger() noexcept
 {
 }
 
-csILogger::~csILogger()
+csILogger::~csILogger() noexcept
+{
+}
+
+void csILogger::logFlush() const
 {
 }

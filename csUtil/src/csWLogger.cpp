@@ -29,6 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <QtCore/QCoreApplication>
 #include <QtCore/QMetaObject>
 
 #include <csUtil/csWLogger.h>
@@ -65,6 +66,11 @@ csWLogger::csWLogger(QWidget *parent)
 
 csWLogger::~csWLogger()
 {
+}
+
+void csWLogger::logFlush() const
+{
+  QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 }
 
 void csWLogger::logText(const char *text) const

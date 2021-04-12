@@ -44,6 +44,8 @@ public:
   csWLogger(QWidget *parent = nullptr);
   ~csWLogger();
 
+  void logFlush() const;
+
   void logText(const char *) const;
   void logText(const std::string&) const;
 

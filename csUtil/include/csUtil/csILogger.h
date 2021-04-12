@@ -38,8 +38,10 @@
 
 class CS_UTIL_EXPORT csILogger {
 public:
-  csILogger();
-  virtual ~csILogger();
+  csILogger() noexcept;
+  virtual ~csILogger() noexcept;
+
+  virtual void logFlush() const;
 
   virtual void logText(const char *) const = 0;
   virtual void logText(const std::string&) const = 0;
