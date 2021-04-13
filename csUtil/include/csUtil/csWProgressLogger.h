@@ -32,20 +32,26 @@
 #ifndef CSWPROGRESSLOGGER_H
 #define CSWPROGRESSLOGGER_H
 
+#include <memory>
+
 #include <QtCore/QFutureWatcher>
 #include <QtWidgets/QDialog>
+#include <QtWidgets/QProgressBar>
 
-#include <csUtil/csIProgress.h>
+#include <csUtil/csutil_config.h>
 
 class csILogger;
+class csIProgress;
+
+namespace priv {
+  class IProgressImpl;
+} // namespace priv
 
 namespace Ui {
   class csWProgressLogger;
 } // namespace Ui
 
-class CS_UTIL_EXPORT csWProgressLogger
-    : public QDialog
-    , public csIProgress {
+class CS_UTIL_EXPORT csWProgressLogger : public QDialog {
   Q_OBJECT
 public:
   csWProgressLogger(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
@@ -53,32 +59,25 @@ public:
 
   const csILogger *logger() const;
 
-  int maximum() const;
-  int minimum() const;
-  int value() const;
+  csIProgress *progress();
+  const csIProgress *progress() const;
 
   template<typename T>
   void setFutureWatcher(QFutureWatcher<T> *watcher);
 
-  void progressFlush() const;
-  void setProgressMaximum(const int max);
-  void setProgressMinimum(const int min);
-  void setProgressRange(const int min, const int max);
-  void setProgressValue(const int val);
-
 public slots:
-  void finish();
-  void setMaximum(int maximum);
-  void setMinimum(int minimum);
-  void setRange(int minimum, int maximum);
-  void setValue(int value);
   void stepValue(int dir = 1);
 
 private slots:
+  void finish();
   void monitorProgress(int value);
 
 private:  
+  QProgressBar *progressBar();
+
   Ui::csWProgressLogger *ui{nullptr};
+
+  std::unique_ptr<priv::IProgressImpl> _progress{nullptr};
 
 signals:
   void canceled();
@@ -103,9 +102,9 @@ void csWProgressLogger::setFutureWatcher(QFutureWatcher<T> *watcher)
   connect(watcher, &QFutureWatcher<T>::finished,
           this, &csWProgressLogger::finish);
   connect(watcher, &QFutureWatcher<T>::progressRangeChanged,
-          this, &csWProgressLogger::setRange);
+          progressBar(), &QProgressBar::setRange);
   connect(watcher, &QFutureWatcher<T>::progressValueChanged,
-          this, &csWProgressLogger::setValue);
+          progressBar(), &QProgressBar::setValue);
 }
 
 #endif // CSWPROGRESSLOGGER_H

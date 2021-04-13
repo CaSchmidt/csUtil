@@ -34,9 +34,53 @@
 #include <csUtil/csWProgressLogger.h>
 #include "ui_csWProgressLogger.h"
 
+#include <csUtil/csIProgress.h>
+
 ////// Private ///////////////////////////////////////////////////////////////
 
 namespace priv {
+
+  class IProgressImpl : public csIProgress {
+  public:
+    IProgressImpl(QProgressBar *bar) noexcept
+      : _bar{bar}
+    {
+    }
+
+    ~IProgressImpl() noexcept
+    {
+    }
+
+    void progressFlush() const
+    {
+      QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+    }
+
+    void setProgressMaximum(const int max)
+    {
+      _bar->setMaximum(max);
+    }
+
+    void setProgressMinimum(const int min)
+    {
+      _bar->setMinimum(min);
+    }
+
+    void setProgressRange(const int min, const int max)
+    {
+      _bar->setRange(min, max);
+    }
+
+    void setProgressValue(const int val)
+    {
+      _bar->setValue(val);
+    }
+
+  private:
+    IProgressImpl() noexcept = delete;
+
+    QProgressBar *_bar;
+  };
 
   bool removeAllButtons(QDialogButtonBox *box)
   {
@@ -57,6 +101,8 @@ csWProgressLogger::csWProgressLogger(QWidget *parent, Qt::WindowFlags f)
   , ui{new Ui::csWProgressLogger}
 {
   ui->setupUi(this);
+
+  _progress = std::make_unique<priv::IProgressImpl>(ui->progressBar);
 
   // User Interface //////////////////////////////////////////////////////////
 
@@ -97,47 +143,33 @@ const csILogger *csWProgressLogger::logger() const
   return ui->logBrowser;
 }
 
-int csWProgressLogger::maximum() const
+csIProgress *csWProgressLogger::progress()
 {
-  return ui->progressBar->maximum();
+  return _progress.get();
 }
 
-int csWProgressLogger::minimum() const
+const csIProgress *csWProgressLogger::progress() const
 {
-  return ui->progressBar->minimum();
-}
-
-int csWProgressLogger::value() const
-{
-  return ui->progressBar->value();
-}
-
-void csWProgressLogger::progressFlush() const
-{
-  QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
-}
-
-void csWProgressLogger::setProgressMaximum(const int max)
-{
-  setMaximum(max);
-}
-
-void csWProgressLogger::setProgressMinimum(const int min)
-{
-  setMinimum(min);
-}
-
-void csWProgressLogger::setProgressRange(const int min, const int max)
-{
-  setRange(min, max);
-}
-
-void csWProgressLogger::setProgressValue(const int val)
-{
-  setValue(val);
+  return _progress.get();
 }
 
 ////// public slots //////////////////////////////////////////////////////////
+
+void csWProgressLogger::stepValue(int dir)
+{
+  if( dir == 0 ) {
+    return;
+  }
+  const int inc = dir >= 0
+      ? 1
+      : -1;
+  const int min = ui->progressBar->minimum();
+  const int val = ui->progressBar->value();
+  const int max = ui->progressBar->maximum();
+  ui->progressBar->setValue(qBound<int>(min, val + inc, max));
+}
+
+////// private slots /////////////////////////////////////////////////////////
 
 void csWProgressLogger::finish()
 {
@@ -156,42 +188,16 @@ void csWProgressLogger::finish()
   }
 }
 
-void csWProgressLogger::setMaximum(int maximum)
-{
-  ui->progressBar->setMaximum(maximum);
-}
-
-void csWProgressLogger::setMinimum(int minimum)
-{
-  ui->progressBar->setMinimum(minimum);
-}
-
-void csWProgressLogger::setRange(int minimum, int maximum)
-{
-  ui->progressBar->setRange(minimum, maximum);
-}
-
-void csWProgressLogger::setValue(int value)
-{
-  ui->progressBar->setValue(value);
-}
-
-void csWProgressLogger::stepValue(int dir)
-{
-  if( dir == 0 ) {
-    return;
-  }
-  const int inc = dir >= 0
-      ? 1
-      : -1;
-  setValue(qBound<int>(minimum(), value() + inc, maximum()));
-}
-
-////// private slots /////////////////////////////////////////////////////////
-
 void csWProgressLogger::monitorProgress(int value)
 {
-  if( value >= maximum() ) {
+  if( value >= ui->progressBar->maximum() ) {
     finish();
   }
+}
+
+////// private ///////////////////////////////////////////////////////////////
+
+QProgressBar *csWProgressLogger::progressBar()
+{
+  return ui->progressBar;
 }
