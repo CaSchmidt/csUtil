@@ -51,6 +51,7 @@ list(APPEND csUtil_HEADERS
   include/csUtil/csIProgress.h
   include/csUtil/csLogger.h
   include/csUtil/csNamespace.h
+  include/csUtil/csOutputContext.h
   include/csUtil/csPointer.h
   include/csUtil/csRawConverter.h
   include/csUtil/csStringUtil.h
@@ -71,6 +72,7 @@ list(APPEND csUtil_SOURCES
   src/csILogger.cpp
   src/csIProgress.cpp
   src/csLogger.cpp
+  src/csOutputContext.cpp
   src/csTextConverter.cpp
   src/csTrie.cpp
   )
