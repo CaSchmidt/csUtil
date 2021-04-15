@@ -47,17 +47,12 @@ public:
   void logFlush() const;
 
   void logText(const char *) const;
-  void logText(const std::string&) const;
 
   void logWarning(const char *) const;
-  void logWarning(const std::string&) const;
   void logWarning(const int, const char *) const;
-  void logWarning(const int, const std::string&) const;
 
   void logError(const char *) const;
-  void logError(const std::string&) const;
   void logError(const int, const char *) const;
-  void logError(const int, const std::string&) const;
 
 private slots:
   void impl_logText(const QString& s);

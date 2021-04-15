@@ -52,19 +52,9 @@ void csLogger::logText(const char *s) const
   fprintf(_file, "%s\n", s);
 }
 
-void csLogger::logText(const std::string& s) const
-{
-  logText(s.data());
-}
-
 void csLogger::logWarning(const char *s) const
 {
   fprintf(_file, "WARNING: %s\n", s);
-}
-
-void csLogger::logWarning(const std::string& s) const
-{
-  logWarning(s.data());
 }
 
 void csLogger::logWarning(const int lineno, const char *s) const
@@ -72,27 +62,12 @@ void csLogger::logWarning(const int lineno, const char *s) const
   fprintf(_file, "WARNING:%d: %s\n", lineno, s);
 }
 
-void csLogger::logWarning(const int lineno, const std::string& s) const
-{
-  logWarning(lineno, s.data());
-}
-
 void csLogger::logError(const char *s) const
 {
   fprintf(_file, "ERROR: %s\n", s);
 }
 
-void csLogger::logError(const std::string& s) const
-{
-  logError(s.data());
-}
-
 void csLogger::logError(const int lineno, const char *s) const
 {
   fprintf(_file, "ERROR:%d: %s\n", lineno, s);
-}
-
-void csLogger::logError(const int lineno, const std::string& s) const
-{
-  logError(lineno, s.data());
 }

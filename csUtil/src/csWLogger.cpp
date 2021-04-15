@@ -79,20 +79,10 @@ void csWLogger::logText(const char *text) const
   priv::invokeLogText(const_cast<csWLogger*>(this), s);
 }
 
-void csWLogger::logText(const std::string& text) const
-{
-  logText(text.data());
-}
-
 void csWLogger::logWarning(const char *warning) const
 {
   const QString s = tr("WARNING: %1").arg(QString::fromUtf8(warning));
   priv::invokeLogWarning(const_cast<csWLogger*>(this), s);
-}
-
-void csWLogger::logWarning(const std::string& warning) const
-{
-  logWarning(warning.data());
 }
 
 void csWLogger::logWarning(const int lineno, const char *warning) const
@@ -101,31 +91,16 @@ void csWLogger::logWarning(const int lineno, const char *warning) const
   priv::invokeLogWarning(const_cast<csWLogger*>(this), s);
 }
 
-void csWLogger::logWarning(const int lineno, const std::string& warning) const
-{
-  logWarning(lineno, warning.data());
-}
-
 void csWLogger::logError(const char *error) const
 {
   const QString s = tr("ERROR: %1").arg(QString::fromUtf8(error));
   priv::invokeLogError(const_cast<csWLogger*>(this), s);
 }
 
-void csWLogger::logError(const std::string& error) const
-{
-  logError(error.data());
-}
-
 void csWLogger::logError(const int lineno, const char *error) const
 {
   const QString s = tr("ERROR:%1: %2").arg(lineno).arg(QString::fromUtf8(error));
   priv::invokeLogError(const_cast<csWLogger*>(this), s);
-}
-
-void csWLogger::logError(const int lineno, const std::string& error) const
-{
-  logError(lineno, error.data());
 }
 
 ////// private slots /////////////////////////////////////////////////////////

@@ -44,3 +44,28 @@ csILogger::~csILogger() noexcept
 void csILogger::logFlush() const
 {
 }
+
+void csILogger::logText(const std::string& text) const
+{
+  logText(text.data());
+}
+
+void csILogger::logWarning(const std::string& warning) const
+{
+  logWarning(warning.data());
+}
+
+void csILogger::logWarning(const int line, const std::string& warning) const
+{
+  logWarning(line, warning.data());
+}
+
+void csILogger::logError(const std::string& error) const
+{
+  logError(error.data());
+}
+
+void csILogger::logError(const int line, const std::string& error) const
+{
+  logError(line, error.data());
+}
