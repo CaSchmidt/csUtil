@@ -58,8 +58,6 @@ public:
   ~csWProgressLogger();
 
   const csILogger *logger() const;
-
-  csIProgress *progress();
   const csIProgress *progress() const;
 
   template<typename T>

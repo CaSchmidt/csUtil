@@ -40,10 +40,10 @@ public:
   virtual ~csIProgress() noexcept;
 
   virtual void progressFlush() const;
-  virtual void setProgressMaximum(const int max) = 0;
-  virtual void setProgressMinimum(const int min) = 0;
-  virtual void setProgressRange(const int min, const int max) = 0;
-  virtual void setProgressValue(const int val) = 0;
+  virtual void setProgressMaximum(const int max) const = 0;
+  virtual void setProgressMinimum(const int min) const = 0;
+  virtual void setProgressRange(const int min, const int max) const = 0;
+  virtual void setProgressValue(const int val) const = 0;
 
 private:
   csIProgress(const csIProgress&) noexcept = delete;

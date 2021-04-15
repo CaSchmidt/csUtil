@@ -56,22 +56,22 @@ namespace priv {
       QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
     }
 
-    void setProgressMaximum(const int max)
+    void setProgressMaximum(const int max) const
     {
       _bar->setMaximum(max);
     }
 
-    void setProgressMinimum(const int min)
+    void setProgressMinimum(const int min) const
     {
       _bar->setMinimum(min);
     }
 
-    void setProgressRange(const int min, const int max)
+    void setProgressRange(const int min, const int max) const
     {
       _bar->setRange(min, max);
     }
 
-    void setProgressValue(const int val)
+    void setProgressValue(const int val) const
     {
       _bar->setValue(val);
     }
@@ -141,11 +141,6 @@ csWProgressLogger::~csWProgressLogger()
 const csILogger *csWProgressLogger::logger() const
 {
   return ui->logBrowser;
-}
-
-csIProgress *csWProgressLogger::progress()
-{
-  return _progress.get();
 }
 
 const csIProgress *csWProgressLogger::progress() const
