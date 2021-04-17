@@ -45,12 +45,12 @@ namespace cs {
 
     template<>
     struct csPointerTypeImpl<4> {
-      typedef uint32_t type;
+      using type = uint32_t;
     };
 
     template<>
     struct csPointerTypeImpl<8> {
-      typedef uint64_t type;
+      using type = uint64_t;
     };
 
   } // namespace pointer
@@ -58,7 +58,7 @@ namespace cs {
 } // namespace cs
 
 struct csPointer {
-  typedef cs::pointer::csPointerTypeImpl<sizeof(void*)>::type type;
+  using type = typename cs::pointer::csPointerTypeImpl<sizeof(void*)>::type;
 
   template<typename DataT>
   inline static bool isAlignedTo(const void *p)

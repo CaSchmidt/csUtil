@@ -122,7 +122,7 @@ namespace cs {
                                               std::is_signed_v<ValueT>
                                               > * = nullptr)
     {
-      typedef std::make_unsigned_t<ValueT> UnsignedT;
+      using UnsignedT = std::make_unsigned_t<ValueT>;
 
       if( first == nullptr  ||  last == nullptr  ||  last <= first  ||
           base < 2  ||  base > 36 ) {
@@ -233,7 +233,7 @@ namespace cs {
                                               std::is_signed_v<ValueT>
                                               > * = nullptr)
     {
-      typedef std::make_unsigned_t<ValueT> UnsignedT;
+      using UnsignedT = std::make_unsigned_t<ValueT>;
 
       if( first == nullptr  ||  last == nullptr  ||  last <= first  ||
           base < 2  ||  base > 36 ) {

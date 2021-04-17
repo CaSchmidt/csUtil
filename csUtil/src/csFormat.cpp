@@ -64,11 +64,11 @@ namespace cs {
     template<typename CharT>
     class Formatter {
     public:
-      typedef unsigned int                       index_type;
-      typedef std::basic_string<CharT>          string_type;
-      typedef typename string_type::size_type     size_type;
-      typedef std::pair<index_type,string_type>  token_type;
-      typedef std::list<token_type>             tokens_type;
+      using  index_type = unsigned int;
+      using string_type = std::basic_string<CharT>;
+      using   size_type = typename string_type::size_type;
+      using  token_type = std::pair<index_type,string_type>;
+      using tokens_type = std::list<token_type>;
 
       Formatter(const CharT *begin, const CharT *end)
         : _options()
