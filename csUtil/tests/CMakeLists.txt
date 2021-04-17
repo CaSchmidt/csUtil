@@ -2,6 +2,10 @@ macro(cs_test target)
   set(sources ${ARGN})
   add_executable(${target} ${sources})
   format_output_name(${target} ${target})
+  set_target_properties(${target} PROPERTIES
+    CXX_STANDARD 20
+    CXX_STANDARD_REQUIRED ON
+    )
   target_include_directories(${target}
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
     PRIVATE ${csUtil_SOURCE_DIR}/testutils/include
