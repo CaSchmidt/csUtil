@@ -2,6 +2,7 @@
 #include <cstdlib>
 
 #include <csUtil/csFileIO.h>
+#include <csUtil/csTypeTraits.h>
 
 using StringList = std::list<std::string>;
 
@@ -23,7 +24,7 @@ void print(const StringList& lines)
 int main(int /*argc*/, char **argv)
 {
   printf("filename: %s\n", argv[1]);
-  const StringList lines = csReadLines(argv[1], true);
+  const StringList lines = csReadLines(cs::UTF8(argv[1]), true);
   print(lines);
 
   return EXIT_SUCCESS;

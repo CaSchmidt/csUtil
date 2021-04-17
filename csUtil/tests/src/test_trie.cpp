@@ -7,6 +7,7 @@
 #include <csUtil/csFileIO.h>
 #include <csUtil/csFlatTrie.h>
 #include <csUtil/csTrie.h>
+#include <csUtil/csTypeTraits.h>
 
 #undef HAVE_REVERSE
 
@@ -26,15 +27,15 @@ inline T reversed(const T& in)
 
 typedef std::set<std::string> Words;
 
-Words readWords(const std::string& filename_utf8)
+Words readWords(const std::u8string& filename)
 {
   Words words;
 
   bool ok;
-  const std::string content = csReadTextFile(filename_utf8, &ok);
+  const std::string content = csReadTextFile(filename, &ok);
   if( !ok ) {
     fprintf(stderr, "ERROR: Unable to open file \"%s\"!\n",
-            filename_utf8.data());
+            cs::CSTR(filename.data()));
     return words;
   }
 
@@ -61,7 +62,7 @@ void complete(const T& trie, const char *s)
 
 int main(int /*argc*/, char **argv)
 {
-  const Words words = readWords(argv[1]);
+  const Words words = readWords(cs::UTF8(argv[1]));
 
   csTrie trie;
   for(const std::string& w : words) {

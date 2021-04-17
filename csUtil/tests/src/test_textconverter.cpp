@@ -42,7 +42,7 @@ int main(int /*argc*/, char ** /*argv*/)
 
   printf("*** File I/O\n");
 
-  const std::string fileutf8 = csReadTextFile("../../csUtil/csUtil/testutils/data/test äuml.txt");
+  const std::string fileutf8 = csReadTextFile(cs::UTF8("../../csUtil/csUtil/testutils/data/test äuml.txt"));
   print(fileutf8); print_sep();
 
   return EXIT_SUCCESS;
