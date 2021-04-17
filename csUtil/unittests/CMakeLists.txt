@@ -3,7 +3,7 @@ macro(cs_unittest target)
   add_executable(${target} ${sources})
   format_output_name(${target} ${target})
   set_target_properties(${target} PROPERTIES
-    CXX_STANDARD 17
+    CXX_STANDARD 20
     CXX_STANDARD_REQUIRED ON
     )
   if(MSVC)
