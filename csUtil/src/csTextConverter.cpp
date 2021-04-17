@@ -45,12 +45,12 @@ namespace priv {
 
   // UTF-16 -> 8bit //////////////////////////////////////////////////////////
 
-  inline std::string fromUnicode(UConverter *cnv, const UChar *s, std::string::size_type len)
+  inline std::string fromUnicode(UConverter *cnv, const UChar *s, std::size_t len)
   {
     std::string result;
 
-    if( len == std::string::npos  &&  s != nullptr ) {
-      len = static_cast<std::string::size_type>(u_strlen(s));
+    if( len == cs::MAX_SIZE_T  &&  s != nullptr ) {
+      len = static_cast<std::size_t>(u_strlen(s));
     }
 
     if( s == nullptr  ||  len < 1 ) {
@@ -61,7 +61,7 @@ namespace priv {
     const int32_t requiredSize = ucnv_fromUChars(cnv, nullptr, 0, s, static_cast<int32_t>(len), &err);
 
     try {
-      result.resize(static_cast<std::string::size_type>(requiredSize), 0);
+      result.resize(static_cast<std::size_t>(requiredSize), 0);
     } catch(...) {
       result.clear();
       return result;
@@ -79,7 +79,7 @@ namespace priv {
     return result;
   }
 
-  inline std::string fromUnicode(const char *name, const UChar *s, const std::string::size_type len)
+  inline std::string fromUnicode(const char *name, const UChar *s, const std::size_t len)
   {
     std::string result;
 
@@ -98,12 +98,12 @@ namespace priv {
 
   // 8bit -> UTF-16 //////////////////////////////////////////////////////////
 
-  inline std::u16string toUnicode(UConverter *cnv, const char *s, std::u16string::size_type len)
+  inline std::u16string toUnicode(UConverter *cnv, const char *s, std::size_t len)
   {
     std::u16string result;
 
-    if( len == std::u16string::npos  &&  s != nullptr ) {
-      len = static_cast<std::u16string::size_type>(std::strlen(s));
+    if( len == cs::MAX_SIZE_T  &&  s != nullptr ) {
+      len = static_cast<std::size_t>(std::strlen(s));
     }
 
     if( s == nullptr  ||  len < 1 ) {
@@ -114,7 +114,7 @@ namespace priv {
     const int32_t requiredSize = ucnv_toUChars(cnv, nullptr, 0, s, static_cast<int32_t>(len), &err);
 
     try {
-      result.resize(static_cast<std::u16string::size_type>(requiredSize), 0);
+      result.resize(static_cast<std::size_t>(requiredSize), 0);
     } catch(...) {
       result.clear();
       return result;
@@ -132,7 +132,7 @@ namespace priv {
     return result;
   }
 
-  inline std::u16string toUnicode(const char *name, const char *s, const std::u16string::size_type len)
+  inline std::u16string toUnicode(const char *name, const char *s, const std::size_t len)
   {
     std::u16string result;
 
@@ -211,12 +211,12 @@ const char *csTextConverter::name() const
   return d->name.data();
 }
 
-std::string csTextConverter::fromUnicode(const char16_t *s, const std::string::size_type len) const
+std::string csTextConverter::fromUnicode(const char16_t *s, const std::size_t len) const
 {
   return priv::fromUnicode(d->cnv, s, len);
 }
 
-std::u16string csTextConverter::toUnicode(const char *s, const std::u16string::size_type len) const
+std::u16string csTextConverter::toUnicode(const char *s, const std::size_t len) const
 {
   return priv::toUnicode(d->cnv, s, len);
 }
@@ -306,22 +306,22 @@ std::list<std::string> csTextConverter::listAvailable()
 
 ////// Public ////////////////////////////////////////////////////////////////
 
-CS_UTIL_EXPORT std::u16string csAsciiToUnicode(const char *s, const std::u16string::size_type len)
+CS_UTIL_EXPORT std::u16string csAsciiToUnicode(const char *s, const std::size_t len)
 {
   return priv::toUnicode("ASCII", s, len);
 }
 
-CS_UTIL_EXPORT std::u16string csUtf8ToUnicode(const char *s, const std::u16string::size_type len)
+CS_UTIL_EXPORT std::u16string csUtf8ToUnicode(const char *s, const std::size_t len)
 {
   return priv::toUnicode("UTF-8", s, len);
 }
 
-CS_UTIL_EXPORT std::string csUnicodeToAscii(const char16_t *s, const std::string::size_type len)
+CS_UTIL_EXPORT std::string csUnicodeToAscii(const char16_t *s, const std::size_t len)
 {
   return priv::fromUnicode("ASCII", s, len);
 }
 
-CS_UTIL_EXPORT std::string csUnicodeToUtf8(const char16_t *s, const std::string::size_type len)
+CS_UTIL_EXPORT std::string csUnicodeToUtf8(const char16_t *s, const std::size_t len)
 {
   return priv::fromUnicode("UTF-8", s, len);
 }
