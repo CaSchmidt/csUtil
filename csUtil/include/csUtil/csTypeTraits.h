@@ -38,15 +38,16 @@
 namespace cs {
 
   template<typename T>
-  struct is_char {
-    enum : bool {
-      value =
-      std::is_same_v<T,char>      ||
-      std::is_same_v<T,char16_t>  ||
-      std::is_same_v<T,char32_t>  ||
-      std::is_same_v<T,wchar_t>
-    };
-  };
+  using is_char = std::bool_constant<
+  std::is_same_v<T,char>      ||
+  std::is_same_v<T,char8_t>   ||
+  std::is_same_v<T,char16_t>  ||
+  std::is_same_v<T,char32_t>  ||
+  std::is_same_v<T,wchar_t>
+  >;
+
+  template<typename T>
+  inline constexpr bool is_char_v = is_char<T>::value;
 
   template<typename T>
   using safe_underlying_type_t =

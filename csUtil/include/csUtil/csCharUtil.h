@@ -39,10 +39,10 @@ namespace cs {
   ////// Types ///////////////////////////////////////////////////////////////
 
   template<typename T>
-  using if_char_t = typename std::enable_if<is_char<T>::value,T>::type;
+  using if_char_t = std::enable_if_t<is_char_v<T>,T>;
 
   template<typename T>
-  using if_char_bool = typename std::enable_if<is_char<T>::value,bool>::type;
+  using if_char_bool = std::enable_if_t<is_char_v<T>,bool>;
 
   ////// Implementation //////////////////////////////////////////////////////
 

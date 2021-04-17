@@ -47,8 +47,17 @@ namespace cs {
   struct is_flags_enabled : std::false_type {};
 
   template<typename T>
-  inline constexpr bool is_flags_v = std::is_enum_v<T>  &&
-      std::is_unsigned_v<safe_underlying_type_t<T>>     &&  is_flags_enabled<T>::value;
+  inline constexpr bool is_flags_enabled_v = is_flags_enabled<T>::value;
+
+  template<typename T>
+  using is_flags = std::bool_constant<
+  std::is_enum_v<T>                              &&
+  std::is_unsigned_v<safe_underlying_type_t<T>>  &&
+  is_flags_enabled_v<T>
+  >;
+
+  template<typename T>
+  inline constexpr bool is_flags_v = is_flags<T>::value;
 
   template<typename T>
   using if_flags_t = std::enable_if_t<is_flags_v<T>,T>;

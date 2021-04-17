@@ -60,7 +60,7 @@ public:
   using letter_type = uint16_t;
 
   template<typename T>
-  using if_letter_t = typename std::enable_if<sizeof(T) <= sizeof(letter_type),letter_type>::type;
+  using if_letter_t = std::enable_if_t<sizeof(T) <= sizeof(letter_type),letter_type>;
 
   csTrieNode(const letter_type letter = 0)
     : _children()

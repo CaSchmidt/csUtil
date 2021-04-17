@@ -42,7 +42,7 @@
 namespace cs {
 
   template<typename T>
-  using if_swap_t = std::enable_if_t<std::is_arithmetic<T>::value,T>;
+  using if_swap_t = std::enable_if_t<std::is_arithmetic_v<T>,T>;
 
   namespace endian {
 

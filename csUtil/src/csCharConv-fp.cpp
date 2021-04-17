@@ -52,9 +52,7 @@ namespace cs {
     template<typename ValueT>
     inline ValueT to_ieee(const double_conversion::StringToDoubleConverter& conv,
                           const char *buffer, const int length, int *processed,
-                          typename std::enable_if<
-                          std::is_same<ValueT,double>::value
-                          >::type * = nullptr)
+                          std::enable_if_t<std::is_same_v<ValueT,double>> * = nullptr)
     {
       return conv.StringToDouble(buffer, length, processed);
     }
@@ -62,9 +60,7 @@ namespace cs {
     template<typename ValueT>
     inline ValueT to_ieee(const double_conversion::StringToDoubleConverter& conv,
                           const char *buffer, const int length, int *processed,
-                          typename std::enable_if<
-                          std::is_same<ValueT,float>::value
-                          >::type * = nullptr)
+                          std::enable_if_t<std::is_same_v<ValueT,float>> * = nullptr)
     {
       return conv.StringToFloat(buffer, length, processed);
     }
@@ -78,9 +74,7 @@ namespace cs {
     inline from_chars_result to_fp(const char *first, const char *last,
                                    ValueT& value,
                                    chars_format fmt,
-                                   typename std::enable_if<
-                                   std::is_floating_point<ValueT>::value
-                                   >::type * = nullptr)
+                                   std::enable_if_t<std::is_floating_point_v<ValueT>> * = nullptr)
     {
       using StrToDbl = double_conversion::StringToDoubleConverter;
 
@@ -169,9 +163,7 @@ namespace cs {
     inline void from_ieee_shortest(const double_conversion::DoubleToStringConverter& conv,
                                    const ValueT value,
                                    double_conversion::StringBuilder *builder,
-                                   typename std::enable_if<
-                                   std::is_same<ValueT,double>::value
-                                   >::type * = nullptr)
+                                   std::enable_if_t<std::is_same_v<ValueT,double>> * = nullptr)
     {
       conv.ToShortest(value, builder);
     }
@@ -180,9 +172,7 @@ namespace cs {
     inline void from_ieee_shortest(const double_conversion::DoubleToStringConverter& conv,
                                    const ValueT value,
                                    double_conversion::StringBuilder *builder,
-                                   typename std::enable_if<
-                                   std::is_same<ValueT,float>::value
-                                   >::type * = nullptr)
+                                   std::enable_if_t<std::is_same_v<ValueT,float>> * = nullptr)
     {
       conv.ToShortestSingle(value, builder);
     }
@@ -192,9 +182,7 @@ namespace cs {
                                    const ValueT value,
                                    const chars_format fmt,
                                    int precision,
-                                   typename std::enable_if<
-                                   std::is_floating_point<ValueT>::value
-                                   >::type * = nullptr)
+                                   std::enable_if_t<std::is_floating_point_v<ValueT>> * = nullptr)
     {
       using DblToStr = double_conversion::DoubleToStringConverter;
 

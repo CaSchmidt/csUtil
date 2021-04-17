@@ -105,9 +105,7 @@ namespace cs {
       template<typename ValueT>
       void arg(const ValueT value,
                const int width, const int base, const CharT fill,
-               typename std::enable_if<
-               std::is_integral<ValueT>::value
-               >::type * = nullptr)
+               std::enable_if_t<std::is_integral_v<ValueT>> * = nullptr)
       {
         _temp.fill(0);
         const cs::to_chars_result res =
@@ -122,9 +120,7 @@ namespace cs {
       template<typename ValueT>
       void arg(const ValueT value,
                const int width, const CharT format, const int precision, const CharT fill,
-               typename std::enable_if<
-               std::is_floating_point<ValueT>::value
-               >::type * = nullptr)
+               std::enable_if_t<std::is_floating_point_v<ValueT>> * = nullptr)
       {
         _temp.fill(0);
         cs::chars_format fmt;

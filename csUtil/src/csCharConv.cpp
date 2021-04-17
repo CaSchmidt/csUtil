@@ -76,10 +76,10 @@ namespace cs {
     inline from_chars_result<CharT> to_unsigned(const CharT *first, const CharT *last,
                                                 ValueT& value, const int base,
                                                 const ValueT max,
-                                                typename std::enable_if<
-                                                std::is_integral<ValueT>::value  &&
-                                                std::is_unsigned<ValueT>::value
-                                                >::type * = nullptr)
+                                                std::enable_if_t<
+                                                std::is_integral_v<ValueT>  &&
+                                                std::is_unsigned_v<ValueT>
+                                                > * = nullptr)
     {
       if( first == nullptr  ||  last == nullptr  ||  last <= first  ||
           base < 2  ||  base > 36 ) {
@@ -117,12 +117,12 @@ namespace cs {
     template<typename ValueT, typename CharT>
     inline from_chars_result<CharT> to_signed(const CharT *first, const CharT *last,
                                               ValueT& value, const int base,
-                                              typename std::enable_if<
-                                              std::is_integral<ValueT>::value  &&
-                                              std::is_signed<ValueT>::value
-                                              >::type * = nullptr)
+                                              std::enable_if_t<
+                                              std::is_integral_v<ValueT>  &&
+                                              std::is_signed_v<ValueT>
+                                              > * = nullptr)
     {
-      typedef typename std::make_unsigned<ValueT>::type UnsignedT;
+      typedef std::make_unsigned_t<ValueT> UnsignedT;
 
       if( first == nullptr  ||  last == nullptr  ||  last <= first  ||
           base < 2  ||  base > 36 ) {
@@ -180,10 +180,10 @@ namespace cs {
 
     template<typename ValueT>
     inline int required_size(ValueT value, const int base,
-                             typename std::enable_if<
-                             std::is_integral<ValueT>::value  &&
-                             std::is_unsigned<ValueT>::value
-                             >::type * = nullptr)
+                             std::enable_if_t<
+                             std::is_integral_v<ValueT>  &&
+                             std::is_unsigned_v<ValueT>
+                             > * = nullptr)
     {
       if( base < 2  ||  base > 36 ) {
         return 0;
@@ -200,10 +200,10 @@ namespace cs {
     template<typename ValueT, typename CharT>
     inline to_chars_result<CharT> from_unsigned(CharT *first, CharT *last,
                                                 const ValueT value, const int base,
-                                                typename std::enable_if<
-                                                std::is_integral<ValueT>::value  &&
-                                                std::is_unsigned<ValueT>::value
-                                                >::type * = nullptr)
+                                                std::enable_if_t<
+                                                std::is_integral_v<ValueT>  &&
+                                                std::is_unsigned_v<ValueT>
+                                                > * = nullptr)
     {
       if( first == nullptr  ||  last == nullptr  ||  last <= first  ||
           base < 2  ||  base > 36 ) {
@@ -228,12 +228,12 @@ namespace cs {
     template<typename ValueT, typename CharT>
     inline to_chars_result<CharT> from_signed(CharT *first, CharT *last,
                                               const ValueT value, const int base,
-                                              typename std::enable_if<
-                                              std::is_integral<ValueT>::value  &&
-                                              std::is_signed<ValueT>::value
-                                              >::type * = nullptr)
+                                              std::enable_if_t<
+                                              std::is_integral_v<ValueT>  &&
+                                              std::is_signed_v<ValueT>
+                                              > * = nullptr)
     {
-      typedef typename std::make_unsigned<ValueT>::type UnsignedT;
+      typedef std::make_unsigned_t<ValueT> UnsignedT;
 
       if( first == nullptr  ||  last == nullptr  ||  last <= first  ||
           base < 2  ||  base > 36 ) {

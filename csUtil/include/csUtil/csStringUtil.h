@@ -42,7 +42,7 @@ namespace cs {
   ////// Types ///////////////////////////////////////////////////////////////
 
   template<typename T>
-  using if_string_t = typename std::enable_if<is_char<T>::value,std::basic_string<T>>::type;
+  using if_string_t = std::enable_if_t<is_char_v<T>,std::basic_string<T>>;
 
   ////// Implementation //////////////////////////////////////////////////////
 
@@ -186,6 +186,20 @@ namespace cs {
   }
 
   template<typename T>
+  inline if_string_t<T> trimmed(std::basic_string<T> s) noexcept
+  {
+    // trim left
+    s.erase(s.begin(),
+            std::find_if(s.begin(), s.end(),
+                         [](const T& ch) -> bool { return !isSpace(ch); }));
+    // trim right
+    s.erase(std::find_if(s.rbegin(), s.rend(),
+                         [](const T& ch) -> bool { return !isSpace(ch); }).base(),
+            s.end());
+    return s;
+  }
+
+  template<typename T>
   inline if_string_t<T> simplified(std::basic_string<T> s) noexcept
   {
     // (1) remove duplicate whitespace
@@ -247,20 +261,6 @@ namespace cs {
     }
 
     std::for_each(s, s + l, [](T& c) -> void { c = cs::toUpper(c); });
-  }
-
-  template<typename T>
-  inline if_string_t<T> trimmed(std::basic_string<T> s) noexcept
-  {
-    // trim left
-    s.erase(s.begin(),
-            std::find_if(s.begin(), s.end(),
-                         [](const T& ch) -> bool { return !isSpace(ch); }));
-    // trim right
-    s.erase(std::find_if(s.rbegin(), s.rend(),
-                         [](const T& ch) -> bool { return !isSpace(ch); }).base(),
-            s.end());
-    return s;
   }
 
 } // namespace cs
