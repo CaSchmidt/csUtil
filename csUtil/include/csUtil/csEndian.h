@@ -37,7 +37,7 @@
 #endif
 #include <cstdint>
 
-#include <type_traits>
+#include <bit>
 
 namespace cs {
 
@@ -136,8 +136,6 @@ namespace cs {
 
   /*
    * Convert endianness between host byte order and 'peer' byte order.
-   *
-   * NOTE: C++20 requires std::endian to reside in <bit>, not in <type_traits>!
    */
 
   template<typename T>
