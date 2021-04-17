@@ -57,6 +57,28 @@ namespace cs {
 
   inline constexpr auto qNaN = std::numeric_limits<double>::quiet_NaN();
 
+  inline const char *CSTR(const char8_t *s)
+  {
+    return reinterpret_cast<const char*>(s);
+  }
+
+  inline const wchar_t *WSTR(const char16_t *s,
+                             std::enable_if_t<sizeof(wchar_t) == sizeof(char16_t)> * = nullptr)
+  {
+    return reinterpret_cast<const wchar_t*>(s);
+  }
+
+  inline const char8_t *UTF8(const char *s)
+  {
+    return reinterpret_cast<const char8_t*>(s);
+  }
+
+  inline const char16_t *UTF16(const wchar_t *s,
+                               std::enable_if_t<sizeof(char16_t) == sizeof(wchar_t)> * = nullptr)
+  {
+    return reinterpret_cast<const char16_t*>(s);
+  }
+
 } // namespace cs
 
 #endif // CSTYPETRAITS_H
