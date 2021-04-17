@@ -95,9 +95,9 @@ inline std::u16string csAsciiToUnicode(const std::string& s)
   return csAsciiToUnicode(s.data(), s.size());
 }
 
-CS_UTIL_EXPORT std::u16string csUtf8ToUnicode(const char *s, const std::size_t len = cs::MAX_SIZE_T);
+CS_UTIL_EXPORT std::u16string csUtf8ToUnicode(const char8_t *s, const std::size_t len = cs::MAX_SIZE_T);
 
-inline std::u16string csUtf8ToUnicode(const std::string& s)
+inline std::u16string csUtf8ToUnicode(const std::u8string& s)
 {
   return csUtf8ToUnicode(s.data(), s.size());
 }
@@ -111,9 +111,9 @@ inline std::string csUnicodeToAscii(const std::u16string& s)
   return csUnicodeToAscii(s.data(), s.size());
 }
 
-CS_UTIL_EXPORT std::string csUnicodeToUtf8(const char16_t *s, const std::size_t len = cs::MAX_SIZE_T);
+CS_UTIL_EXPORT std::u8string csUnicodeToUtf8(const char16_t *s, const std::size_t len = cs::MAX_SIZE_T);
 
-inline std::string csUnicodeToUtf8(const std::u16string& s)
+inline std::u8string csUnicodeToUtf8(const std::u16string& s)
 {
   return csUnicodeToUtf8(s.data(), s.size());
 }

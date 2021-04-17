@@ -43,7 +43,7 @@
 namespace impl {
 
   template<typename T>
-  inline T read(const std::string& filename_utf8, bool *ok)
+  inline T read(const std::u8string& filename, bool *ok)
   {
     static_assert(sizeof(typename T::value_type) == 1);
 
@@ -54,7 +54,7 @@ namespace impl {
     }
 
     try {
-      std::fstream file = csOpenFile(filename_utf8, cs::READ_BINARY_FILE);
+      std::fstream file = csOpenFile(filename, cs::READ_BINARY_FILE);
       if( !file.is_open() ) {
         return result;
       }
@@ -82,24 +82,24 @@ namespace impl {
 
 ////// Public ////////////////////////////////////////////////////////////////
 
-CS_UTIL_EXPORT std::fstream csOpenFile(const std::string& filename_utf8,
+CS_UTIL_EXPORT std::fstream csOpenFile(const std::u8string& filename,
                                        const std::ios_base::openmode mode)
 {
   std::fstream file;
 #if defined(_MSC_VER) && defined(_WIN32)
-  const std::u16string filename_utf16 = csUtf8ToUnicode(filename_utf8.data());
-  file.open(reinterpret_cast<const wchar_t*>(filename_utf16.data()), mode);
+  const std::u16string filename_utf16 = csUtf8ToUnicode(filename);
+  file.open(cs::WSTR(filename_utf16.data()), mode);
 #else
-  file.open(filename_utf8, mode);
+  file.open(cs::CSTR(filename.data()), mode);
 #endif
   return file;
 }
 
-CS_UTIL_EXPORT std::list<std::string> csReadLines(const std::string& filename_utf8, const bool trim)
+CS_UTIL_EXPORT std::list<std::string> csReadLines(const std::u8string& filename, const bool trim)
 {
   std::list<std::string> result;
 
-  const std::string lines = csReadTextFile(filename_utf8);
+  const std::string lines = csReadTextFile(filename);
   if( lines.empty() ) {
     return result;
   }
@@ -118,14 +118,14 @@ CS_UTIL_EXPORT std::list<std::string> csReadLines(const std::string& filename_ut
   return result;
 }
 
-CS_UTIL_EXPORT std::string csReadTextFile(const std::string& filename_utf8, bool *ok)
+CS_UTIL_EXPORT std::string csReadTextFile(const std::u8string& filename, bool *ok)
 {
-  return impl::read<std::string>(filename_utf8, ok);
+  return impl::read<std::string>(filename, ok);
 }
 
-CS_UTIL_EXPORT std::vector<uint8_t> csReadBinaryFile(const std::string& filename_utf8, bool *ok)
+CS_UTIL_EXPORT std::vector<uint8_t> csReadBinaryFile(const std::u8string& filename, bool *ok)
 {
-  return impl::read<std::vector<uint8_t>>(filename_utf8, ok);
+  return impl::read<std::vector<uint8_t>>(filename, ok);
 }
 
 CS_UTIL_EXPORT bool csRead(std::istream& stream, void *data, const std::size_t size)

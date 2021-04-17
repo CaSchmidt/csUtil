@@ -43,22 +43,22 @@
 
 namespace cs {
 
-  constexpr std::ios_base::openmode CREATE_BINARY_FILE =
+  inline constexpr std::ios_base::openmode CREATE_BINARY_FILE =
       std::ios_base::out | std::ios_base::binary | std::ios_base::trunc;
 
-  constexpr std::ios_base::openmode READ_BINARY_FILE =
+  inline constexpr std::ios_base::openmode READ_BINARY_FILE =
       std::ios_base::in | std::ios_base::binary;
 
 } // namespace cs
 
-CS_UTIL_EXPORT std::fstream csOpenFile(const std::string& filename_utf8,
+CS_UTIL_EXPORT std::fstream csOpenFile(const std::u8string& filename,
                                        const std::ios_base::openmode mode);
 
-CS_UTIL_EXPORT std::list<std::string> csReadLines(const std::string& filename_utf8, const bool trim = false);
+CS_UTIL_EXPORT std::list<std::string> csReadLines(const std::u8string& filename, const bool trim = false);
 
-CS_UTIL_EXPORT std::string csReadTextFile(const std::string& filename_utf8, bool *ok = nullptr);
+CS_UTIL_EXPORT std::string csReadTextFile(const std::u8string& filename, bool *ok = nullptr);
 
-CS_UTIL_EXPORT std::vector<uint8_t> csReadBinaryFile(const std::string& filename_utf8, bool *ok = nullptr);
+CS_UTIL_EXPORT std::vector<uint8_t> csReadBinaryFile(const std::u8string& filename, bool *ok = nullptr);
 
 CS_UTIL_EXPORT bool csRead(std::istream& stream, void *data, const std::size_t size);
 
