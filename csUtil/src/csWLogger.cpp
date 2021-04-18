@@ -34,6 +34,8 @@
 
 #include <csUtil/csWLogger.h>
 
+#include <csUtil/csTypeTraits.h>
+
 ////// Private ///////////////////////////////////////////////////////////////
 
 namespace priv {
@@ -73,33 +75,33 @@ void csWLogger::logFlush() const
   QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 }
 
-void csWLogger::logText(const char *text) const
+void csWLogger::logText(const char8_t *text) const
 {
-  const QString s = QString::fromUtf8(text);
+  const QString s = QString::fromUtf8(cs::CSTR(text));
   priv::invokeLogText(const_cast<csWLogger*>(this), s);
 }
 
-void csWLogger::logWarning(const char *warning) const
+void csWLogger::logWarning(const char8_t *warning) const
 {
-  const QString s = tr("WARNING: %1").arg(QString::fromUtf8(warning));
+  const QString s = tr("WARNING: %1").arg(QString::fromUtf8(cs::CSTR(warning)));
   priv::invokeLogWarning(const_cast<csWLogger*>(this), s);
 }
 
-void csWLogger::logWarning(const int lineno, const char *warning) const
+void csWLogger::logWarning(const int lineno, const char8_t *warning) const
 {
-  const QString s = tr("WARNING:%1: %2").arg(lineno).arg(QString::fromUtf8(warning));
+  const QString s = tr("WARNING:%1: %2").arg(lineno).arg(QString::fromUtf8(cs::CSTR(warning)));
   priv::invokeLogWarning(const_cast<csWLogger*>(this), s);
 }
 
-void csWLogger::logError(const char *error) const
+void csWLogger::logError(const char8_t *error) const
 {
-  const QString s = tr("ERROR: %1").arg(QString::fromUtf8(error));
+  const QString s = tr("ERROR: %1").arg(QString::fromUtf8(cs::CSTR(error)));
   priv::invokeLogError(const_cast<csWLogger*>(this), s);
 }
 
-void csWLogger::logError(const int lineno, const char *error) const
+void csWLogger::logError(const int lineno, const char8_t *error) const
 {
-  const QString s = tr("ERROR:%1: %2").arg(lineno).arg(QString::fromUtf8(error));
+  const QString s = tr("ERROR:%1: %2").arg(lineno).arg(QString::fromUtf8(cs::CSTR(error)));
   priv::invokeLogError(const_cast<csWLogger*>(this), s);
 }
 

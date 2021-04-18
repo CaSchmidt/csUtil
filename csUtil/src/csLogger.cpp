@@ -31,6 +31,8 @@
 
 #include "csUtil/csLogger.h"
 
+#include <csUtil/csTypeTraits.h>
+
 ////// public ////////////////////////////////////////////////////////////////
 
 csLogger::csLogger(FILE *file)
@@ -47,27 +49,27 @@ void csLogger::logFlush() const
   fflush(_file);
 }
 
-void csLogger::logText(const char *s) const
+void csLogger::logText(const char8_t *s) const
 {
-  fprintf(_file, "%s\n", s);
+  fprintf(_file, "%s\n", cs::CSTR(s));
 }
 
-void csLogger::logWarning(const char *s) const
+void csLogger::logWarning(const char8_t *s) const
 {
-  fprintf(_file, "WARNING: %s\n", s);
+  fprintf(_file, "WARNING: %s\n", cs::CSTR(s));
 }
 
-void csLogger::logWarning(const int lineno, const char *s) const
+void csLogger::logWarning(const int lineno, const char8_t *s) const
 {
-  fprintf(_file, "WARNING:%d: %s\n", lineno, s);
+  fprintf(_file, "WARNING:%d: %s\n", lineno, cs::CSTR(s));
 }
 
-void csLogger::logError(const char *s) const
+void csLogger::logError(const char8_t *s) const
 {
-  fprintf(_file, "ERROR: %s\n", s);
+  fprintf(_file, "ERROR: %s\n", cs::CSTR(s));
 }
 
-void csLogger::logError(const int lineno, const char *s) const
+void csLogger::logError(const int lineno, const char8_t *s) const
 {
-  fprintf(_file, "ERROR:%d: %s\n", lineno, s);
+  fprintf(_file, "ERROR:%d: %s\n", lineno, cs::CSTR(s));
 }

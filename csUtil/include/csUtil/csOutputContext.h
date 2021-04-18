@@ -49,18 +49,18 @@ public:
 
   void logFlush() const;
 
-  void logText(const char *text) const;
-  void logText(const std::string& text) const;
+  void logText(const char8_t *text) const;
+  void logText(const std::u8string& text) const;
 
-  void logWarning(const char *warning) const;
-  void logWarning(const std::string& warning) const;
-  void logWarning(const int line, const char *warning) const;
-  void logWarning(const int line, const std::string& warning) const;
+  void logWarning(const char8_t *warning) const;
+  void logWarning(const std::u8string& warning) const;
+  void logWarning(const int line, const char8_t *warning) const;
+  void logWarning(const int line, const std::u8string& warning) const;
 
-  void logError(const char *error) const;
-  void logError(const std::string& error) const;
-  void logError(const int line, const char *error) const;
-  void logError(const int line, const std::string& error) const;
+  void logError(const char8_t *error) const;
+  void logError(const std::u8string& error) const;
+  void logError(const int line, const char8_t *error) const;
+  void logError(const int line, const std::u8string& error) const;
 
   void progressFlush() const;
 

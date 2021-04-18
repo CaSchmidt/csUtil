@@ -43,18 +43,18 @@ public:
 
   virtual void logFlush() const;
 
-  virtual void logText(const char *) const = 0;
-  virtual void logText(const std::string&) const;
+  virtual void logText(const char8_t *) const = 0;
+  virtual void logText(const std::u8string&) const;
 
-  virtual void logWarning(const char *) const = 0;
-  virtual void logWarning(const std::string&) const;
-  virtual void logWarning(const int, const char *) const = 0;
-  virtual void logWarning(const int, const std::string&) const;
+  virtual void logWarning(const char8_t *) const = 0;
+  virtual void logWarning(const std::u8string&) const;
+  virtual void logWarning(const int, const char8_t *) const = 0;
+  virtual void logWarning(const int, const std::u8string&) const;
 
-  virtual void logError(const char *) const = 0;
-  virtual void logError(const std::string&) const;
-  virtual void logError(const int, const char *) const = 0;
-  virtual void logError(const int, const std::string&) const;
+  virtual void logError(const char8_t *) const = 0;
+  virtual void logError(const std::u8string&) const;
+  virtual void logError(const int, const char8_t *) const = 0;
+  virtual void logError(const int, const std::u8string&) const;
 
 private:
   csILogger(const csILogger&) noexcept = delete;

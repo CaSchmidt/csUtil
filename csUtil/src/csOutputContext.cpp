@@ -64,7 +64,7 @@ void csOutputContext::logFlush() const
   }
 }
 
-void csOutputContext::logText(const char *text) const
+void csOutputContext::logText(const char8_t *text) const
 {
   if( _logger != nullptr ) {
     _logger->logText(text);
@@ -74,7 +74,7 @@ void csOutputContext::logText(const char *text) const
   }
 }
 
-void csOutputContext::logText(const std::string& text) const
+void csOutputContext::logText(const std::u8string& text) const
 {
   if( _logger != nullptr ) {
     _logger->logText(text);
@@ -84,7 +84,7 @@ void csOutputContext::logText(const std::string& text) const
   }
 }
 
-void csOutputContext::logWarning(const char *warning) const
+void csOutputContext::logWarning(const char8_t *warning) const
 {
   if( _logger != nullptr ) {
     _logger->logWarning(warning);
@@ -94,7 +94,7 @@ void csOutputContext::logWarning(const char *warning) const
   }
 }
 
-void csOutputContext::logWarning(const std::string& warning) const
+void csOutputContext::logWarning(const std::u8string& warning) const
 {
   if( _logger != nullptr ) {
     _logger->logWarning(warning);
@@ -104,7 +104,7 @@ void csOutputContext::logWarning(const std::string& warning) const
   }
 }
 
-void csOutputContext::logWarning(const int line, const char *warning) const
+void csOutputContext::logWarning(const int line, const char8_t *warning) const
 {
   if( _logger != nullptr ) {
     _logger->logWarning(line, warning);
@@ -114,7 +114,7 @@ void csOutputContext::logWarning(const int line, const char *warning) const
   }
 }
 
-void csOutputContext::logWarning(const int line, const std::string& warning) const
+void csOutputContext::logWarning(const int line, const std::u8string& warning) const
 {
   if( _logger != nullptr ) {
     _logger->logWarning(line, warning);
@@ -124,7 +124,7 @@ void csOutputContext::logWarning(const int line, const std::string& warning) con
   }
 }
 
-void csOutputContext::logError(const char *error) const
+void csOutputContext::logError(const char8_t *error) const
 {
   if( _logger != nullptr ) {
     _logger->logError(error);
@@ -134,7 +134,7 @@ void csOutputContext::logError(const char *error) const
   }
 }
 
-void csOutputContext::logError(const std::string& error) const
+void csOutputContext::logError(const std::u8string& error) const
 {
   if( _logger != nullptr ) {
     _logger->logError(error);
@@ -144,7 +144,7 @@ void csOutputContext::logError(const std::string& error) const
   }
 }
 
-void csOutputContext::logError(const int line, const char *error) const
+void csOutputContext::logError(const int line, const char8_t *error) const
 {
   if( _logger != nullptr ) {
     _logger->logError(line, error);
@@ -154,7 +154,7 @@ void csOutputContext::logError(const int line, const char *error) const
   }
 }
 
-void csOutputContext::logError(const int line, const std::string& error) const
+void csOutputContext::logError(const int line, const std::u8string& error) const
 {
   if( _logger != nullptr ) {
     _logger->logError(line, error);

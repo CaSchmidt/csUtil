@@ -43,13 +43,13 @@ public:
 
   void logFlush() const;
 
-  void logText(const char *s) const final;
+  void logText(const char8_t *s) const final;
 
-  void logWarning(const char *s) const final;
-  void logWarning(const int lineno, const char *s) const final;
+  void logWarning(const char8_t *s) const final;
+  void logWarning(const int lineno, const char8_t *s) const final;
 
-  void logError(const char *s) const final;
-  void logError(const int lineno, const char *s) const final;
+  void logError(const char8_t *s) const final;
+  void logError(const int lineno, const char8_t *s) const final;
 
 private:
   FILE *_file;

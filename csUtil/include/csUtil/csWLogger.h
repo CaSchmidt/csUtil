@@ -46,13 +46,13 @@ public:
 
   void logFlush() const;
 
-  void logText(const char *) const;
+  void logText(const char8_t *) const;
 
-  void logWarning(const char *) const;
-  void logWarning(const int, const char *) const;
+  void logWarning(const char8_t *) const;
+  void logWarning(const int, const char8_t *) const;
 
-  void logError(const char *) const;
-  void logError(const int, const char *) const;
+  void logError(const char8_t *) const;
+  void logError(const int, const char8_t *) const;
 
 private slots:
   void impl_logText(const QString& s);
