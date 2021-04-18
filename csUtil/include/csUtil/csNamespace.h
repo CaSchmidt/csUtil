@@ -32,8 +32,6 @@
 #ifndef CSUTIL_CSNAMESPACE_H
 #define CSUTIL_CSNAMESPACE_H
 
-#include <algorithm>
-
 namespace cs {
 
   enum TrieMatch {
@@ -41,12 +39,6 @@ namespace cs {
     PartialMatch,
     ExactMatch
   };
-
-  template<typename T>
-  constexpr const T& clamp(const T& v, const T& lo, const T& hi)
-  {
-    return std::max(lo, std::min(v, hi));
-  }
 
 } // namespace cs
 
