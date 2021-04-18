@@ -90,7 +90,7 @@ CS_UTIL_EXPORT std::fstream csOpenFile(const std::u8string& filename,
   const std::u16string filename_utf16 = csUtf8ToUnicode(filename);
   file.open(cs::WSTR(filename_utf16.data()), mode);
 #else
-  file.open(cs::CSTR(filename.data()), mode);
+  file.open(cs::toString(filename), mode);
 #endif
   return file;
 }

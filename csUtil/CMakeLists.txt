@@ -82,6 +82,7 @@ if(ENABLE_QT)
     forms/csWProgressLogger.ui
     )
   list(APPEND csUtil_HEADERS
+    include/csUtil/csQStringUtil.h
     include/csUtil/csWLogger.h
     include/csUtil/csWProgressLogger.h
     )

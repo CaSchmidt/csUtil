@@ -263,6 +263,22 @@ namespace cs {
     std::for_each(s, s + l, [](T& c) -> void { c = cs::toUpper(c); });
   }
 
+  ////// Conversion //////////////////////////////////////////////////////////
+
+  inline std::string toString(const std::u8string& s)
+  {
+    return !s.empty()
+        ? std::string(cs::CSTR(s.data()), s.size())
+        : std::string();
+  }
+
+  inline std::u8string toUtf8String(const std::string& s)
+  {
+    return !s.empty()
+        ? std::u8string(cs::UTF8(s.data()), s.size())
+        : std::u8string();
+  }
+
 } // namespace cs
 
 #endif // CSSTRINGUTIL_H
