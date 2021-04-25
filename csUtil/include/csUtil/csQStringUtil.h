@@ -71,8 +71,9 @@ namespace cs {
   inline std::u8string toUtf8String(const QString& s)
   {
     using size_type = std::u8string::size_type;
-    return !s.isEmpty()
-        ? std::u8string(cs::UTF8(s.toUtf8().constData()), size_type(s.size()))
+    const QByteArray utf8 = s.toUtf8();
+    return !utf8.isEmpty()
+        ? std::u8string(cs::UTF8(utf8.constData()), size_type(utf8.size()))
         : std::u8string();
   }
 
