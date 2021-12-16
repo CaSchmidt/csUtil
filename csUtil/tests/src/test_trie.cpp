@@ -78,17 +78,17 @@ int main(int /*argc*/, char **argv)
   std::size_t cntTrie(0), cntFlatTrie(0);
   for(const std::string& w : words) {
 #ifndef HAVE_REVERSE
-    if( trie.find(w) == cs::ExactMatch ) {
+    if( trie.find(w) == cs::TrieMatch::Exact ) {
       cntTrie++;
     }
-    if( flatTrie.find(w) == cs::ExactMatch ) {
+    if( flatTrie.find(w) == cs::TrieMatch::Exact ) {
       cntFlatTrie++;
     }
 #else
-    if( trie.find(reversed(w)) == cs::ExactMatch ) {
+    if( trie.find(reversed(w)) == cs::TrieMatch::Exact ) {
       cntTrie++;
     }
-    if( flatTrie.find(reversed(w)) == cs::ExactMatch ) {
+    if( flatTrie.find(reversed(w)) == cs::TrieMatch::Exact ) {
       cntFlatTrie++;
     }
 #endif

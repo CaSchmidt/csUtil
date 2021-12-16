@@ -46,12 +46,12 @@ public:
     const auto diff = std::distance(r.first, r.second);
     if( diff >= 1 ) {
       if( *(r.first) == s ) {
-        return cs::ExactMatch;
+        return cs::TrieMatch::Exact;
       } else {
-        return cs::PartialMatch;
+        return cs::TrieMatch::Partial;
       }
     }
-    return cs::NoMatch;
+    return cs::TrieMatch::None;
   }
 
   std::size_t size() const
@@ -95,7 +95,7 @@ namespace priv {
   {
     std::size_t count = 0;
     for(const StringList::value_type& word : words) {
-      if( trie.find(word) == cs::ExactMatch ) {
+      if( trie.find(word) == cs::TrieMatch::Exact ) {
         count++;
       }
     }
