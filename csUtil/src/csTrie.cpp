@@ -70,7 +70,7 @@ namespace priv {
   cs::TrieMatch find(const csTrieNode *root, const String<T>& needle)
   {
     if( needle.empty() ) {
-      return cs::NoMatch;
+      return cs::TrieMatch::None;
     }
     return root->find(0, needle);
   }

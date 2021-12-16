@@ -88,7 +88,7 @@ public:
   cs::TrieMatch find(const String& str) const
   {
     return isEmpty()  ||  str.empty()
-        ? cs::NoMatch
+        ? cs::TrieMatch::None
         : find(0, str, 0);
   }
 
@@ -145,9 +145,9 @@ private:
 
       if( idxStr + 1 == str.size() ) { // Last character
         if( priv::isEndOfWord(_links[i]) ) {
-          return cs::ExactMatch;
+          return cs::TrieMatch::Exact;
         } else {
-          return cs::PartialMatch;
+          return cs::TrieMatch::Partial;
         }
       }
 
@@ -157,7 +157,7 @@ private:
       }
     } while( !priv::isEndOfList(_links[i++]) );
 
-    return cs::NoMatch;
+    return cs::TrieMatch::None;
   }
 
   void list(StringList& words, String& str,

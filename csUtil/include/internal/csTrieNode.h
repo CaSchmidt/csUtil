@@ -97,16 +97,16 @@ public:
   {
     if( idxStr == str.size() ) {
       if( isMatch() ) {
-        return cs::ExactMatch;
+        return cs::TrieMatch::Exact;
       } else {
-        return cs::PartialMatch;
+        return cs::TrieMatch::Partial;
       }
     }
 
     csTrieNode *idxMatch = findLetter(str[idxStr]);
 
     if( idxMatch == nullptr ) {
-      return cs::NoMatch;
+      return cs::TrieMatch::None;
     }
 
     return idxMatch->find(idxStr + 1, str);

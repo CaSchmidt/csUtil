@@ -34,10 +34,10 @@
 
 namespace cs {
 
-  enum TrieMatch {
-    NoMatch = 0,
-    PartialMatch,
-    ExactMatch
+  enum class TrieMatch {
+    None = 0,
+    Partial,
+    Exact
   };
 
 } // namespace cs
