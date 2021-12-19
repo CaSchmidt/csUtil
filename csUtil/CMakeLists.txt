@@ -43,6 +43,7 @@ list(APPEND csUtil_HEADERS
   include/csUtil/csCharConv.h
   include/csUtil/csCharUtil.h
   include/csUtil/csEndian.h
+  include/csUtil/csFile.h
   include/csUtil/csFileIO.h
   include/csUtil/csFlags.h
   include/csUtil/csFlatTrie.h
@@ -66,6 +67,7 @@ list(APPEND csUtil_HEADERS
 list(APPEND csUtil_SOURCES
   src/csCharConv-fp.cpp
   src/csCharConv.cpp
+  src/csFile_generic.cpp
   src/csFileIO.cpp
   src/csFlatTrie.cpp
   src/csFormat.cpp
@@ -76,6 +78,12 @@ list(APPEND csUtil_SOURCES
   src/csTextConverter.cpp
   src/csTrie.cpp
   )
+
+if(WIN32)
+  list(APPEND csUtil_SOURCES
+    src/csFile_win32.cpp
+    )
+endif()
 
 if(ENABLE_QT)
   list(APPEND csUtil_FORMS
