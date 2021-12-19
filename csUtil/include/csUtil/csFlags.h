@@ -211,7 +211,10 @@ private:
 
 // Macros ////////////////////////////////////////////////////////////////////
 
-#define CS_ENABLE_FLAGS(T)  \
-  template<> struct ::cs::is_flags_enabled<T> : std::true_type {};
+#define CS_ENABLE_FLAGS(T)                           \
+  namespace cs {                                     \
+    template<>                                       \
+    struct is_flags_enabled<T> : std::true_type {};  \
+  }
 
 #endif // CSFLAGS_H
