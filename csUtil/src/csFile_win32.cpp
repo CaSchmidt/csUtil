@@ -35,6 +35,7 @@
 #include <Windows.h>
 
 #include "csUtil/csFile.h"
+#include "csUtil/csTextConverter.h"
 
 ////// Implementation ////////////////////////////////////////////////////////
 
@@ -81,7 +82,7 @@ public:
   }
 
   HANDLE file{INVALID_HANDLE_VALUE};
-  std::u16string filename;
+  std::u8string filename;
 };
 
 ////// Private ///////////////////////////////////////////////////////////////
@@ -120,7 +121,7 @@ bool csFile::isOpen() const
   return _impl  &&  _impl->isOpen();
 }
 
-bool csFile::open(const std::u16string& filename, const OpenFlags flags)
+bool csFile::open(const std::u8string& filename, const OpenFlags flags)
 {
   // (1) Close (possibly) open file //////////////////////////////////////////
 
@@ -159,7 +160,8 @@ bool csFile::open(const std::u16string& filename, const OpenFlags flags)
     dwCreationDisposition = OPEN_EXISTING;
   }
 
-  _impl->file = CreateFileW(reinterpret_cast<LPCWSTR>(filename.data()),
+  const std::u16string filename_utf16 = csUtf8ToUnicode(filename);
+  _impl->file = CreateFileW(reinterpret_cast<LPCWSTR>(filename_utf16.data()),
                             dwDesiredAccess,
                             0,
                             NULL,
@@ -183,10 +185,10 @@ bool csFile::open(const std::u16string& filename, const OpenFlags flags)
   return isOpen();
 }
 
-std::u16string csFile::filename() const
+std::u8string csFile::filename() const
 {
   if( !isOpen() ) {
-    return std::u16string();
+    return std::u8string();
   }
   return _impl->filename;
 }

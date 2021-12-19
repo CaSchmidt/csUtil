@@ -72,9 +72,9 @@ public:
 
   void close();
   bool isOpen() const;
-  bool open(const std::u16string& filename, const OpenFlags flags = cs::FileOpenFlag::Read);
+  bool open(const std::u8string& filename, const OpenFlags flags = cs::FileOpenFlag::Read);
 
-  std::u16string filename() const;
+  std::u8string filename() const;
 
   bool seek(const filepos_t pos) const;
   filepos_t tell() const;
