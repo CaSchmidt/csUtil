@@ -32,40 +32,13 @@
 #ifndef CSFILEIO_H
 #define CSFILEIO_H
 
-#include <cstdint>
-
-#include <fstream>
 #include <list>
 #include <string>
-#include <vector>
 
 #include <csUtil/csutil_config.h>
-
-namespace cs {
-
-  inline constexpr std::ios_base::openmode CREATE_BINARY_FILE =
-      std::ios_base::out | std::ios_base::binary | std::ios_base::trunc;
-
-  inline constexpr std::ios_base::openmode READ_BINARY_FILE =
-      std::ios_base::in | std::ios_base::binary;
-
-} // namespace cs
-
-CS_UTIL_EXPORT std::fstream csOpenFile(const std::u8string& filename,
-                                       const std::ios_base::openmode mode);
 
 CS_UTIL_EXPORT std::list<std::string> csReadLines(const std::u8string& filename, const bool trim = false);
 
 CS_UTIL_EXPORT std::string csReadTextFile(const std::u8string& filename, bool *ok = nullptr);
-
-CS_UTIL_EXPORT std::vector<uint8_t> csReadBinaryFile(const std::u8string& filename, bool *ok = nullptr);
-
-CS_UTIL_EXPORT bool csRead(std::istream& stream, void *data, const std::size_t size);
-
-CS_UTIL_EXPORT std::size_t csSize(std::istream& stream, bool *ok = nullptr);
-
-CS_UTIL_EXPORT std::size_t csSize(std::ostream& stream, bool *ok = nullptr);
-
-CS_UTIL_EXPORT bool csWrite(std::ostream& stream, const void *data, const std::size_t size);
 
 #endif // CSFILEIO_H
