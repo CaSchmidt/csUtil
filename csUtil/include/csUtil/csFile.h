@@ -38,7 +38,7 @@
 #include <string>
 #include <vector>
 
-#include <csUtil/csutil_config.h>
+#include <csUtil/csIODevice.h>
 #include <csUtil/csFlags.h>
 
 namespace cs {
@@ -60,12 +60,9 @@ class csFileImpl;
 
 using csFileImplPtr = std::unique_ptr<csFileImpl>;
 
-class CS_UTIL_EXPORT csFile {
+class CS_UTIL_EXPORT csFile : public csIODevice {
 public:
   using OpenFlags = csFlags<cs::FileOpenFlag>;
-
-  using  filepos_t =  int64_t;
-  using filesize_t = uint64_t;
 
   csFile() noexcept;
   ~csFile() noexcept;
@@ -76,13 +73,13 @@ public:
 
   std::u8string filename() const;
 
-  bool seek(const filepos_t pos) const;
-  filepos_t tell() const;
+  bool seek(const pos_type pos) const;
+  pos_type tell() const;
 
-  filesize_t size() const;
+  size_type size() const;
 
-  filesize_t read(void *buffer, const filesize_t length) const;
-  filesize_t write(const void *buffer, const filesize_t length) const;
+  size_type read(void *buffer, const size_type length) const;
+  size_type write(const void *buffer, const size_type length) const;
 
   std::vector<uint8_t> readAll() const;
 

@@ -29,34 +29,25 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <limits>
+#ifndef CSIODEVICE_H
+#define CSIODEVICE_H
 
-#include "csUtil/csFile.h"
+#include <cstdint>
 
-std::vector<uint8_t> csFile::readAll() const
-{
-  using Buffer = std::vector<uint8_t>;
+#include <csUtil/csutil_config.h>
 
-  constexpr size_type MAX_SIZE = std::numeric_limits<Buffer::size_type>::max();
-  constexpr size_type      ONE = 1;
+class CS_UTIL_EXPORT csIODevice {
+public:
+  using  pos_type =  int64_t;
+  using size_type = uint64_t;
 
-  const size_type numToRead = size();
+  csIODevice() noexcept;
+  virtual ~csIODevice() noexcept;
 
-  const bool is_size = ONE <= numToRead  &&  numToRead <= MAX_SIZE;
-  if( !isOpen()  ||  !is_size ) {
-    return Buffer();
-  }
+  virtual void close() = 0;
 
-  Buffer buffer;
-  try {
-    buffer.resize(static_cast<Buffer::size_type>(numToRead), 0);
-  } catch(...) {
-    return Buffer();
-  }
+  virtual size_type read(void *buffer, const size_type length) const = 0;
+  virtual size_type write(const void *buffer, const size_type length) const = 0;
+};
 
-  if( read(buffer.data(), numToRead) != numToRead ) {
-    return Buffer();
-  }
-
-  return buffer;
-}
+#endif // CSIODEVICE_H

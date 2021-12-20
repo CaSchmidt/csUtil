@@ -49,6 +49,7 @@ list(APPEND csUtil_HEADERS
   include/csUtil/csFlatTrie.h
   include/csUtil/csFormat.h
   include/csUtil/csILogger.h
+  include/csUtil/csIODevice.h
   include/csUtil/csIProgress.h
   include/csUtil/csLogger.h
   include/csUtil/csNamespace.h
@@ -72,6 +73,7 @@ list(APPEND csUtil_SOURCES
   src/csFlatTrie.cpp
   src/csFormat.cpp
   src/csILogger.cpp
+  src/csIODevice.cpp
   src/csIProgress.cpp
   src/csLogger.cpp
   src/csOutputContext.cpp
@@ -80,8 +82,12 @@ list(APPEND csUtil_SOURCES
   )
 
 if(WIN32)
+  list(APPEND csUtil_HEADERS
+    include/internal/Win32Handle.h
+    )
   list(APPEND csUtil_SOURCES
     src/csFile_win32.cpp
+    src/Win32Handle.cpp
     )
 endif()
 

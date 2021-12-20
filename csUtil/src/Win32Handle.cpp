@@ -29,34 +29,26 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <limits>
+#include "internal/Win32Handle.h"
 
-#include "csUtil/csFile.h"
+////// public ////////////////////////////////////////////////////////////////
 
-std::vector<uint8_t> csFile::readAll() const
+Win32Handle::Win32Handle() noexcept
+  : handle{INVALID_HANDLE_VALUE}
+  , name()
 {
-  using Buffer = std::vector<uint8_t>;
+}
 
-  constexpr size_type MAX_SIZE = std::numeric_limits<Buffer::size_type>::max();
-  constexpr size_type      ONE = 1;
-
-  const size_type numToRead = size();
-
-  const bool is_size = ONE <= numToRead  &&  numToRead <= MAX_SIZE;
-  if( !isOpen()  ||  !is_size ) {
-    return Buffer();
+Win32Handle::~Win32Handle() noexcept
+{
+  if( isOpen() ) {
+    CloseHandle(handle);
   }
+  handle = INVALID_HANDLE_VALUE;
+  name.clear();
+}
 
-  Buffer buffer;
-  try {
-    buffer.resize(static_cast<Buffer::size_type>(numToRead), 0);
-  } catch(...) {
-    return Buffer();
-  }
-
-  if( read(buffer.data(), numToRead) != numToRead ) {
-    return Buffer();
-  }
-
-  return buffer;
+bool Win32Handle::isOpen() const
+{
+  return handle != INVALID_HANDLE_VALUE;
 }

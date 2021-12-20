@@ -29,34 +29,58 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <limits>
+#ifndef WIN32HANDLE_H
+#define WIN32HANDLE_H
 
-#include "csUtil/csFile.h"
+#include <string>
 
-std::vector<uint8_t> csFile::readAll() const
-{
-  using Buffer = std::vector<uint8_t>;
+#define NOMINMAX
+#include <Windows.h>
 
-  constexpr size_type MAX_SIZE = std::numeric_limits<Buffer::size_type>::max();
-  constexpr size_type      ONE = 1;
+class Win32Handle {
+public:
+  Win32Handle() noexcept;
+  ~Win32Handle() noexcept;
 
-  const size_type numToRead = size();
+  bool isOpen() const;
 
-  const bool is_size = ONE <= numToRead  &&  numToRead <= MAX_SIZE;
-  if( !isOpen()  ||  !is_size ) {
-    return Buffer();
+  template<typename CS_SIZE_T>
+  inline static bool isRWLength(const CS_SIZE_T length)
+  {
+    static_assert(std::is_integral_v<CS_SIZE_T>  &&  sizeof(CS_SIZE_T) > sizeof(DWORD));
+
+    constexpr CS_SIZE_T MAX_DWORD = std::numeric_limits<DWORD>::max();
+    constexpr CS_SIZE_T       ONE = 1;
+
+    return ONE <= length  &&  length <= MAX_DWORD;
   }
 
-  Buffer buffer;
-  try {
-    buffer.resize(static_cast<Buffer::size_type>(numToRead), 0);
-  } catch(...) {
-    return Buffer();
+  template<typename CS_SIZE_T>
+  inline CS_SIZE_T read(void *buffer, const CS_SIZE_T length) const
+  {
+    const DWORD numToRead = static_cast<DWORD>(length);
+    DWORD numRead = 0;
+    if( !isOpen()  ||  !isRWLength(length)  ||
+        ReadFile(handle, buffer, numToRead, &numRead, NULL) == 0 ) {
+      return 0;
+    }
+    return numRead;
   }
 
-  if( read(buffer.data(), numToRead) != numToRead ) {
-    return Buffer();
+  template<typename CS_SIZE_T>
+  inline CS_SIZE_T write(const void *buffer, const CS_SIZE_T length) const
+  {
+    const DWORD numToWrite = static_cast<DWORD>(length);
+    DWORD numWritten = 0;
+    if( !isOpen()  ||  !isRWLength(length)  ||
+        WriteFile(handle, buffer, numToWrite, &numWritten, NULL) == 0 ) {
+      return 0;
+    }
+    return numWritten;
   }
 
-  return buffer;
-}
+  HANDLE handle{INVALID_HANDLE_VALUE};
+  std::u8string name;
+};
+
+#endif // WIN32HANDLE_H

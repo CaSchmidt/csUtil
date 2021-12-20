@@ -31,41 +31,30 @@
 
 #include <limits>
 
-#define NOMINMAX
-#include <Windows.h>
-
 #include "csUtil/csFile.h"
+
 #include "csUtil/csTextConverter.h"
+#include "internal/Win32Handle.h"
 
 ////// Implementation ////////////////////////////////////////////////////////
 
-class csFileImpl {
+class csFileImpl : public Win32Handle {
 public:
   csFileImpl() noexcept
-    : file{INVALID_HANDLE_VALUE}
-    , filename()
+    : Win32Handle()
   {
   }
 
   ~csFileImpl() noexcept
   {
-    if( isOpen() ) {
-      CloseHandle(file);
-    }
-    file = INVALID_HANDLE_VALUE;
   }
 
-  bool isOpen() const
-  {
-    return file != INVALID_HANDLE_VALUE;
-  }
-
-  bool seek(const csFile::filepos_t pos) const
+  bool seek(const csIODevice::pos_type pos) const
   {
     LARGE_INTEGER li;
     li.QuadPart = pos;
 
-    return isOpen()  &&  SetFilePointerEx(file, li, NULL, FILE_BEGIN) != 0;
+    return isOpen()  &&  SetFilePointerEx(handle, li, NULL, FILE_BEGIN) != 0;
   }
 
   bool seekToEnd() const
@@ -73,31 +62,14 @@ public:
     LARGE_INTEGER li;
     li.QuadPart = 0;
 
-    return isOpen()  &&  SetFilePointerEx(file, li, NULL, FILE_END) != 0;
+    return isOpen()  &&  SetFilePointerEx(handle, li, NULL, FILE_END) != 0;
   }
 
   bool truncate() const
   {
-    return isOpen()  &&  seek(0)  &&  SetEndOfFile(file) != 0;
+    return isOpen()  &&  seek(0)  &&  SetEndOfFile(handle) != 0;
   }
-
-  HANDLE file{INVALID_HANDLE_VALUE};
-  std::u8string filename;
 };
-
-////// Private ///////////////////////////////////////////////////////////////
-
-namespace priv {
-
-  inline bool isRWLength(const csFile::filesize_t length)
-  {
-    constexpr csFile::filesize_t MAX_DWORD = std::numeric_limits<DWORD>::max();
-    constexpr csFile::filesize_t       ONE = 1;
-
-    return ONE <= length  &&  length <= MAX_DWORD;
-  }
-
-} // namespace priv
 
 ////// public ////////////////////////////////////////////////////////////////
 
@@ -108,7 +80,7 @@ csFile::csFile() noexcept
 
 csFile::~csFile() noexcept
 {
-  close();
+  csFile::close();
 }
 
 void csFile::close()
@@ -161,25 +133,27 @@ bool csFile::open(const std::u8string& filename, const OpenFlags flags)
   }
 
   const std::u16string filename_utf16 = csUtf8ToUnicode(filename);
-  _impl->file = CreateFileW(reinterpret_cast<LPCWSTR>(filename_utf16.data()),
-                            dwDesiredAccess,
-                            0,
-                            NULL,
-                            dwCreationDisposition,
-                            FILE_ATTRIBUTE_NORMAL,
-                            NULL);
-
-  if( !isOpen() ) {
-    _impl->filename = filename;
-  }
+  _impl->handle = CreateFileW(reinterpret_cast<LPCWSTR>(filename_utf16.data()),
+                              dwDesiredAccess,
+                              0,
+                              NULL,
+                              dwCreationDisposition,
+                              FILE_ATTRIBUTE_NORMAL,
+                              NULL);
 
   // (5) Handling of remaining flags /////////////////////////////////////////
 
-  if( flags.testMask(cs::FileOpenFlag::Write | cs::FileOpenFlag::Append) ) {
-    _impl->seekToEnd();
-  }
-  if( flags.testMask(cs::FileOpenFlag::Write | cs::FileOpenFlag::Truncate) ) {
-    _impl->truncate();
+  if( isOpen() ) {
+    _impl->name = filename;
+
+    if( flags.testMask(cs::FileOpenFlag::Write | cs::FileOpenFlag::Append) ) {
+      _impl->seekToEnd();
+    }
+    if( flags.testMask(cs::FileOpenFlag::Write | cs::FileOpenFlag::Truncate) ) {
+      _impl->truncate();
+    }
+  } else {
+    close();
   }
 
   return isOpen();
@@ -190,58 +164,50 @@ std::u8string csFile::filename() const
   if( !isOpen() ) {
     return std::u8string();
   }
-  return _impl->filename;
+  return _impl->name;
 }
 
-bool csFile::seek(const filepos_t pos) const
+bool csFile::seek(const pos_type pos) const
 {
   return isOpen()  &&  _impl->seek(pos);
 }
 
-csFile::filepos_t csFile::tell() const
+csIODevice::pos_type csFile::tell() const
 {
   LARGE_INTEGER in;
   in.QuadPart = 0;
   LARGE_INTEGER out;
   out.QuadPart = 0;
 
-  if( !isOpen()  ||  SetFilePointerEx(_impl->file, in, &out, FILE_CURRENT) == 0 ) {
+  if( !isOpen()  ||  SetFilePointerEx(_impl->handle, in, &out, FILE_CURRENT) == 0 ) {
     return 0;
   }
 
   return out.QuadPart;
 }
 
-csFile::filesize_t csFile::size() const
+csIODevice::size_type csFile::size() const
 {
   LARGE_INTEGER li;
   li.QuadPart = 0;
 
-  if( !isOpen()  ||  GetFileSizeEx(_impl->file, &li) == 0 ) {
+  if( !isOpen()  ||  GetFileSizeEx(_impl->handle, &li) == 0 ) {
     return 0;
   }
 
-  return static_cast<filesize_t>(li.QuadPart);
+  return static_cast<size_type>(li.QuadPart);
 }
 
-csFile::filesize_t csFile::read(void *buffer, const filesize_t length) const
+csIODevice::size_type csFile::read(void *buffer, const size_type length) const
 {
-  const DWORD numToRead = static_cast<DWORD>(length);
-  DWORD numRead = 0;
-  if( !isOpen()  ||  !priv::isRWLength(length)  ||
-      ReadFile(_impl->file, buffer, numToRead, &numRead, NULL) == 0 ) {
-    return 0;
-  }
-  return numRead;
+  return isOpen()
+      ? _impl->read(buffer, length)
+      : 0;
 }
 
-csFile::filesize_t csFile::write(const void *buffer, const filesize_t length) const
+csIODevice::size_type csFile::write(const void *buffer, const size_type length) const
 {
-  const DWORD numToWrite = static_cast<DWORD>(length);
-  DWORD numWritten = 0;
-  if( !isOpen()  ||  !priv::isRWLength(length)  ||
-      WriteFile(_impl->file, buffer, numToWrite, &numWritten, NULL) == 0 ) {
-    return 0;
-  }
-  return numWritten;
+  return isOpen()
+      ? _impl->write(buffer, length)
+      : 0;
 }
