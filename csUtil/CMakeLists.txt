@@ -56,6 +56,7 @@ list(APPEND csUtil_HEADERS
   include/csUtil/csOutputContext.h
   include/csUtil/csPointer.h
   include/csUtil/csRawConverter.h
+  include/csUtil/csSerial.h
   include/csUtil/csStringUtil.h
   include/csUtil/csTextConverter.h
   include/csUtil/csTrie.h
@@ -87,6 +88,7 @@ if(WIN32)
     )
   list(APPEND csUtil_SOURCES
     src/csFile_win32.cpp
+    src/csSerial_win32.cpp
     src/Win32Handle.cpp
     )
 endif()
