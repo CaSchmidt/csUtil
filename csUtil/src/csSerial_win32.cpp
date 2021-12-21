@@ -134,7 +134,6 @@ csSerial::csSerial() noexcept
 
 csSerial::~csSerial() noexcept
 {
-  csSerial::close();
 }
 
 void csSerial::close()

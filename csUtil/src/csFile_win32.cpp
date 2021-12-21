@@ -80,7 +80,6 @@ csFile::csFile() noexcept
 
 csFile::~csFile() noexcept
 {
-  csFile::close();
 }
 
 void csFile::close()
