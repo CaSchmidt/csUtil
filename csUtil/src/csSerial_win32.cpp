@@ -34,6 +34,8 @@
 #include "csUtil/csTextConverter.h"
 #include "internal/Win32Handle.h"
 
+constexpr DWORD QUEUE_SIZE = 8*1024;
+
 ////// Implementation ////////////////////////////////////////////////////////
 
 class csSerialImpl : public Win32Handle {
@@ -176,6 +178,11 @@ bool csSerial::open(const std::u8string& device, const int rate)
   }
 
   // (4) Initialize device ///////////////////////////////////////////////////
+
+  if( SetupComm(_impl->handle, QUEUE_SIZE, QUEUE_SIZE) == 0 ) {
+    close();
+    return false;
+  }
 
   DCB dcb;
   priv::setupDCB(&dcb, priv::toBaudRate(rate), 8, NOPARITY, ONESTOPBIT);
