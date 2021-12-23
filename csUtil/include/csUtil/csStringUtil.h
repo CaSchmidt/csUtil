@@ -33,7 +33,8 @@
 #define CSSTRINGUTIL_H
 
 #include <algorithm>
-#include <string>
+#include <list>
+#include <sstream>
 
 #include <csUtil/csCharUtil.h>
 
@@ -212,6 +213,28 @@ namespace cs {
                     glyph<T>::space);
     // (3) return trimmed result
     return trimmed(s);
+  }
+
+  template<typename T>
+  inline std::list<if_string_t<T>> split(const std::basic_string<T>& text, const T delim,
+                                         const bool skip_empty = false, const bool do_trim = false)
+  {
+    using String = std::basic_string<T>;
+
+    std::list<String> result;
+
+    std::basic_istringstream<T> input(text);
+    for(String line; std::getline(input, line, delim); ) {
+      if( skip_empty  &&  cs::isSpace(line.data(), line.size()) ) {
+        continue;
+      }
+      if( do_trim ) {
+        line = cs::trimmed(line);
+      }
+      result.push_back(std::move(line));
+    }
+
+    return result;
   }
 
   template<typename T>

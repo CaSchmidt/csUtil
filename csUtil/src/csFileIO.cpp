@@ -29,9 +29,6 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <sstream>
-#include <type_traits>
-
 #include "csUtil/csFileIO.h"
 
 #include "csUtil/csFile.h"
@@ -39,25 +36,14 @@
 
 CS_UTIL_EXPORT std::list<std::string> csReadLines(const std::u8string& filename, const bool trim)
 {
-  std::list<std::string> result;
+  using StringList = std::list<std::string>;
 
-  const std::string lines = csReadTextFile(filename);
-  if( lines.empty() ) {
-    return result;
+  const std::string text = csReadTextFile(filename);
+  if( text.empty() ) {
+    return StringList();
   }
 
-  std::istringstream input(lines);
-  for(std::string line; std::getline(input, line, '\n'); ) {
-    if( cs::isSpace(line.data(), line.size()) ) {
-      continue;
-    }
-    if( trim ) {
-      line = cs::trimmed(line);
-    }
-    result.push_back(std::move(line));
-  }
-
-  return result;
+  return cs::split(text, '\n', true, trim);
 }
 
 CS_UTIL_EXPORT std::string csReadTextFile(const std::u8string& filename, bool *ok)
