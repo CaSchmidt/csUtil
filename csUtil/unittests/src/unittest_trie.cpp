@@ -193,6 +193,22 @@ namespace test_basic {
 
 } // namespace test_basic
 
+namespace test_fileio {
+
+  TEST_CASE("File I/O functionality.", "[fileio]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    // (1) File I/O //////////////////////////////////////////////////////////
+
+    const StringList words = priv::readWords();
+
+    REQUIRE( !words.empty() );
+
+    REQUIRE( words.size() == 178691 );
+  }
+
+} // namespace test_fileio
+
 namespace test_flat {
 
   TEST_CASE("csFlatTrie functionality.", "[flattrie]") {
