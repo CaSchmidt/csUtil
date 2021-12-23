@@ -69,8 +69,8 @@ namespace cs {
   }
 
   template<typename T>
-  inline if_char_bool<T> endsWith(const T *s1, const std::size_t _l1,
-                                  const T *s2, const std::size_t _l2,
+  inline if_char_bool<T> endsWith(const T *s1, const std::size_t _l1, // haystack
+                                  const T *s2, const std::size_t _l2, // needle
                                   const bool ignoreCase = false) noexcept
   {
     const std::size_t l1 = _l1 == MAX_SIZE_T
@@ -215,8 +215,8 @@ namespace cs {
   }
 
   template<typename T>
-  inline if_char_bool<T> startsWith(const T *s1, const std::size_t _l1,
-                                    const T *s2, const std::size_t _l2,
+  inline if_char_bool<T> startsWith(const T *s1, const std::size_t _l1, // haystack
+                                    const T *s2, const std::size_t _l2, // needle
                                     const bool ignoreCase = false) noexcept
   {
     const std::size_t l1 = _l1 == MAX_SIZE_T
