@@ -15,6 +15,8 @@
 
 #define WORD_LIST  u8"../../csUtil/csUtil/testutils/data/Word-List.txt"
 
+constexpr std::size_t WORD_COUNT = 178691;
+
 class FlatSet {
 public:
   using     String = std::string;
@@ -204,7 +206,7 @@ namespace test_fileio {
 
     REQUIRE( !words.empty() );
 
-    REQUIRE( words.size() == 178691 );
+    REQUIRE( words.size() == WORD_COUNT );
   }
 
 } // namespace test_fileio
