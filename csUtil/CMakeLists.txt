@@ -52,11 +52,13 @@ list(APPEND csUtil_HEADERS
   include/csUtil/csIODevice.h
   include/csUtil/csIProgress.h
   include/csUtil/csLogger.h
+  include/csUtil/csMath.h
   include/csUtil/csNamespace.h
   include/csUtil/csOutputContext.h
   include/csUtil/csPointer.h
   include/csUtil/csRawConverter.h
   include/csUtil/csSerial.h
+  include/csUtil/csStatistics.h
   include/csUtil/csStringUtil.h
   include/csUtil/csTextConverter.h
   include/csUtil/csTrie.h
