@@ -54,10 +54,10 @@ namespace cs {
     {
       static_assert( sizeof(std::size_t) >= 4 );
 
-      constexpr std::size_t ONE = 1;
+      constexpr std::size_t MIN = 1;
       constexpr std::size_t MAX = 0x7FFFFFFF;
 
-      return ONE <= count  &&  count <= MAX;
+      return MIN <= count  &&  count <= MAX;
     }
 
     template<typename T, bool MINUS_ONE = false>
@@ -80,7 +80,7 @@ namespace cs {
   {
     constexpr T ZERO = 0;
 
-    if( !impl::isCount(count) ) {
+    if( data == nullptr  ||  !impl::isCount(count) ) {
       return INVALID_RESULT<T>;
     }
 
