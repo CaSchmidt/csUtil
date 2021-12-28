@@ -62,6 +62,7 @@ list(APPEND csUtil_HEADERS
   include/csUtil/csStatistics.h
   include/csUtil/csStringUtil.h
   include/csUtil/csTextConverter.h
+  include/csUtil/csTime.h
   include/csUtil/csTrie.h
   include/csUtil/csTypeTraits.h
   include/internal/csutil_internal.h
@@ -83,6 +84,7 @@ list(APPEND csUtil_SOURCES
   src/csLogger.cpp
   src/csOutputContext.cpp
   src/csTextConverter.cpp
+  src/csTime.cpp
   src/csTrie.cpp
   )
 
