@@ -61,9 +61,11 @@ namespace cs {
     static constexpr auto nine = static_cast<T>('9');
 
     static constexpr auto a = static_cast<T>('a');
+    static constexpr auto f = static_cast<T>('f');
     static constexpr auto z = static_cast<T>('z');
 
     static constexpr auto A = static_cast<T>('A');
+    static constexpr auto F = static_cast<T>('F');
     static constexpr auto Z = static_cast<T>('Z');
 
     static constexpr auto under = static_cast<T>('_');
@@ -73,6 +75,15 @@ namespace cs {
   constexpr if_char_bool<T> isDigit(const T& c) noexcept
   {
     return glyph<T>::zero <= c  &&  c <= glyph<T>::nine;
+  }
+
+  template<typename T>
+  inline if_char_bool<T> isHexDigit(const T& c) noexcept
+  {
+    const bool is_0to9 = glyph<T>::zero <= c  &&  c <= glyph<T>::nine;
+    const bool is_atof = glyph<T>::a    <= c  &&  c <= glyph<T>::f;
+    const bool is_AtoF = glyph<T>::A    <= c  &&  c <= glyph<T>::F;
+    return is_0to9  ||  is_atof  ||  is_AtoF;
   }
 
   template<typename T>
