@@ -3,15 +3,12 @@
 #include <cstring>
 
 #include <array>
-#include <chrono>
-#include <thread>
 
 #include <csUtil/csSerial.h>
+#include <csUtil/csTime.h>
 
 int main(int /*argc*/, char ** /*argv*/)
 {
-  using namespace std::chrono_literals;
-
   std::array<char,1024> buffer;
   constexpr rsize_t bufferSize = buffer.size() - 2;
 
@@ -47,7 +44,7 @@ int main(int /*argc*/, char ** /*argv*/)
 
     buffer[strlen(buffer.data())] = '\n';
     serial.write(buffer.data(), strlen(buffer.data()));
-    std::this_thread::sleep_for(2000ms);
+    csSleep(2);
 
     buffer.fill(0);
     serial.read(buffer.data(), bufferSize);
