@@ -76,7 +76,7 @@ namespace cs {
   } // namespace impl
 
   template<typename T>
-  if_real_t<T> mean(const T *data, const std::size_t count)
+  inline if_real_t<T> mean(const T *data, const std::size_t count)
   {
     constexpr T ZERO = 0;
 
