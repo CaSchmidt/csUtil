@@ -69,7 +69,7 @@ namespace cs {
     return lengthDiff(s, s + maxCount);
   }
 
-  template<typename T>
+  template<typename T> // check if 's1' ends with 's2'
   inline if_char_bool<T> endsWith(const T *s1, const std::size_t _l1, // haystack
                                   const T *s2, const std::size_t _l2, // needle
                                   const bool ignoreCase = false) noexcept
@@ -88,6 +88,12 @@ namespace cs {
     return ignoreCase
         ? std::equal(s1 + l1 - l2, s1 + l1, s2, [](const T& a, const T& b) -> bool { return toLower(a) == toLower(b); })
         : std::equal(s1 + l1 - l2, s1 + l1, s2);
+  }
+
+  template<typename T> // convenience helper
+  inline if_char_bool<T> endsWith(const T *str, const T *end, const bool ignoreCase = false)
+  {
+    return endsWith<T>(str, MAX_SIZE_T, end, MAX_SIZE_T, ignoreCase);
   }
 
   template<typename T>
@@ -127,6 +133,12 @@ namespace cs {
     return ignoreCase
         ? std::equal(s1, s1 + l1, s2, [](const T& a, const T& b) -> bool { return toLower(a) == toLower(b); })
         : std::equal(s1, s1 + l1, s2);
+  }
+
+  template<typename T> // convenience helper
+  inline if_char_bool<T> equals(const T *s1, const T *s2, const bool ignoreCase = false)
+  {
+    return equals(s1, MAX_SIZE_T, s2, MAX_SIZE_T, ignoreCase);
   }
 
   template<typename T>
@@ -237,7 +249,7 @@ namespace cs {
     return result;
   }
 
-  template<typename T>
+  template<typename T> // check if 's1' ends with 's2'
   inline if_char_bool<T> startsWith(const T *s1, const std::size_t _l1, // haystack
                                     const T *s2, const std::size_t _l2, // needle
                                     const bool ignoreCase = false) noexcept
@@ -256,6 +268,12 @@ namespace cs {
     return ignoreCase
         ? std::equal(s1, s1 + l2, s2, [](const T& a, const T& b) -> bool { return toLower(a) == toLower(b); })
         : std::equal(s1, s1 + l2, s2);
+  }
+
+  template<typename T> // convenience helper
+  inline if_char_bool<T> startsWith(const T *str, const T *start, const bool ignoreCase = false)
+  {
+    return startsWith(str, MAX_SIZE_T, start, MAX_SIZE_T, ignoreCase);
   }
 
   template<typename T>
