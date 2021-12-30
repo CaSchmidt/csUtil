@@ -69,6 +69,25 @@ namespace cs {
     return lengthDiff(s, s + maxCount);
   }
 
+  template<typename T>
+  inline if_char_bool<T> containsSpace(const T *s, const std::size_t _l = MAX_SIZE_T)
+  {
+    const std::size_t l = _l == MAX_SIZE_T
+        ? length(s)
+        : _l;
+
+    if( l < 1 ) {
+      return false;
+    }
+
+    const T *beg = s;
+    const T *end = s + l;
+    const T *hit = std::find_if(beg, end,
+                                [](const T c) -> bool { return isSpace(c); });
+
+    return hit != end;
+  }
+
   template<typename T> // check if 's1' ends with 's2'
   inline if_char_bool<T> endsWith(const T *s1, const std::size_t _l1, // haystack
                                   const T *s2, const std::size_t _l2, // needle
