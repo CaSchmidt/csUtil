@@ -35,13 +35,17 @@
 
 ////// public ////////////////////////////////////////////////////////////////
 
-csLogger::csLogger(FILE *file)
+csLogger::csLogger(FILE *file, const bool owner)
   : _file(file)
+  , _owner(owner)
 {
 }
 
 csLogger::~csLogger()
 {
+  if( _owner  &&  _file != stderr  &&  _file != stdout ) {
+    fclose(_file);
+  }
 }
 
 void csLogger::logFlush() const

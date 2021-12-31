@@ -38,7 +38,7 @@
 
 class CS_UTIL_EXPORT csLogger : public csILogger {
 public:
-  csLogger(FILE *file = stderr);
+  csLogger(FILE *file = stderr, const bool owner = true);
   ~csLogger();
 
   void logFlush() const;
@@ -53,6 +53,7 @@ public:
 
 private:
   FILE *_file;
+  bool _owner;
 };
 
 #endif // CSLOGGER_H
