@@ -32,9 +32,16 @@
 #ifndef CSILOGGER_H
 #define CSILOGGER_H
 
+#ifdef HAVE_STD_FORMAT
+# include <format>
+#endif
 #include <string>
 
 #include <csUtil/csutil_config.h>
+
+#ifdef HAVE_STD_FORMAT
+# include <csUtil/csTypeTraits.h>
+#endif
 
 class CS_UTIL_EXPORT csILogger {
 public:
@@ -56,9 +63,56 @@ public:
   virtual void logError(const int, const char8_t *) const = 0;
   virtual void logError(const int, const std::u8string&) const;
 
+#ifdef HAVE_STD_FORMAT
+public:
+  template<typename... Args>
+  inline void logTextf(const char8_t *fmt, Args&&... args) const
+  {
+    const std::string msg = vformat(fmt, args...);
+    logText(cs::UTF8(msg.data()));
+  }
+
+  template<typename... Args>
+  inline void logWarningf(const char8_t *fmt, Args&&... args) const
+  {
+    const std::string msg = vformat(fmt, args...);
+    logWarning(cs::UTF8(msg.data()));
+  }
+
+  template<typename... Args>
+  inline void logWarningf(const int lineno, const char8_t *fmt, Args&&... args) const
+  {
+    const std::string msg = vformat(fmt, args...);
+    logWarning(lineno, cs::UTF8(msg.data()));
+  }
+
+  template<typename... Args>
+  inline void logErrorf(const char8_t *fmt, Args&&... args) const
+  {
+    const std::string msg = vformat(fmt, args...);
+    logError(cs::UTF8(msg.data()));
+  }
+
+  template<typename... Args>
+  inline void logErrorf(const int lineno, const char8_t *fmt, Args&&... args) const
+  {
+    const std::string msg = vformat(fmt, args...);
+    logError(lineno, cs::UTF8(msg.data()));
+  }
+
+private:
+  template<typename... Args>
+  inline static std::string vformat(const char8_t *fmt, Args&&... args)
+  {
+    return std::vformat(cs::CSTR(fmt), std::make_format_args(args...));
+  }
+#endif
+
 private:
   csILogger(const csILogger&) noexcept = delete;
   csILogger& operator=(const csILogger&) noexcept = delete;
+  csILogger(csILogger&&) noexcept = delete;
+  csILogger& operator=(csILogger&&) noexcept = delete;
 };
 
 #endif // CSILOGGER_H
