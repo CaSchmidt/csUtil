@@ -237,11 +237,11 @@ namespace cs {
 
     std::basic_istringstream<T> input(text);
     for(String line; std::getline(input, line, delim); ) {
-      if( skip_empty  &&  cs::isSpace(line.data(), line.size()) ) {
+      if( skip_empty  &&  isSpace(line.data(), line.size()) ) {
         continue;
       }
       if( do_trim ) {
-        line = cs::trimmed(line);
+        line = trimmed(line);
       }
       result.push_back(std::move(line));
     }
@@ -277,9 +277,9 @@ namespace cs {
   }
 
   template<typename T>
-  inline void toLower(T *s, const std::size_t len = cs::MAX_SIZE_T)
+  inline void toLower(T *s, const std::size_t len = MAX_SIZE_T)
   {
-    const std::size_t l = len == cs::MAX_SIZE_T
+    const std::size_t l = len == MAX_SIZE_T
         ? length(s)
         : len;
 
@@ -287,13 +287,13 @@ namespace cs {
       return;
     }
 
-    std::for_each(s, s + l, [](T& c) -> void { c = cs::toLower(c); });
+    std::for_each(s, s + l, [](T& c) -> void { c = toLower(c); });
   }
 
   template<typename T>
-  inline void toUpper(T *s, const std::size_t len = cs::MAX_SIZE_T)
+  inline void toUpper(T *s, const std::size_t len = MAX_SIZE_T)
   {
-    const std::size_t l = len == cs::MAX_SIZE_T
+    const std::size_t l = len == MAX_SIZE_T
         ? length(s)
         : len;
 
@@ -301,7 +301,7 @@ namespace cs {
       return;
     }
 
-    std::for_each(s, s + l, [](T& c) -> void { c = cs::toUpper(c); });
+    std::for_each(s, s + l, [](T& c) -> void { c = toUpper(c); });
   }
 
   ////// Conversion //////////////////////////////////////////////////////////
@@ -309,14 +309,14 @@ namespace cs {
   inline std::string toString(const std::u8string& s)
   {
     return !s.empty()
-        ? std::string(cs::CSTR(s.data()), s.size())
+        ? std::string(CSTR(s.data()), s.size())
         : std::string();
   }
 
   inline std::u8string toUtf8String(const std::string& s)
   {
     return !s.empty()
-        ? std::u8string(cs::UTF8(s.data()), s.size())
+        ? std::u8string(UTF8(s.data()), s.size())
         : std::u8string();
   }
 
