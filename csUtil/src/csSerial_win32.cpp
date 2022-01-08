@@ -158,7 +158,7 @@ bool csSerial::open(const std::u8string& device, const int rate)
 
   try {
     _impl = std::make_unique<csSerialImpl>();
-  } catch (...) {
+  } catch(...) {
     return false;
   }
 
