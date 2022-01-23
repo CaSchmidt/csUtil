@@ -56,6 +56,7 @@ list(APPEND csUtil_HEADERS
   include/csUtil/csLogger.h
   include/csUtil/csMath.h
   include/csUtil/csNamespace.h
+  include/csUtil/csNumeric.h
   include/csUtil/csOutputContext.h
   include/csUtil/csPointer.h
   include/csUtil/csRawConverter.h
