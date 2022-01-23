@@ -42,6 +42,7 @@ add_subdirectory(3rdparty/icu-651)
 list(APPEND csUtil_HEADERS
   include/csUtil/csCharConv.h
   include/csUtil/csCharUtil.h
+  include/csUtil/csConcepts.h
   include/csUtil/csDualLogger.h
   include/csUtil/csEndian.h
   include/csUtil/csFile.h
