@@ -23,6 +23,7 @@ endmacro()
 
 cs_unittest(unittest_endian src/unittest_endian.cpp src/unittest_endian_impl.cpp)
 cs_unittest(unittest_flags src/unittest_flags.cpp)
+cs_unittest(unittest_numeric src/unittest_numeric.cpp src/unittest_numeric_main.cpp)
 cs_unittest(unittest_statistics src/unittest_statistics.cpp)
 cs_unittest(unittest_textconverter src/unittest_textconverter.cpp)
 cs_unittest(unittest_trie src/unittest_trie.cpp)
