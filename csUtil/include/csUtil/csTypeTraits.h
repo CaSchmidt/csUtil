@@ -32,6 +32,7 @@
 #ifndef CSTYPETRAITS_H
 #define CSTYPETRAITS_H
 
+#include <cstddef>
 #include <cstdint>
 
 #include <limits>
