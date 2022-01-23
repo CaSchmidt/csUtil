@@ -32,10 +32,14 @@
 #ifndef CSTYPETRAITS_H
 #define CSTYPETRAITS_H
 
+#include <cstdint>
+
 #include <limits>
 #include <type_traits>
 
 namespace cs {
+
+  ////// Type Categories /////////////////////////////////////////////////////
 
   template<typename T>
   using is_char = std::bool_constant<
@@ -50,12 +54,40 @@ namespace cs {
   inline constexpr bool is_char_v = is_char<T>::value;
 
   template<typename T>
+  using is_integral = std::bool_constant<
+  std::is_same_v<T,int8_t>    ||
+  std::is_same_v<T,uint8_t>   ||
+  std::is_same_v<T,int16_t>   ||
+  std::is_same_v<T,uint16_t>  ||
+  std::is_same_v<T,int32_t>   ||
+  std::is_same_v<T,uint32_t>  ||
+  std::is_same_v<T,int64_t>   ||
+  std::is_same_v<T,uint64_t>
+  >;
+
+  template<typename T>
+  inline constexpr bool is_integral_v = is_integral<T>::value;
+
+  template<typename T>
+  using is_real = std::bool_constant<
+  std::is_same_v<T,float>   ||
+  std::is_same_v<T,double>
+  >;
+
+  template<typename T>
+  inline constexpr bool is_real_v = is_real<T>::value;
+
+  ////// Miscellaneous Transformations ///////////////////////////////////////
+
+  template<typename T>
   using safe_underlying_type_t =
   std::enable_if_t<std::is_enum_v<T>,std::underlying_type_t<T>>;
 
+  ////// Constants ///////////////////////////////////////////////////////////
+
   inline constexpr auto MAX_SIZE_T = std::numeric_limits<std::size_t>::max();
 
-  inline constexpr auto qNaN = std::numeric_limits<double>::quiet_NaN();
+  ////// Pointer Conversions /////////////////////////////////////////////////
 
   inline const char *CSTR(const char8_t *s)
   {
