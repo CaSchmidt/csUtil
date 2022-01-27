@@ -42,20 +42,47 @@ namespace cs {
 
   ////// Types ///////////////////////////////////////////////////////////////
 
-  template<typename T>
-  using if_string_t = std::enable_if_t<is_char_v<T>,std::basic_string<T>>;
+  template<typename T> requires IsCharacter<T>
+  using String = std::basic_string<T>;
 
-  ////// Implementation //////////////////////////////////////////////////////
+  template<typename T> requires IsCharacter<T>
+  using StringIter = typename String<T>::iterator;
 
-  template<typename T>
-  inline std::size_t length(const T *s) noexcept
+  template<typename T> requires IsCharacter<T>
+  using ConstStringIter = typename String<T>::const_iterator;
+
+  template<typename T> requires IsCharacter<T>
+  using StringList = std::list<String<T>>;
+
+  template<typename T> requires IsCharacter<T>
+  using StringListIter = typename StringList<T>::iterator;
+
+  template<typename T> requires IsCharacter<T>
+  using ConstStringListIter = typename StringList<T>::const_iterator;
+
+  ////// Length Functions ////////////////////////////////////////////////////
+
+  namespace impl {
+
+    template<typename T> requires IsCharacter<T>
+    constexpr std::size_t length2(const T *str)
+    {
+      return *str == glyph<T>::null
+          ? 0
+          : 1 + length2(str + 1);
+    }
+
+  } // namespace impl
+
+  template<typename T> requires IsCharacter<T>
+  constexpr std::size_t length(const T *str) noexcept
   {
-    return s != nullptr
-        ? std::char_traits<T>::length(s)
-        : 0;
+    return str == nullptr
+        ? 0
+        : impl::length2(str);
   }
 
-  template<typename T>
+  template<typename T> requires IsCharacter<T>
   inline std::size_t lengthDiff(const T *first, const T *last) noexcept
   {
     return first != nullptr  &&  first < last
@@ -63,180 +90,264 @@ namespace cs {
         : 0;
   }
 
-  template<typename T>
-  inline std::size_t lengthN(const T *s, const std::size_t maxCount) noexcept
+  template<typename T> requires IsCharacter<T>
+  inline std::size_t lengthN(const T *str, const std::size_t max) noexcept
   {
-    return lengthDiff(s, s + maxCount);
+    return lengthDiff(str, str + max);
   }
 
-  template<typename T> // check if 's1' ends with 's2'
-  inline if_char_bool<T> endsWith(const T *s1, const std::size_t _l1, // haystack
-                                  const T *s2, const std::size_t _l2, // needle
-                                  const bool ignoreCase = false) noexcept
-  {
-    const std::size_t l1 = _l1 == MAX_SIZE_T
-        ? length(s1)
-        : _l1;
-    const std::size_t l2 = _l2 == MAX_SIZE_T
-        ? length(s2)
-        : _l2;
+  ////// String ends with pattern... /////////////////////////////////////////
 
-    if( l1 < 1  ||  l2 < 1  ||  l1 < l2 ) {
+  template<typename T> requires IsCharacter<T>
+  inline bool endsWith(const T *str, const std::size_t lenstr,
+                       const T *pat, const std::size_t lenpat,
+                       const bool ignoreCase = false) noexcept
+  {
+    const std::size_t maxstr = lenstr == MAX_SIZE_T
+        ? length(str)
+        : lenstr;
+    const std::size_t maxpat = lenpat == MAX_SIZE_T
+        ? length(pat)
+        : lenpat;
+
+    if( maxstr < 1  ||  maxpat < 1  ||  maxstr < maxpat ) {
       return false;
     }
 
     return ignoreCase
-        ? std::equal(s1 + l1 - l2, s1 + l1, s2, [](const T& a, const T& b) -> bool { return toLower(a) == toLower(b); })
-        : std::equal(s1 + l1 - l2, s1 + l1, s2);
+        ? std::equal(str + maxstr - maxpat, str + maxstr, pat, lambda_eqI<T>())
+        : std::equal(str + maxstr - maxpat, str + maxstr, pat);
   }
 
-  template<typename T> // convenience helper
-  inline if_char_bool<T> endsWith(const T *str, const T *end, const bool ignoreCase = false)
+  template<typename T> requires IsCharacter<T>
+  inline bool endsWith(const T *str, const T *pat, const bool ignoreCase = false)
   {
-    return endsWith<T>(str, MAX_SIZE_T, end, MAX_SIZE_T, ignoreCase);
+    return endsWith<T>(str, MAX_SIZE_T, pat, MAX_SIZE_T, ignoreCase);
   }
 
-  template<typename T>
-  inline if_char_bool<T> equals(const T *s1, const T *s2,
-                                const std::size_t _count = MAX_SIZE_T,
-                                const bool ignoreCase = false) noexcept
+  template<typename T> requires IsCharacter<T>
+  inline bool endsWith(const String<T>& str, const T *pat, const bool ignoreCase = false)
   {
-    const std::size_t count = _count == MAX_SIZE_T
-        ? std::min(length(s1), length(s2))
-        : _count;
-
-    if( count < 1 ) {
-      return false;
-    }
-
-    return ignoreCase
-        ? std::equal(s1, s1 + count, s2, [](const T& a, const T& b) -> bool { return toLower(a) == toLower(b); })
-        : std::equal(s1, s1 + count, s2);
+    return endsWith<T>(str.data(), str.size(), pat, MAX_SIZE_T, ignoreCase);
   }
 
-  template<typename T>
-  inline if_char_bool<T> equals(const T *s1, const std::size_t len1,
-                                const T *s2, const std::size_t len2,
-                                const bool ignoreCase = false)
+  template<typename T> requires IsCharacter<T>
+  inline bool endsWith(const T *str, const String<T>& pat, const bool ignoreCase = false)
   {
-    const std::size_t l1 = len1 == MAX_SIZE_T
-        ? length(s1)
-        : len1;
-    const std::size_t l2 = len2 == MAX_SIZE_T
-        ? length(s2)
-        : len2;
-
-    if( l1 < 1  ||  l2 < 1  ||  l1 != l2 ) {
-      return false;
-    }
-
-    return ignoreCase
-        ? std::equal(s1, s1 + l1, s2, [](const T& a, const T& b) -> bool { return toLower(a) == toLower(b); })
-        : std::equal(s1, s1 + l1, s2);
+    return endsWith<T>(str, MAX_SIZE_T, pat.data(), pat.size(), ignoreCase);
   }
 
-  template<typename T> // convenience helper
-  inline if_char_bool<T> equals(const T *s1, const T *s2, const bool ignoreCase = false)
+  template<typename T> requires IsCharacter<T>
+  inline bool endsWith(const String<T>& str, const String<T>& pat, const bool ignoreCase = false)
   {
-    return equals(s1, MAX_SIZE_T, s2, MAX_SIZE_T, ignoreCase);
+    return endsWith<T>(str.data(), str.size(), pat.data(), pat.size(), ignoreCase);
   }
 
-  template<typename T>
-  inline if_char_bool<T> isSpace(const T *s, const std::size_t len = MAX_SIZE_T)
+  ////// Strings are equal... ////////////////////////////////////////////////
+
+  template<typename T> requires IsCharacter<T>
+  inline bool equalsN(const T *a, const T *b,
+                      const std::size_t len = MAX_SIZE_T,
+                      const bool ignoreCase = false) noexcept
   {
-    const std::size_t l = len == MAX_SIZE_T
-        ? length(s)
+    const std::size_t max = len == MAX_SIZE_T
+        ? std::min(length(a), length(b))
         : len;
-    const auto numSpace = std::count_if(s, s + l,
-                                        [](const T& ch) -> bool { return isSpace(ch); });
-    return static_cast<std::size_t>(numSpace) == l;
+
+    if( max < 1 ) {
+      return false;
+    }
+
+    return ignoreCase
+        ? std::equal(a, a + max, b, glyph<T>::lambda_eqI())
+        : std::equal(a, a + max, b);
   }
 
-  template<typename T>
-  inline void replaceAll(std::basic_string<T>& s,
-                         const T& needle,
-                         const T *text, const std::size_t lenText = MAX_SIZE_T)
+  template<typename T> requires IsCharacter<T>
+  inline bool equals(const T *a, const std::size_t lena,
+                     const T *b, const std::size_t lenb,
+                     const bool ignoreCase = false)
   {
-    const std::size_t lt = lenText == MAX_SIZE_T
-        ? length(text)
-        : lenText;
+    const std::size_t maxa = lena == MAX_SIZE_T
+        ? length(a)
+        : lena;
+    const std::size_t maxb = lenb == MAX_SIZE_T
+        ? length(b)
+        : lenb;
 
-    if( s.size() < 1  ||  lt < 1 ) {
+    if( maxa < 1  ||  maxb < 1  ||  maxa != maxb ) {
+      return false;
+    }
+
+    return ignoreCase
+        ? std::equal(a, a + maxa, b, lambda_eqI<T>())
+        : std::equal(a, a + maxa, b);
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline bool equals(const T *a, const T *b, const bool ignoreCase = false)
+  {
+    return equals<T>(a, MAX_SIZE_T, b, MAX_SIZE_T, ignoreCase);
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline bool equals(const String<T>& a, const T *b, const bool ignoreCase = false)
+  {
+    return equals<T>(a.data(), a.size(), b, MAX_SIZE_T, ignoreCase);
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline bool equals(const T *a, const String<T>& b, const bool ignoreCase = false)
+  {
+    return equals<T>(a, MAX_SIZE_T, b.data(), b.size(), ignoreCase);
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline bool equals(const String<T>& a, const String<T>& b, const bool ignoreCase = false)
+  {
+    return equals<T>(a.data(), a.size(), b.data(), b.size(), ignoreCase);
+  }
+
+  ////// String contains only whitespace... //////////////////////////////////
+
+  template<typename T> requires IsCharacter<T>
+  inline bool isSpace(const T *str, const std::size_t len = MAX_SIZE_T)
+  {
+    const std::size_t max = len == MAX_SIZE_T
+        ? length(str)
+        : len;
+    const auto numSpace = std::count_if(str, str + max, lambda_is_space<T>());
+    return static_cast<std::size_t>(numSpace) == max;
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline bool isSpace(const String<T>& str)
+  {
+    return isSpace<T>(str.data(), str.size());
+  }
+
+  ////// Replace pattern in string... ////////////////////////////////////////
+
+  template<typename T> requires IsCharacter<T>
+  inline void replaceAll(String<T>& str,
+                         const T& pat,
+                         const T *txt, const std::size_t lentxt = MAX_SIZE_T)
+  {
+    const std::size_t siztxt = lentxt == MAX_SIZE_T
+        ? length(txt)
+        : lentxt;
+
+    if( str.size() < 1  ||  siztxt < 1 ) {
       return;
     }
 
-    for(std::size_t pos = 0; (pos = s.find(needle, pos)) != s.npos; pos += lt) {
-      s.replace(pos, 1, text, lt);
+    for(std::size_t pos = 0; (pos = str.find(pat, pos)) != str.npos; pos += siztxt) {
+      str.replace(pos, 1, txt, siztxt);
     }
   }
 
-  template<typename T>
-  inline void replaceAll(std::basic_string<T>& s,
-                         const T *needle, const std::size_t lenNeedle,
-                         const T *text, const std::size_t lenText = MAX_SIZE_T)
+  template<typename T> requires IsCharacter<T>
+  inline void replaceAll(String<T>& str, const T& pat, const String<T>& txt)
   {
-    const std::size_t ln = lenNeedle == MAX_SIZE_T
-        ? length(needle)
-        : lenNeedle;
-    const std::size_t lt = lenText == MAX_SIZE_T
-        ? length(text)
-        : lenText;
+    replaceAll<T>(str, pat, txt.data(), txt.size());
+  }
 
-    if( s.size() < 1  ||  ln < 1  ||  lt < 1  ||  s.size() < ln ) {
+  template<typename T> requires IsCharacter<T>
+  inline void replaceAll(String<T>& str,
+                         const T *pat, const std::size_t lenpat,
+                         const T *txt, const std::size_t lentxt = MAX_SIZE_T)
+  {
+    const std::size_t sizpat = lenpat == MAX_SIZE_T
+        ? length(pat)
+        : lenpat;
+    const std::size_t siztxt = lentxt == MAX_SIZE_T
+        ? length(txt)
+        : lentxt;
+
+    if( str.size() < 1  ||  sizpat < 1  ||  siztxt < 1  ||  str.size() < sizpat ) {
       return;
     }
 
-    for(std::size_t pos = 0; (pos = s.find(needle, pos, ln)) != s.npos; pos += lt) {
-      s.replace(pos, ln, text, lt);
+    for(std::size_t pos = 0; (pos = str.find(pat, pos, sizpat)) != str.npos; pos += siztxt) {
+      str.replace(pos, sizpat, txt, siztxt);
     }
   }
 
-  template<typename T>
-  inline void shrink(std::basic_string<T>& str)
+  template<typename T> requires IsCharacter<T>
+  inline void replaceAll(String<T>& str, const T *pat, const T *txt)
+  {
+    replaceAll<T>(str, pat, MAX_SIZE_T, txt, MAX_SIZE_T);
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline void replaceAll(String<T>& str, const String<T>& pat, const T *txt)
+  {
+    replaceAll<T>(str, pat.data(), pat.size(), txt, MAX_SIZE_T);
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline void replaceAll(String<T>& str, const T *pat, const String<T>& txt)
+  {
+    replaceAll<T>(str, pat, MAX_SIZE_T, txt.data(), txt.size());
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline void replaceAll(String<T>& str, const String<T>& pat, const String<T>& txt)
+  {
+    replaceAll<T>(str, pat.data(), pat.size(), txt.data(), txt.size());
+  }
+
+  ////// Reclaim memory... ///////////////////////////////////////////////////
+
+  template<typename T> requires IsCharacter<T>
+  inline void shrink(String<T>& str)
   {
     str.resize(lengthDiff(str.data(), str.data() + str.size()));
     str.shrink_to_fit();
   }
 
-  template<typename T>
-  inline if_string_t<T> trimmed(std::basic_string<T> s) noexcept
+  ////// Remove whitespace from begin & end... ///////////////////////////////
+
+  template<typename T> requires IsCharacter<T>
+  inline String<T> trimmed(String<T> str) noexcept
   {
     // trim left
-    s.erase(s.begin(),
-            std::find_if(s.begin(), s.end(),
-                         [](const T& ch) -> bool { return !isSpace(ch); }));
+    str.erase(str.begin(),
+            std::find_if(str.begin(), str.end(), lambda_is_not_space<T>()));
     // trim right
-    s.erase(std::find_if(s.rbegin(), s.rend(),
-                         [](const T& ch) -> bool { return !isSpace(ch); }).base(),
-            s.end());
-    return s;
+    str.erase(std::find_if(str.rbegin(), str.rend(), lambda_is_not_space<T>()).base(),
+            str.end());
+    return str;
   }
 
-  template<typename T>
-  inline if_string_t<T> simplified(std::basic_string<T> s) noexcept
+  ////// Replace consecutive whitespace with single space... /////////////////
+
+  template<typename T> requires IsCharacter<T>
+  inline String<T> simplified(String<T> str) noexcept
   {
+    constexpr auto lambda_adjacent_space = [](const T& a, const T& b) -> bool {
+      return isSpace(a)  &&  isSpace(b);
+    };
+
     // (1) remove duplicate whitespace
-    auto last = std::unique(s.begin(), s.end(),
-                            [](const T& a, const T& b) -> bool { return isSpace(a)  &&  isSpace(b); });
-    s.erase(last, s.end());
+    auto last = std::unique(str.begin(), str.end(), lambda_adjacent_space);
+    str.erase(last, str.end());
     // (2) replace single whitespace characters with space
-    std::replace_if(s.begin(), s.end(),
-                    [](const T& ch) -> bool { return isSpace(ch); },
-                    glyph<T>::space);
+    std::replace_if(str.begin(), str.end(), lambda_is_space<T>(), glyph<T>::space);
     // (3) return trimmed result
-    return trimmed(s);
+    return trimmed(str);
   }
 
-  template<typename T>
-  inline std::list<if_string_t<T>> split(const std::basic_string<T>& text, const T delim,
-                                         const bool skip_empty = false, const bool do_trim = false)
-  {
-    using String = std::basic_string<T>;
+  ////// Split string at delimiting character... /////////////////////////////
 
-    std::list<String> result;
+  template<typename T> requires IsCharacter<T>
+  inline StringList<T> split(const String<T>& text, const T& delim,
+                             const bool skip_empty = false, const bool do_trim = false)
+  {
+    StringList<T> result;
 
     std::basic_istringstream<T> input(text);
-    for(String line; std::getline(input, line, delim); ) {
+    for(String<T> line; std::getline(input, line, delim); ) {
       if( skip_empty  &&  isSpace(line.data(), line.size()) ) {
         continue;
       }
@@ -249,74 +360,108 @@ namespace cs {
     return result;
   }
 
-  template<typename T> // check if 's1' ends with 's2'
-  inline if_char_bool<T> startsWith(const T *s1, const std::size_t _l1, // haystack
-                                    const T *s2, const std::size_t _l2, // needle
-                                    const bool ignoreCase = false) noexcept
-  {
-    const std::size_t l1 = _l1 == MAX_SIZE_T
-        ? length(s1)
-        : _l1;
-    const std::size_t l2 = _l2 == MAX_SIZE_T
-        ? length(s2)
-        : _l2;
+  ////// String starts with pattern... ///////////////////////////////////////
 
-    if( l1 < 1  ||  l2 < 1  ||  l1 < l2 ) {
+  template<typename T> requires IsCharacter<T>
+  inline bool startsWith(const T *str, const std::size_t lenstr, // haystack
+                         const T *pat, const std::size_t lenpat, // needle
+                         const bool ignoreCase = false) noexcept
+  {
+    const std::size_t maxstr = lenstr == MAX_SIZE_T
+        ? length(str)
+        : lenstr;
+    const std::size_t maxpat = lenpat == MAX_SIZE_T
+        ? length(pat)
+        : lenpat;
+
+    if( maxstr < 1  ||  maxpat < 1  ||  maxstr < maxpat ) {
       return false;
     }
 
     return ignoreCase
-        ? std::equal(s1, s1 + l2, s2, [](const T& a, const T& b) -> bool { return toLower(a) == toLower(b); })
-        : std::equal(s1, s1 + l2, s2);
+        ? std::equal(str, str + maxpat, pat, lambda_eqI<T>())
+        : std::equal(str, str + maxpat, pat);
   }
 
-  template<typename T> // convenience helper
-  inline if_char_bool<T> startsWith(const T *str, const T *start, const bool ignoreCase = false)
+  template<typename T> requires IsCharacter<T>
+  inline bool startsWith(const T *str, const T *pat, const bool ignoreCase = false)
   {
-    return startsWith(str, MAX_SIZE_T, start, MAX_SIZE_T, ignoreCase);
+    return startsWith<T>(str, MAX_SIZE_T, pat, MAX_SIZE_T, ignoreCase);
   }
 
-  template<typename T>
-  inline void toLower(T *s, const std::size_t len = MAX_SIZE_T)
+  template<typename T> requires IsCharacter<T>
+  inline bool startsWith(const String<T>& str, const T *pat, const bool ignoreCase = false)
   {
-    const std::size_t l = len == MAX_SIZE_T
-        ? length(s)
+    return startsWith<T>(str.data(), str.size(), pat, MAX_SIZE_T, ignoreCase);
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline bool startsWith(const T *str, const String<T>& pat, const bool ignoreCase = false)
+  {
+    return startsWith<T>(str, MAX_SIZE_T, pat.data(), pat.size(), ignoreCase);
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline bool startsWith(const String<T>& str, const String<T>& pat, const bool ignoreCase = false)
+  {
+    return startsWith<T>(str.data(), str.size(), pat.data(), pat.size(), ignoreCase);
+  }
+
+  ////// Case conversion... //////////////////////////////////////////////////
+
+  template<typename T> requires IsCharacter<T>
+  inline void toLower(T *str, const std::size_t len = MAX_SIZE_T)
+  {
+    const std::size_t max = len == MAX_SIZE_T
+        ? length(str)
         : len;
 
-    if( l < 1 ) {
+    if( max < 1 ) {
       return;
     }
 
-    std::for_each(s, s + l, [](T& c) -> void { c = toLower(c); });
+    std::for_each(str, str + max, [](T& c) -> void { c = toLower(c); });
   }
 
-  template<typename T>
-  inline void toUpper(T *s, const std::size_t len = MAX_SIZE_T)
+  template<typename T> requires IsCharacter<T>
+  inline void toLower(T& str)
   {
-    const std::size_t l = len == MAX_SIZE_T
-        ? length(s)
+    toLower<T>(str.data(), str.size());
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline void toUpper(T *str, const std::size_t len = MAX_SIZE_T)
+  {
+    const std::size_t max = len == MAX_SIZE_T
+        ? length(str)
         : len;
 
-    if( l < 1 ) {
+    if( max < 1 ) {
       return;
     }
 
-    std::for_each(s, s + l, [](T& c) -> void { c = toUpper(c); });
+    std::for_each(str, str + max, [](T& c) -> void { c = toUpper(c); });
   }
 
-  ////// Conversion //////////////////////////////////////////////////////////
-
-  inline std::string toString(const std::u8string& s)
+  template<typename T> requires IsCharacter<T>
+  inline void toUpper(T& str)
   {
-    return !s.empty()
-        ? std::string(CSTR(s.data()), s.size())
+    toUpper<T>(str.data(), str.size());
+  }
+
+  ////// Type conversion... //////////////////////////////////////////////////
+
+  inline std::string toString(const std::u8string& str)
+  {
+    return !str.empty()
+        ? std::string(CSTR(str.data()), str.size())
         : std::string();
   }
 
-  inline std::u8string toUtf8String(const std::string& s)
+  inline std::u8string toUtf8String(const std::string& str)
   {
-    return !s.empty()
-        ? std::u8string(UTF8(s.data()), s.size())
+    return !str.empty()
+        ? std::u8string(UTF8(str.data()), str.size())
         : std::u8string();
   }
 
