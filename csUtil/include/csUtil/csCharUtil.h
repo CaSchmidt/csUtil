@@ -32,21 +32,13 @@
 #ifndef CSCHARUTIL_H
 #define CSCHARUTIL_H
 
-#include <csUtil/csTypeTraits.h>
+#include <csUtil/csConcepts.h>
 
 namespace cs {
 
-  ////// Types ///////////////////////////////////////////////////////////////
+  ////// Glyphs //////////////////////////////////////////////////////////////
 
-  template<typename T>
-  using if_char_t = std::enable_if_t<is_char_v<T>,T>;
-
-  template<typename T>
-  using if_char_bool = std::enable_if_t<is_char_v<T>,bool>;
-
-  ////// Implementation //////////////////////////////////////////////////////
-
-  template<typename T>
+  template<typename T> requires IsCharacter<T>
   struct glyph {
     static constexpr auto null = static_cast<T>('\0');
 
@@ -71,14 +63,16 @@ namespace cs {
     static constexpr auto under = static_cast<T>('_');
   };
 
-  template<typename T>
-  constexpr if_char_bool<T> isDigit(const T& c) noexcept
+  ////// Functions ///////////////////////////////////////////////////////////
+
+  template<typename T> requires IsCharacter<T>
+  constexpr bool isDigit(const T& c)
   {
     return glyph<T>::zero <= c  &&  c <= glyph<T>::nine;
   }
 
-  template<typename T>
-  inline if_char_bool<T> isHexDigit(const T& c) noexcept
+  template<typename T> requires IsCharacter<T>
+  inline bool isHexDigit(const T& c)
   {
     const bool is_0to9 = glyph<T>::zero <= c  &&  c <= glyph<T>::nine;
     const bool is_atof = glyph<T>::a    <= c  &&  c <= glyph<T>::f;
@@ -86,14 +80,14 @@ namespace cs {
     return is_0to9  ||  is_atof  ||  is_AtoF;
   }
 
-  template<typename T>
-  constexpr if_char_bool<T> isLower(const T& c) noexcept
+  template<typename T> requires IsCharacter<T>
+  constexpr bool isLower(const T& c)
   {
     return glyph<T>::a <= c  &&  c <= glyph<T>::z;
   }
 
-  template<typename T>
-  constexpr if_char_bool<T> isSpace(const T& c) noexcept
+  template<typename T> requires IsCharacter<T>
+  constexpr bool isSpace(const T& c)
   {
     return
         c == glyph<T>::space  ||
@@ -104,32 +98,64 @@ namespace cs {
         c == glyph<T>::vt;
   }
 
-  template<typename T>
-  constexpr if_char_bool<T> isUpper(const T& c) noexcept
+  template<typename T> requires IsCharacter<T>
+  constexpr bool isUpper(const T& c)
   {
     return glyph<T>::A <= c  &&  c <= glyph<T>::Z;
   }
 
-  template<typename T>
-  constexpr if_char_bool<T> isIdent(const T& c) noexcept
+  template<typename T, bool IS_FIRST = false> requires IsCharacter<T>
+  constexpr bool isIdent(const T& c)
   {
-    return isLower(c)  ||  isUpper(c)  ||  isDigit(c)  ||  c == glyph<T>::under;
+    return isLower(c)  ||  isUpper(c)  ||  (!IS_FIRST  &&  isDigit(c))  ||  c == glyph<T>::under;
   }
 
-  template<typename T>
-  constexpr if_char_t<T> toLower(const T& c) noexcept
+  template<typename T> requires IsCharacter<T>
+  constexpr bool isIdentFirst(const T& c)
+  {
+    return isIdent<T,true>(c);
+  }
+
+  template<typename T> requires IsCharacter<T>
+  constexpr T toLower(const T& c)
   {
     return isUpper(c)
         ? c - glyph<T>::A + glyph<T>::a
         : c;
   }
 
-  template<typename T>
-  constexpr if_char_t<T> toUpper(const T& c) noexcept
+  template<typename T> requires IsCharacter<T>
+  constexpr T toUpper(const T& c)
   {
     return isLower(c)
         ? c - glyph<T>::a + glyph<T>::A
         : c;
+  }
+
+  ////// Lambdas /////////////////////////////////////////////////////////////
+
+  template<typename T> requires IsCharacter<T>
+  constexpr auto lambda_eqI()
+  {
+    return [](const T& a, const T& b) -> bool {
+      return toLower(a) == toLower(b);
+    };
+  }
+
+  template<typename T> requires IsCharacter<T>
+  constexpr auto lambda_is_space()
+  {
+    return [](const T& c) -> bool {
+      return isSpace(c);
+    };
+  }
+
+  template<typename T> requires IsCharacter<T>
+  constexpr auto lambda_is_not_space()
+  {
+    return [](const T& c) -> bool {
+      return !isSpace(c);
+    };
   }
 
 } // namespace cs
