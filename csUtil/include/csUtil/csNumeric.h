@@ -52,7 +52,7 @@ namespace cs {
   }
 
   template<typename T> requires IsIntegral<T>
-  constexpr bool isEven(const T x)
+  constexpr bool isEven(const T& x)
   {
     constexpr T  ONE = 1;
     constexpr T ZERO = 0;
@@ -61,7 +61,7 @@ namespace cs {
   }
 
   template<typename T> requires IsIntegral<T>
-  constexpr bool isOdd(const T x)
+  constexpr bool isOdd(const T& x)
   {
     constexpr T  ONE = 1;
     constexpr T ZERO = 0;
