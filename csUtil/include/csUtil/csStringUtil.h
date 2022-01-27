@@ -34,7 +34,7 @@
 
 #include <algorithm>
 #include <list>
-#include <sstream>
+#include <string>
 
 #include <csUtil/csCharUtil.h>
 
@@ -313,10 +313,10 @@ namespace cs {
   {
     // trim left
     str.erase(str.begin(),
-            std::find_if(str.begin(), str.end(), lambda_is_not_space<T>()));
+              std::find_if(str.begin(), str.end(), lambda_is_not_space<T>()));
     // trim right
     str.erase(std::find_if(str.rbegin(), str.rend(), lambda_is_not_space<T>()).base(),
-            str.end());
+              str.end());
     return str;
   }
 
@@ -338,26 +338,78 @@ namespace cs {
     return trimmed(str);
   }
 
-  ////// Split string at delimiting character... /////////////////////////////
+  ////// Split string at delimiter... ////////////////////////////////////////
 
-  template<typename T> requires IsCharacter<T>
-  inline StringList<T> split(const String<T>& text, const T& delim,
-                             const bool skip_empty = false, const bool do_trim = false)
-  {
-    StringList<T> result;
+  namespace impl {
 
-    std::basic_istringstream<T> input(text);
-    for(String<T> line; std::getline(input, line, delim); ) {
-      if( skip_empty  &&  isSpace(line.data(), line.size()) ) {
-        continue;
+    template<typename T> requires IsCharacter<T>
+    inline void extract(StringList<T>& result, const String<T>& txt,
+                        const std::size_t first, const std::size_t last,
+                        const bool skipEmpty, const bool doTrim)
+    {
+      const std::size_t len = last - first;
+      String<T> part = len > 0
+          ? txt.substr(first, len)
+          : String<T>();
+
+      if( skipEmpty  &&  part.empty() ) {
+        return;
       }
-      if( do_trim ) {
-        line = trimmed(line);
+
+      if( doTrim ) {
+        part = trimmed(part);
       }
-      result.push_back(std::move(line));
+
+      result.push_back(std::move(part));
     }
 
+  } // namespace impl
+
+  template<typename T> requires IsCharacter<T>
+  inline StringList<T> split(const String<T>& txt,
+                             const T *del, const std::size_t lendel,
+                             const bool skipEmpty = false, const bool doTrim = false)
+  {
+    const std::size_t maxdel = lendel == MAX_SIZE_T
+        ? length(del)
+        : lendel;
+
+    if( txt.size() < 1  ||  del == nullptr  ||  maxdel < 1 ) {
+      return StringList<T>();
+    }
+
+    StringList<T> result;
+
+    std::size_t pos = 0, hit;
+    while( (hit = txt.find(del, pos, maxdel)) != String<T>::npos ) {
+      impl::extract(result, txt, pos, hit, skipEmpty, doTrim);
+
+      pos = hit + maxdel;
+    }
+    impl::extract(result, txt, pos, txt.size(), skipEmpty, doTrim);
+
     return result;
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline StringList<T> split(const String<T>& txt, const T *del,
+                             const bool skipEmpty = false, const bool doTrim = false)
+  {
+    return split<T>(txt, del, MAX_SIZE_T, skipEmpty, doTrim);
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline StringList<T> split(const String<T>& txt, const String<T>& del,
+                             const bool skipEmpty = false, const bool doTrim = false)
+  {
+    return split<T>(txt, del.data(), del.size(), skipEmpty, doTrim);
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline StringList<T> split(const String<T>& txt, const T& del,
+                             const bool skipEmpty = false, const bool doTrim = false)
+  {
+    return split<T>(txt, &del, 1, skipEmpty, doTrim);
   }
 
   ////// String starts with pattern... ///////////////////////////////////////
