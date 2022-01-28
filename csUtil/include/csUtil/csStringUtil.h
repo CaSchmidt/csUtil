@@ -60,6 +60,11 @@ namespace cs {
   template<typename T> requires IsCharacter<T>
   using ConstStringListIter = typename StringList<T>::const_iterator;
 
+  ////// Constants ///////////////////////////////////////////////////////////
+
+  template<typename T> requires IsCharacter<T>
+  inline constexpr typename String<T>::size_type NPOS = String<T>::npos;
+
   ////// Length Functions ////////////////////////////////////////////////////
 
   namespace impl {
@@ -241,7 +246,7 @@ namespace cs {
       return;
     }
 
-    for(std::size_t pos = 0; (pos = str.find(pat, pos)) != str.npos; pos += siztxt) {
+    for(std::size_t pos = 0; (pos = str.find(pat, pos)) != NPOS<T>; pos += siztxt) {
       str.replace(pos, 1, txt, siztxt);
     }
   }
@@ -268,7 +273,7 @@ namespace cs {
       return;
     }
 
-    for(std::size_t pos = 0; (pos = str.find(pat, pos, sizpat)) != str.npos; pos += siztxt) {
+    for(std::size_t pos = 0; (pos = str.find(pat, pos, sizpat)) != NPOS<T>; pos += siztxt) {
       str.replace(pos, sizpat, txt, siztxt);
     }
   }
