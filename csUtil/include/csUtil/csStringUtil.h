@@ -385,11 +385,9 @@ namespace cs {
 
     StringList<T> result;
 
-    std::size_t pos = 0, hit;
-    while( (hit = txt.find(del, pos, maxdel)) != String<T>::npos ) {
+    std::size_t pos = 0;
+    for(std::size_t hit; (hit = txt.find(del, pos, maxdel)) != NPOS<T>; pos = hit + maxdel) {
       impl::extract(result, txt, pos, hit, skipEmpty, doTrim);
-
-      pos = hit + maxdel;
     }
     impl::extract(result, txt, pos, txt.size(), skipEmpty, doTrim);
 
