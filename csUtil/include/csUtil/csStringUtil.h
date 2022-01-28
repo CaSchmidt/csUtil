@@ -476,7 +476,7 @@ namespace cs {
   }
 
   template<typename T> requires IsCharacter<T>
-  inline void toLower(T& str)
+  inline void toLower(String<T>& str)
   {
     toLower<T>(str.data(), str.size());
   }
@@ -496,7 +496,7 @@ namespace cs {
   }
 
   template<typename T> requires IsCharacter<T>
-  inline void toUpper(T& str)
+  inline void toUpper(String<T>& str)
   {
     toUpper<T>(str.data(), str.size());
   }
