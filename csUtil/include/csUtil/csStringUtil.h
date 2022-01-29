@@ -164,8 +164,14 @@ namespace cs {
     }
 
     return ignoreCase
-        ? std::equal(a, a + max, b, glyph<T>::lambda_eqI())
+        ? std::equal(a, a + max, b, lambda_eqI<T>())
         : std::equal(a, a + max, b);
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline bool equalsN(const T *a, const T *b, const bool ignoreCase = false)
+  {
+    return equalsN<T>(a, b, MAX_SIZE_T, ignoreCase);
   }
 
   template<typename T> requires IsCharacter<T>
