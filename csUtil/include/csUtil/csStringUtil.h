@@ -237,6 +237,52 @@ namespace cs {
     return isSpace<T>(str.data(), str.size());
   }
 
+  ////// Remove pattern from string... ///////////////////////////////////////
+
+  template<typename T> requires IsCharacter<T>
+  inline void removeAll(String<T>& str, const T *pat, const std::size_t lenpat = MAX_SIZE_T)
+  {
+    const std::size_t sizpat = lenpat == MAX_SIZE_T
+        ? length(pat)
+        : lenpat;
+
+    if( str.size() < 1  ||  pat == nullptr  ||  sizpat < 1 ) {
+      return;
+    }
+
+    for(std::size_t pos = 0; (pos = str.find(pat, pos, sizpat)) != NPOS<T>; ) {
+      str.erase(pos, sizpat);
+    }
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline void removeAll(String<T>& str, const String<T>& pat)
+  {
+    removeAll<T>(str, pat.data(), pat.size());
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline void removeAll(String<T>& str, const T& pat)
+  {
+    removeAll<T>(str, &pat, 1);
+  }
+
+  template<typename T, typename PredFunc> requires IsCharacter<T>
+  inline void removeAll(T *first, T *last, PredFunc func)
+  {
+    T *end = std::remove_if(first, last, func);
+    for(; end != last; ) {
+      *end++ = glyph<T>::null;
+    }
+  }
+
+  template<typename T, typename PredFunc> requires IsCharacter<T>
+  inline void removeAll(String<T>& str, PredFunc func)
+  {
+    StringIter<T> end = std::remove_if(str.begin(), str.end(), func);
+    str.erase(end, str.end());
+  }
+
   ////// Replace pattern in string... ////////////////////////////////////////
 
   template<typename T> requires IsCharacter<T>
