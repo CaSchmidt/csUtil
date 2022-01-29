@@ -151,8 +151,7 @@ namespace cs {
   ////// Strings are equal... ////////////////////////////////////////////////
 
   template<typename T> requires IsCharacter<T>
-  inline bool equalsN(const T *a, const T *b,
-                      const std::size_t len = MAX_SIZE_T,
+  inline bool equalsN(const T *a, const T *b, const std::size_t len,
                       const bool ignoreCase = false) noexcept
   {
     const std::size_t max = len == MAX_SIZE_T
