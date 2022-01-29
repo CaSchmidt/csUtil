@@ -43,6 +43,14 @@ namespace cs {
   ////// Type Categories /////////////////////////////////////////////////////
 
   template<typename T>
+  using is_boolean = std::bool_constant<
+  std::is_same_v<T,bool>
+  >;
+
+  template<typename T>
+  inline constexpr bool is_boolean_v = is_boolean<T>::value;
+
+  template<typename T>
   using is_char = std::bool_constant<
   std::is_same_v<T,char>      ||
   std::is_same_v<T,char8_t>   ||

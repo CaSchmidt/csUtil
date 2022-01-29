@@ -37,6 +37,9 @@
 namespace cs {
 
   template<typename T>
+  concept IsBoolean = is_boolean_v<T>;
+
+  template<typename T>
   concept IsCharacter = is_char_v<T>;
 
   template<typename T>
