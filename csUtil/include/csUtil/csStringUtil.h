@@ -218,6 +218,42 @@ namespace cs {
     return equals<T>(a.data(), a.size(), b.data(), b.size(), ignoreCase);
   }
 
+  ////// String is C-style identifier... /////////////////////////////////////
+
+  template<typename T> requires IsCharacter<T>
+  inline bool isIdent(const T *str, const std::size_t len = MAX_SIZE_T)
+  {
+    const std::size_t max = len == MAX_SIZE_T
+        ? cs::length(str)
+        : len;
+
+    if( str == nullptr  ||  max < 1 ) {
+      return false;
+    }
+
+    const T *first = str;
+    const T  *last = first + max;
+
+    if( first != last ) { // Superfluous?
+      if( !isIdentFirst(*first++) ) {
+        return false;
+      }
+    }
+    while( first != last ) {
+      if( !isIdent(*first++) ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline bool isIdent(const String<T>& str)
+  {
+    return isIdent<T>(str.data(), str.size());
+  }
+
   ////// String contains only whitespace... //////////////////////////////////
 
   template<typename T> requires IsCharacter<T>
