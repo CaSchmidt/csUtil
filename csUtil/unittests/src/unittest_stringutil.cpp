@@ -22,6 +22,16 @@ namespace stringutil {
   const char *STR_ABC  = "ABC";
   const char *STR_BCD  = "BCD";
 
+  TEST_CASE("Beautification of a string.", "[beautification]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    REQUIRE( cs::trimmed(String("\nabc\r")) == STR_abc );
+    REQUIRE( cs::trimmed(String(STR_abc)) == STR_abc );
+
+    REQUIRE( cs::simplified(String("\fa\nb\rc\td\v")) == "a b c d" );
+    REQUIRE( cs::simplified(String(STR_abcd)) == STR_abcd );
+  }
+
   TEST_CASE("Case conversion.", "[case]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
@@ -38,6 +48,19 @@ namespace stringutil {
     }
   }
 
+  TEST_CASE("Classify string's contents.", "[classify]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    REQUIRE(  cs::isIdent("_azAZ09") );
+    REQUIRE(  cs::isIdent("azAZ09_") );
+    REQUIRE(  cs::isIdent("AZ09_az") );
+    REQUIRE( !cs::isIdent("09_azAZ") );
+    REQUIRE( !cs::isIdent("_azAZ09-") );
+
+    REQUIRE(  cs::isSpace(" \f\n\r\t\v") ); // C99
+    REQUIRE( !cs::isSpace(" \f\n\r\t\v-") );
+  }
+
   TEST_CASE("String ends with pattern.", "[ends]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
@@ -50,6 +73,20 @@ namespace stringutil {
     REQUIRE(  cs::endsWith(STR_ABCD, STR_bcd, true) );
 
     REQUIRE( !cs::endsWith(STR_bcd, STR_abcd) );
+  }
+
+  TEST_CASE("Two strings are equal.", "[equals]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    REQUIRE(  cs::equalsN(STR_abc, STR_abcd) );
+    REQUIRE( !cs::equalsN(STR_abc, STR_ABCD) );
+    REQUIRE(  cs::equalsN(STR_abc, STR_ABCD, true) );
+    REQUIRE(  cs::equalsN(STR_ABC, STR_abcd, true) );
+
+    REQUIRE(  cs::equals(STR_abc, STR_abc) );
+    REQUIRE( !cs::equals(STR_abc, STR_ABC) );
+    REQUIRE(  cs::equals(STR_abc, STR_ABC, true) );
+    REQUIRE( !cs::equals(STR_abc, STR_abcd) );
   }
 
   TEST_CASE("Remove patterns string.", "[remove]") {
