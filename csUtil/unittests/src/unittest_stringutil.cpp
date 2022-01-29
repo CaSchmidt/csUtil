@@ -22,6 +22,22 @@ namespace stringutil {
   const char *STR_ABC  = "ABC";
   const char *STR_BCD  = "BCD";
 
+  TEST_CASE("Case conversion.", "[case]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    {
+      String str(STR_ABCD);
+      cs::toLower(str);
+      REQUIRE( str == STR_abcd );
+    }
+
+    {
+      String str(STR_abcd);
+      cs::toUpper(str);
+      REQUIRE( str == STR_ABCD );
+    }
+  }
+
   TEST_CASE("String ends with pattern.", "[ends]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
@@ -34,6 +50,64 @@ namespace stringutil {
     REQUIRE(  cs::endsWith(STR_ABCD, STR_bcd, true) );
 
     REQUIRE( !cs::endsWith(STR_bcd, STR_abcd) );
+  }
+
+  TEST_CASE("Remove patterns string.", "[remove]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    const char *STR_input1 = ".ab.cd.";
+    const char *STR_input2 = "abcabc";
+    const char *STR_input3 = " a b c ";
+
+    {
+      String str(STR_input1);
+      cs::removeAll(str, '.');
+      REQUIRE( str == STR_abcd );
+    }
+
+    {
+      String str(STR_input2);
+      cs::removeAll(str, STR_abc);
+      REQUIRE( str.size() == 0 );
+    }
+
+    {
+      String str(STR_input3);
+      cs::removeAll(str.data(), str.data() + str.size(), cs::lambda_is_space<char>());
+      cs::shrink(str);
+      REQUIRE( str == STR_abc );
+    }
+
+    {
+      String str(STR_input3);
+      cs::removeAll(str, cs::lambda_is_space<char>());
+      REQUIRE( str == STR_abc );
+    }
+  }
+
+  TEST_CASE("Replace part(s) of string.", "[replace]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    const char *STR_input1 = " abc abc ";
+    const char *STR_input2 = "abcabc";
+
+    {
+      String str(STR_input1);
+      cs::replaceAll(str, ' ', ".");
+      REQUIRE( str == ".abc.abc." );
+    }
+
+    {
+      String str(STR_input1);
+      cs::replaceAll(str, "abc", "xyz");
+      REQUIRE( str == " xyz xyz " );
+    }
+
+    {
+      String str(STR_input2);
+      cs::replaceAll(str, "abc", "xyz");
+      REQUIRE( str == "xyzxyz" );
+    }
   }
 
   TEST_CASE("Split string at delimiter.", "[split]") {
