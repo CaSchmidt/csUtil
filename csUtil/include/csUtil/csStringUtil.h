@@ -115,7 +115,8 @@ namespace cs {
         ? length(pat)
         : lenpat;
 
-    if( maxstr < 1  ||  maxpat < 1  ||  maxstr < maxpat ) {
+    if( str == nullptr  ||  pat == nullptr  ||
+        maxstr < 1  ||  maxpat < 1  ||  maxstr < maxpat ) {
       return false;
     }
 
@@ -158,7 +159,8 @@ namespace cs {
         ? std::min(length(a), length(b))
         : len;
 
-    if( max < 1 ) {
+    if( a == nullptr  ||  b == nullptr  ||
+        max < 1 ) {
       return false;
     }
 
@@ -185,7 +187,8 @@ namespace cs {
         ? length(b)
         : lenb;
 
-    if( maxa < 1  ||  maxb < 1  ||  maxa != maxb ) {
+    if( a == nullptr  ||  b == nullptr  ||
+        maxa < 1  ||  maxb < 1  ||  maxa != maxb ) {
       return false;
     }
 
@@ -227,7 +230,8 @@ namespace cs {
         ? cs::length(str)
         : len;
 
-    if( str == nullptr  ||  max < 1 ) {
+    if( str == nullptr  ||
+        max < 1 ) {
       return false;
     }
 
@@ -262,7 +266,14 @@ namespace cs {
     const std::size_t max = len == MAX_SIZE_T
         ? length(str)
         : len;
+
+    if( str == nullptr  ||
+        max < 1 ) {
+      return false;
+    }
+
     const auto numSpace = std::count_if(str, str + max, lambda_is_space<T>());
+
     return static_cast<std::size_t>(numSpace) == max;
   }
 
@@ -281,7 +292,8 @@ namespace cs {
         ? length(pat)
         : lenpat;
 
-    if( str.size() < 1  ||  pat == nullptr  ||  sizpat < 1 ) {
+    if( str.size() < 1  ||  pat == nullptr  ||
+        sizpat < 1  ||  str.size() < sizpat ) {
       return;
     }
 
@@ -332,7 +344,8 @@ namespace cs {
         ? length(txt)
         : lentxt;
 
-    if( str.size() < 1  ||  sizpat < 1  ||  siztxt < 1  ||  str.size() < sizpat ) {
+    if( str.size() < 1  ||  pat == nullptr  ||  txt == nullptr  ||
+        sizpat < 1  ||  siztxt < 1  ||  str.size() < sizpat ) {
       return;
     }
 
@@ -454,7 +467,8 @@ namespace cs {
         ? length(del)
         : lendel;
 
-    if( txt.size() < 1  ||  del == nullptr  ||  maxdel < 1 ) {
+    if( txt.size() < 1  ||  del == nullptr  ||
+        maxdel < 1  ||  txt.size() < maxdel ) {
       return StringList<T>();
     }
 
@@ -504,7 +518,8 @@ namespace cs {
         ? length(pat)
         : lenpat;
 
-    if( maxstr < 1  ||  maxpat < 1  ||  maxstr < maxpat ) {
+    if( str == nullptr  ||  pat == nullptr  ||
+        maxstr < 1  ||  maxpat < 1  ||  maxstr < maxpat ) {
       return false;
     }
 
@@ -546,7 +561,8 @@ namespace cs {
         ? length(str)
         : len;
 
-    if( max < 1 ) {
+    if( str == nullptr  ||
+        max < 1 ) {
       return;
     }
 
@@ -566,7 +582,8 @@ namespace cs {
         ? length(str)
         : len;
 
-    if( max < 1 ) {
+    if( str == nullptr  ||
+        max < 1 ) {
       return;
     }
 
