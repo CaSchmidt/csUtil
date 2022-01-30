@@ -34,22 +34,37 @@
 #include "csUtil/csFile.h"
 #include "csUtil/csStringUtil.h"
 
-CS_UTIL_EXPORT std::list<std::string> csReadLines(const std::u8string& filename, const bool trim)
+////// Types /////////////////////////////////////////////////////////////////
+
+using String     = std::string;
+using StringList = std::list<String>;
+
+////// Public ////////////////////////////////////////////////////////////////
+
+CS_UTIL_EXPORT std::list<std::string> csReadLines(const std::u8string& filename,
+                                                  const bool skipBlank,
+                                                  const bool doTrim)
 {
-  using StringList = std::list<std::string>;
+  constexpr auto lambda_is_blank = [](const String& str) -> bool {
+    return str.empty()  ||  cs::isSpace(str);
+  };
 
   const std::string text = csReadTextFile(filename);
   if( text.empty() ) {
     return StringList();
   }
 
-  return cs::split(text, '\n', true, trim);
+  StringList lines = cs::split(text, '\n', false, doTrim);
+  if( skipBlank ) {
+    lines.remove_if(lambda_is_blank);
+  }
+
+  return lines;
 }
 
 CS_UTIL_EXPORT std::string csReadTextFile(const std::u8string& filename, bool *ok)
 {
   using Buffer = std::vector<uint8_t>;
-  using String = std::string;
 
   if( ok != nullptr ) {
     *ok = false;

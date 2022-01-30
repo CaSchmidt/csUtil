@@ -37,7 +37,9 @@
 
 #include <csUtil/csutil_config.h>
 
-CS_UTIL_EXPORT std::list<std::string> csReadLines(const std::u8string& filename, const bool trim = false);
+CS_UTIL_EXPORT std::list<std::string> csReadLines(const std::u8string& filename,
+                                                  const bool skipBlank = false,
+                                                  const bool doTrim = false);
 
 CS_UTIL_EXPORT std::string csReadTextFile(const std::u8string& filename, bool *ok = nullptr);
 
