@@ -126,7 +126,7 @@ namespace priv {
 
   StringList readWords()
   {
-    StringList result = csReadLines(WORD_LIST, true);
+    StringList result = csReadLines(WORD_LIST, true, true);
     if( result.empty() ) {
       return result;
     }
