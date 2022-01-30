@@ -284,30 +284,30 @@ namespace cs {
   ////// Remove pattern from string... ///////////////////////////////////////
 
   template<typename T> requires IsCharacter<T>
-  inline void removeAll(String<T>& str, const T *pat, const std::size_t lenpat = MAX_SIZE_T)
+  inline void removeAll(String<T> *str, const T *pat, const std::size_t lenpat = MAX_SIZE_T)
   {
     const std::size_t sizpat = lenpat == MAX_SIZE_T
         ? length(pat)
         : lenpat;
 
-    if( str.size() < 1  ||  pat == nullptr  ||
-        sizpat < 1  ||  str.size() < sizpat ) {
+    if( str->size() < 1  ||  pat == nullptr  ||
+        sizpat < 1  ||  str->size() < sizpat ) {
       return;
     }
 
-    for(std::size_t pos = 0; (pos = str.find(pat, pos, sizpat)) != NPOS<T>; ) {
-      str.erase(pos, sizpat);
+    for(std::size_t pos = 0; (pos = str->find(pat, pos, sizpat)) != NPOS<T>; ) {
+      str->erase(pos, sizpat);
     }
   }
 
   template<typename T> requires IsCharacter<T>
-  inline void removeAll(String<T>& str, const String<T>& pat)
+  inline void removeAll(String<T> *str, const String<T>& pat)
   {
     removeAll<T>(str, pat.data(), pat.size());
   }
 
   template<typename T> requires IsCharacter<T>
-  inline void removeAll(String<T>& str, const T& pat)
+  inline void removeAll(String<T> *str, const T& pat)
   {
     removeAll<T>(str, &pat, 1);
   }
@@ -322,16 +322,16 @@ namespace cs {
   }
 
   template<typename T, typename PredFunc> requires IsCharacter<T>
-  inline void removeAll(String<T>& str, PredFunc func)
+  inline void removeAll(String<T> *str, PredFunc func)
   {
-    StringIter<T> end = std::remove_if(str.begin(), str.end(), func);
-    str.erase(end, str.end());
+    StringIter<T> end = std::remove_if(str->begin(), str->end(), func);
+    str->erase(end, str->end());
   }
 
   ////// Replace pattern in string... ////////////////////////////////////////
 
   template<typename T> requires IsCharacter<T>
-  inline void replaceAll(String<T>& str,
+  inline void replaceAll(String<T> *str,
                          const T *pat, const std::size_t lenpat,
                          const T *txt, const std::size_t lentxt = MAX_SIZE_T)
   {
@@ -342,48 +342,48 @@ namespace cs {
         ? length(txt)
         : lentxt;
 
-    if( str.size() < 1  ||  pat == nullptr  ||  txt == nullptr  ||
-        sizpat < 1  ||  siztxt < 1  ||  str.size() < sizpat ) {
+    if( str->size() < 1  ||  pat == nullptr  ||  txt == nullptr  ||
+        sizpat < 1  ||  siztxt < 1  ||  str->size() < sizpat ) {
       return;
     }
 
-    for(std::size_t pos = 0; (pos = str.find(pat, pos, sizpat)) != NPOS<T>; pos += siztxt) {
-      str.replace(pos, sizpat, txt, siztxt);
+    for(std::size_t pos = 0; (pos = str->find(pat, pos, sizpat)) != NPOS<T>; pos += siztxt) {
+      str->replace(pos, sizpat, txt, siztxt);
     }
   }
 
   template<typename T> requires IsCharacter<T>
-  inline void replaceAll(String<T>& str, const T *pat, const T *txt)
+  inline void replaceAll(String<T> *str, const T *pat, const T *txt)
   {
     replaceAll<T>(str, pat, MAX_SIZE_T, txt, MAX_SIZE_T);
   }
 
   template<typename T> requires IsCharacter<T>
-  inline void replaceAll(String<T>& str, const String<T>& pat, const T *txt)
+  inline void replaceAll(String<T> *str, const String<T>& pat, const T *txt)
   {
     replaceAll<T>(str, pat.data(), pat.size(), txt, MAX_SIZE_T);
   }
 
   template<typename T> requires IsCharacter<T>
-  inline void replaceAll(String<T>& str, const T *pat, const String<T>& txt)
+  inline void replaceAll(String<T> *str, const T *pat, const String<T>& txt)
   {
     replaceAll<T>(str, pat, MAX_SIZE_T, txt.data(), txt.size());
   }
 
   template<typename T> requires IsCharacter<T>
-  inline void replaceAll(String<T>& str, const String<T>& pat, const String<T>& txt)
+  inline void replaceAll(String<T> *str, const String<T>& pat, const String<T>& txt)
   {
     replaceAll<T>(str, pat.data(), pat.size(), txt.data(), txt.size());
   }
 
   template<typename T> requires IsCharacter<T>
-  inline void replaceAll(String<T>& str, const T& pat, const char *txt)
+  inline void replaceAll(String<T> *str, const T& pat, const char *txt)
   {
     replaceAll<T>(str, &pat, 1, txt, MAX_SIZE_T);
   }
 
   template<typename T> requires IsCharacter<T>
-  inline void replaceAll(String<T>& str, const T& pat, const String<T>& txt)
+  inline void replaceAll(String<T> *str, const T& pat, const String<T>& txt)
   {
     replaceAll<T>(str, &pat, 1, txt.data(), txt.size());
   }
@@ -391,10 +391,10 @@ namespace cs {
   ////// Reclaim memory... ///////////////////////////////////////////////////
 
   template<typename T> requires IsCharacter<T>
-  inline void shrink(String<T>& str)
+  inline void shrink(String<T> *str)
   {
-    str.resize(lengthDiff(str.data(), str.data() + str.size()));
-    str.shrink_to_fit();
+    str->resize(lengthDiff(str->data(), str->data() + str->size()));
+    str->shrink_to_fit();
   }
 
   ////// Remove whitespace from begin & end... ///////////////////////////////
@@ -568,9 +568,9 @@ namespace cs {
   }
 
   template<typename T> requires IsCharacter<T>
-  inline void toLower(String<T>& str)
+  inline void toLower(String<T> *str)
   {
-    toLower<T>(str.data(), str.size());
+    toLower<T>(str->data(), str->size());
   }
 
   template<typename T> requires IsCharacter<T>
@@ -589,9 +589,9 @@ namespace cs {
   }
 
   template<typename T> requires IsCharacter<T>
-  inline void toUpper(String<T>& str)
+  inline void toUpper(String<T> *str)
   {
-    toUpper<T>(str.data(), str.size());
+    toUpper<T>(str->data(), str->size());
   }
 
   ////// Type conversion... //////////////////////////////////////////////////

@@ -37,13 +37,13 @@ namespace stringutil {
 
     {
       String str(STR_ABCD);
-      cs::toLower(str);
+      cs::toLower(&str);
       REQUIRE( str == STR_abcd );
     }
 
     {
       String str(STR_abcd);
-      cs::toUpper(str);
+      cs::toUpper(&str);
       REQUIRE( str == STR_ABCD );
     }
   }
@@ -98,26 +98,26 @@ namespace stringutil {
 
     {
       String str(STR_input1);
-      cs::removeAll(str, '.');
+      cs::removeAll(&str, '.');
       REQUIRE( str == STR_abcd );
     }
 
     {
       String str(STR_input2);
-      cs::removeAll(str, STR_abc);
+      cs::removeAll(&str, STR_abc);
       REQUIRE( str.size() == 0 );
     }
 
     {
       String str(STR_input3);
       cs::removeAll(str.data(), str.data() + str.size(), cs::lambda_is_space<char>());
-      cs::shrink(str);
+      cs::shrink(&str);
       REQUIRE( str == STR_abc );
     }
 
     {
       String str(STR_input3);
-      cs::removeAll(str, cs::lambda_is_space<char>());
+      cs::removeAll(&str, cs::lambda_is_space<char>());
       REQUIRE( str == STR_abc );
     }
   }
@@ -130,19 +130,19 @@ namespace stringutil {
 
     {
       String str(STR_input1);
-      cs::replaceAll(str, ' ', ".");
+      cs::replaceAll(&str, ' ', ".");
       REQUIRE( str == ".abc.abc." );
     }
 
     {
       String str(STR_input1);
-      cs::replaceAll(str, "abc", "xyz");
+      cs::replaceAll(&str, "abc", "xyz");
       REQUIRE( str == " xyz xyz " );
     }
 
     {
       String str(STR_input2);
-      cs::replaceAll(str, "abc", "xyz");
+      cs::replaceAll(&str, "abc", "xyz");
       REQUIRE( str == "xyzxyz" );
     }
   }
