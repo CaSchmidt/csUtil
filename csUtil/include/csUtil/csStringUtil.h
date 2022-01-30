@@ -238,13 +238,11 @@ namespace cs {
     const T *first = str;
     const T  *last = first + max;
 
-    if( first != last ) { // Superfluous?
-      if( !isIdentFirst(*first++) ) {
-        return false;
-      }
+    if( !isIdentFirst(*first) ) {
+      return false;
     }
-    while( first != last ) {
-      if( !isIdent(*first++) ) {
+    for(++first; first != last; ++first) {
+      if( !isIdent(*first) ) {
         return false;
       }
     }
@@ -318,8 +316,8 @@ namespace cs {
   inline void removeAll(T *first, T *last, PredFunc func)
   {
     T *end = std::remove_if(first, last, func);
-    for(; end != last; ) {
-      *end++ = glyph<T>::null;
+    for(; end != last; ++end) {
+      *end = glyph<T>::null;
     }
   }
 

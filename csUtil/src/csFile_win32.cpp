@@ -100,6 +100,10 @@ bool csFile::open(const std::u8string& filename, const OpenFlags flags)
 
   // (2) Sanity check ////////////////////////////////////////////////////////
 
+  if( filename.empty() ) {
+    return false;
+  }
+
   if( !flags.testFlag(cs::FileOpenFlag::ReadWrite) ) {
     return false;
   }
