@@ -57,6 +57,8 @@ namespace cs {
     template<typename T, bool MINUS_ONE = false> requires IsReal<T>
     inline T normFact(const std::size_t count) // NOTE: Does NOT check 'count'!
     {
+      static_assert( sizeof(double) == 8 );
+
       constexpr double ONE = 1;
 
       const double N = static_cast<double>(count);
@@ -70,34 +72,34 @@ namespace cs {
   } // namespace impl
 
   template<typename T> requires IsReal<T>
-  inline T mean(const T *data, const std::size_t count)
+  inline T mean(const T *x, const std::size_t N)
   {
-    if( data == nullptr  ||  !impl::isCount(count) ) {
+    if( x == nullptr  ||  !impl::isCount(N) ) {
       return INVALID_RESULT<T>;
     }
 
-    const T fac = impl::normFact<T>(count);
+    const T fac = impl::normFact<T>(N);
 
     T sum = 0;
-    for(std::size_t i = 0; i < count; i++) {
-      sum += data[i];
+    for(std::size_t i = 0; i < N; i++) {
+      sum += x[i];
     }
 
     return fac*sum;
   }
 
   template<typename T> requires IsReal<T>
-  inline T var(const T *data, const std::size_t count, const T mu)
+  inline T var(const T *x, const std::size_t N, const T mu)
   {
-    if( data == nullptr  ||  !impl::isCount(count)  ||  isNaN(mu) ) {
+    if( x == nullptr  ||  !impl::isCount(N)  ||  isNaN(mu) ) {
       return INVALID_RESULT<T>;
     }
 
-    const T fac = impl::normFact<T,true>(count);
+    const T fac = impl::normFact<T,true>(N);
 
     T sum = 0;
-    for(std::size_t i = 0; i < count; i++) {
-      const T d = data[i] - mu;
+    for(std::size_t i = 0; i < N; i++) {
+      const T d = x[i] - mu;
       sum += d*d;
     }
 
@@ -105,15 +107,15 @@ namespace cs {
   }
 
   template<typename T> requires IsReal<T>
-  inline T var(const T *data, const std::size_t count)
+  inline T var(const T *x, const std::size_t N)
   {
-    return var(data, count, mean(data, count));
+    return var(x, N, mean(x, N));
   }
 
   template<typename T> requires IsReal<T>
-  inline T stddev(const T *data, const std::size_t count, const T mu)
+  inline T stddev(const T *x, const std::size_t N, const T mu)
   {
-    const T ss = var(data, count, mu); // Variance := s*s
+    const T ss = var(x, N, mu); // Variance := s*s
     if( isNaN(ss) ) {
       return INVALID_RESULT<T>;
     }
@@ -121,9 +123,9 @@ namespace cs {
   }
 
   template<typename T> requires IsReal<T>
-  inline T stddev(const T *data, const std::size_t count)
+  inline T stddev(const T *x, const std::size_t N)
   {
-    return stddev(data, count, mean(data, count));
+    return stddev(x, N, mean(x, N));
   }
 
 } // namespace cs
