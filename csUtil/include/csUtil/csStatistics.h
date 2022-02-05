@@ -85,13 +85,40 @@ namespace cs {
       sum += x[i];
     }
 
+    return fac*sum; // Mean := mu
+  }
+
+  template<typename T> requires IsReal<T>
+  inline T cov(const T *x, const T *y, const std::size_t N, const T muX, const T muY)
+  {
+    if( x == nullptr  ||  y == nullptr  ||  !impl::isCount(N)  ||
+        isNaN(muX)  ||  isNaN(muY) ) {
+      return INVALID_RESULT<T>;
+    }
+
+    const T fac = impl::normFact<T,true>(N);
+
+    T sum = 0;
+    for(std::size_t i = 0; i < N; i++) {
+      const T dX = x[i] - muX;
+      const T dY = y[i] - muY;
+      sum += dX*dY;
+    }
+
     return fac*sum;
+  }
+
+  template<typename T> requires IsReal<T>
+  inline T cov(const T *x, const T *y, const std::size_t N)
+  {
+    return cov(x, y, N, mean(x, N), mean(y, N));
   }
 
   template<typename T> requires IsReal<T>
   inline T var(const T *x, const std::size_t N, const T mu)
   {
-    if( x == nullptr  ||  !impl::isCount(N)  ||  isNaN(mu) ) {
+    if( x == nullptr  ||  !impl::isCount(N)  ||
+        isNaN(mu) ) {
       return INVALID_RESULT<T>;
     }
 
@@ -126,6 +153,27 @@ namespace cs {
   inline T stddev(const T *x, const std::size_t N)
   {
     return stddev(x, N, mean(x, N));
+  }
+
+  template<typename T> requires IsReal<T>
+  inline T corr(const T *x, const T *y, const std::size_t N, const T muX, const T muY)
+  {
+    if( x == nullptr  ||  y == nullptr  ||  !impl::isCount(N)  ||
+        isNaN(muX)  ||  isNaN(muY) ) {
+      return INVALID_RESULT<T>;
+    }
+
+    const T   covXY = cov(x, y, N, muX, muY);
+    const T sigmaX  = stddev(x, N, muX);
+    const T sigmaY  = stddev(y, N, muY);
+
+    return covXY/(sigmaX*sigmaY); // Pearson Correlation Coefficient := r (AKA "rho")
+  }
+
+  template<typename T> requires IsReal<T>
+  inline T corr(const T *x, const T *y, const std::size_t N)
+  {
+    return corr(x, y, N, mean(x, N), mean(y, N));
   }
 
 } // namespace cs
