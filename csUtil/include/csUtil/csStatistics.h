@@ -34,19 +34,13 @@
 
 #include <cstddef>
 
-#include <limits>
-#include <numeric>
-#include <type_traits>
-
+#include <csUtil/csConcepts.h>
 #include <csUtil/csMath.h>
 
 namespace cs {
 
-  template<typename T>
-  using if_real_t = std::enable_if_t<std::is_floating_point_v<T>,T>;
-
-  template<typename T>
-  inline constexpr if_real_t<T> INVALID_RESULT = std::numeric_limits<T>::quiet_NaN();
+  template<typename T> requires IsReal<T>
+  inline constexpr T INVALID_RESULT = std::numeric_limits<T>::quiet_NaN();
 
   namespace impl {
 
@@ -54,14 +48,14 @@ namespace cs {
     {
       static_assert( sizeof(std::size_t) >= 4 );
 
-      constexpr std::size_t MIN = 1;
+      constexpr std::size_t MIN = 2;
       constexpr std::size_t MAX = 0x7FFFFFFF;
 
       return MIN <= count  &&  count <= MAX;
     }
 
-    template<typename T, bool MINUS_ONE = false>
-    inline if_real_t<T> normFact(const std::size_t count) // NOTE: Does NOT check 'count'!
+    template<typename T, bool MINUS_ONE = false> requires IsReal<T>
+    inline T normFact(const std::size_t count) // NOTE: Does NOT check 'count'!
     {
       constexpr double ONE = 1;
 
@@ -75,19 +69,61 @@ namespace cs {
 
   } // namespace impl
 
-  template<typename T>
-  inline if_real_t<T> mean(const T *data, const std::size_t count)
+  template<typename T> requires IsReal<T>
+  inline T mean(const T *data, const std::size_t count)
   {
-    constexpr T ZERO = 0;
-
     if( data == nullptr  ||  !impl::isCount(count) ) {
       return INVALID_RESULT<T>;
     }
 
-    const T sum = std::accumulate<const T*,T>(data, data + count, ZERO);
     const T fac = impl::normFact<T>(count);
 
-    return sum*fac;
+    T sum = 0;
+    for(std::size_t i = 0; i < count; i++) {
+      sum += data[i];
+    }
+
+    return fac*sum;
+  }
+
+  template<typename T> requires IsReal<T>
+  inline T var(const T *data, const std::size_t count, const T mu)
+  {
+    if( data == nullptr  ||  !impl::isCount(count)  ||  isNaN(mu) ) {
+      return INVALID_RESULT<T>;
+    }
+
+    const T fac = impl::normFact<T,true>(count);
+
+    T sum = 0;
+    for(std::size_t i = 0; i < count; i++) {
+      const T d = data[i] - mu;
+      sum += d*d;
+    }
+
+    return fac*sum;
+  }
+
+  template<typename T> requires IsReal<T>
+  inline T var(const T *data, const std::size_t count)
+  {
+    return var(data, count, mean(data, count));
+  }
+
+  template<typename T> requires IsReal<T>
+  inline T stddev(const T *data, const std::size_t count, const T mu)
+  {
+    const T ss = var(data, count, mu); // Variance := s*s
+    if( isNaN(ss) ) {
+      return INVALID_RESULT<T>;
+    }
+    return sqrt(ss); // Standard Deviation := s (AKA "sigma")
+  }
+
+  template<typename T> requires IsReal<T>
+  inline T stddev(const T *data, const std::size_t count)
+  {
+    return stddev(data, count, mean(data, count));
   }
 
 } // namespace cs
