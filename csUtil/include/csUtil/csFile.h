@@ -34,8 +34,8 @@
 
 #include <cstdint>
 
+#include <filesystem>
 #include <memory>
-#include <string>
 #include <vector>
 
 #include <csUtil/csIODevice.h>
@@ -69,9 +69,9 @@ public:
 
   void close();
   bool isOpen() const;
-  bool open(const std::u8string& filename, const OpenFlags flags = cs::FileOpenFlag::Read);
+  bool open(const std::filesystem::path& path, const OpenFlags flags = cs::FileOpenFlag::Read);
 
-  std::u8string filename() const;
+  std::filesystem::path path() const;
 
   bool seek(const pos_type pos) const;
   pos_type tell() const;

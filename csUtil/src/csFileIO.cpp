@@ -41,7 +41,7 @@ using StringList = std::list<String>;
 
 ////// Public ////////////////////////////////////////////////////////////////
 
-CS_UTIL_EXPORT std::list<std::string> csReadLines(const std::u8string& filename,
+CS_UTIL_EXPORT std::list<std::string> csReadLines(const std::filesystem::path& path,
                                                   const bool skipBlank,
                                                   const bool doTrim)
 {
@@ -49,7 +49,7 @@ CS_UTIL_EXPORT std::list<std::string> csReadLines(const std::u8string& filename,
     return str.empty()  ||  cs::isSpace(str);
   };
 
-  const std::string text = csReadTextFile(filename);
+  const std::string text = csReadTextFile(path);
   if( text.empty() ) {
     return StringList();
   }
@@ -62,7 +62,7 @@ CS_UTIL_EXPORT std::list<std::string> csReadLines(const std::u8string& filename,
   return lines;
 }
 
-CS_UTIL_EXPORT std::string csReadTextFile(const std::u8string& filename, bool *ok)
+CS_UTIL_EXPORT std::string csReadTextFile(const std::filesystem::path& path, bool *ok)
 {
   using Buffer = std::vector<uint8_t>;
 
@@ -71,7 +71,7 @@ CS_UTIL_EXPORT std::string csReadTextFile(const std::u8string& filename, bool *o
   }
 
   csFile file;
-  if( !file.open(filename) ) {
+  if( !file.open(path) ) {
     return String();
   }
   const Buffer buffer = file.readAll();

@@ -31,7 +31,6 @@
 
 #include "csUtil/csSerial.h"
 
-#include "csUtil/csTextConverter.h"
 #include "internal/Win32Handle.h"
 
 constexpr DWORD QUEUE_SIZE = 8*1024;
@@ -148,13 +147,19 @@ bool csSerial::isOpen() const
   return _impl  &&  _impl->isOpen();
 }
 
-bool csSerial::open(const std::u8string& device, const int rate)
+bool csSerial::open(const std::filesystem::path& device, const int rate)
 {
   // (1) Close (possibly) open device ////////////////////////////////////////
 
   close();
 
-  // (2) Create implementation ///////////////////////////////////////////////
+  // (2) Sanity check ////////////////////////////////////////////////////////
+
+  if( device.empty() ) {
+    return false;
+  }
+
+  // (3) Create implementation ///////////////////////////////////////////////
 
   try {
     _impl = std::make_unique<csSerialImpl>();
@@ -162,10 +167,10 @@ bool csSerial::open(const std::u8string& device, const int rate)
     return false;
   }
 
-  // (3) Open device /////////////////////////////////////////////////////////
+  // (4) Open device /////////////////////////////////////////////////////////
 
-  const std::u16string filename_utf16 = csUtf8ToUnicode(device);
-  _impl->handle = CreateFileW(reinterpret_cast<LPCWSTR>(filename_utf16.data()),
+  const std::u16string device_utf16 = device.filename().generic_u16string();
+  _impl->handle = CreateFileW(reinterpret_cast<LPCWSTR>(device_utf16.data()),
                               GENERIC_READ | GENERIC_WRITE,
                               0,
                               NULL,
@@ -177,7 +182,7 @@ bool csSerial::open(const std::u8string& device, const int rate)
     return false;
   }
 
-  // (4) Initialize device ///////////////////////////////////////////////////
+  // (5) Initialize device ///////////////////////////////////////////////////
 
   if( SetupComm(_impl->handle, QUEUE_SIZE, QUEUE_SIZE) == 0 ) {
     close();

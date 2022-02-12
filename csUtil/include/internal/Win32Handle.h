@@ -32,7 +32,7 @@
 #ifndef WIN32HANDLE_H
 #define WIN32HANDLE_H
 
-#include <string>
+#include <filesystem>
 
 #define NOMINMAX
 #include <Windows.h>
@@ -80,7 +80,7 @@ public:
   }
 
   HANDLE handle{INVALID_HANDLE_VALUE};
-  std::u8string name;
+  std::filesystem::path path{};
 };
 
 #endif // WIN32HANDLE_H

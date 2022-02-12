@@ -32,8 +32,8 @@
 #ifndef CSSERIAL_H
 #define CSSERIAL_H
 
+#include <filesystem>
 #include <memory>
-#include <string>
 
 #include <csUtil/csIODevice.h>
 
@@ -48,7 +48,7 @@ public:
 
   void close();
   bool isOpen() const;
-  bool open(const std::u8string& device, const int rate);
+  bool open(const std::filesystem::path& device, const int rate);
 
   size_type read(void *buffer, const size_type length) const;
   size_type write(const void *buffer, const size_type length) const;

@@ -35,7 +35,7 @@
 
 Win32Handle::Win32Handle() noexcept
   : handle{INVALID_HANDLE_VALUE}
-  , name()
+  , path{}
 {
 }
 
@@ -45,7 +45,7 @@ Win32Handle::~Win32Handle() noexcept
     CloseHandle(handle);
   }
   handle = INVALID_HANDLE_VALUE;
-  name.clear();
+  path.clear();
 }
 
 bool Win32Handle::isOpen() const

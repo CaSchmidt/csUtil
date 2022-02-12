@@ -32,15 +32,15 @@
 #ifndef CSFILEIO_H
 #define CSFILEIO_H
 
+#include <filesystem>
 #include <list>
-#include <string>
 
 #include <csUtil/csutil_config.h>
 
-CS_UTIL_EXPORT std::list<std::string> csReadLines(const std::u8string& filename,
+CS_UTIL_EXPORT std::list<std::string> csReadLines(const std::filesystem::path& path,
                                                   const bool skipBlank = false,
                                                   const bool doTrim = false);
 
-CS_UTIL_EXPORT std::string csReadTextFile(const std::u8string& filename, bool *ok = nullptr);
+CS_UTIL_EXPORT std::string csReadTextFile(const std::filesystem::path& path, bool *ok = nullptr);
 
 #endif // CSFILEIO_H

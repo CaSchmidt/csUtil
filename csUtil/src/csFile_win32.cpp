@@ -33,7 +33,6 @@
 
 #include "csUtil/csFile.h"
 
-#include "csUtil/csTextConverter.h"
 #include "internal/Win32Handle.h"
 
 ////// Implementation ////////////////////////////////////////////////////////
@@ -92,7 +91,7 @@ bool csFile::isOpen() const
   return _impl  &&  _impl->isOpen();
 }
 
-bool csFile::open(const std::u8string& filename, const OpenFlags flags)
+bool csFile::open(const std::filesystem::path& path, const OpenFlags flags)
 {
   // (1) Close (possibly) open file //////////////////////////////////////////
 
@@ -100,7 +99,8 @@ bool csFile::open(const std::u8string& filename, const OpenFlags flags)
 
   // (2) Sanity check ////////////////////////////////////////////////////////
 
-  if( filename.empty() ) {
+  std::error_code ec;
+  if( !std::filesystem::is_regular_file(path, ec) ) {
     return false;
   }
 
@@ -135,8 +135,8 @@ bool csFile::open(const std::u8string& filename, const OpenFlags flags)
     dwCreationDisposition = OPEN_EXISTING;
   }
 
-  const std::u16string filename_utf16 = csUtf8ToUnicode(filename);
-  _impl->handle = CreateFileW(reinterpret_cast<LPCWSTR>(filename_utf16.data()),
+  const std::u16string path_utf16 = path.generic_u16string();
+  _impl->handle = CreateFileW(reinterpret_cast<LPCWSTR>(path_utf16.data()),
                               dwDesiredAccess,
                               0,
                               NULL,
@@ -147,7 +147,7 @@ bool csFile::open(const std::u8string& filename, const OpenFlags flags)
   // (5) Handling of remaining flags /////////////////////////////////////////
 
   if( isOpen() ) {
-    _impl->name = filename;
+    _impl->path = path;
 
     if( flags.testMask(cs::FileOpenFlag::Write | cs::FileOpenFlag::Append) ) {
       _impl->seekToEnd();
@@ -162,12 +162,12 @@ bool csFile::open(const std::u8string& filename, const OpenFlags flags)
   return isOpen();
 }
 
-std::u8string csFile::filename() const
+std::filesystem::path csFile::path() const
 {
   if( !isOpen() ) {
     return std::u8string();
   }
-  return _impl->name;
+  return _impl->path;
 }
 
 bool csFile::seek(const pos_type pos) const
