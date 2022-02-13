@@ -100,7 +100,7 @@ bool csFile::open(const std::filesystem::path& path, const OpenFlags flags)
   // (2) Sanity check ////////////////////////////////////////////////////////
 
   std::error_code ec;
-  if( !std::filesystem::is_regular_file(path, ec) ) {
+  if( !std::filesystem::exists(path, ec) ) {
     return false;
   }
 
