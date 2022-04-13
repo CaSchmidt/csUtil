@@ -44,136 +44,97 @@ namespace cs {
 
   namespace impl {
 
+    template<typename T> requires IsReal<T>
     inline bool isCount(const std::size_t count)
     {
-      static_assert( sizeof(std::size_t) >= 4 );
+      constexpr std::size_t ONE = 1;
 
       constexpr std::size_t MIN = 2;
-      constexpr std::size_t MAX = 0x7FFFFFFF;
+      constexpr std::size_t MAX = sizeof(std::size_t) >= sizeof(T)
+          ? (ONE << std::numeric_limits<T>::digits) - ONE
+          : std::numeric_limits<std::size_t>::max();
 
       return MIN <= count  &&  count <= MAX;
-    }
-
-    template<typename T, bool MINUS_ONE = false> requires IsReal<T>
-    inline T normFact(const std::size_t count) // NOTE: Does NOT check 'count'!
-    {
-      static_assert( sizeof(double) == 8 );
-
-      constexpr double ONE = 1;
-
-      const double N = static_cast<double>(count);
-      const double f = MINUS_ONE
-          ? ONE/(N - ONE)
-          : ONE/ N;
-
-      return static_cast<T>(f);
     }
 
   } // namespace impl
 
   template<typename T> requires IsReal<T>
-  inline T mean(const T *x, const std::size_t N)
+  inline T mean(const T *x, const std::size_t count)
   {
-    if( x == nullptr  ||  !impl::isCount(N) ) {
+    if( x == nullptr  ||  !impl::isCount<T>(count) ) {
       return INVALID_RESULT<T>;
     }
 
-    const T fac = impl::normFact<T>(N);
+    const T N = static_cast<T>(count);
 
     T sum = 0;
     for(std::size_t i = 0; i < N; i++) {
       sum += x[i];
     }
 
-    return fac*sum; // Mean := mu
+    return sum/N;
   }
 
   template<typename T> requires IsReal<T>
-  inline T cov(const T *x, const T *y, const std::size_t N, const T muX, const T muY)
+  inline T cov(const T *x, const T *y, const std::size_t count,
+               const T _meanX = INVALID_RESULT<T>,
+               const T _meanY = INVALID_RESULT<T>)
   {
-    if( x == nullptr  ||  y == nullptr  ||  !impl::isCount(N)  ||
-        isNaN(muX)  ||  isNaN(muY) ) {
+    constexpr T ONE = 1;
+
+    if( x == nullptr  ||  y == nullptr  ||  !impl::isCount<T>(count) ) {
       return INVALID_RESULT<T>;
     }
 
-    const T fac = impl::normFact<T,true>(N);
+    const T     N = static_cast<T>(count);
+    const T meanX = !isNaN(_meanX)
+        ? _meanX
+        : mean(x, count);
+    const T meanY = !isNaN(_meanY)
+        ? _meanY
+        : mean(y, count);
 
     T sum = 0;
-    for(std::size_t i = 0; i < N; i++) {
-      const T dX = x[i] - muX;
-      const T dY = y[i] - muY;
-      sum += dX*dY;
+    for(std::size_t i = 0; i < count; i++) {
+      sum += x[i]*y[i];
     }
 
-    return fac*sum;
+    return (sum - N*meanX*meanY)/(N - ONE);
   }
 
   template<typename T> requires IsReal<T>
-  inline T cov(const T *x, const T *y, const std::size_t N)
+  inline T var(const T *x, const std::size_t count,
+               const T _meanX = INVALID_RESULT<T>)
   {
-    return cov(x, y, N, mean(x, N), mean(y, N));
-  }
+    constexpr T ONE = 1;
 
-  template<typename T> requires IsReal<T>
-  inline T var(const T *x, const std::size_t N, const T mu)
-  {
-    if( x == nullptr  ||  !impl::isCount(N)  ||
-        isNaN(mu) ) {
+    if( x == nullptr  ||  !impl::isCount<T>(count) ) {
       return INVALID_RESULT<T>;
     }
 
-    const T fac = impl::normFact<T,true>(N);
+    const T     N = static_cast<T>(count);
+    const T meanX = !isNaN(_meanX)
+        ? _meanX
+        : mean(x, count);
 
     T sum = 0;
-    for(std::size_t i = 0; i < N; i++) {
-      const T d = x[i] - mu;
-      sum += d*d;
+    for(std::size_t i = 0; i < count; i++) {
+      sum += x[i]*x[i];
     }
 
-    return fac*sum;
+    return (sum - N*meanX*meanX)/(N - ONE);
   }
 
   template<typename T> requires IsReal<T>
-  inline T var(const T *x, const std::size_t N)
+  inline T stddev(const T *x, const std::size_t count,
+                  const T _meanX = INVALID_RESULT<T>)
   {
-    return var(x, N, mean(x, N));
-  }
-
-  template<typename T> requires IsReal<T>
-  inline T stddev(const T *x, const std::size_t N, const T mu)
-  {
-    const T ss = var(x, N, mu); // Variance := s*s
+    const T ss = var(x, count, _meanX);
     if( isNaN(ss) ) {
       return INVALID_RESULT<T>;
     }
-    return sqrt(ss); // Standard Deviation := s (AKA "sigma")
-  }
-
-  template<typename T> requires IsReal<T>
-  inline T stddev(const T *x, const std::size_t N)
-  {
-    return stddev(x, N, mean(x, N));
-  }
-
-  template<typename T> requires IsReal<T>
-  inline T corr(const T *x, const T *y, const std::size_t N, const T muX, const T muY)
-  {
-    if( x == nullptr  ||  y == nullptr  ||  !impl::isCount(N)  ||
-        isNaN(muX)  ||  isNaN(muY) ) {
-      return INVALID_RESULT<T>;
-    }
-
-    const T   covXY = cov(x, y, N, muX, muY);
-    const T sigmaX  = stddev(x, N, muX);
-    const T sigmaY  = stddev(y, N, muY);
-
-    return covXY/(sigmaX*sigmaY); // Pearson Correlation Coefficient := r (AKA "rho")
-  }
-
-  template<typename T> requires IsReal<T>
-  inline T corr(const T *x, const T *y, const std::size_t N)
-  {
-    return corr(x, y, N, mean(x, N), mean(y, N));
+    return sqrt(ss);
   }
 
 } // namespace cs
