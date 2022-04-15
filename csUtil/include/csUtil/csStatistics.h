@@ -34,15 +34,16 @@
 
 #include <cstddef>
 
-#include <csUtil/csConcepts.h>
 #include <csUtil/csMath.h>
+#include <csUtil/csSIMD.h>
+#include <csUtil/csSIMD128.h>
 
 namespace cs {
 
   template<typename T> requires IsReal<T>
   inline constexpr T INVALID_RESULT = std::numeric_limits<T>::quiet_NaN();
 
-  namespace impl {
+  namespace impl_statistics {
 
     template<typename T> requires IsReal<T>
     inline bool isCount(const std::size_t count)
@@ -57,21 +58,18 @@ namespace cs {
       return MIN <= count  &&  count <= MAX;
     }
 
-  } // namespace impl
+  } // namespace impl_statistics
 
   template<typename T> requires IsReal<T>
   inline T mean(const T *x, const std::size_t count)
   {
-    if( x == nullptr  ||  !impl::isCount<T>(count) ) {
+    if( x == nullptr  ||  !impl_statistics::isCount<T>(count) ) {
       return INVALID_RESULT<T>;
     }
 
     const T N = static_cast<T>(count);
 
-    T sum = 0;
-    for(std::size_t i = 0; i < N; i++) {
-      sum += x[i];
-    }
+    const T sum = simd::sum<simd128_type<T>>(x, count);
 
     return sum/N;
   }
@@ -83,7 +81,7 @@ namespace cs {
   {
     constexpr T ONE = 1;
 
-    if( x == nullptr  ||  y == nullptr  ||  !impl::isCount<T>(count) ) {
+    if( x == nullptr  ||  y == nullptr  ||  !impl_statistics::isCount<T>(count) ) {
       return INVALID_RESULT<T>;
     }
 
@@ -95,10 +93,7 @@ namespace cs {
         ? _meanY
         : mean(y, count);
 
-    T sum = 0;
-    for(std::size_t i = 0; i < count; i++) {
-      sum += x[i]*y[i];
-    }
+    const T sum = simd::dot<simd128_type<T>>(x, y, count);
 
     return (sum - N*meanX*meanY)/(N - ONE);
   }
@@ -109,7 +104,7 @@ namespace cs {
   {
     constexpr T ONE = 1;
 
-    if( x == nullptr  ||  !impl::isCount<T>(count) ) {
+    if( x == nullptr  ||  !impl_statistics::isCount<T>(count) ) {
       return INVALID_RESULT<T>;
     }
 
@@ -118,10 +113,7 @@ namespace cs {
         ? _meanX
         : mean(x, count);
 
-    T sum = 0;
-    for(std::size_t i = 0; i < count; i++) {
-      sum += x[i]*x[i];
-    }
+    const T sum = simd::sum_squared<simd128_type<T>>(x, count);
 
     return (sum - N*meanX*meanX)/(N - ONE);
   }
