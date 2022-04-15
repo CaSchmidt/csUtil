@@ -15,9 +15,9 @@ namespace test_mean {
   TEST_CASE("Compute mean of values.", "[mean]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
-    const std::array<real_T,4> values = {1, 2, 5, 8};
+    const std::array<real_T,5> values = {1, 2, 5, 8, 9};
 
-    REQUIRE( cs::mean(values.data(), values.size()) == real_T{4} );
+    REQUIRE( cs::mean(values.data(), values.size()) == real_T{5} );
   }
 
 } // namespace test_statistics
