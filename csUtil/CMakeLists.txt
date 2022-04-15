@@ -61,6 +61,9 @@ list(APPEND csUtil_HEADERS
   include/csUtil/csPointer.h
   include/csUtil/csRawConverter.h
   include/csUtil/csSerial.h
+  include/csUtil/csSIMD.h
+  include/csUtil/csSIMD128.h
+  include/csUtil/csSIMD128Util.h
   include/csUtil/csStatistics.h
   include/csUtil/csStringUtil.h
   include/csUtil/csTextConverter.h
