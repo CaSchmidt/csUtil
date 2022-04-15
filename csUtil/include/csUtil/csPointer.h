@@ -36,29 +36,29 @@
 
 namespace cs {
 
-  namespace pointer {
+  namespace impl_pointer {
 
     template<int Size>
-    struct csPointerTypeImpl {
+    struct PointerTypeImpl {
       // SFINAE
     };
 
     template<>
-    struct csPointerTypeImpl<4> {
+    struct PointerTypeImpl<4> {
       using type = uint32_t;
     };
 
     template<>
-    struct csPointerTypeImpl<8> {
+    struct PointerTypeImpl<8> {
       using type = uint64_t;
     };
 
-  } // namespace pointer
+  } // namespace impl_pointer
 
 } // namespace cs
 
 struct csPointer {
-  using type = typename cs::pointer::csPointerTypeImpl<sizeof(void*)>::type;
+  using type = typename cs::impl_pointer::PointerTypeImpl<sizeof(void*)>::type;
 
   template<typename DataT>
   inline static bool isAlignedTo(const void *p)
