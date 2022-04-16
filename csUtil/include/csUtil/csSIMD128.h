@@ -43,6 +43,55 @@ namespace cs {
   };
 
   template<>
+  struct simd128_impl<4> {
+    using block_type = __m128;
+    using  size_type = std::size_t;
+    using value_type = float;
+
+    static constexpr size_type NUM_ELEMS = sizeof(block_type)/sizeof(value_type);
+
+    static_assert( NUM_ELEMS == 4 );
+
+    ////// Functions ///////////////////////////////////////////////////////
+
+    inline static block_type add(const block_type& a, const block_type& b)
+    {
+      return _mm_add_ps(a, b);
+    }
+
+    inline static block_type hadd(const block_type& x)
+    {
+      const block_type y = _mm_add_ps(x, simd128_swizzle_ps<1,0,3,2>(x));
+      return               _mm_add_ps(y, simd128_swizzle_ps<3,2,1,0>(y));
+    }
+
+    inline static block_type load(const value_type *ptr)
+    {
+      return _mm_load_ps(ptr);
+    }
+
+    inline static block_type load_unaligned(const value_type *ptr)
+    {
+      return _mm_loadu_ps(ptr);
+    }
+
+    inline static block_type mul(const block_type& a, const block_type& b)
+    {
+      return _mm_mul_ps(a, b);
+    }
+
+    inline static value_type to_value(const block_type& x)
+    {
+      return _mm_cvtss_f32(x);
+    }
+
+    inline static block_type zero()
+    {
+      return _mm_setzero_ps();
+    }
+  };
+
+  template<>
   struct simd128_impl<8> {
     using block_type = __m128d;
     using  size_type = std::size_t;

@@ -11,7 +11,7 @@
 
 namespace test_mean {
 
-  TEMPLATE_TEST_CASE("Various SIMD algorithms.", "[simd]", double) {
+  TEMPLATE_TEST_CASE("Various SIMD algorithms.", "[simd]", double, float) {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
     using real_T = TestType;
