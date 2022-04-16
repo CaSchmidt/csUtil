@@ -44,47 +44,47 @@ namespace cs {
 
   template<>
   struct simd128_impl<8> {
-    using real_type = double;
-    using simd_type = __m128d;
-    using size_type = std::size_t;
+    using block_type = __m128d;
+    using  size_type = std::size_t;
+    using value_type = double;
 
-    static constexpr size_type NUM_ELEMS = sizeof(simd_type)/sizeof(real_type);
+    static constexpr size_type NUM_ELEMS = sizeof(block_type)/sizeof(value_type);
 
     static_assert( NUM_ELEMS == 2 );
 
     ////// Functions ///////////////////////////////////////////////////////
 
-    inline static simd_type add(const simd_type& a, const simd_type& b)
+    inline static block_type add(const block_type& a, const block_type& b)
     {
       return _mm_add_pd(a, b);
     }
 
-    inline static simd_type hadd(const simd_type& x)
+    inline static block_type hadd(const block_type& x)
     {
       return _mm_add_pd(x, simd128_swizzle_pd<1,0>(x));
     }
 
-    inline static simd_type load(const real_type *ptr)
+    inline static block_type load(const value_type *ptr)
     {
       return _mm_load_pd(ptr);
     }
 
-    inline static simd_type load_unaligned(const real_type *ptr)
+    inline static block_type load_unaligned(const value_type *ptr)
     {
       return _mm_loadu_pd(ptr);
     }
 
-    inline static simd_type mul(const simd_type& a, const simd_type& b)
+    inline static block_type mul(const block_type& a, const block_type& b)
     {
       return _mm_mul_pd(a, b);
     }
 
-    inline static real_type to_real(const simd_type& x)
+    inline static value_type to_value(const block_type& x)
     {
       return _mm_cvtsd_f64(x);
     }
 
-    inline static simd_type zero()
+    inline static block_type zero()
     {
       return _mm_setzero_pd();
     }

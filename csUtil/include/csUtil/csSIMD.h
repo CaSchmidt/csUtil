@@ -44,12 +44,12 @@ namespace cs {
 
       template<typename SIMD>
       struct OP_identity {
-        inline static typename SIMD::real_type eval(const typename SIMD::real_type& x)
+        inline static typename SIMD::value_type eval(const typename SIMD::value_type& x)
         {
           return x;
         }
 
-        inline static typename SIMD::simd_type eval(const typename SIMD::simd_type& x)
+        inline static typename SIMD::block_type eval(const typename SIMD::block_type& x)
         {
           return x;
         }
@@ -57,14 +57,14 @@ namespace cs {
 
       template<typename SIMD>
       struct OP_mul {
-        inline static typename SIMD::real_type eval(const typename SIMD::real_type& a,
-                                                    const typename SIMD::real_type& b)
+        inline static typename SIMD::value_type eval(const typename SIMD::value_type& a,
+                                                     const typename SIMD::value_type& b)
         {
           return a*b;
         }
 
-        inline static typename SIMD::simd_type eval(const typename SIMD::simd_type& a,
-                                                    const typename SIMD::simd_type& b)
+        inline static typename SIMD::block_type eval(const typename SIMD::block_type& a,
+                                                     const typename SIMD::block_type& b)
         {
           return SIMD::mul(a, b);
         }
@@ -72,43 +72,43 @@ namespace cs {
 
       template<typename SIMD>
       struct OP_square {
-        inline static typename SIMD::real_type eval(const typename SIMD::real_type& x)
+        inline static typename SIMD::value_type eval(const typename SIMD::value_type& x)
         {
           return x*x;
         }
 
-        inline static typename SIMD::simd_type eval(const typename SIMD::simd_type& x)
+        inline static typename SIMD::block_type eval(const typename SIMD::block_type& x)
         {
           return SIMD::mul(x, x);
         }
       };
 
       template<typename SIMD, typename OP, bool ALIGNED>
-      inline typename SIMD::real_type accumulate(const typename SIMD::real_type *x,
-                                                 const typename SIMD::size_type count)
+      inline typename SIMD::value_type accumulate(const typename SIMD::value_type *x,
+                                                  const typename SIMD::size_type count)
       {
-        using real_type = typename SIMD::real_type;
-        using simd_type = typename SIMD::simd_type;
-        using size_type = typename SIMD::size_type;
+        using block_type = typename SIMD::block_type;
+        using  size_type = typename SIMD::size_type;
+        using value_type = typename SIMD::value_type;
 
         if( x == nullptr  ||  count < 1 ) {
-          return std::numeric_limits<real_type>::quiet_NaN();
+          return std::numeric_limits<value_type>::quiet_NaN();
         }
 
         const size_type numBlocks = count/SIMD::NUM_ELEMS;
         const size_type numRemain = count%SIMD::NUM_ELEMS;
 
-        real_type sum = 0;
+        value_type sum = 0;
 
         if( numBlocks > 0 ) {
-          simd_type acc = SIMD::zero();
+          block_type acc = SIMD::zero();
           for(size_type i = 0; i < numBlocks; i++, x += SIMD::NUM_ELEMS) {
-            const simd_type block = ALIGNED
+            const block_type block = ALIGNED
                 ? SIMD::load(x)
                 : SIMD::load_unaligned(x);
             acc = SIMD::add(acc, OP::eval(block));
           }
-          sum += SIMD::to_real(SIMD::hadd(acc));
+          sum += SIMD::to_value(SIMD::hadd(acc));
         }
 
         for(size_type i = 0; i < numRemain; i++, x++) {
@@ -119,35 +119,35 @@ namespace cs {
       }
 
       template<typename SIMD, typename OP, bool ALIGNED_a, bool ALIGNED_b>
-      inline typename SIMD::real_type accumulate(const typename SIMD::real_type *a,
-                                                 const typename SIMD::real_type *b,
-                                                 const typename SIMD::size_type count)
+      inline typename SIMD::value_type accumulate(const typename SIMD::value_type *a,
+                                                  const typename SIMD::value_type *b,
+                                                  const typename SIMD::size_type count)
       {
-        using real_type = typename SIMD::real_type;
-        using simd_type = typename SIMD::simd_type;
-        using size_type = typename SIMD::size_type;
+        using block_type = typename SIMD::block_type;
+        using  size_type = typename SIMD::size_type;
+        using value_type = typename SIMD::value_type;
 
         if( a == nullptr  ||  b == nullptr  ||  count < 1 ) {
-          return std::numeric_limits<real_type>::quiet_NaN();
+          return std::numeric_limits<value_type>::quiet_NaN();
         }
 
         const size_type numBlocks = count/SIMD::NUM_ELEMS;
         const size_type numRemain = count%SIMD::NUM_ELEMS;
 
-        real_type sum = 0;
+        value_type sum = 0;
 
         if( numBlocks > 0 ) {
-          simd_type acc = SIMD::zero();
+          block_type acc = SIMD::zero();
           for(size_type i = 0; i < numBlocks; i++, a += SIMD::NUM_ELEMS, b += SIMD::NUM_ELEMS) {
-            const simd_type block_a = ALIGNED_a
+            const block_type block_a = ALIGNED_a
                 ? SIMD::load(a)
                 : SIMD::load_unaligned(a);
-            const simd_type block_b = ALIGNED_b
+            const block_type block_b = ALIGNED_b
                 ? SIMD::load(b)
                 : SIMD::load_unaligned(b);
             acc = SIMD::add(acc, OP::eval(block_a, block_b));
           }
-          sum += SIMD::to_real(SIMD::hadd(acc));
+          sum += SIMD::to_value(SIMD::hadd(acc));
         }
 
         for(size_type i = 0; i < numRemain; i++, a++, b++) {
@@ -160,13 +160,13 @@ namespace cs {
     } // namespace impl_simd
 
     template<typename SIMD>
-    inline typename SIMD::real_type dot(const typename SIMD::real_type *a,
-                                        const typename SIMD::real_type *b,
-                                        const typename SIMD::size_type count)
+    inline typename SIMD::value_type dot(const typename SIMD::value_type *a,
+                                         const typename SIMD::value_type *b,
+                                         const typename SIMD::size_type count)
     {
       using OP = impl_simd::OP_mul<SIMD>;
-      const bool is_aligned_a = csPointer::isAlignedTo<typename SIMD::simd_type>(a);
-      const bool is_aligned_b = csPointer::isAlignedTo<typename SIMD::simd_type>(b);
+      const bool is_aligned_a = csPointer::isAlignedTo<typename SIMD::block_type>(a);
+      const bool is_aligned_b = csPointer::isAlignedTo<typename SIMD::block_type>(b);
       if( is_aligned_a  &&  is_aligned_b ) {
         return impl_simd::accumulate<SIMD,OP,true,true>(a, b, count);
       } else if( is_aligned_a ) {
@@ -178,25 +178,27 @@ namespace cs {
     }
 
     template<typename SIMD>
-    inline typename SIMD::real_type sum(const typename SIMD::real_type *x,
-                                        const typename SIMD::size_type count)
+    inline typename SIMD::value_type sum(const typename SIMD::value_type *x,
+                                         const typename SIMD::size_type count)
     {
       using OP = impl_simd::OP_identity<SIMD>;
-      const bool is_aligned = csPointer::isAlignedTo<typename SIMD::simd_type>(x);
-      return is_aligned
-          ? impl_simd::accumulate<SIMD,OP,true>(x, count)
-          : impl_simd::accumulate<SIMD,OP,false>(x, count);
+      const bool is_aligned = csPointer::isAlignedTo<typename SIMD::block_type>(x);
+      if( is_aligned ) {
+        return impl_simd::accumulate<SIMD,OP,true>(x, count);
+      }
+      return impl_simd::accumulate<SIMD,OP,false>(x, count);
     }
 
     template<typename SIMD>
-    inline typename SIMD::real_type sum_squared(const typename SIMD::real_type *x,
-                                                const typename SIMD::size_type count)
+    inline typename SIMD::value_type sum_squared(const typename SIMD::value_type *x,
+                                                 const typename SIMD::size_type count)
     {
       using OP = impl_simd::OP_square<SIMD>;
-      const bool is_aligned = csPointer::isAlignedTo<typename SIMD::simd_type>(x);
-      return is_aligned
-          ? impl_simd::accumulate<SIMD,OP,true>(x, count)
-          : impl_simd::accumulate<SIMD,OP,false>(x, count);
+      const bool is_aligned = csPointer::isAlignedTo<typename SIMD::block_type>(x);
+      if( is_aligned ) {
+        return impl_simd::accumulate<SIMD,OP,true>(x, count);
+      }
+      return impl_simd::accumulate<SIMD,OP,false>(x, count);
     }
 
   } // namespace simd
