@@ -204,22 +204,25 @@ namespace cs {
 
             const block_type block_a1 = load<SIMD,ALIGNED_a>(a);
             a += SIMD::NUM_ELEMS;
-            const block_type block_a2 = load<SIMD,ALIGNED_a>(a);
-            a += SIMD::NUM_ELEMS;
             const block_type block_b1 = load<SIMD,ALIGNED_b>(b);
             b += SIMD::NUM_ELEMS;
+
+            const block_type block_a2 = load<SIMD,ALIGNED_a>(a);
+            a += SIMD::NUM_ELEMS;
             const block_type block_b2 = load<SIMD,ALIGNED_b>(b);
             b += SIMD::NUM_ELEMS;
 
             acc = SIMD::add(acc, OP::eval(block_a1, block_b1));
-            acc = SIMD::add(acc, OP::eval(block_a2, block_b2));
 
             const block_type block_a3 = load<SIMD,ALIGNED_a>(a);
             a += SIMD::NUM_ELEMS;
-            const block_type block_a4 = load<SIMD,ALIGNED_a>(a);
-            a += SIMD::NUM_ELEMS;
             const block_type block_b3 = load<SIMD,ALIGNED_b>(b);
             b += SIMD::NUM_ELEMS;
+
+            acc = SIMD::add(acc, OP::eval(block_a2, block_b2));
+
+            const block_type block_a4 = load<SIMD,ALIGNED_a>(a);
+            a += SIMD::NUM_ELEMS;
             const block_type block_b4 = load<SIMD,ALIGNED_b>(b);
             b += SIMD::NUM_ELEMS;
 
