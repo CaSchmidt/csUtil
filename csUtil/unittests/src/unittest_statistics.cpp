@@ -6,14 +6,15 @@
 
 #include <catch.hpp>
 
+#define HAVE_SIMD128_PREFETCH
 #include <csUtil/csStatistics.h>
-
-using real_T = double;
 
 namespace test_mean {
 
-  TEST_CASE("Compute mean of values.", "[mean]") {
+  TEMPLATE_TEST_CASE("Compute mean of values.", "[mean]", double, float) {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    using real_T = TestType;
 
     const std::array<real_T,5> values = {1, 2, 5, 8, 9};
 
