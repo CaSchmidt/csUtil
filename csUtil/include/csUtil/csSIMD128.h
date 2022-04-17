@@ -80,6 +80,11 @@ namespace cs {
       return _mm_mul_ps(a, b);
     }
 
+    inline static void prefetch(const value_type *ptr)
+    {
+      _mm_prefetch(reinterpret_cast<const char*>(ptr), _MM_HINT_NTA);
+    }
+
     inline static value_type to_value(const block_type& x)
     {
       return _mm_cvtss_f32(x);
@@ -126,6 +131,11 @@ namespace cs {
     inline static block_type mul(const block_type& a, const block_type& b)
     {
       return _mm_mul_pd(a, b);
+    }
+
+    inline static void prefetch(const value_type *ptr)
+    {
+      _mm_prefetch(reinterpret_cast<const char*>(ptr), _MM_HINT_NTA);
     }
 
     inline static value_type to_value(const block_type& x)
