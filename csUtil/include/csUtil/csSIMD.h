@@ -40,6 +40,8 @@ namespace cs {
 
   namespace simd {
 
+    ////// User Interface of SIMD Helpers ////////////////////////////////////
+
     template<typename SIMD, bool ALIGNED>
     inline typename SIMD::block_type load(const typename SIMD::value_type *ptr)
     {
@@ -48,6 +50,8 @@ namespace cs {
       }
       return SIMD::load_unaligned(ptr);
     }
+
+    ////// Begin Implementation //////////////////////////////////////////////
 
     namespace impl_simd {
 
@@ -253,6 +257,10 @@ namespace cs {
       }
 
     } // namespace impl_simd
+
+    ////// End Implementation ////////////////////////////////////////////////
+
+    ////// User Interface of SIMD Algorithms /////////////////////////////////
 
     template<typename SIMD>
     inline typename SIMD::value_type dot(const typename SIMD::value_type *a,
