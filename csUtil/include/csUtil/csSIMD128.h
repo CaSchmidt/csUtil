@@ -68,10 +68,9 @@ namespace cs {
     template<bool ALIGNED = true>
     inline static block_type load(const value_type *ptr)
     {
-      if constexpr( ALIGNED ) {
-        return _mm_load_ps(ptr);
-      }
-      return _mm_loadu_ps(ptr);
+      return ALIGNED
+          ? _mm_load_ps(ptr)
+          : _mm_loadu_ps(ptr);
     }
 
     inline static block_type mul(const block_type& a, const block_type& b)
@@ -120,10 +119,9 @@ namespace cs {
     template<bool ALIGNED = true>
     inline static block_type load(const value_type *ptr)
     {
-      if constexpr( ALIGNED ) {
-        return _mm_load_pd(ptr);
-      }
-      return _mm_loadu_pd(ptr);
+      return ALIGNED
+          ? _mm_load_pd(ptr)
+          : _mm_loadu_pd(ptr);
     }
 
     inline static block_type mul(const block_type& a, const block_type& b)
