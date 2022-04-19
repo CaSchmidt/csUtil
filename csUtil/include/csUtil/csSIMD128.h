@@ -65,13 +65,12 @@ namespace cs {
       return               _mm_add_ps(y, simd128_swizzle_ps<3,2,1,0>(y));
     }
 
+    template<bool ALIGNED = true>
     inline static block_type load(const value_type *ptr)
     {
-      return _mm_load_ps(ptr);
-    }
-
-    inline static block_type load_unaligned(const value_type *ptr)
-    {
+      if constexpr( ALIGNED ) {
+        return _mm_load_ps(ptr);
+      }
       return _mm_loadu_ps(ptr);
     }
 
@@ -118,13 +117,12 @@ namespace cs {
       return _mm_add_pd(x, simd128_swizzle_pd<1,0>(x));
     }
 
+    template<bool ALIGNED = true>
     inline static block_type load(const value_type *ptr)
     {
-      return _mm_load_pd(ptr);
-    }
-
-    inline static block_type load_unaligned(const value_type *ptr)
-    {
+      if constexpr( ALIGNED ) {
+        return _mm_load_pd(ptr);
+      }
       return _mm_loadu_pd(ptr);
     }
 
