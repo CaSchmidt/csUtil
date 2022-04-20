@@ -9,12 +9,14 @@
 
 int main(int /*argc*/, char ** /*argv*/)
 {
+  using uint = unsigned int;
+
   std::array<char,1024> buffer;
   constexpr rsize_t bufferSize = buffer.size() - 2;
 
   printf("device = ");
   buffer.fill(0);
-  fscanf_s(stdin, "%s", buffer.data(), bufferSize); fflush(stdin);
+  fscanf_s(stdin, "%s", buffer.data(), uint{bufferSize}); fflush(stdin);
   const std::u8string device = reinterpret_cast<char8_t*>(buffer.data());
 
   printf("rate = ");
@@ -37,7 +39,7 @@ int main(int /*argc*/, char ** /*argv*/)
     printf(": ");
 
     buffer.fill(0);
-    fscanf_s(stdin, "%s", buffer.data(), bufferSize); fflush(stdin);
+    fscanf_s(stdin, "%s", buffer.data(), uint{bufferSize}); fflush(stdin);
     if( strcmp(buffer.data(), "quit") == 0 ) {
       break;
     }
