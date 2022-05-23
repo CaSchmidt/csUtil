@@ -146,7 +146,7 @@ namespace cs {
   };
 
   template<typename T> requires IsReal<T>
-  using simd128_type = simd128_impl<sizeof(T)>;
+  using simd128 = simd128_impl<sizeof(T)>;
 
 } // namespace cs
 

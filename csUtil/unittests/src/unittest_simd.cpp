@@ -17,7 +17,7 @@ namespace test_mean {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
     using real_T = TestType;
-    using simd_T = cs::simd128_type<real_T>;
+    using simd_T = cs::simd128<real_T>;
 
     const std::array<real_T,5> values = {1, 2, 5, 8, 9};
     //                                   1  4 25 64  81
@@ -34,7 +34,7 @@ namespace test_mean {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
     using real_T = TestType;
-    using simd_T = cs::simd128_type<real_T>;
+    using simd_T = cs::simd128<real_T>;
 
     std::array<real_T,23> values;
     std::iota(values.begin(), values.end(), real_T{1});

@@ -69,7 +69,7 @@ namespace cs {
 
     const T N = static_cast<T>(count);
 
-    const T sum = simd::sum<simd128_type<T>>(x, count);
+    const T sum = simd::sum<simd128<T>>(x, count);
 
     return sum/N;
   }
@@ -93,7 +93,7 @@ namespace cs {
         ? _meanY
         : mean(y, count);
 
-    const T sum = simd::dot<simd128_type<T>>(x, y, count);
+    const T sum = simd::dot<simd128<T>>(x, y, count);
 
     return (sum - N*meanX*meanY)/(N - ONE);
   }
@@ -113,7 +113,7 @@ namespace cs {
         ? _meanX
         : mean(x, count);
 
-    const T sum = simd::sum_squared<simd128_type<T>>(x, count);
+    const T sum = simd::sum_squared<simd128<T>>(x, count);
 
     return (sum - N*meanX*meanX)/(N - ONE);
   }
