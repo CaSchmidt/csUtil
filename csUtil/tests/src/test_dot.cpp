@@ -36,7 +36,7 @@ extern "C" real_T dot(const real_T *a, const real_T *b, const std::size_t count)
   }
   return sum;
 #else
-  using SIMD = cs::simd128_type<real_T>;
+  using SIMD = cs::simd128<real_T>;
   using OP = cs::simd::impl_simd::OP_mul<SIMD>;
   return cs::simd::impl_simd::accumulate<SIMD,OP,true,true>(a, b, count);
 #endif
