@@ -99,11 +99,6 @@ bool csFile::open(const std::filesystem::path& path, const OpenFlags flags)
 
   // (2) Sanity check ////////////////////////////////////////////////////////
 
-  std::error_code ec;
-  if( !std::filesystem::exists(path, ec) ) {
-    return false;
-  }
-
   if( !flags.testFlag(cs::FileOpenFlag::ReadWrite) ) {
     return false;
   }
