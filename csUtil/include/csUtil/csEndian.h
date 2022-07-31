@@ -39,10 +39,22 @@
 
 #include <bit>
 
+#include <csUtil/csTypeTraits.h>
+
 namespace cs {
 
   template<typename T>
-  using if_swap_t = std::enable_if_t<std::is_arithmetic_v<T>,T>;
+  using is_swappable = std::bool_constant<
+  is_char_v<T>      ||
+  is_integral_v<T>  ||
+  is_real_v<T>
+  >;
+
+  template<typename T>
+  inline constexpr bool is_swappable_v = is_swappable<T>::value;
+
+  template<typename T>
+  using if_swappable_t = std::enable_if_t<std::is_swappable_v<T>,T>;
 
   namespace impl_endian {
 
@@ -123,13 +135,13 @@ namespace cs {
   } // namespace impl_endian
 
   template<bool SWAP, typename T>
-  constexpr if_swap_t<T> copy(const T& value)
+  constexpr if_swappable_t<T> copy(const T& value)
   {
     return impl_endian::dispatch<SWAP  &&  sizeof(T) >= 2,T>(value);
   }
 
   template<typename T>
-  constexpr if_swap_t<T> swap(const T& value)
+  constexpr if_swappable_t<T> swap(const T& value)
   {
     return impl_endian::dispatch<sizeof(T) >= 2,T>(value);
   }
@@ -139,25 +151,25 @@ namespace cs {
    */
 
   template<typename T>
-  constexpr if_swap_t<T> fromBigEndian(const T& peerValue)
+  constexpr if_swappable_t<T> fromBigEndian(const T& peerValue)
   {
     return copy<std::endian::native != std::endian::big>(peerValue);
   }
 
   template<typename T>
-  constexpr if_swap_t<T> fromLittleEndian(const T& peerValue)
+  constexpr if_swappable_t<T> fromLittleEndian(const T& peerValue)
   {
     return copy<std::endian::native != std::endian::little>(peerValue);
   }
 
   template<typename T>
-  constexpr if_swap_t<T> toBigEndian(const T& hostValue)
+  constexpr if_swappable_t<T> toBigEndian(const T& hostValue)
   {
     return copy<std::endian::native != std::endian::big>(hostValue);
   }
 
   template<typename T>
-  constexpr if_swap_t<T> toLittleEndian(const T& hostValue)
+  constexpr if_swappable_t<T> toLittleEndian(const T& hostValue)
   {
     return copy<std::endian::native != std::endian::little>(hostValue);
   }
