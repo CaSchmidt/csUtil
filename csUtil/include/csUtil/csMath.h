@@ -34,47 +34,81 @@
 
 #include <math.h>
 
+#include <csUtil/csConcepts.h>
+
 namespace cs {
 
-  inline double abs(const double x)
-  {
-    return ::fabs(x);
-  }
+  template<std::size_t SIZE>
+  struct math_impl {
+    // SFINAE
+  };
 
-  inline float abs(const float x)
-  {
-    return ::fabsf(x);
-  }
+  template<>
+  struct math_impl<4> {
+    using value_type = float;
 
-  inline bool isFinite(const double x)
-  {
-    return isfinite(x) != 0;
-  }
+    static constexpr auto INVALID_RESULT = std::numeric_limits<value_type>::quiet_NaN();
 
-  inline bool isFinite(const float x)
-  {
-    return isfinite(x) != 0;
-  }
+    inline static value_type abs(const value_type x)
+    {
+      return ::fabsf(x);
+    }
 
-  inline bool isNaN(const double x)
-  {
-    return isnan(x) != 0;
-  }
+    inline static bool isFinite(const value_type x)
+    {
+      return isfinite(x) != 0;
+    }
 
-  inline bool isNaN(const float x)
-  {
-    return isnan(x) != 0;
-  }
+    inline static bool isInfinite(const value_type x)
+    {
+      return isinf(x) != 0;
+    }
 
-  inline double sqrt(const double x)
-  {
-    return ::sqrt(x);
-  }
+    inline static bool isNaN(const value_type x)
+    {
+      return isnan(x) != 0;
+    }
 
-  inline float sqrt(const float x)
-  {
-    return ::sqrtf(x);
-  }
+    inline static value_type sqrt(const value_type x)
+    {
+      return ::sqrtf(x);
+    }
+  };
+
+  template<>
+  struct math_impl<8> {
+    using value_type = double;
+
+    static constexpr auto INVALID_RESULT = std::numeric_limits<value_type>::quiet_NaN();
+
+    inline static value_type abs(const value_type x)
+    {
+      return ::fabs(x);
+    }
+
+    inline static bool isFinite(const value_type x)
+    {
+      return isfinite(x) != 0;
+    }
+
+    inline static bool isInfinite(const value_type x)
+    {
+      return isinf(x) != 0;
+    }
+
+    inline static bool isNaN(const value_type x)
+    {
+      return isnan(x) != 0;
+    }
+
+    inline static value_type sqrt(const value_type x)
+    {
+      return ::sqrt(x);
+    }
+  };
+
+  template<typename T> requires IsReal<T>
+  using math = math_impl<sizeof(T)>;
 
 } // namespace cs
 

@@ -29,7 +29,6 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <cmath>
 #include <cstring>
 
 #include <limits>
@@ -37,6 +36,8 @@
 #include <double-conversion.h>
 
 #include "csUtil/csCharConv.h"
+
+#include "csUtil/csMath.h"
 
 namespace cs {
 
@@ -91,7 +92,7 @@ namespace cs {
       int processed = 0;
       const ValueT v = to_ieee<ValueT>(conv, first, length(first, last), &processed);
 
-      if( std::isnan(v)  &&  processed < 3 ) { // Empty or Junk String
+      if( math<ValueT>::isNaN(v)  &&  processed < 3 ) { // Empty or Junk String
         return from_chars_result{first, std::errc::invalid_argument};
       }
 

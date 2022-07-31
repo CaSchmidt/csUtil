@@ -40,9 +40,6 @@
 
 namespace cs {
 
-  template<typename T> requires IsReal<T>
-  inline constexpr T INVALID_RESULT = std::numeric_limits<T>::quiet_NaN();
-
   namespace impl_statistics {
 
     template<typename T> requires IsReal<T>
@@ -64,7 +61,7 @@ namespace cs {
   inline T mean(const T *x, const std::size_t count)
   {
     if( x == nullptr  ||  !impl_statistics::isCount<T>(count) ) {
-      return INVALID_RESULT<T>;
+      return math<T>::INVALID_RESULT;
     }
 
     const T N = static_cast<T>(count);
@@ -76,20 +73,20 @@ namespace cs {
 
   template<typename T> requires IsReal<T>
   inline T cov(const T *x, const T *y, const std::size_t count,
-               const T _meanX = INVALID_RESULT<T>,
-               const T _meanY = INVALID_RESULT<T>)
+               const T _meanX = math<T>::INVALID_RESULT,
+               const T _meanY = math<T>::INVALID_RESULT)
   {
     constexpr T ONE = 1;
 
     if( x == nullptr  ||  y == nullptr  ||  !impl_statistics::isCount<T>(count) ) {
-      return INVALID_RESULT<T>;
+      return math<T>::INVALID_RESULT;
     }
 
     const T     N = static_cast<T>(count);
-    const T meanX = !isNaN(_meanX)
+    const T meanX = !math<T>::isNaN(_meanX)
         ? _meanX
         : mean(x, count);
-    const T meanY = !isNaN(_meanY)
+    const T meanY = !math<T>::isNaN(_meanY)
         ? _meanY
         : mean(y, count);
 
@@ -100,16 +97,16 @@ namespace cs {
 
   template<typename T> requires IsReal<T>
   inline T var(const T *x, const std::size_t count,
-               const T _meanX = INVALID_RESULT<T>)
+               const T _meanX = math<T>::INVALID_RESULT)
   {
     constexpr T ONE = 1;
 
     if( x == nullptr  ||  !impl_statistics::isCount<T>(count) ) {
-      return INVALID_RESULT<T>;
+      return math<T>::INVALID_RESULT;
     }
 
     const T     N = static_cast<T>(count);
-    const T meanX = !isNaN(_meanX)
+    const T meanX = !math<T>::isNaN(_meanX)
         ? _meanX
         : mean(x, count);
 
@@ -120,13 +117,13 @@ namespace cs {
 
   template<typename T> requires IsReal<T>
   inline T stddev(const T *x, const std::size_t count,
-                  const T _meanX = INVALID_RESULT<T>)
+                  const T _meanX = math<T>::INVALID_RESULT)
   {
     const T ss = var(x, count, _meanX);
-    if( isNaN(ss) ) {
-      return INVALID_RESULT<T>;
+    if( math<T>::isNaN(ss) ) {
+      return math<T>::INVALID_RESULT;
     }
-    return sqrt(ss);
+    return math<T>::sqrt(ss);
   }
 
 } // namespace cs
