@@ -37,7 +37,7 @@
 
 namespace cs {
 
-  template<int SIZE>
+  template<std::size_t SIZE>
   struct simd128_impl {
     // SFINAE
   };
