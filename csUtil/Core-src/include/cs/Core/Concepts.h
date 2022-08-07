@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2016, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2022, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,48 +29,25 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSPOINTER_H
-#define CSPOINTER_H
+#ifndef CS_CONCEPTS_H
+#define CS_CONCEPTS_H
 
-#include <cstdint>
+#include <cs/Core/TypeTraits.h>
 
 namespace cs {
 
-  namespace impl_pointer {
+  template<typename T>
+  concept IsBoolean = is_boolean_v<T>;
 
-    template<int Size>
-    struct PointerTypeImpl {
-      // SFINAE
-    };
+  template<typename T>
+  concept IsCharacter = is_char_v<T>;
 
-    template<>
-    struct PointerTypeImpl<4> {
-      using type = uint32_t;
-    };
+  template<typename T>
+  concept IsIntegral = is_integral_v<T>;
 
-    template<>
-    struct PointerTypeImpl<8> {
-      using type = uint64_t;
-    };
-
-  } // namespace impl_pointer
+  template<typename T>
+  concept IsReal = is_real_v<T>;
 
 } // namespace cs
 
-struct csPointer {
-  using type = typename cs::impl_pointer::PointerTypeImpl<sizeof(void*)>::type;
-
-  template<typename DataT>
-  inline static bool isAlignedTo(const void *p)
-  {
-    return ( reinterpret_cast<type>(p) & static_cast<type>(sizeof(DataT)-1) ) == 0;
-  }
-
-  template<typename DataT>
-  inline static void *alignTo(const void *p)
-  {
-    return static_cast<void*>( reinterpret_cast<type>(p) & ~static_cast<type>(sizeof(DataT)-1) );
-  }
-};
-
-#endif // CSPOINTER_H
+#endif // CS_CONCEPTS_H

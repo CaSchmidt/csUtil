@@ -29,10 +29,10 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSFLAGS_H
-#define CSFLAGS_H
+#ifndef CS_FLAGS_H
+#define CS_FLAGS_H
 
-#include <csUtil/csTypeTraits.h>
+#include <cs/Core/TypeTraits.h>
 
 /*
  * NOTE:
@@ -129,85 +129,89 @@ inline cs::if_flags_t<T>& operator^=(T& result, const T& a)
 
 // Implementation ////////////////////////////////////////////////////////////
 
-template<typename EnumT>
-class csFlags {
-public:
-  using  enum_type = cs::if_flags_t<EnumT>;
-  using value_type = cs::safe_underlying_type_t<enum_type>;
+namespace cs {
 
-  csFlags() noexcept = default;
-  ~csFlags() noexcept = default;
+  template<typename EnumT>
+  class Flags {
+  public:
+    using  enum_type = cs::if_flags_t<EnumT>;
+    using value_type = cs::safe_underlying_type_t<enum_type>;
 
-  csFlags(const csFlags&) noexcept = default;
-  csFlags& operator=(const csFlags&) noexcept = default;
+    Flags() noexcept = default;
+    ~Flags() noexcept = default;
 
-  csFlags(csFlags&&) noexcept = default;
-  csFlags& operator=(csFlags&&) noexcept = default;
+    Flags(const Flags&) noexcept = default;
+    Flags& operator=(const Flags&) noexcept = default;
 
-  csFlags(const enum_type flags) noexcept
-    : _flags{flags}
-  {
-  }
+    Flags(Flags&&) noexcept = default;
+    Flags& operator=(Flags&&) noexcept = default;
 
-  csFlags(const value_type value) noexcept
-    : _flags{static_cast<enum_type>(value)}
-  {
-  }
-
-  csFlags& operator=(const enum_type flags)
-  {
-    _flags = flags;
-    return *this;
-  }
-
-  csFlags& operator=(const value_type value)
-  {
-    _flags = static_cast<enum_type>(value);
-    return *this;
-  }
-
-  inline operator bool() const
-  {
-    return static_cast<value_type>(_flags) != 0;
-  }
-
-  inline operator enum_type() const
-  {
-    return _flags;
-  }
-
-  inline operator value_type() const
-  {
-    return static_cast<value_type>(_flags);
-  }
-
-  inline bool testFlag(const enum_type f) const
-  {
-    return static_cast<value_type>(_flags & f) != 0;
-  }
-
-  inline bool testMask(const enum_type m) const
-  {
-    return (_flags & m) == m;
-  }
-
-  inline void set(const enum_type f, const bool on = true)
-  {
-    if( on ) {
-      _flags |=  f;
-    } else {
-      _flags &= ~f;
+    Flags(const enum_type flags) noexcept
+      : _flags{flags}
+    {
     }
-  }
 
-  inline void reset(const enum_type f)
-  {
-    set(f, false);
-  }
+    Flags(const value_type value) noexcept
+      : _flags{static_cast<enum_type>(value)}
+    {
+    }
 
-private:
-  enum_type _flags{};
-};
+    Flags& operator=(const enum_type flags)
+    {
+      _flags = flags;
+      return *this;
+    }
+
+    Flags& operator=(const value_type value)
+    {
+      _flags = static_cast<enum_type>(value);
+      return *this;
+    }
+
+    inline operator bool() const
+    {
+      return static_cast<value_type>(_flags) != 0;
+    }
+
+    inline operator enum_type() const
+    {
+      return _flags;
+    }
+
+    inline operator value_type() const
+    {
+      return static_cast<value_type>(_flags);
+    }
+
+    inline bool testFlag(const enum_type f) const
+    {
+      return static_cast<value_type>(_flags & f) != 0;
+    }
+
+    inline bool testMask(const enum_type m) const
+    {
+      return (_flags & m) == m;
+    }
+
+    inline void set(const enum_type f, const bool on = true)
+    {
+      if( on ) {
+        _flags |=  f;
+      } else {
+        _flags &= ~f;
+      }
+    }
+
+    inline void reset(const enum_type f)
+    {
+      set(f, false);
+    }
+
+  private:
+    enum_type _flags{};
+  };
+
+} // namespace cs
 
 // Macros ////////////////////////////////////////////////////////////////////
 
@@ -217,4 +221,4 @@ private:
     struct is_flags_enabled<T> : std::true_type {};  \
   }
 
-#endif // CSFLAGS_H
+#endif // CS_FLAGS_H

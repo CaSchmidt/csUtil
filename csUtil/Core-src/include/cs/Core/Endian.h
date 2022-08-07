@@ -29,17 +29,16 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSENDIAN_H
-#define CSENDIAN_H
+#ifndef CS_ENDIAN_H
+#define CS_ENDIAN_H
 
 #ifdef _MSC_VER
 # include <cstdlib>
 #endif
-#include <cstdint>
 
 #include <bit>
 
-#include <csUtil/csTypeTraits.h>
+#include <cs/Core/TypeTraits.h>
 
 namespace cs {
 
@@ -55,6 +54,8 @@ namespace cs {
 
   template<typename T>
   using if_swappable_t = std::enable_if_t<std::is_swappable_v<T>,T>;
+
+  // Implementation //////////////////////////////////////////////////////////
 
   namespace impl_endian {
 
@@ -92,30 +93,10 @@ namespace cs {
 # error Compiler not supported!
 #endif
 
-    template<int SIZE>
-    struct SwapType {
-      // SFINAE
-    };
-
-    template<>
-    struct SwapType<2> {
-      using swap_type = uint16_t;
-    };
-
-    template<>
-    struct SwapType<4> {
-      using swap_type = uint32_t;
-    };
-
-    template<>
-    struct SwapType<8> {
-      using swap_type = uint64_t;
-    };
-
     template<typename T>
     inline T do_swap(const T& value)
     {
-      using S = typename SwapType<sizeof(T)>::swap_type;
+      using S = typename IntegralOfSize<sizeof(T)>::unsigned_type;
       const S swapped = impl_swap(*reinterpret_cast<const S*>(&value));
       return *reinterpret_cast<const T*>(&swapped);
     }
@@ -133,6 +114,8 @@ namespace cs {
     }
 
   } // namespace impl_endian
+
+  // User Interface //////////////////////////////////////////////////////////
 
   template<bool SWAP, typename T>
   constexpr if_swappable_t<T> copy(const T& value)
@@ -176,4 +159,4 @@ namespace cs {
 
 } // namespace cs
 
-#endif // CSENDIAN_H
+#endif // CS_ENDIAN_H

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.13 FATAL_ERROR)
 
 ### Project ##################################################################
 
@@ -17,8 +17,8 @@ if(NOT BUILD_SHARED_LIBS)
 endif()
 
 # config.h
-configure_file(include/config/csutil_config.h.in
-  ${CMAKE_CURRENT_BINARY_DIR}/include/csUtil/csutil_config.h @ONLY
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Core-src/include/config/csutil_config.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/include/cs/Core/csutil_config.h @ONLY
   )
 
 # Build Tests?
@@ -34,20 +34,16 @@ endif()
 
 ### 3rd Party ################################################################
 
-add_subdirectory(3rdparty/double-conversion)
-add_subdirectory(3rdparty/icu-651)
+#add_subdirectory(3rdparty/double-conversion)
+#add_subdirectory(3rdparty/icu-651)
 
 ### csUtil ###################################################################
 
 list(APPEND csUtil_HEADERS
   include/csUtil/csCharConv.h
-  include/csUtil/csCharUtil.h
-  include/csUtil/csConcepts.h
   include/csUtil/csDualLogger.h
-  include/csUtil/csEndian.h
   include/csUtil/csFile.h
   include/csUtil/csFileIO.h
-  include/csUtil/csFlags.h
   include/csUtil/csFlatTrie.h
   include/csUtil/csFormat.h
   include/csUtil/csILogger.h
@@ -58,18 +54,14 @@ list(APPEND csUtil_HEADERS
   include/csUtil/csNamespace.h
   include/csUtil/csNumeric.h
   include/csUtil/csOutputContext.h
-  include/csUtil/csPointer.h
-  include/csUtil/csRawConverter.h
   include/csUtil/csSerial.h
   include/csUtil/csSIMD.h
   include/csUtil/csSIMD128.h
   include/csUtil/csSIMD128Util.h
   include/csUtil/csStatistics.h
-  include/csUtil/csStringUtil.h
   include/csUtil/csTextConverter.h
   include/csUtil/csTime.h
   include/csUtil/csTrie.h
-  include/csUtil/csTypeTraits.h
   include/internal/csutil_internal.h
   include/internal/csFlatTrieUtil.h
   include/internal/csTrieNode.h
@@ -121,83 +113,98 @@ endif()
 
 ### Target ###################################################################
 
-add_library(csUtil
-  ${csUtil_HEADERS}
-  ${csUtil_SOURCES}
-  )
+add_library(csUtilLib)
 
-if(ENABLE_QT)
-  target_sources(csUtil
-    PRIVATE ${csUtil_FORMS}
-    )
-endif()
+format_output_name(csUtilLib "csUtil")
 
-format_output_name(csUtil "csUtil")
-
-set_target_properties(csUtil PROPERTIES
+set_target_properties(csUtilLib PROPERTIES
   CXX_STANDARD 20
   CXX_STANDARD_REQUIRED ON
   )
 
-if(ENABLE_QT)
-  set_target_properties(csUtil PROPERTIES
-    AUTOMOC ON
-    AUTOUIC ON
-    AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/forms
-    )
-endif()
-
-target_compile_definitions(csUtil
+target_compile_definitions(csUtilLib
   PRIVATE CS_BUILD_UTIL_LIB
-  PRIVATE HAVE_STD_FORMAT
   )
 
-if(MSVC)
-  target_compile_options(csUtil
-    PRIVATE /wd4251
-    )
-endif()
+add_subdirectory(Core-src)
 
-target_include_directories(csUtil
-  PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include
-  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
-  )
+#add_library(csUtil
+#  ${csUtil_HEADERS}
+#  ${csUtil_SOURCES}
+#  )
 
-list(APPEND csUtil_LIBS
-  PUBLIC dblcnv
-  PUBLIC icu
-  )
-if(ENABLE_QT)
-  list(APPEND csUtil_LIBS
-    PUBLIC Qt5::Widgets
-    )
-endif()
-if(UNIX)
-  list(APPEND csUtil_LIBS
-    PUBLIC pthread # std::unique_ptr<>
-    )
-endif()
-target_link_libraries(csUtil
-  ${csUtil_LIBS}
-  )
+#if(ENABLE_QT)
+#  target_sources(csUtil
+#    PRIVATE ${csUtil_FORMS}
+#    )
+#endif()
+
+#set_cxx_properties(csUtil)
+
+#set_target_properties(csUtil PROPERTIES
+#  CXX_STANDARD 20
+#  CXX_STANDARD_REQUIRED ON
+#  )
+
+#if(ENABLE_QT)
+#  set_target_properties(csUtil PROPERTIES
+#    AUTOMOC ON
+#    AUTOUIC ON
+#    AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/forms
+#    )
+#endif()
+
+#target_compile_definitions(csUtil
+#  PRIVATE CS_BUILD_UTIL_LIB
+#  PRIVATE HAVE_STD_FORMAT
+#  )
+
+#if(MSVC)
+#  target_compile_options(csUtil
+#    PRIVATE /wd4251
+#    )
+#endif()
+
+#target_include_directories(csUtil
+#  PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include
+#  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+#  )
+
+#list(APPEND csUtil_LIBS
+#  PUBLIC dblcnv
+#  PUBLIC icu
+#  )
+#if(ENABLE_QT)
+#  list(APPEND csUtil_LIBS
+#    PUBLIC Qt5::Widgets
+#    )
+#endif()
+#if(UNIX)
+#  list(APPEND csUtil_LIBS
+#    PUBLIC pthread # std::unique_ptr<>
+#    )
+#endif()
+#target_link_libraries(csUtil
+#  ${csUtil_LIBS}
+#  )
 
 ### Install ##################################################################
 
-install(TARGETS csUtil
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin
-  )
+#install(TARGETS csUtil
+#  ARCHIVE DESTINATION lib
+#  LIBRARY DESTINATION lib
+#  RUNTIME DESTINATION bin
+#  )
 
-install(DIRECTORY include/
-  DESTINATION include
-  PATTERN "config" EXCLUDE
-  PATTERN "internal" EXCLUDE
-  )
+#install(DIRECTORY include/
+#  DESTINATION include
+#  PATTERN "config" EXCLUDE
+#  PATTERN "internal" EXCLUDE
+#  )
 
-install(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/include/csUtil/csutil_config.h DESTINATION include/csUtil
-  )
+#install(FILES
+#  ${CMAKE_CURRENT_BINARY_DIR}/include/csUtil/csutil_config.h DESTINATION include/csUtil
+#  )
 
 ### Tests ####################################################################
 

@@ -29,14 +29,14 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSSTRINGUTIL_H
-#define CSSTRINGUTIL_H
+#ifndef CS_STRINGUTIL_H
+#define CS_STRINGUTIL_H
 
 #include <algorithm>
 #include <list>
 #include <string>
 
-#include <csUtil/csCharUtil.h>
+#include <cs/Core/CharUtil.h>
 
 namespace cs {
 
@@ -612,4 +612,4 @@ namespace cs {
 
 } // namespace cs
 
-#endif // CSSTRINGUTIL_H
+#endif // CS_STRINGUTIL_H

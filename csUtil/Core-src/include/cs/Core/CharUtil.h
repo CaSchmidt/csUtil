@@ -29,10 +29,10 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSCHARUTIL_H
-#define CSCHARUTIL_H
+#ifndef CS_CHARUTIL_H
+#define CS_CHARUTIL_H
 
-#include <csUtil/csConcepts.h>
+#include <cs/Core/Concepts.h>
 
 namespace cs {
 
@@ -160,4 +160,4 @@ namespace cs {
 
 } // namespace cs
 
-#endif // CSCHARUTIL_H
+#endif // CS_CHARUTIL_H

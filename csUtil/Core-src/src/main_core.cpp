@@ -29,25 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSCONCEPTS_H
-#define CSCONCEPTS_H
+#include <cs/Core/csutil_config.h>
 
-#include <csUtil/csTypeTraits.h>
-
-namespace cs {
-
-  template<typename T>
-  concept IsBoolean = is_boolean_v<T>;
-
-  template<typename T>
-  concept IsCharacter = is_char_v<T>;
-
-  template<typename T>
-  concept IsIntegral = is_integral_v<T>;
-
-  template<typename T>
-  concept IsReal = is_real_v<T>;
-
-} // namespace cs
-
-#endif // CSCONCEPTS_H
+CS_UTIL_EXPORT void main_core()
+{
+}

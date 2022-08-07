@@ -29,8 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSRAWCONVERTER_H
-#define CSRAWCONVERTER_H
+#ifndef CS_RAWCONVERTER_H
+#define CS_RAWCONVERTER_H
 
 #include <cstdint>
 
@@ -40,13 +40,13 @@
 #include <smmintrin.h> // SSE4.1
 #include <xmmintrin.h> // SSE
 
-/*****************************************************************************
- * Implementation ************************************************************
- *****************************************************************************/
-
 namespace cs {
 
-  namespace convert {
+  /***************************************************************************
+   * Implementation **********************************************************
+   ***************************************************************************/
+
+  namespace impl_convert {
 
     /*************************************************************************
      * Stride Computation ****************************************************
@@ -379,131 +379,131 @@ namespace cs {
       }
     };
 
-  } // namespace convert
+  } // namespace impl_convert
+
+  /***************************************************************************
+   * User Interface **********************************************************
+   ***************************************************************************/
+
+  template<typename DataT>
+  void convert(double *dest, const DataT *src, const int N,
+               std::enable_if_t<std::is_arithmetic_v<DataT>> * = nullptr)
+  {
+    using namespace impl_convert;
+
+    const int count = N / Stride<DataT>::Elements;
+    if( count > 0 ) {
+      const __m128d helper = BlockHelper<DataT>::create();
+
+      const int unroll = count / Stride<DataT>::PrefetchUnroll;
+      for(int i = 0; i < unroll; i++) {
+        _mm_prefetch(reinterpret_cast<const char*>(&src[Stride<DataT>::PrefetchWidth]),
+            _MM_HINT_NTA);
+
+        Unroll<DataT,Stride<DataT>::PrefetchUnroll-1>::run(dest, src, helper);
+
+        dest += Stride<DataT>::UnrolledElements;
+        src  += Stride<DataT>::UnrolledElements;
+      }
+
+      const int remain = count % Stride<DataT>::PrefetchUnroll;
+      for(int i = 0; i < remain; i++) {
+        Unroll<DataT,0>::run(dest, src, helper);
+
+        dest += Stride<DataT>::Elements;
+        src  += Stride<DataT>::Elements;
+      }
+
+      _mm_sfence();
+    }
+
+    const int remain = N % Stride<DataT>::Elements;
+    for(int i = 0; i < remain; i++) {
+      *dest++ = static_cast<double>(*src++);
+    }
+  }
+
+  template<typename DataT>
+  void convert(double *dest, const DataT *src, const int N,
+               const double c1,
+               std::enable_if_t<std::is_arithmetic_v<DataT>> * = nullptr)
+  {
+    using namespace impl_convert;
+
+    const int count = N / Stride<DataT>::Elements;
+    if( count > 0 ) {
+      const __m128d   c1mm = _mm_set1_pd(c1);
+      const __m128d helper = BlockHelper<DataT>::create();
+
+      const int unroll = count / Stride<DataT>::PrefetchUnroll;
+      for(int i = 0; i < unroll; i++) {
+        _mm_prefetch(reinterpret_cast<const char*>(&src[Stride<DataT>::PrefetchWidth]),
+            _MM_HINT_NTA);
+
+        Unroll<DataT,Stride<DataT>::PrefetchUnroll-1>::run(dest, src, c1mm, helper);
+
+        dest += Stride<DataT>::UnrolledElements;
+        src  += Stride<DataT>::UnrolledElements;
+      }
+
+      const int remain = count % Stride<DataT>::PrefetchUnroll;
+      for(int i = 0; i < remain; i++) {
+        Unroll<DataT,0>::run(dest, src, c1mm, helper);
+
+        dest += Stride<DataT>::Elements;
+        src  += Stride<DataT>::Elements;
+      }
+
+      _mm_sfence();
+    }
+
+    const int remain = N % Stride<DataT>::Elements;
+    for(int i = 0; i < remain; i++) {
+      *dest++ = c1 * static_cast<double>(*src++);
+    }
+  }
+
+  template<typename DataT>
+  void convert(double *dest, const DataT *src, const int N,
+               const double c1, const double c0,
+               std::enable_if_t<std::is_arithmetic_v<DataT>> * = nullptr)
+  {
+    using namespace impl_convert;
+
+    const int count = N / Stride<DataT>::Elements;
+    if( count > 0 ) {
+      const __m128d   c1mm = _mm_set1_pd(c1);
+      const __m128d   c0mm = _mm_set1_pd(c0);
+      const __m128d helper = BlockHelper<DataT>::create();
+
+      const int unroll = count / Stride<DataT>::PrefetchUnroll;
+      for(int i = 0; i < unroll; i++) {
+        _mm_prefetch(reinterpret_cast<const char*>(&src[Stride<DataT>::PrefetchWidth]),
+            _MM_HINT_NTA);
+
+        Unroll<DataT,Stride<DataT>::PrefetchUnroll-1>::run(dest, src, c1mm, c0mm, helper);
+
+        dest += Stride<DataT>::UnrolledElements;
+        src  += Stride<DataT>::UnrolledElements;
+      }
+
+      const int remain = count % Stride<DataT>::PrefetchUnroll;
+      for(int i = 0; i < remain; i++) {
+        Unroll<DataT,0>::run(dest, src, c1mm, c0mm, helper);
+
+        dest += Stride<DataT>::Elements;
+        src  += Stride<DataT>::Elements;
+      }
+
+      _mm_sfence();
+    }
+
+    const int remain = N % Stride<DataT>::Elements;
+    for(int i = 0; i < remain; i++) {
+      *dest++ = c1 * static_cast<double>(*src++) + c0;
+    }
+  }
 
 } // namespace cs
 
-/*****************************************************************************
- * User Interface ************************************************************
- *****************************************************************************/
-
-template<typename DataT>
-void csConvert(double *dest, const DataT *src, const int N,
-               std::enable_if_t<std::is_arithmetic_v<DataT>> * = nullptr)
-{
-  using namespace cs::convert;
-
-  const int count = N / Stride<DataT>::Elements;
-  if( count > 0 ) {
-    const __m128d helper = BlockHelper<DataT>::create();
-
-    const int unroll = count / Stride<DataT>::PrefetchUnroll;
-    for(int i = 0; i < unroll; i++) {
-      _mm_prefetch(reinterpret_cast<const char*>(&src[Stride<DataT>::PrefetchWidth]),
-          _MM_HINT_NTA);
-
-      Unroll<DataT,Stride<DataT>::PrefetchUnroll-1>::run(dest, src, helper);
-
-      dest += Stride<DataT>::UnrolledElements;
-      src  += Stride<DataT>::UnrolledElements;
-    }
-
-    const int remain = count % Stride<DataT>::PrefetchUnroll;
-    for(int i = 0; i < remain; i++) {
-      Unroll<DataT,0>::run(dest, src, helper);
-
-      dest += Stride<DataT>::Elements;
-      src  += Stride<DataT>::Elements;
-    }
-
-    _mm_sfence();
-  }
-
-  const int remain = N % Stride<DataT>::Elements;
-  for(int i = 0; i < remain; i++) {
-    *dest++ = static_cast<double>(*src++);
-  }
-}
-
-template<typename DataT>
-void csConvert(double *dest, const DataT *src, const int N,
-               const double c1,
-               std::enable_if_t<std::is_arithmetic_v<DataT>> * = nullptr)
-{
-  using namespace cs::convert;
-
-  const int count = N / Stride<DataT>::Elements;
-  if( count > 0 ) {
-    const __m128d   c1mm = _mm_set1_pd(c1);
-    const __m128d helper = BlockHelper<DataT>::create();
-
-    const int unroll = count / Stride<DataT>::PrefetchUnroll;
-    for(int i = 0; i < unroll; i++) {
-      _mm_prefetch(reinterpret_cast<const char*>(&src[Stride<DataT>::PrefetchWidth]),
-          _MM_HINT_NTA);
-
-      Unroll<DataT,Stride<DataT>::PrefetchUnroll-1>::run(dest, src, c1mm, helper);
-
-      dest += Stride<DataT>::UnrolledElements;
-      src  += Stride<DataT>::UnrolledElements;
-    }
-
-    const int remain = count % Stride<DataT>::PrefetchUnroll;
-    for(int i = 0; i < remain; i++) {
-      Unroll<DataT,0>::run(dest, src, c1mm, helper);
-
-      dest += Stride<DataT>::Elements;
-      src  += Stride<DataT>::Elements;
-    }
-
-    _mm_sfence();
-  }
-
-  const int remain = N % Stride<DataT>::Elements;
-  for(int i = 0; i < remain; i++) {
-    *dest++ = c1 * static_cast<double>(*src++);
-  }
-}
-
-template<typename DataT>
-void csConvert(double *dest, const DataT *src, const int N,
-               const double c1, const double c0,
-               std::enable_if_t<std::is_arithmetic_v<DataT>> * = nullptr)
-{
-  using namespace cs::convert;
-
-  const int count = N / Stride<DataT>::Elements;
-  if( count > 0 ) {
-    const __m128d   c1mm = _mm_set1_pd(c1);
-    const __m128d   c0mm = _mm_set1_pd(c0);
-    const __m128d helper = BlockHelper<DataT>::create();
-
-    const int unroll = count / Stride<DataT>::PrefetchUnroll;
-    for(int i = 0; i < unroll; i++) {
-      _mm_prefetch(reinterpret_cast<const char*>(&src[Stride<DataT>::PrefetchWidth]),
-          _MM_HINT_NTA);
-
-      Unroll<DataT,Stride<DataT>::PrefetchUnroll-1>::run(dest, src, c1mm, c0mm, helper);
-
-      dest += Stride<DataT>::UnrolledElements;
-      src  += Stride<DataT>::UnrolledElements;
-    }
-
-    const int remain = count % Stride<DataT>::PrefetchUnroll;
-    for(int i = 0; i < remain; i++) {
-      Unroll<DataT,0>::run(dest, src, c1mm, c0mm, helper);
-
-      dest += Stride<DataT>::Elements;
-      src  += Stride<DataT>::Elements;
-    }
-
-    _mm_sfence();
-  }
-
-  const int remain = N % Stride<DataT>::Elements;
-  for(int i = 0; i < remain; i++) {
-    *dest++ = c1 * static_cast<double>(*src++) + c0;
-  }
-}
-
-#endif // CSRAWCONVERTER_H
+#endif // CS_RAWCONVERTER_H

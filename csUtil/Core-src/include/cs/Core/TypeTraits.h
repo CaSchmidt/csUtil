@@ -29,8 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSTYPETRAITS_H
-#define CSTYPETRAITS_H
+#ifndef CS_TYPETRAITS_H
+#define CS_TYPETRAITS_H
 
 #include <cstddef>
 #include <cstdint>
@@ -86,6 +86,37 @@ namespace cs {
   template<typename T>
   inline constexpr bool is_real_v = is_real<T>::value;
 
+  ////// Integral Types //////////////////////////////////////////////////////
+
+  template<std::size_t SIZE>
+  struct IntegralOfSize {
+    // SFINAE
+  };
+
+  template<>
+  struct IntegralOfSize<1> {
+    using   signed_type =  int8_t;
+    using unsigned_type = uint8_t;
+  };
+
+  template<>
+  struct IntegralOfSize<2> {
+    using   signed_type =  int16_t;
+    using unsigned_type = uint16_t;
+  };
+
+  template<>
+  struct IntegralOfSize<4> {
+    using   signed_type =  int32_t;
+    using unsigned_type = uint32_t;
+  };
+
+  template<>
+  struct IntegralOfSize<8> {
+    using   signed_type =  int64_t;
+    using unsigned_type = uint64_t;
+  };
+
   ////// Miscellaneous Transformations ///////////////////////////////////////
 
   template<typename T>
@@ -122,4 +153,4 @@ namespace cs {
 
 } // namespace cs
 
-#endif // CSTYPETRAITS_H
+#endif // CS_TYPETRAITS_H
