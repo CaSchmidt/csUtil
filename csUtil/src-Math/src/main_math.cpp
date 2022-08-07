@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2021, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2022, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,87 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_MATH_H
-#define CS_MATH_H
+#include <cs/Core/csutil_config.h>
 
-#include <math.h>
-
-#include <csUtil/csConcepts.h>
-
-namespace cs {
-
-  template<std::size_t SIZE>
-  struct math_impl {
-    // SFINAE
-  };
-
-  template<>
-  struct math_impl<4> {
-    using value_type = float;
-
-    static constexpr auto INVALID_RESULT = std::numeric_limits<value_type>::quiet_NaN();
-
-    inline static value_type abs(const value_type x)
-    {
-      return ::fabsf(x);
-    }
-
-    inline static bool isFinite(const value_type x)
-    {
-      return isfinite(x) != 0;
-    }
-
-    inline static bool isInfinite(const value_type x)
-    {
-      return isinf(x) != 0;
-    }
-
-    inline static bool isNaN(const value_type x)
-    {
-      return isnan(x) != 0;
-    }
-
-    inline static value_type sqrt(const value_type x)
-    {
-      return ::sqrtf(x);
-    }
-  };
-
-  template<>
-  struct math_impl<8> {
-    using value_type = double;
-
-    static constexpr auto INVALID_RESULT = std::numeric_limits<value_type>::quiet_NaN();
-
-    inline static value_type abs(const value_type x)
-    {
-      return ::fabs(x);
-    }
-
-    inline static bool isFinite(const value_type x)
-    {
-      return isfinite(x) != 0;
-    }
-
-    inline static bool isInfinite(const value_type x)
-    {
-      return isinf(x) != 0;
-    }
-
-    inline static bool isNaN(const value_type x)
-    {
-      return isnan(x) != 0;
-    }
-
-    inline static value_type sqrt(const value_type x)
-    {
-      return ::sqrt(x);
-    }
-  };
-
-  template<typename T> requires IsReal<T>
-  using math = math_impl<sizeof(T)>;
-
-} // namespace cs
-
-#endif // CS_MATH_H
+CS_UTIL_EXPORT void main_math()
+{
+}

@@ -17,7 +17,7 @@ if(NOT BUILD_SHARED_LIBS)
 endif()
 
 # config.h
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Core-src/include/config/csutil_config.h.in
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src-Core/include/config/csutil_config.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/include/cs/Core/csutil_config.h @ONLY
   )
 
@@ -50,7 +50,6 @@ list(APPEND csUtil_HEADERS
   include/csUtil/csIODevice.h
   include/csUtil/csIProgress.h
   include/csUtil/csLogger.h
-  include/csUtil/csMath.h
   include/csUtil/csNamespace.h
   include/csUtil/csNumeric.h
   include/csUtil/csOutputContext.h
@@ -126,7 +125,9 @@ target_compile_definitions(csUtilLib
   PRIVATE CS_BUILD_UTIL_LIB
   )
 
-add_subdirectory(Core-src)
+add_subdirectory(src-Core)
+add_subdirectory(src-Math)
+#add_subdirectory(CharConv-src)
 
 #add_library(csUtil
 #  ${csUtil_HEADERS}
