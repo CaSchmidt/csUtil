@@ -49,7 +49,6 @@ list(APPEND csUtil_HEADERS
   include/csUtil/csIProgress.h
   include/csUtil/csLogger.h
   include/csUtil/csNamespace.h
-  include/csUtil/csNumeric.h
   include/csUtil/csOutputContext.h
   include/csUtil/csSerial.h
   include/csUtil/csSIMD.h

@@ -4,7 +4,6 @@ list(APPEND csCore_HEADERS
   include/cs/Core/Endian.h
   include/cs/Core/Flags.h
   include/cs/Core/Pointer.h
-  include/cs/Core/RawConverter.h
   include/cs/Core/StringUtil.h
   include/cs/Core/TypeTraits.h
   )

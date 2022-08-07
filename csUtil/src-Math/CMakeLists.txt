@@ -1,5 +1,7 @@
 list(APPEND csMath_HEADERS
   include/cs/Math/Math.h
+  include/cs/Math/Numeric.h
+  include/cs/Math/RawConverter.h
   )
 
 list(APPEND csMath_SOURCES

@@ -29,10 +29,10 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSNUMERIC_H
-#define CSNUMERIC_H
+#ifndef CS_NUMERIC_H
+#define CS_NUMERIC_H
 
-#include <csUtil/csConcepts.h>
+#include <cs/Core/Concepts.h>
 
 namespace cs {
 
@@ -71,4 +71,4 @@ namespace cs {
 
 } // namespace cs
 
-#endif // CSNUMERIC_H
+#endif // CS_NUMERIC_H
