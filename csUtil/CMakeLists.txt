@@ -32,10 +32,6 @@ if(ENABLE_QT)
   find_package(Qt5Widgets 5.6 REQUIRED)
 endif()
 
-### 3rd Party ################################################################
-
-#add_subdirectory(3rdparty/icu-651)
-
 ### csUtil ###################################################################
 
 list(APPEND csUtil_HEADERS
@@ -54,7 +50,6 @@ list(APPEND csUtil_HEADERS
   include/csUtil/csSIMD128.h
   include/csUtil/csSIMD128Util.h
   include/csUtil/csStatistics.h
-  include/csUtil/csTextConverter.h
   include/csUtil/csTime.h
   include/csUtil/csTrie.h
   include/internal/csutil_internal.h
@@ -72,7 +67,6 @@ list(APPEND csUtil_SOURCES
   src/csIProgress.cpp
   src/csLogger.cpp
   src/csOutputContext.cpp
-  src/csTextConverter.cpp
   src/csTime.cpp
   src/csTrie.cpp
   )
@@ -122,6 +116,7 @@ add_subdirectory(src-Core)
 add_subdirectory(src-Math)
 add_subdirectory(src-CharConv)
 add_subdirectory(src-Format)
+add_subdirectory(src-Unicode)
 
 #add_library(csUtil
 #  ${csUtil_HEADERS}

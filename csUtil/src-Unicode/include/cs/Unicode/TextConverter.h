@@ -29,16 +29,16 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSTEXTCONVERTER_H
-#define CSTEXTCONVERTER_H
+#ifndef CS_TEXTCONVERTER_H
+#define CS_TEXTCONVERTER_H
 
 #include <list>
 #include <memory>
 #include <string>
 
-#include <csUtil/csutil_config.h>
+#include <cs/Core/csutil_config.h>
 
-#include <csUtil/csTypeTraits.h>
+#include <cs/Core/TypeTraits.h>
 
 class csTextConverterData;
 
@@ -118,4 +118,4 @@ inline std::u8string csUnicodeToUtf8(const std::u16string& s)
   return csUnicodeToUtf8(s.data(), s.size());
 }
 
-#endif // CSTEXTCONVERTER_H
+#endif // CS_TEXTCONVERTER_H

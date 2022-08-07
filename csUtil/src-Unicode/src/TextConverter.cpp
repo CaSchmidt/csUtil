@@ -37,7 +37,7 @@
 #include <unicode/ucnv.h>
 #include <unicode/ustring.h>
 
-#include "csUtil/csTextConverter.h"
+#include "cs/Unicode/TextConverter.h"
 
 ////// Private ///////////////////////////////////////////////////////////////
 
