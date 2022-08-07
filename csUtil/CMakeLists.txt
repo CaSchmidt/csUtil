@@ -21,6 +21,10 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src-Core/include/config/csutil_config
   ${CMAKE_CURRENT_BINARY_DIR}/include/cs/Core/csutil_config.h @ONLY
   )
 
+# Build Modules?
+option(ENABLE_CHARCONV "Build elementary string conversions module" OFF)
+option(ENABLE_UNICODE "Build Unicode module" OFF)
+
 # Build Tests?
 option(ENABLE_TESTS "Enable tests" OFF)
 option(ENABLE_UNITTESTS "Enable unit tests" OFF)
@@ -114,9 +118,15 @@ target_compile_definitions(csUtilLib
 
 add_subdirectory(src-Core)
 add_subdirectory(src-Math)
-add_subdirectory(src-CharConv)
-add_subdirectory(src-Format)
-add_subdirectory(src-Unicode)
+
+if(ENABLE_CHARCONV)
+  add_subdirectory(src-CharConv)
+  add_subdirectory(src-Format) # depends on CharConv
+endif()
+
+if(ENABLE_UNICODE)
+  add_subdirectory(src-Unicode)
+endif()
 
 #add_library(csUtil
 #  ${csUtil_HEADERS}
