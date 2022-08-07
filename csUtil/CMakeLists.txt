@@ -43,7 +43,6 @@ list(APPEND csUtil_HEADERS
   include/csUtil/csFile.h
   include/csUtil/csFileIO.h
   include/csUtil/csFlatTrie.h
-  include/csUtil/csFormat.h
   include/csUtil/csILogger.h
   include/csUtil/csIODevice.h
   include/csUtil/csIProgress.h
@@ -68,7 +67,6 @@ list(APPEND csUtil_SOURCES
   src/csFile_generic.cpp
   src/csFileIO.cpp
   src/csFlatTrie.cpp
-  src/csFormat.cpp
   src/csILogger.cpp
   src/csIODevice.cpp
   src/csIProgress.cpp
@@ -123,6 +121,7 @@ target_compile_definitions(csUtilLib
 add_subdirectory(src-Core)
 add_subdirectory(src-Math)
 add_subdirectory(src-CharConv)
+add_subdirectory(src-Format)
 
 #add_library(csUtil
 #  ${csUtil_HEADERS}

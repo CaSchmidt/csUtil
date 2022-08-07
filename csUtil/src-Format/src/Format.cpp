@@ -32,10 +32,10 @@
 #include <array>
 #include <list>
 
-#include "csUtil/csFormat.h"
+#include "cs/Format/Format.h"
 
-#include "csUtil/csCharConv.h"
-#include "csUtil/csStringUtil.h"
+#include "cs/CharConv/CharConv.h"
+#include "cs/Core/StringUtil.h"
 
 namespace cs {
 

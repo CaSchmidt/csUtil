@@ -29,15 +29,15 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSFORMAT_H
-#define CSFORMAT_H
+#ifndef CS_FORMAT_H
+#define CS_FORMAT_H
 
 #include <cstdint>
 
 #include <memory>
 #include <string>
 
-#include <csUtil/csutil_config.h>
+#include <cs/Core/csutil_config.h>
 
 namespace cs {
   namespace format {
@@ -119,4 +119,4 @@ private:
   std::unique_ptr<Formatter> impl;
 };
 
-#endif // CSFORMAT_H
+#endif // CS_FORMAT_H
