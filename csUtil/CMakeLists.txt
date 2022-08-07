@@ -34,13 +34,11 @@ endif()
 
 ### 3rd Party ################################################################
 
-#add_subdirectory(3rdparty/double-conversion)
 #add_subdirectory(3rdparty/icu-651)
 
 ### csUtil ###################################################################
 
 list(APPEND csUtil_HEADERS
-  include/csUtil/csCharConv.h
   include/csUtil/csDualLogger.h
   include/csUtil/csFile.h
   include/csUtil/csFileIO.h
@@ -67,8 +65,6 @@ list(APPEND csUtil_HEADERS
   )
 
 list(APPEND csUtil_SOURCES
-  src/csCharConv-fp.cpp
-  src/csCharConv.cpp
   src/csDualLogger.cpp
   src/csFile_generic.cpp
   src/csFileIO.cpp
@@ -127,7 +123,7 @@ target_compile_definitions(csUtilLib
 
 add_subdirectory(src-Core)
 add_subdirectory(src-Math)
-#add_subdirectory(CharConv-src)
+add_subdirectory(src-CharConv)
 
 #add_library(csUtil
 #  ${csUtil_HEADERS}

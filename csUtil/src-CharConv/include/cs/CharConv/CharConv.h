@@ -29,14 +29,14 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSCHARCONV_H
-#define CSCHARCONV_H
+#ifndef CS_CHARCONV_H
+#define CS_CHARCONV_H
 
 #include <cstdint>
 
 #include <system_error>
 
-#include <csUtil/csutil_config.h>
+#include <cs/Core/csutil_config.h>
 
 namespace cs {
 
@@ -135,4 +135,4 @@ namespace cs {
 
 } // namespace cs
 
-#endif // CSCHARCONV_H
+#endif // CS_CHARCONV_H

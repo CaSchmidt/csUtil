@@ -35,9 +35,9 @@
 
 #include <double-conversion.h>
 
-#include "csUtil/csCharConv.h"
+#include "cs/CharConv/CharConv.h"
 
-#include "csUtil/csMath.h"
+#include "cs/Math/Math.h"
 
 namespace cs {
 
