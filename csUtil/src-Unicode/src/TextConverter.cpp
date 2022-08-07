@@ -39,291 +39,295 @@
 
 #include "cs/Unicode/TextConverter.h"
 
-////// Private ///////////////////////////////////////////////////////////////
+namespace cs {
 
-namespace priv {
+  ////// Private /////////////////////////////////////////////////////////////
 
-  // UTF-16 -> 8bit //////////////////////////////////////////////////////////
+  namespace impl_txtcnv {
 
-  template<typename CharT>
-  inline std::basic_string<CharT> fromUnicode(UConverter *cnv, const UChar *s, std::size_t len)
-  {
-    std::basic_string<CharT> result;
+    // UTF-16 -> 8bit ////////////////////////////////////////////////////////
 
-    if( len == cs::MAX_SIZE_T  &&  s != nullptr ) {
-      len = static_cast<std::size_t>(u_strlen(s));
-    }
+    template<typename CharT>
+    inline std::basic_string<CharT> fromUnicode(UConverter *cnv, const UChar *s, std::size_t len)
+    {
+      std::basic_string<CharT> result;
 
-    if( s == nullptr  ||  len < 1 ) {
+      if( len == cs::MAX_SIZE_T  &&  s != nullptr ) {
+        len = static_cast<std::size_t>(u_strlen(s));
+      }
+
+      if( s == nullptr  ||  len < 1 ) {
+        return result;
+      }
+
+      UErrorCode err = U_ZERO_ERROR;
+      const int32_t requiredSize = ucnv_fromUChars(cnv, nullptr, 0, s, static_cast<int32_t>(len), &err);
+
+      try {
+        result.resize(static_cast<std::size_t>(requiredSize), 0);
+      } catch(...) {
+        result.clear();
+        return result;
+      }
+
+      err = U_ZERO_ERROR;
+      ucnv_fromUChars(cnv,
+                      reinterpret_cast<char*>(result.data()), static_cast<int32_t>(result.size()),
+                      s, static_cast<int32_t>(len), &err);
+
+      if( U_FAILURE(err) ) {
+        result.clear();
+      }
+
       return result;
     }
 
-    UErrorCode err = U_ZERO_ERROR;
-    const int32_t requiredSize = ucnv_fromUChars(cnv, nullptr, 0, s, static_cast<int32_t>(len), &err);
+    template<typename CharT>
+    inline std::basic_string<CharT> fromUnicode(const char *name, const UChar *s, const std::size_t len)
+    {
+      std::basic_string<CharT> result;
 
-    try {
-      result.resize(static_cast<std::size_t>(requiredSize), 0);
-    } catch(...) {
-      result.clear();
+      UErrorCode err = U_ZERO_ERROR;
+      UConverter *cnv = ucnv_open(name, &err);
+      if( cnv == nullptr  ||  U_FAILURE(err) ) {
+        return result;
+      }
+
+      result = fromUnicode<CharT>(cnv, s, len);
+
+      ucnv_close(cnv);
+
       return result;
     }
 
-    err = U_ZERO_ERROR;
-    ucnv_fromUChars(cnv,
-                    reinterpret_cast<char*>(result.data()), static_cast<int32_t>(result.size()),
+    // 8bit -> UTF-16 ////////////////////////////////////////////////////////
+
+    inline std::u16string toUnicode(UConverter *cnv, const char *s, std::size_t len)
+    {
+      std::u16string result;
+
+      if( len == cs::MAX_SIZE_T  &&  s != nullptr ) {
+        len = static_cast<std::size_t>(std::strlen(s));
+      }
+
+      if( s == nullptr  ||  len < 1 ) {
+        return result;
+      }
+
+      UErrorCode err = U_ZERO_ERROR;
+      const int32_t requiredSize = ucnv_toUChars(cnv, nullptr, 0, s, static_cast<int32_t>(len), &err);
+
+      try {
+        result.resize(static_cast<std::size_t>(requiredSize), 0);
+      } catch(...) {
+        result.clear();
+        return result;
+      }
+
+      err = U_ZERO_ERROR;
+      ucnv_toUChars(cnv,
+                    reinterpret_cast<UChar*>(result.data()), static_cast<int32_t>(result.size()),
                     s, static_cast<int32_t>(len), &err);
 
-    if( U_FAILURE(err) ) {
-      result.clear();
-    }
+      if( U_FAILURE(err) ) {
+        result.clear();
+      }
 
-    return result;
-  }
-
-  template<typename CharT>
-  inline std::basic_string<CharT> fromUnicode(const char *name, const UChar *s, const std::size_t len)
-  {
-    std::basic_string<CharT> result;
-
-    UErrorCode err = U_ZERO_ERROR;
-    UConverter *cnv = ucnv_open(name, &err);
-    if( cnv == nullptr  ||  U_FAILURE(err) ) {
       return result;
     }
 
-    result = fromUnicode<CharT>(cnv, s, len);
+    inline std::u16string toUnicode(const char *name, const char *s, const std::size_t len)
+    {
+      std::u16string result;
 
-    ucnv_close(cnv);
+      UErrorCode err = U_ZERO_ERROR;
+      UConverter *cnv = ucnv_open(name, &err);
+      if( cnv == nullptr  ||  U_FAILURE(err) ) {
+        return result;
+      }
 
-    return result;
-  }
+      result = toUnicode(cnv, s, len);
 
-  // 8bit -> UTF-16 //////////////////////////////////////////////////////////
+      ucnv_close(cnv);
 
-  inline std::u16string toUnicode(UConverter *cnv, const char *s, std::size_t len)
-  {
-    std::u16string result;
-
-    if( len == cs::MAX_SIZE_T  &&  s != nullptr ) {
-      len = static_cast<std::size_t>(std::strlen(s));
-    }
-
-    if( s == nullptr  ||  len < 1 ) {
       return result;
     }
 
-    UErrorCode err = U_ZERO_ERROR;
-    const int32_t requiredSize = ucnv_toUChars(cnv, nullptr, 0, s, static_cast<int32_t>(len), &err);
+  } // namespace impl_txtcnv
+
+  ////// TextConverterData ///////////////////////////////////////////////////
+
+  /***************************************************************************
+   * NOTE:
+   * Although TextConverterData's destructor will be called whenever the enclosing
+   * unique_ptr<> is destroyed, ICU specific memory leaks may be reported.
+   * See the documentation of u_cleanup() for further information and the means to
+   * mitigate the situation.
+   ***************************************************************************/
+
+  class TextConverterData {
+  public:
+    TextConverterData(const char *_name, UErrorCode *err) noexcept
+      : cnv(nullptr)
+      , name(_name)
+    {
+      *err = U_ZERO_ERROR;
+      cnv = ucnv_open(_name, err);
+    }
+
+    ~TextConverterData() noexcept
+    {
+      if( cnv != nullptr ) {
+        ucnv_close(cnv);
+      }
+    }
+
+    UConverter *cnv;
+    std::string name;
+  };
+
+  ////// public //////////////////////////////////////////////////////////////
+
+  TextConverter::TextConverter(TextConverterData *ptr) noexcept
+    : d(ptr)
+  {
+  }
+
+  TextConverter::~TextConverter() noexcept = default;
+  TextConverter::TextConverter(TextConverter&&) noexcept = default;
+  TextConverter& TextConverter::operator=(TextConverter&&) noexcept = default;
+
+  bool TextConverter::isNull() const
+  {
+    return !d;
+  }
+
+  void TextConverter::clear()
+  {
+    d.reset(nullptr);
+  }
+
+  const char *TextConverter::name() const
+  {
+    if( isNull() ) {
+      return nullptr;
+    }
+    return d->name.data();
+  }
+
+  std::string TextConverter::fromUnicode(const char16_t *s, const std::size_t len) const
+  {
+    return impl_txtcnv::fromUnicode<char>(d->cnv, s, len);
+  }
+
+  std::u16string TextConverter::toUnicode(const char *s, const std::size_t len) const
+  {
+    return impl_txtcnv::toUnicode(d->cnv, s, len);
+  }
+
+  ////// public static ///////////////////////////////////////////////////////
+
+  TextConverter TextConverter::create(const char *name)
+  {
+    TextConverter result;
+
+    UErrorCode err;
 
     try {
-      result.resize(static_cast<std::size_t>(requiredSize), 0);
+      result.d = std::make_unique<TextConverterData>(name, &err);
     } catch(...) {
       result.clear();
       return result;
     }
 
-    err = U_ZERO_ERROR;
-    ucnv_toUChars(cnv,
-                  reinterpret_cast<UChar*>(result.data()), static_cast<int32_t>(result.size()),
-                  s, static_cast<int32_t>(len), &err);
-
-    if( U_FAILURE(err) ) {
+    if( result.d->cnv == nullptr  ||  U_FAILURE(err) ) {
       result.clear();
-    }
-
-    return result;
-  }
-
-  inline std::u16string toUnicode(const char *name, const char *s, const std::size_t len)
-  {
-    std::u16string result;
-
-    UErrorCode err = U_ZERO_ERROR;
-    UConverter *cnv = ucnv_open(name, &err);
-    if( cnv == nullptr  ||  U_FAILURE(err) ) {
       return result;
     }
 
-    result = toUnicode(cnv, s, len);
-
-    ucnv_close(cnv);
-
     return result;
   }
 
-} // namespace priv
-
-////// csTextConverterData ///////////////////////////////////////////////////
-
-/*
- * NOTE:
- * Although csTextConverterData's destructor will be called whenever the enclosing
- * unique_ptr<> is destroyed, ICU specific memory leaks may be reported.
- * See the documentation of u_cleanup() for further information and the means to
- * mitigate the situation.
- */
-
-class csTextConverterData {
-public:
-  csTextConverterData(const char *_name, UErrorCode *err) noexcept
-    : cnv(nullptr)
-    , name(_name)
+  TextConverter TextConverter::createAscii()
   {
-    *err = U_ZERO_ERROR;
-    cnv = ucnv_open(_name, err);
+    return create("ASCII");
   }
 
-  ~csTextConverterData() noexcept
+  TextConverter TextConverter::createLatin1()
   {
-    if( cnv != nullptr ) {
-      ucnv_close(cnv);
-    }
+    return create("ISO-8859-1");
   }
 
-  UConverter *cnv;
-  std::string name;
-};
-
-////// public ////////////////////////////////////////////////////////////////
-
-csTextConverter::csTextConverter(csTextConverterData *ptr) noexcept
-  : d(ptr)
-{
-}
-
-csTextConverter::~csTextConverter() noexcept = default;
-csTextConverter::csTextConverter(csTextConverter&&) noexcept = default;
-csTextConverter& csTextConverter::operator=(csTextConverter&&) noexcept = default;
-
-bool csTextConverter::isNull() const
-{
-  return !d;
-}
-
-void csTextConverter::clear()
-{
-  d.reset(nullptr);
-}
-
-const char *csTextConverter::name() const
-{
-  if( isNull() ) {
-    return nullptr;
-  }
-  return d->name.data();
-}
-
-std::string csTextConverter::fromUnicode(const char16_t *s, const std::size_t len) const
-{
-  return priv::fromUnicode<char>(d->cnv, s, len);
-}
-
-std::u16string csTextConverter::toUnicode(const char *s, const std::size_t len) const
-{
-  return priv::toUnicode(d->cnv, s, len);
-}
-
-////// public static /////////////////////////////////////////////////////////
-
-csTextConverter csTextConverter::create(const char *name)
-{
-  csTextConverter result;
-
-  UErrorCode err;
-
-  try {
-    result.d = std::make_unique<csTextConverterData>(name, &err);
-  } catch(...) {
-    result.clear();
-    return result;
+  TextConverter TextConverter::createLatin9()
+  {
+    return create("ISO-8859-15");
   }
 
-  if( result.d->cnv == nullptr  ||  U_FAILURE(err) ) {
-    result.clear();
-    return result;
+  TextConverter TextConverter::createUtf8()
+  {
+    return create("UTF-8");
   }
 
-  return result;
-}
+  TextConverter TextConverter::createWindows1252()
+  {
+    return create("WINDOWS-1252");
+  }
 
-csTextConverter csTextConverter::createAscii()
-{
-  return create("ASCII");
-}
+  std::list<std::string> TextConverter::listAvailable()
+  {
+    std::set<std::string> names;
 
-csTextConverter csTextConverter::createLatin1()
-{
-  return create("ISO-8859-1");
-}
+    const int32_t numAvailable = ucnv_countAvailable();
+    for(int32_t i = 0; i < numAvailable; i++) {
+      UErrorCode err;
 
-csTextConverter csTextConverter::createLatin9()
-{
-  return create("ISO-8859-15");
-}
-
-csTextConverter csTextConverter::createUtf8()
-{
-  return create("UTF-8");
-}
-
-csTextConverter csTextConverter::createWindows1252()
-{
-  return create("WINDOWS-1252");
-}
-
-std::list<std::string> csTextConverter::listAvailable()
-{
-  std::set<std::string> names;
-
-  const int32_t numAvailable = ucnv_countAvailable();
-  for(int32_t i = 0; i < numAvailable; i++) {
-    UErrorCode err;
-
-    const char *name = ucnv_getAvailableName(i);
-    if( name == nullptr  ||  std::strlen(name) < 1 ) {
-      continue;
-    }
-
-    names.insert(std::string(name));
-
-    err = U_ZERO_ERROR;
-    const uint16_t numAliases = ucnv_countAliases(name, &err);
-    if( U_FAILURE(err) ) {
-      continue;
-    }
-
-    for(uint16_t i = 0; i < numAliases; i++) {
-      err = U_ZERO_ERROR;
-      const char *alias = ucnv_getAlias(name, i, &err);
-      if( U_FAILURE(err)  ||  alias == nullptr  ||  std::strlen(alias) < 1 ) {
+      const char *name = ucnv_getAvailableName(i);
+      if( name == nullptr  ||  std::strlen(name) < 1 ) {
         continue;
       }
 
-      names.insert(std::string(alias));
-    } // For each alias
-  } // For each available name
+      names.insert(std::string(name));
 
-  return std::list<std::string>(names.cbegin(), names.cend());
-}
+      err = U_ZERO_ERROR;
+      const uint16_t numAliases = ucnv_countAliases(name, &err);
+      if( U_FAILURE(err) ) {
+        continue;
+      }
 
-////// Public ////////////////////////////////////////////////////////////////
+      for(uint16_t i = 0; i < numAliases; i++) {
+        err = U_ZERO_ERROR;
+        const char *alias = ucnv_getAlias(name, i, &err);
+        if( U_FAILURE(err)  ||  alias == nullptr  ||  std::strlen(alias) < 1 ) {
+          continue;
+        }
 
-CS_UTIL_EXPORT std::u16string csAsciiToUnicode(const char *s, const std::size_t len)
-{
-  return priv::toUnicode("ASCII", s, len);
-}
+        names.insert(std::string(alias));
+      } // For each alias
+    } // For each available name
 
-CS_UTIL_EXPORT std::u16string csUtf8ToUnicode(const char8_t *s, const std::size_t len)
-{
-  return priv::toUnicode("UTF-8", cs::CSTR(s), len);
-}
+    return std::list<std::string>(names.cbegin(), names.cend());
+  }
 
-CS_UTIL_EXPORT std::string csUnicodeToAscii(const char16_t *s, const std::size_t len)
-{
-  return priv::fromUnicode<char>("ASCII", s, len);
-}
+  ////// Public //////////////////////////////////////////////////////////////
 
-CS_UTIL_EXPORT std::u8string csUnicodeToUtf8(const char16_t *s, const std::size_t len)
-{
-  return priv::fromUnicode<char8_t>("UTF-8", s, len);
-}
+  CS_UTIL_EXPORT std::u16string asciiToUnicode(const char *s, const std::size_t len)
+  {
+    return impl_txtcnv::toUnicode("ASCII", s, len);
+  }
+
+  CS_UTIL_EXPORT std::u16string utf8ToUnicode(const char8_t *s, const std::size_t len)
+  {
+    return impl_txtcnv::toUnicode("UTF-8", cs::CSTR(s), len);
+  }
+
+  CS_UTIL_EXPORT std::string unicodeToAscii(const char16_t *s, const std::size_t len)
+  {
+    return impl_txtcnv::fromUnicode<char>("ASCII", s, len);
+  }
+
+  CS_UTIL_EXPORT std::u8string unicodeToUtf8(const char16_t *s, const std::size_t len)
+  {
+    return impl_txtcnv::fromUnicode<char8_t>("UTF-8", s, len);
+  }
+
+} // namespace cs
