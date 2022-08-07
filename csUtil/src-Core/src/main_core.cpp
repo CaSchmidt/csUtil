@@ -29,7 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <cs/Core/csutil_config.h>
+#include "cs/Core/csutil_config.h"
 
 CS_UTIL_EXPORT void main_core()
 {
