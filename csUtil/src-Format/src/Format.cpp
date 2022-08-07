@@ -41,7 +41,7 @@ namespace cs {
 
   ////// Implementation //////////////////////////////////////////////////////
 
-  namespace format {
+  namespace impl_format {
 
     template<typename CharT>
     struct Options {
@@ -319,204 +319,204 @@ namespace cs {
 
   } // namespace format
 
+  ////// User Interface //////////////////////////////////////////////////////
+
+  Format::Format(const std::string& s)
+    : impl()
+  {
+    try {
+      impl = std::make_unique<Formatter>(s.data(), s.data() + s.size());
+    } catch(...) {
+      impl.reset(nullptr);
+    }
+  }
+
+  Format::Format(const char *s)
+    : impl()
+  {
+    try {
+      impl = std::make_unique<Formatter>(s, s + cs::length(s));
+    } catch(...) {
+      impl.reset(nullptr);
+    }
+  }
+
+  Format::~Format()
+  {
+  }
+
+  Format::operator std::string() const
+  {
+    return impl->yield();
+  }
+
+  Format& Format::arg(const FormatChar& c,
+                      const int width, const char fill)
+  {
+    impl->arg(c.value, width, fill);
+    return *this;
+  }
+
+  Format& Format::arg(const std::string& s,
+                      const int width, const char fill)
+  {
+    impl->arg(s, width, fill);
+    return *this;
+  }
+
+  Format& Format::arg(const char *s,
+                      const int width, const char fill)
+  {
+    impl->arg(s, width, fill);
+    return *this;
+  }
+
+  Format& Format::arg(const int8_t value,
+                      const int width, const int base, const char fill)
+  {
+    impl->arg(value, width, base, fill);
+    return *this;
+  }
+
+  Format& Format::arg(const uint8_t value,
+                      const int width, const int base, const char fill)
+  {
+    impl->arg(value, width, base, fill);
+    return *this;
+  }
+
+  Format& Format::arg(const int16_t value,
+                      const int width, const int base, const char fill)
+  {
+    impl->arg(value, width, base, fill);
+    return *this;
+  }
+
+  Format& Format::arg(const uint16_t value,
+                      const int width, const int base, const char fill)
+  {
+    impl->arg(value, width, base, fill);
+    return *this;
+  }
+
+  Format& Format::arg(const int32_t value,
+                      const int width, const int base, const char fill)
+  {
+    impl->arg(value, width, base, fill);
+    return *this;
+  }
+
+  Format& Format::arg(const uint32_t value,
+                      const int width, const int base, const char fill)
+  {
+    impl->arg(value, width, base, fill);
+    return *this;
+  }
+
+  Format& Format::arg(const int64_t value,
+                      const int width, const int base, const char fill)
+  {
+    impl->arg(value, width, base, fill);
+    return *this;
+  }
+
+  Format& Format::arg(const uint64_t value,
+                      const int width, const int base, const char fill)
+  {
+    impl->arg(value, width, base, fill);
+    return *this;
+  }
+
+  Format& Format::arg(const float value,
+                      const int width, const char format, const int precision, const char fill)
+  {
+    impl->arg(value, width, format, precision, fill);
+    return *this;
+  }
+
+  Format& Format::arg(const double value,
+                      const int width, const char format, const int precision, const char fill)
+  {
+    impl->arg(value, width, format, precision, fill);
+    return *this;
+  }
+
+  Format& Format::operator%(const FormatChar& c)
+  {
+    const impl_format::Options<char>& opt = impl->options();
+    return arg(c, opt.width, opt.fill);
+  }
+
+  Format& Format::operator%(const std::string& s)
+  {
+    const impl_format::Options<char>& opt = impl->options();
+    return arg(s, opt.width, opt.fill);
+  }
+
+  Format& Format::operator%(const char *s)
+  {
+    const impl_format::Options<char>& opt = impl->options();
+    return arg(s, opt.width, opt.fill);
+  }
+
+  Format& Format::operator%(const int8_t value)
+  {
+    const impl_format::Options<char>& opt = impl->options();
+    return arg(value, opt.width, opt.base, opt.fill);
+  }
+
+  Format& Format::operator%(const uint8_t value)
+  {
+    const impl_format::Options<char>& opt = impl->options();
+    return arg(value, opt.width, opt.base, opt.fill);
+  }
+
+  Format& Format::operator%(const int16_t value)
+  {
+    const impl_format::Options<char>& opt = impl->options();
+    return arg(value, opt.width, opt.base, opt.fill);
+  }
+
+  Format& Format::operator%(const uint16_t value)
+  {
+    const impl_format::Options<char>& opt = impl->options();
+    return arg(value, opt.width, opt.base, opt.fill);
+  }
+
+  Format& Format::operator%(const int32_t value)
+  {
+    const impl_format::Options<char>& opt = impl->options();
+    return arg(value, opt.width, opt.base, opt.fill);
+  }
+
+  Format& Format::operator%(const uint32_t value)
+  {
+    const impl_format::Options<char>& opt = impl->options();
+    return arg(value, opt.width, opt.base, opt.fill);
+  }
+
+  Format& Format::operator%(const int64_t value)
+  {
+    const impl_format::Options<char>& opt = impl->options();
+    return arg(value, opt.width, opt.base, opt.fill);
+  }
+
+  Format& Format::operator%(const uint64_t value)
+  {
+    const impl_format::Options<char>& opt = impl->options();
+    return arg(value, opt.width, opt.base, opt.fill);
+  }
+
+  Format& Format::operator%(const float value)
+  {
+    const impl_format::Options<char>& opt = impl->options();
+    return arg(value, opt.width, opt.format, opt.precision, opt.fill);
+  }
+
+  Format& Format::operator%(const double value)
+  {
+    const impl_format::Options<char>& opt = impl->options();
+    return arg(value, opt.width, opt.format, opt.precision, opt.fill);
+  }
+
 } // namespace cs
-
-////// User Interface //////////////////////////////////////////////////////
-
-csFormat::csFormat(const std::string& s)
-  : impl()
-{
-  try {
-    impl = std::make_unique<Formatter>(s.data(), s.data() + s.size());
-  } catch(...) {
-    impl.reset(nullptr);
-  }
-}
-
-csFormat::csFormat(const char *s)
-  : impl()
-{
-  try {
-    impl = std::make_unique<Formatter>(s, s + cs::length(s));
-  } catch(...) {
-    impl.reset(nullptr);
-  }
-}
-
-csFormat::~csFormat()
-{
-}
-
-csFormat::operator std::string() const
-{
-  return impl->yield();
-}
-
-csFormat& csFormat::arg(const csFormatChar& c,
-                        const int width, const char fill)
-{
-  impl->arg(c.value, width, fill);
-  return *this;
-}
-
-csFormat& csFormat::arg(const std::string& s,
-                        const int width, const char fill)
-{
-  impl->arg(s, width, fill);
-  return *this;
-}
-
-csFormat& csFormat::arg(const char *s,
-                        const int width, const char fill)
-{
-  impl->arg(s, width, fill);
-  return *this;
-}
-
-csFormat& csFormat::arg(const int8_t value,
-                        const int width, const int base, const char fill)
-{
-  impl->arg(value, width, base, fill);
-  return *this;
-}
-
-csFormat& csFormat::arg(const uint8_t value,
-                        const int width, const int base, const char fill)
-{
-  impl->arg(value, width, base, fill);
-  return *this;
-}
-
-csFormat& csFormat::arg(const int16_t value,
-                        const int width, const int base, const char fill)
-{
-  impl->arg(value, width, base, fill);
-  return *this;
-}
-
-csFormat& csFormat::arg(const uint16_t value,
-                        const int width, const int base, const char fill)
-{
-  impl->arg(value, width, base, fill);
-  return *this;
-}
-
-csFormat& csFormat::arg(const int32_t value,
-                        const int width, const int base, const char fill)
-{
-  impl->arg(value, width, base, fill);
-  return *this;
-}
-
-csFormat& csFormat::arg(const uint32_t value,
-                        const int width, const int base, const char fill)
-{
-  impl->arg(value, width, base, fill);
-  return *this;
-}
-
-csFormat& csFormat::arg(const int64_t value,
-                        const int width, const int base, const char fill)
-{
-  impl->arg(value, width, base, fill);
-  return *this;
-}
-
-csFormat& csFormat::arg(const uint64_t value,
-                        const int width, const int base, const char fill)
-{
-  impl->arg(value, width, base, fill);
-  return *this;
-}
-
-csFormat& csFormat::arg(const float value,
-                        const int width, const char format, const int precision, const char fill)
-{
-  impl->arg(value, width, format, precision, fill);
-  return *this;
-}
-
-csFormat& csFormat::arg(const double value,
-                        const int width, const char format, const int precision, const char fill)
-{
-  impl->arg(value, width, format, precision, fill);
-  return *this;
-}
-
-csFormat& csFormat::operator%(const csFormatChar& c)
-{
-  const cs::format::Options<char>& opt = impl->options();
-  return arg(c, opt.width, opt.fill);
-}
-
-csFormat& csFormat::operator%(const std::string& s)
-{
-  const cs::format::Options<char>& opt = impl->options();
-  return arg(s, opt.width, opt.fill);
-}
-
-csFormat& csFormat::operator%(const char *s)
-{
-  const cs::format::Options<char>& opt = impl->options();
-  return arg(s, opt.width, opt.fill);
-}
-
-csFormat& csFormat::operator%(const int8_t value)
-{
-  const cs::format::Options<char>& opt = impl->options();
-  return arg(value, opt.width, opt.base, opt.fill);
-}
-
-csFormat& csFormat::operator%(const uint8_t value)
-{
-  const cs::format::Options<char>& opt = impl->options();
-  return arg(value, opt.width, opt.base, opt.fill);
-}
-
-csFormat& csFormat::operator%(const int16_t value)
-{
-  const cs::format::Options<char>& opt = impl->options();
-  return arg(value, opt.width, opt.base, opt.fill);
-}
-
-csFormat& csFormat::operator%(const uint16_t value)
-{
-  const cs::format::Options<char>& opt = impl->options();
-  return arg(value, opt.width, opt.base, opt.fill);
-}
-
-csFormat& csFormat::operator%(const int32_t value)
-{
-  const cs::format::Options<char>& opt = impl->options();
-  return arg(value, opt.width, opt.base, opt.fill);
-}
-
-csFormat& csFormat::operator%(const uint32_t value)
-{
-  const cs::format::Options<char>& opt = impl->options();
-  return arg(value, opt.width, opt.base, opt.fill);
-}
-
-csFormat& csFormat::operator%(const int64_t value)
-{
-  const cs::format::Options<char>& opt = impl->options();
-  return arg(value, opt.width, opt.base, opt.fill);
-}
-
-csFormat& csFormat::operator%(const uint64_t value)
-{
-  const cs::format::Options<char>& opt = impl->options();
-  return arg(value, opt.width, opt.base, opt.fill);
-}
-
-csFormat& csFormat::operator%(const float value)
-{
-  const cs::format::Options<char>& opt = impl->options();
-  return arg(value, opt.width, opt.format, opt.precision, opt.fill);
-}
-
-csFormat& csFormat::operator%(const double value)
-{
-  const cs::format::Options<char>& opt = impl->options();
-  return arg(value, opt.width, opt.format, opt.precision, opt.fill);
-}
