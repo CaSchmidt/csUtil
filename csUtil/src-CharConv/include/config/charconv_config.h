@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2018, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2022, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,33 +29,14 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSUTIL_CONFIG_H
-#define CSUTIL_CONFIG_H
+#ifndef CS_CHARCONV_CONFIG_H
+#define CS_CHARCONV_CONFIG_H
 
-////// Configured by CMake ///////////////////////////////////////////////////
+////// Feature Configuration /////////////////////////////////////////////////
 
-#cmakedefine CS_BUILD_UTIL_STATIC
+#undef CS_FROM_CHARS_HAVE_CAPS
+#undef CS_FROM_CHARS_HAVE_PLUS
 
-////// Compiler Configuration ////////////////////////////////////////////////
+#define CS_TO_CHARS_HAVE_REMOVE_TRAILING_ZEROS
 
-#ifdef _MSC_VER
-# define CS_DECL_EXPORT  __declspec(dllexport)
-# define CS_DECL_IMPORT  __declspec(dllimport)
-#else
-# define CS_DECL_EXPORT
-# define CS_DECL_IMPORT
-#endif
-
-////// Build Configuration ///////////////////////////////////////////////////
-
-#ifdef CS_BUILD_UTIL_STATIC
-# define CS_UTIL_EXPORT
-#else
-# if defined(CS_BUILD_UTIL_LIB)
-#  define CS_UTIL_EXPORT  CS_DECL_EXPORT
-# else
-#  define CS_UTIL_EXPORT  CS_DECL_IMPORT
-# endif
-#endif
-
-#endif // CSUTIL_CONFIG_H
+#endif // CS_CHARCONV_CONFIG_H

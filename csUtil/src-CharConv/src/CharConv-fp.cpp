@@ -37,6 +37,7 @@
 
 #include "cs/CharConv/CharConv.h"
 
+#include "config/charconv_config.h"
 #include "cs/Math/Math.h"
 
 namespace cs {

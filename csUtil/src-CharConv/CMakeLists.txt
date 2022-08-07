@@ -1,4 +1,5 @@
 list(APPEND csCharConv_HEADERS
+  include/config/charconv_config.h
   include/cs/CharConv/CharConv.h
   )
 

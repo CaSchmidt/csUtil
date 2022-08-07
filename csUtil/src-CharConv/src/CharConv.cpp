@@ -34,6 +34,8 @@
 
 #include "cs/CharConv/CharConv.h"
 
+#include "config/charconv_config.h"
+
 namespace cs {
 
   namespace charconv {
