@@ -36,14 +36,18 @@
 
 #include <cs/Core/csutil_config.h>
 
-CS_UTIL_EXPORT void csSleep(const unsigned int secs);
+namespace cs {
 
-CS_UTIL_EXPORT void csMSleep(const unsigned int millisecs);
+  CS_UTIL_EXPORT void sleep(const unsigned int secs);
 
-CS_UTIL_EXPORT void csUSleep(const unsigned int microsecs);
+  CS_UTIL_EXPORT void msleep(const unsigned int millisecs);
 
-CS_UTIL_EXPORT uint64_t csTickCountMs();
+  CS_UTIL_EXPORT void usleep(const unsigned int microsecs);
 
-CS_UTIL_EXPORT uint64_t csTickCountUs();
+  CS_UTIL_EXPORT uint64_t tickCountMs();
+
+  CS_UTIL_EXPORT uint64_t tickCountUs();
+
+} // namespace cs
 
 #endif // CS_TIME_H
