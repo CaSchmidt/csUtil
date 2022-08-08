@@ -50,7 +50,6 @@ list(APPEND csUtil_HEADERS
   include/csUtil/csNamespace.h
   include/csUtil/csOutputContext.h
   include/csUtil/csSerial.h
-  include/csUtil/csTime.h
   include/csUtil/csTrie.h
   include/internal/csutil_internal.h
   include/internal/csFlatTrieUtil.h
@@ -67,7 +66,6 @@ list(APPEND csUtil_SOURCES
   src/csIProgress.cpp
   src/csLogger.cpp
   src/csOutputContext.cpp
-  src/csTime.cpp
   src/csTrie.cpp
   )
 
@@ -115,14 +113,15 @@ target_compile_definitions(csUtilLib
 add_subdirectory(src-Core)
 add_subdirectory(src-SIMD)
 add_subdirectory(src-Math) # depends on SIMD
+add_subdirectory(src-System)
+
+if(ENABLE_UNICODE)
+  add_subdirectory(src-Unicode)
+endif()
 
 if(ENABLE_CHARCONV)
   add_subdirectory(src-CharConv)
   add_subdirectory(src-Format) # depends on CharConv
-endif()
-
-if(ENABLE_UNICODE)
-  add_subdirectory(src-Unicode)
 endif()
 
 #add_library(csUtil

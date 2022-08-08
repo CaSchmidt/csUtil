@@ -29,21 +29,54 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSTIME_H
-#define CSTIME_H
+#include <chrono>
+#include <thread>
 
-#include <cstdint>
+#include "cs/System/Time.h"
 
-#include <csUtil/csutil_config.h>
+////// Private ///////////////////////////////////////////////////////////////
 
-CS_UTIL_EXPORT void csSleep(const unsigned int secs);
+namespace impl {
 
-CS_UTIL_EXPORT void csMSleep(const unsigned int millisecs);
+  template<typename Clock, typename Duration>
+  inline uint64_t getTickCount()
+  {
+    const Duration now = std::chrono::duration_cast<Duration>(Clock::now().time_since_epoch());
 
-CS_UTIL_EXPORT void csUSleep(const unsigned int microsecs);
+    return static_cast<uint64_t>(now.count());
+  }
 
-CS_UTIL_EXPORT uint64_t csTickCountMs();
+} // namespace impl
 
-CS_UTIL_EXPORT uint64_t csTickCountUs();
+////// Public ////////////////////////////////////////////////////////////////
 
-#endif // CSTIME_H
+CS_UTIL_EXPORT void csSleep(const unsigned int secs)
+{
+  std::this_thread::sleep_for(std::chrono::seconds(secs));
+}
+
+CS_UTIL_EXPORT void csMSleep(const unsigned int millisecs)
+{
+  std::this_thread::sleep_for(std::chrono::milliseconds(millisecs));
+}
+
+CS_UTIL_EXPORT void csUSleep(const unsigned int microsecs)
+{
+  std::this_thread::sleep_for(std::chrono::microseconds(microsecs));
+}
+
+CS_UTIL_EXPORT uint64_t csTickCountMs()
+{
+  using    Clock = std::chrono::steady_clock;
+  using Duration = std::chrono::milliseconds;
+
+  return impl::getTickCount<Clock,Duration>();
+}
+
+CS_UTIL_EXPORT uint64_t csTickCountUs()
+{
+  using    Clock = std::chrono::steady_clock;
+  using Duration = std::chrono::microseconds;
+
+  return impl::getTickCount<Clock,Duration>();
+}
