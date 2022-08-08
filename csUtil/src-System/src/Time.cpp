@@ -34,49 +34,53 @@
 
 #include "cs/System/Time.h"
 
-////// Private ///////////////////////////////////////////////////////////////
+namespace cs {
 
-namespace impl {
+  ////// Private /////////////////////////////////////////////////////////////
 
-  template<typename Clock, typename Duration>
-  inline uint64_t getTickCount()
+  namespace impl_time {
+
+    template<typename Clock, typename Duration>
+    inline uint64_t getTickCount()
+    {
+      const Duration now = std::chrono::duration_cast<Duration>(Clock::now().time_since_epoch());
+
+      return static_cast<uint64_t>(now.count());
+    }
+
+  } // namespace impl_time
+
+  ////// Public //////////////////////////////////////////////////////////////
+
+  CS_UTIL_EXPORT void sleep(const unsigned int secs)
   {
-    const Duration now = std::chrono::duration_cast<Duration>(Clock::now().time_since_epoch());
-
-    return static_cast<uint64_t>(now.count());
+    std::this_thread::sleep_for(std::chrono::seconds(secs));
   }
 
-} // namespace impl
+  CS_UTIL_EXPORT void msleep(const unsigned int millisecs)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(millisecs));
+  }
 
-////// Public ////////////////////////////////////////////////////////////////
+  CS_UTIL_EXPORT void usleep(const unsigned int microsecs)
+  {
+    std::this_thread::sleep_for(std::chrono::microseconds(microsecs));
+  }
 
-CS_UTIL_EXPORT void csSleep(const unsigned int secs)
-{
-  std::this_thread::sleep_for(std::chrono::seconds(secs));
-}
+  CS_UTIL_EXPORT uint64_t tickCountMs()
+  {
+    using    Clock = std::chrono::steady_clock;
+    using Duration = std::chrono::milliseconds;
 
-CS_UTIL_EXPORT void csMSleep(const unsigned int millisecs)
-{
-  std::this_thread::sleep_for(std::chrono::milliseconds(millisecs));
-}
+    return impl_time::getTickCount<Clock,Duration>();
+  }
 
-CS_UTIL_EXPORT void csUSleep(const unsigned int microsecs)
-{
-  std::this_thread::sleep_for(std::chrono::microseconds(microsecs));
-}
+  CS_UTIL_EXPORT uint64_t tickCountUs()
+  {
+    using    Clock = std::chrono::steady_clock;
+    using Duration = std::chrono::microseconds;
 
-CS_UTIL_EXPORT uint64_t csTickCountMs()
-{
-  using    Clock = std::chrono::steady_clock;
-  using Duration = std::chrono::milliseconds;
+    return impl_time::getTickCount<Clock,Duration>();
+  }
 
-  return impl::getTickCount<Clock,Duration>();
-}
-
-CS_UTIL_EXPORT uint64_t csTickCountUs()
-{
-  using    Clock = std::chrono::steady_clock;
-  using Duration = std::chrono::microseconds;
-
-  return impl::getTickCount<Clock,Duration>();
-}
+} // namespace cs
