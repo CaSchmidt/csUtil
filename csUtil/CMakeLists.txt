@@ -50,7 +50,6 @@ list(APPEND csUtil_HEADERS
   include/csUtil/csNamespace.h
   include/csUtil/csOutputContext.h
   include/csUtil/csSerial.h
-  include/csUtil/csStatistics.h
   include/csUtil/csTime.h
   include/csUtil/csTrie.h
   include/internal/csutil_internal.h

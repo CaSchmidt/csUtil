@@ -29,14 +29,14 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSSTATISTICS_H
-#define CSSTATISTICS_H
+#ifndef CS_STATISTICS_H
+#define CS_STATISTICS_H
 
 #include <cstddef>
 
-#include <csUtil/csMath.h>
-#include <csUtil/csSIMD.h>
-#include <csUtil/csSIMD128.h>
+#include <cs/Math/Math.h>
+#include <cs/SIMD/SIMD.h>
+#include <cs/SIMD/SIMD128.h>
 
 namespace cs {
 
@@ -128,4 +128,4 @@ namespace cs {
 
 } // namespace cs
 
-#endif // CSSTATISTICS_H
+#endif // CS_STATISTICS_H

@@ -2,6 +2,7 @@ list(APPEND csMath_HEADERS
   include/cs/Math/Math.h
   include/cs/Math/Numeric.h
   include/cs/Math/RawConverter.h
+  include/cs/Math/Statistics.h
   )
 
 list(APPEND csMath_SOURCES
@@ -17,7 +18,7 @@ target_include_directories(csMath
   )
 
 target_link_libraries(csMath
-  INTERFACE csCore
+  INTERFACE csSIMD
   )
 
 ### csUtil ###################################################################
