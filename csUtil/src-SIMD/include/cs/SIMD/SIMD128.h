@@ -29,11 +29,11 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSSIMD128_H
-#define CSSIMD128_H
+#ifndef CS_SIMD128_H
+#define CS_SIMD128_H
 
-#include <csUtil/csConcepts.h>
-#include <csUtil/csSIMD128Util.h>
+#include <cs/Core/Concepts.h>
+#include <cs/SIMD/SIMD128Util.h>
 
 namespace cs {
 
@@ -150,4 +150,4 @@ namespace cs {
 
 } // namespace cs
 
-#endif // CSSIMD128_H
+#endif // CS_SIMD128_H

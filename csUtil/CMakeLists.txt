@@ -50,9 +50,6 @@ list(APPEND csUtil_HEADERS
   include/csUtil/csNamespace.h
   include/csUtil/csOutputContext.h
   include/csUtil/csSerial.h
-  include/csUtil/csSIMD.h
-  include/csUtil/csSIMD128.h
-  include/csUtil/csSIMD128Util.h
   include/csUtil/csStatistics.h
   include/csUtil/csTime.h
   include/csUtil/csTrie.h
@@ -117,7 +114,8 @@ target_compile_definitions(csUtilLib
   )
 
 add_subdirectory(src-Core)
-add_subdirectory(src-Math)
+add_subdirectory(src-SIMD)
+add_subdirectory(src-Math) # depends on SIMD
 
 if(ENABLE_CHARCONV)
   add_subdirectory(src-CharConv)

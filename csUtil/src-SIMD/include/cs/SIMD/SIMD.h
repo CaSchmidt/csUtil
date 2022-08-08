@@ -29,12 +29,12 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSSIMD_H
-#define CSSIMD_H
+#ifndef CS_SIMD_H
+#define CS_SIMD_H
 
 #include <limits>
 
-#include <csUtil/csPointer.h>
+#include <cs/Core/Pointer.h>
 
 namespace cs {
 
@@ -249,8 +249,8 @@ namespace cs {
                                          const typename SIMD::size_type count)
     {
       using OP = impl_simd::OP_mul<SIMD>;
-      const bool is_aligned_a = csPointer::isAlignedTo<typename SIMD::block_type>(a);
-      const bool is_aligned_b = csPointer::isAlignedTo<typename SIMD::block_type>(b);
+      const bool is_aligned_a = Pointer::isAlignedTo<typename SIMD::block_type>(a);
+      const bool is_aligned_b = Pointer::isAlignedTo<typename SIMD::block_type>(b);
       if( is_aligned_a  &&  is_aligned_b ) {
         return impl_simd::accumulate<SIMD,OP,true,true>(a, b, count);
       } else if( is_aligned_a ) {
@@ -266,7 +266,7 @@ namespace cs {
                                          const typename SIMD::size_type count)
     {
       using OP = impl_simd::OP_identity<SIMD>;
-      const bool is_aligned = csPointer::isAlignedTo<typename SIMD::block_type>(x);
+      const bool is_aligned = Pointer::isAlignedTo<typename SIMD::block_type>(x);
       if( is_aligned ) {
         return impl_simd::accumulate<SIMD,OP,true>(x, count);
       }
@@ -278,7 +278,7 @@ namespace cs {
                                                  const typename SIMD::size_type count)
     {
       using OP = impl_simd::OP_square<SIMD>;
-      const bool is_aligned = csPointer::isAlignedTo<typename SIMD::block_type>(x);
+      const bool is_aligned = Pointer::isAlignedTo<typename SIMD::block_type>(x);
       if( is_aligned ) {
         return impl_simd::accumulate<SIMD,OP,true>(x, count);
       }
@@ -289,4 +289,4 @@ namespace cs {
 
 } // namespace cs
 
-#endif // CSSIMD_H
+#endif // CS_SIMD_H
