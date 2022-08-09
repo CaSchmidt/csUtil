@@ -34,240 +34,244 @@
 #include "cs/Core/TypeTraits.h"
 #include "internal/FlatTrieUtil.h"
 
-////// Private ///////////////////////////////////////////////////////////////
+namespace cs {
 
-template<typename T>
-class csFlatTrieImpl {
-public:
-  using     String = std::basic_string<T>;
-  using StringList = std::list<String>;
+  ////// Private /////////////////////////////////////////////////////////////
 
-  csFlatTrieImpl(const csFlatTrie::Letters& letters, const csFlatTrie::Links& links,
+  template<typename T>
+  class FlatTrieImpl {
+  public:
+    using     String = std::basic_string<T>;
+    using StringList = std::list<String>;
+
+    FlatTrieImpl(const FlatTrie::Letters& letters, const FlatTrie::Links& links,
                  const std::size_t buffer_size = 1024)
-    : _buffer_size(buffer_size)
-    , _letters(letters)
-    , _links(links)
+      : _buffer_size(buffer_size)
+      , _letters(letters)
+      , _links(links)
+    {
+    }
+
+    ~FlatTrieImpl() = default;
+
+    bool isEmpty() const
+    {
+      return _letters.size() != _links.size()  ||  _letters.empty()  ||  _links.empty();
+    }
+
+    StringList complete(const String& baseStr) const
+    {
+      StringList words;
+
+      if( isEmpty()  ||  baseStr.empty() ) {
+        return words;
+      }
+
+      const std::size_t baseIndex = base(0, baseStr, 0);
+      if( baseIndex == cs::MAX_SIZE_T ) {
+        return words;
+      }
+
+      if( impl_trie::isEndOfWord(_links[baseIndex]) ) {
+        words.push_back(baseStr);
+      }
+
+      const std::size_t destLink = impl_trie::linkIndex(_links[baseIndex]);
+      if( destLink > 0 ) {
+        String str;
+        str.reserve(_buffer_size);
+        str = baseStr;
+        list(words, str, destLink);
+      }
+
+      return words;
+    }
+
+    TrieMatch find(const String& str) const
+    {
+      return isEmpty()  ||  str.empty()
+          ? TrieMatch::None
+          : find(0, str, 0);
+    }
+
+    StringList list() const
+    {
+      StringList words;
+
+      if( isEmpty() ) {
+        return words;
+      }
+
+      String str;
+      str.reserve(_buffer_size);
+      list(words, str, 0);
+
+      return words;
+    }
+
+  private:
+    const std::size_t _buffer_size;
+    const FlatTrie::Letters& _letters;
+    const FlatTrie::Links& _links;
+
+    std::size_t base(const std::size_t idxStr, const String& str,
+                     const std::size_t baseIndex) const
+    {
+      std::size_t i = baseIndex;
+      do {
+        if( _letters[i] != str[idxStr] ) {
+          continue;
+        }
+
+        if( idxStr + 1 == str.size() ) { // Last character
+          return i;
+        }
+
+        const std::size_t destIndex = impl_trie::linkIndex(_links[i]);
+        if( destIndex != 0 ) {
+          return base(idxStr + 1, str, destIndex);
+        }
+      } while( !impl_trie::isEndOfList(_links[i++]) );
+
+      return cs::MAX_SIZE_T;
+    }
+
+    TrieMatch find(const std::size_t idxStr, const String& str,
+                       const std::size_t baseIndex) const
+    {
+      std::size_t i = baseIndex;
+      do {
+        if( _letters[i] != str[idxStr] ) {
+          continue;
+        }
+
+        if( idxStr + 1 == str.size() ) { // Last character
+          if( impl_trie::isEndOfWord(_links[i]) ) {
+            return TrieMatch::Exact;
+          } else {
+            return TrieMatch::Partial;
+          }
+        }
+
+        const std::size_t destIndex = impl_trie::linkIndex(_links[i]);
+        if( destIndex != 0 ) {
+          return find(idxStr + 1, str, destIndex);
+        }
+      } while( !impl_trie::isEndOfList(_links[i++]) );
+
+      return TrieMatch::None;
+    }
+
+    void list(StringList& words, String& str,
+              const std::size_t baseIndex) const
+    {
+      std::size_t i = baseIndex;
+      do {
+        str.push_back(static_cast<T>(_letters[i]));
+
+        if( impl_trie::isEndOfWord(_links[i]) ) {
+          words.push_back(str);
+        }
+
+        const std::size_t destIndex = impl_trie::linkIndex(_links[i]);
+        if( destIndex != 0 ) {
+          list(words, str, destIndex);
+        }
+
+        str.pop_back();
+      } while( !impl_trie::isEndOfList(_links[i++]) );
+    }
+
+    FlatTrieImpl() = delete;
+
+    FlatTrieImpl(const FlatTrieImpl&) = delete;
+    FlatTrieImpl& operator=(const FlatTrieImpl&) = delete;
+
+    FlatTrieImpl(FlatTrieImpl&&) = delete;
+    FlatTrieImpl& operator=(FlatTrieImpl&&) = delete;
+  };
+
+  ////// public //////////////////////////////////////////////////////////////
+
+  FlatTrie::FlatTrie(FlatTrie::Links&& links, FlatTrie::Letters&& letters)
+    : _letters()
+    , _links()
   {
+    if( letters.size() == links.size() ) {
+      _letters = std::move(letters);
+      _links   = std::move(links);
+    }
   }
 
-  ~csFlatTrieImpl() = default;
+  void FlatTrie::clear()
+  {
+    _letters.clear();
+    _links.clear();
+  }
 
-  bool isEmpty() const
+  bool FlatTrie::isEmpty() const
   {
     return _letters.size() != _links.size()  ||  _letters.empty()  ||  _links.empty();
   }
 
-  StringList complete(const String& baseStr) const
+  std::size_t FlatTrie::nodeCount() const
   {
-    StringList words;
-
-    if( isEmpty()  ||  baseStr.empty() ) {
-      return words;
-    }
-
-    const std::size_t baseIndex = base(0, baseStr, 0);
-    if( baseIndex == cs::MAX_SIZE_T ) {
-      return words;
-    }
-
-    if( priv::isEndOfWord(_links[baseIndex]) ) {
-      words.push_back(baseStr);
-    }
-
-    const std::size_t destLink = priv::linkIndex(_links[baseIndex]);
-    if( destLink > 0 ) {
-      String str;
-      str.reserve(_buffer_size);
-      str = baseStr;
-      list(words, str, destLink);
-    }
-
-    return words;
+    return isEmpty()
+        ? 0
+        : _links.size();
   }
 
-  cs::TrieMatch find(const String& str) const
+  std::size_t FlatTrie::size() const
   {
-    return isEmpty()  ||  str.empty()
-        ? cs::TrieMatch::None
-        : find(0, str, 0);
+    return isEmpty()
+        ? 0
+        : sizeof(letter_type)*_letters.size() + sizeof(link_type)*_links.size();
   }
 
-  StringList list() const
+  // char methods ////////////////////////////////////////////////////////////
+
+  template<>
+  std::list<std::string> FlatTrie::complete(const std::string& str) const
   {
-    StringList words;
-
-    if( isEmpty() ) {
-      return words;
-    }
-
-    String str;
-    str.reserve(_buffer_size);
-    list(words, str, 0);
-
-    return words;
+    FlatTrieImpl<char> impl(_letters, _links);
+    return impl.complete(str);
   }
 
-private:
-  const std::size_t _buffer_size;
-  const csFlatTrie::Letters& _letters;
-  const csFlatTrie::Links& _links;
-
-  std::size_t base(const std::size_t idxStr, const String& str,
-                   const std::size_t baseIndex) const
+  template<>
+  TrieMatch FlatTrie::find(const std::string& str) const
   {
-    std::size_t i = baseIndex;
-    do {
-      if( _letters[i] != str[idxStr] ) {
-        continue;
-      }
-
-      if( idxStr + 1 == str.size() ) { // Last character
-        return i;
-      }
-
-      const std::size_t destIndex = priv::linkIndex(_links[i]);
-      if( destIndex != 0 ) {
-        return base(idxStr + 1, str, destIndex);
-      }
-    } while( !priv::isEndOfList(_links[i++]) );
-
-    return cs::MAX_SIZE_T;
+    FlatTrieImpl<char> impl(_letters, _links);
+    return impl.find(str);
   }
 
-  cs::TrieMatch find(const std::size_t idxStr, const String& str,
-                     const std::size_t baseIndex) const
+  template<>
+  std::list<std::string> FlatTrie::list() const
   {
-    std::size_t i = baseIndex;
-    do {
-      if( _letters[i] != str[idxStr] ) {
-        continue;
-      }
-
-      if( idxStr + 1 == str.size() ) { // Last character
-        if( priv::isEndOfWord(_links[i]) ) {
-          return cs::TrieMatch::Exact;
-        } else {
-          return cs::TrieMatch::Partial;
-        }
-      }
-
-      const std::size_t destIndex = priv::linkIndex(_links[i]);
-      if( destIndex != 0 ) {
-        return find(idxStr + 1, str, destIndex);
-      }
-    } while( !priv::isEndOfList(_links[i++]) );
-
-    return cs::TrieMatch::None;
+    FlatTrieImpl<char> impl(_letters, _links);
+    return impl.list();
   }
 
-  void list(StringList& words, String& str,
-            const std::size_t baseIndex) const
+  // char16_t methods ////////////////////////////////////////////////////////
+
+  template<>
+  std::list<std::u16string> FlatTrie::complete(const std::u16string& str) const
   {
-    std::size_t i = baseIndex;
-    do {
-      str.push_back(static_cast<T>(_letters[i]));
-
-      if( priv::isEndOfWord(_links[i]) ) {
-        words.push_back(str);
-      }
-
-      const std::size_t destIndex = priv::linkIndex(_links[i]);
-      if( destIndex != 0 ) {
-        list(words, str, destIndex);
-      }
-
-      str.pop_back();
-    } while( !priv::isEndOfList(_links[i++]) );
+    FlatTrieImpl<char16_t> impl(_letters, _links);
+    return impl.complete(str);
   }
 
-  csFlatTrieImpl() = delete;
-
-  csFlatTrieImpl(const csFlatTrieImpl&) = delete;
-  csFlatTrieImpl& operator=(const csFlatTrieImpl&) = delete;
-
-  csFlatTrieImpl(csFlatTrieImpl&&) = delete;
-  csFlatTrieImpl& operator=(csFlatTrieImpl&&) = delete;
-};
-
-////// public ////////////////////////////////////////////////////////////////
-
-csFlatTrie::csFlatTrie(csFlatTrie::Links&& links, csFlatTrie::Letters&& letters)
-  : _letters()
-  , _links()
-{
-  if( letters.size() == links.size() ) {
-    _letters = std::move(letters);
-    _links   = std::move(links);
+  template<>
+  TrieMatch FlatTrie::find(const std::u16string& str) const
+  {
+    FlatTrieImpl<char16_t> impl(_letters, _links);
+    return impl.find(str);
   }
-}
 
-void csFlatTrie::clear()
-{
-  _letters.clear();
-  _links.clear();
-}
+  template<>
+  std::list<std::u16string> FlatTrie::list() const
+  {
+    FlatTrieImpl<char16_t> impl(_letters, _links);
+    return impl.list();
+  }
 
-bool csFlatTrie::isEmpty() const
-{
-  return _letters.size() != _links.size()  ||  _letters.empty()  ||  _links.empty();
-}
-
-std::size_t csFlatTrie::nodeCount() const
-{
-  return isEmpty()
-      ? 0
-      : _links.size();
-}
-
-std::size_t csFlatTrie::size() const
-{
-  return isEmpty()
-      ? 0
-      : sizeof(letter_type)*_letters.size() + sizeof(link_type)*_links.size();
-}
-
-// char methods //////////////////////////////////////////////////////////////
-
-template<>
-std::list<std::string> csFlatTrie::complete(const std::string& str) const
-{
-  csFlatTrieImpl<char> impl(_letters, _links);
-  return impl.complete(str);
-}
-
-template<>
-cs::TrieMatch csFlatTrie::find(const std::string& str) const
-{
-  csFlatTrieImpl<char> impl(_letters, _links);
-  return impl.find(str);
-}
-
-template<>
-std::list<std::string> csFlatTrie::list() const
-{
-  csFlatTrieImpl<char> impl(_letters, _links);
-  return impl.list();
-}
-
-// char16_t methods //////////////////////////////////////////////////////////
-
-template<>
-std::list<std::u16string> csFlatTrie::complete(const std::u16string& str) const
-{
-  csFlatTrieImpl<char16_t> impl(_letters, _links);
-  return impl.complete(str);
-}
-
-template<>
-cs::TrieMatch csFlatTrie::find(const std::u16string& str) const
-{
-  csFlatTrieImpl<char16_t> impl(_letters, _links);
-  return impl.find(str);
-}
-
-template<>
-std::list<std::u16string> csFlatTrie::list() const
-{
-  csFlatTrieImpl<char16_t> impl(_letters, _links);
-  return impl.list();
-}
+} // namespace cs

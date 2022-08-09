@@ -33,196 +33,200 @@
 
 #include "internal/TrieNode.h"
 
-////// Private ///////////////////////////////////////////////////////////////
+namespace cs {
 
-namespace priv {
+  ////// Private ///////////////////////////////////////////////////////////////
 
-  template<typename T>
-  using String = std::basic_string<T>;
+  namespace priv {
 
-  template<typename T>
-  using StringList = std::list<String<T>>;
+    template<typename T>
+    using String = std::basic_string<T>;
 
-  template<typename T>
-  StringList<T> complete(const csTrieNode *root, const String<T>& needle,
-                         const std::size_t buffer_size = 1024)
-  {
-    if( needle.empty() ) {
-      return StringList<T>();
+    template<typename T>
+    using StringList = std::list<String<T>>;
+
+    template<typename T>
+    StringList<T> complete(const TrieNode *root, const String<T>& needle,
+                           const std::size_t buffer_size = 1024)
+    {
+      if( needle.empty() ) {
+        return StringList<T>();
+      }
+
+      const TrieNode *base = root->base(0, needle);
+      if( base == nullptr ) {
+        return StringList<T>();
+      }
+
+      String<T> word;
+      word.reserve(buffer_size);
+      word = needle;
+
+      StringList<T> words;
+      base->list(words, word);
+
+      return words;
     }
 
-    const csTrieNode *base = root->base(0, needle);
-    if( base == nullptr ) {
-      return StringList<T>();
+    template<typename T>
+    TrieMatch find(const TrieNode *root, const String<T>& needle)
+    {
+      if( needle.empty() ) {
+        return TrieMatch::None;
+      }
+      return root->find(0, needle);
     }
 
-    String<T> word;
-    word.reserve(buffer_size);
-    word = needle;
-
-    StringList<T> words;
-    base->list(words, word);
-
-    return words;
-  }
-
-  template<typename T>
-  cs::TrieMatch find(const csTrieNode *root, const String<T>& needle)
-  {
-    if( needle.empty() ) {
-      return cs::TrieMatch::None;
+    template<typename T>
+    void insert(TrieNode *root, const String<T>& s)
+    {
+      if( s.empty() ) {
+        return;
+      }
+      root->insert(0, s);
     }
-    return root->find(0, needle);
-  }
 
-  template<typename T>
-  void insert(csTrieNode *root, const String<T>& s)
-  {
-    if( s.empty() ) {
-      return;
+    template<typename T>
+    void insertReverse(TrieNode *root, const String<T>& s)
+    {
+      if( s.empty() ) {
+        return;
+      }
+      root->insertReverse(s.size(), s);
     }
-    root->insert(0, s);
-  }
 
-  template<typename T>
-  void insertReverse(csTrieNode *root, const String<T>& s)
-  {
-    if( s.empty() ) {
-      return;
+    template<typename T>
+    StringList<T> list(const TrieNode *root, const std::size_t buffer_size = 1024)
+    {
+      StringList<T> words;
+
+      String<T> word;
+      word.reserve(buffer_size);
+      root->list(words, word);
+
+      return words;
     }
-    root->insertReverse(s.size(), s);
-  }
 
-  template<typename T>
-  StringList<T> list(const csTrieNode *root, const std::size_t buffer_size = 1024)
+  } // namespace priv
+
+  ////// public ////////////////////////////////////////////////////////////////
+
+  Trie::Trie()
+    : _root()
   {
-    StringList<T> words;
-
-    String<T> word;
-    word.reserve(buffer_size);
-    root->list(words, word);
-
-    return words;
+    _root = std::make_unique<TrieNode>(0);
   }
 
-} // namespace priv
+  Trie::~Trie() = default;
 
-////// public ////////////////////////////////////////////////////////////////
+  Trie::Trie(Trie&&) = default;
+  Trie& Trie::operator=(Trie&&) = default;
 
-csTrie::csTrie()
-  : _root()
-{
-  _root = std::make_unique<csTrieNode>(0);
-}
-
-csTrie::~csTrie() = default;
-
-csTrie::csTrie(csTrie&&) = default;
-csTrie& csTrie::operator=(csTrie&&) = default;
-
-void csTrie::clear()
-{
-  _root.reset();
-  _root = std::make_unique<csTrieNode>(0);
-}
-
-csFlatTrie csTrie::flattened() const
-{
-  const std::size_t numNodes = nodeCount() - 1; // Don't count 'root'!
-  if( numNodes < 1 ) {
-    return csFlatTrie();
+  void Trie::clear()
+  {
+    _root.reset();
+    _root = std::make_unique<TrieNode>(0);
   }
 
-  csFlatTrie::Links     links(numNodes);
-  csFlatTrie::Letters letters(numNodes);
+  FlatTrie Trie::flattened() const
+  {
+    const std::size_t numNodes = nodeCount() - 1; // Don't count 'root'!
+    if( numNodes < 1 ) {
+      return FlatTrie();
+    }
 
-  std::size_t cntNodes = 0;
-  _root->flattened(links, letters, cntNodes);
+    FlatTrie::Links     links(numNodes);
+    FlatTrie::Letters letters(numNodes);
 
-  return csFlatTrie(std::move(links), std::move(letters));
-}
+    std::size_t cntNodes = 0;
+    _root->flattened(links, letters, cntNodes);
 
-bool csTrie::isNull() const
-{
-  return !_root;
-}
+    return FlatTrie(std::move(links), std::move(letters));
+  }
 
-std::size_t csTrie::nodeCount() const
-{
-  std::size_t numNodes = 0;
-  _root->statistics(numNodes);
+  bool Trie::isNull() const
+  {
+    return !_root;
+  }
 
-  return numNodes;
-}
+  std::size_t Trie::nodeCount() const
+  {
+    std::size_t numNodes = 0;
+    _root->statistics(numNodes);
 
-std::size_t csTrie::size() const
-{
-  std::size_t numNodes = 0;
-  _root->statistics(numNodes);
+    return numNodes;
+  }
 
-  return sizeof(csTrieNode)*numNodes;
-}
+  std::size_t Trie::size() const
+  {
+    std::size_t numNodes = 0;
+    _root->statistics(numNodes);
 
-// char methods //////////////////////////////////////////////////////////////
+    return sizeof(TrieNode)*numNodes;
+  }
 
-template<>
-std::list<std::string> csTrie::complete(const std::string& base) const
-{
-  return priv::complete(_root.get(), base);
-}
+  // char methods //////////////////////////////////////////////////////////////
 
-template<>
-cs::TrieMatch csTrie::find(const std::string& str) const
-{
-  return priv::find(_root.get(), str);
-}
+  template<>
+  std::list<std::string> Trie::complete(const std::string& base) const
+  {
+    return priv::complete(_root.get(), base);
+  }
 
-template<>
-void csTrie::insert(const std::string& str)
-{
-  priv::insert(_root.get(), str);
-}
+  template<>
+  TrieMatch Trie::find(const std::string& str) const
+  {
+    return priv::find(_root.get(), str);
+  }
 
-template<>
-void csTrie::insertReverse(const std::string& str)
-{
-  priv::insertReverse(_root.get(), str);
-}
+  template<>
+  void Trie::insert(const std::string& str)
+  {
+    priv::insert(_root.get(), str);
+  }
 
-template<>
-std::list<std::string> csTrie::list(char *) const
-{
-  return priv::list<char>(_root.get());
-}
+  template<>
+  void Trie::insertReverse(const std::string& str)
+  {
+    priv::insertReverse(_root.get(), str);
+  }
 
-// char16_t methods //////////////////////////////////////////////////////////
+  template<>
+  std::list<std::string> Trie::list(char *) const
+  {
+    return priv::list<char>(_root.get());
+  }
 
-template<>
-std::list<std::u16string> csTrie::complete(const std::u16string& base) const
-{
-  return priv::complete(_root.get(), base);
-}
+  // char16_t methods //////////////////////////////////////////////////////////
 
-template<>
-cs::TrieMatch csTrie::find(const std::u16string& str) const
-{
-  return priv::find(_root.get(), str);
-}
+  template<>
+  std::list<std::u16string> Trie::complete(const std::u16string& base) const
+  {
+    return priv::complete(_root.get(), base);
+  }
 
-template<>
-void csTrie::insert(const std::u16string& str)
-{
-  priv::insert(_root.get(), str);
-}
+  template<>
+  TrieMatch Trie::find(const std::u16string& str) const
+  {
+    return priv::find(_root.get(), str);
+  }
 
-template<>
-void csTrie::insertReverse(const std::u16string& str)
-{
-  priv::insertReverse(_root.get(), str);
-}
+  template<>
+  void Trie::insert(const std::u16string& str)
+  {
+    priv::insert(_root.get(), str);
+  }
 
-template<>
-std::list<std::u16string> csTrie::list(char16_t *) const
-{
-  return priv::list<char16_t>(_root.get());
-}
+  template<>
+  void Trie::insertReverse(const std::u16string& str)
+  {
+    priv::insertReverse(_root.get(), str);
+  }
+
+  template<>
+  std::list<std::u16string> Trie::list(char16_t *) const
+  {
+    return priv::list<char16_t>(_root.get());
+  }
+
+} // namespace cs

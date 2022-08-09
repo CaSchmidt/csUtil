@@ -41,64 +41,68 @@
 #include <cs/Core/csutil_config.h>
 #include <cs/Trie/TrieMatch.h>
 
-class CS_UTIL_EXPORT csFlatTrie {
-public:
-  using Letters = std::vector<uint16_t>;
-  using   Links = std::vector<uint32_t>;
+namespace cs {
 
-  using letter_type = Letters::value_type;
-  using   link_type =   Links::value_type;
+  class CS_UTIL_EXPORT FlatTrie {
+  public:
+    using Letters = std::vector<uint16_t>;
+    using   Links = std::vector<uint32_t>;
 
-  csFlatTrie() = default;
-  ~csFlatTrie() = default;
+    using letter_type = Letters::value_type;
+    using   link_type =   Links::value_type;
 
-  csFlatTrie(csFlatTrie&&) = default;
-  csFlatTrie& operator=(csFlatTrie&&) = default;
+    FlatTrie() = default;
+    ~FlatTrie() = default;
 
-  csFlatTrie(Links&& link, Letters&& letters);
+    FlatTrie(FlatTrie&&) = default;
+    FlatTrie& operator=(FlatTrie&&) = default;
 
-  void clear();
-  bool isEmpty() const;
-  std::size_t nodeCount() const;
-  std::size_t size() const;
+    FlatTrie(Links&& link, Letters&& letters);
 
-  template<typename T>
-  std::list<std::basic_string<T>> complete(const std::basic_string<T>& str) const;
+    void clear();
+    bool isEmpty() const;
+    std::size_t nodeCount() const;
+    std::size_t size() const;
 
-  template<typename T>
-  cs::TrieMatch find(const std::basic_string<T>& str) const;
+    template<typename T>
+    std::list<std::basic_string<T>> complete(const std::basic_string<T>& str) const;
 
-  template<typename T>
-  std::list<std::basic_string<T>> list() const;
+    template<typename T>
+    TrieMatch find(const std::basic_string<T>& str) const;
 
-private:
-  csFlatTrie(const csFlatTrie&) = delete;
-  csFlatTrie& operator=(const csFlatTrie&) = delete;
+    template<typename T>
+    std::list<std::basic_string<T>> list() const;
 
-  Letters _letters;
-  Links   _links;
-};
+  private:
+    FlatTrie(const FlatTrie&) = delete;
+    FlatTrie& operator=(const FlatTrie&) = delete;
 
-// char methods //////////////////////////////////////////////////////////////
+    Letters _letters;
+    Links   _links;
+  };
 
-template<>
-CS_UTIL_EXPORT std::list<std::string> csFlatTrie::complete(const std::string& str) const;
+  // char methods //////////////////////////////////////////////////////////////
 
-template<>
-CS_UTIL_EXPORT cs::TrieMatch csFlatTrie::find(const std::string& str) const;
+  template<>
+  CS_UTIL_EXPORT std::list<std::string> FlatTrie::complete(const std::string& str) const;
 
-template<>
-CS_UTIL_EXPORT std::list<std::string> csFlatTrie::list() const;
+  template<>
+  CS_UTIL_EXPORT TrieMatch FlatTrie::find(const std::string& str) const;
 
-// char16_t methods //////////////////////////////////////////////////////////
+  template<>
+  CS_UTIL_EXPORT std::list<std::string> FlatTrie::list() const;
 
-template<>
-CS_UTIL_EXPORT std::list<std::u16string> csFlatTrie::complete(const std::u16string& str) const;
+  // char16_t methods //////////////////////////////////////////////////////////
 
-template<>
-CS_UTIL_EXPORT cs::TrieMatch csFlatTrie::find(const std::u16string& str) const;
+  template<>
+  CS_UTIL_EXPORT std::list<std::u16string> FlatTrie::complete(const std::u16string& str) const;
 
-template<>
-CS_UTIL_EXPORT std::list<std::u16string> csFlatTrie::list() const;
+  template<>
+  CS_UTIL_EXPORT TrieMatch FlatTrie::find(const std::u16string& str) const;
+
+  template<>
+  CS_UTIL_EXPORT std::list<std::u16string> FlatTrie::list() const;
+
+} // namespace cs
 
 #endif // CS_FLATTRIE_H

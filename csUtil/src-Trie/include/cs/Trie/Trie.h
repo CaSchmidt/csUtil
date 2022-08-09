@@ -40,80 +40,84 @@
 #include <cs/Trie/FlatTrie.h>
 #include <cs/Trie/TrieMatch.h>
 
-class csTrieNode;
+namespace cs {
 
-class CS_UTIL_EXPORT csTrie {
-public:
-  csTrie();
-  ~csTrie();
+  class TrieNode;
 
-  csTrie(csTrie&&);
-  csTrie& operator=(csTrie&&);
+  class CS_UTIL_EXPORT Trie {
+  public:
+    Trie();
+    ~Trie();
 
-  void clear();
+    Trie(Trie&&);
+    Trie& operator=(Trie&&);
 
-  csFlatTrie flattened() const;
+    void clear();
 
-  bool isNull() const;
+    FlatTrie flattened() const;
 
-  std::size_t nodeCount() const;
+    bool isNull() const;
 
-  std::size_t size() const;
+    std::size_t nodeCount() const;
 
-  template<typename T>
-  std::list<std::basic_string<T>> complete(const std::basic_string<T>& base) const;
+    std::size_t size() const;
 
-  template<typename T>
-  cs::TrieMatch find(const std::basic_string<T>& str) const;
+    template<typename T>
+    std::list<std::basic_string<T>> complete(const std::basic_string<T>& base) const;
 
-  template<typename T>
-  void insert(const std::basic_string<T>& str);
+    template<typename T>
+    TrieMatch find(const std::basic_string<T>& str) const;
 
-  template<typename T>
-  void insertReverse(const std::basic_string<T>& str);
+    template<typename T>
+    void insert(const std::basic_string<T>& str);
 
-  template<typename T>
-  std::list<std::basic_string<T>> list(T * = nullptr) const;
+    template<typename T>
+    void insertReverse(const std::basic_string<T>& str);
 
-private:
-  csTrie(const csTrie&) = delete;
-  csTrie& operator=(const csTrie&) = delete;
+    template<typename T>
+    std::list<std::basic_string<T>> list(T * = nullptr) const;
 
-  std::unique_ptr<csTrieNode> _root;
-};
+  private:
+    Trie(const Trie&) = delete;
+    Trie& operator=(const Trie&) = delete;
 
-// char methods //////////////////////////////////////////////////////////////
+    std::unique_ptr<TrieNode> _root;
+  };
 
-template<>
-CS_UTIL_EXPORT std::list<std::string> csTrie::complete(const std::string& base) const;
+  // char methods ////////////////////////////////////////////////////////////
 
-template<>
-CS_UTIL_EXPORT cs::TrieMatch csTrie::find(const std::string& str) const;
+  template<>
+  CS_UTIL_EXPORT std::list<std::string> Trie::complete(const std::string& base) const;
 
-template<>
-CS_UTIL_EXPORT void csTrie::insert(const std::string& str);
+  template<>
+  CS_UTIL_EXPORT TrieMatch Trie::find(const std::string& str) const;
 
-template<>
-CS_UTIL_EXPORT void csTrie::insertReverse(const std::string& str);
+  template<>
+  CS_UTIL_EXPORT void Trie::insert(const std::string& str);
 
-template<>
-CS_UTIL_EXPORT std::list<std::string> csTrie::list(char *) const;
+  template<>
+  CS_UTIL_EXPORT void Trie::insertReverse(const std::string& str);
 
-// char16_t methods //////////////////////////////////////////////////////////
+  template<>
+  CS_UTIL_EXPORT std::list<std::string> Trie::list(char *) const;
 
-template<>
-CS_UTIL_EXPORT std::list<std::u16string> csTrie::complete(const std::u16string& base) const;
+  // char16_t methods ////////////////////////////////////////////////////////
 
-template<>
-CS_UTIL_EXPORT cs::TrieMatch csTrie::find(const std::u16string& str) const;
+  template<>
+  CS_UTIL_EXPORT std::list<std::u16string> Trie::complete(const std::u16string& base) const;
 
-template<>
-CS_UTIL_EXPORT void csTrie::insert(const std::u16string& str);
+  template<>
+  CS_UTIL_EXPORT TrieMatch Trie::find(const std::u16string& str) const;
 
-template<>
-CS_UTIL_EXPORT void csTrie::insertReverse(const std::u16string& str);
+  template<>
+  CS_UTIL_EXPORT void Trie::insert(const std::u16string& str);
 
-template<>
-CS_UTIL_EXPORT std::list<std::u16string> csTrie::list(char16_t *) const;
+  template<>
+  CS_UTIL_EXPORT void Trie::insertReverse(const std::u16string& str);
+
+  template<>
+  CS_UTIL_EXPORT std::list<std::u16string> Trie::list(char16_t *) const;
+
+} // namespace cs
 
 #endif // CS_TRIE_H

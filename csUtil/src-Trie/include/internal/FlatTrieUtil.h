@@ -34,29 +34,33 @@
 
 #include "cs/Trie/FlatTrie.h"
 
-namespace priv {
+namespace cs {
 
-  enum LinkBits : csFlatTrie::link_type {
-    Mask_EOL = 0x80000000, // End-of-List
-    Mask_EOW = 0x40000000, // End-of-Word
-    Mask_IDX = 0x3FFFFFFF  // Index
-  };
+  namespace impl_trie {
 
-  constexpr bool isEndOfList(const csFlatTrie::link_type& link)
-  {
-    return (link & Mask_EOL) != 0;
-  }
+    enum LinkBits : FlatTrie::link_type {
+      Mask_EOL = 0x80000000, // End-of-List
+      Mask_EOW = 0x40000000, // End-of-Word
+      Mask_IDX = 0x3FFFFFFF  // Index
+    };
 
-  constexpr bool isEndOfWord(const csFlatTrie::link_type& link)
-  {
-    return (link & Mask_EOW) != 0;
-  }
+    constexpr bool isEndOfList(const FlatTrie::link_type& link)
+    {
+      return (link & Mask_EOL) != 0;
+    }
 
-  constexpr std::size_t linkIndex(const csFlatTrie::link_type& link)
-  {
-    return link & Mask_IDX;
-  }
+    constexpr bool isEndOfWord(const FlatTrie::link_type& link)
+    {
+      return (link & Mask_EOW) != 0;
+    }
 
-} // namespace priv
+    constexpr std::size_t linkIndex(const FlatTrie::link_type& link)
+    {
+      return link & Mask_IDX;
+    }
+
+  } // namespace impl_trie
+
+} // namespace cs
 
 #endif // CS_FLATTRIEUTIL_H
