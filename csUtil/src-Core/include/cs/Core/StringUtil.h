@@ -227,7 +227,7 @@ namespace cs {
   inline bool isIdent(const T *str, const std::size_t len = MAX_SIZE_T)
   {
     const std::size_t max = len == MAX_SIZE_T
-        ? cs::length(str)
+        ? length(str)
         : len;
 
     if( str == nullptr  ||
