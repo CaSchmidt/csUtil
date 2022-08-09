@@ -29,8 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSTRIENODE_H
-#define CSTRIENODE_H
+#ifndef CS_TRIENODE_H
+#define CS_TRIENODE_H
 
 #include <cstdint>
 
@@ -39,8 +39,8 @@
 #include <string>
 #include <type_traits>
 
-#include "csUtil/csNamespace.h"
-#include "internal/csFlatTrieUtil.h"
+#include "cs/Trie/Namespace.h"
+#include "internal/FlatTrieUtil.h"
 
 class csTrieNode {
 private:
@@ -276,4 +276,4 @@ private:
   }
 };
 
-#endif // CSTRIENODE_H
+#endif // CS_TRIENODE_H

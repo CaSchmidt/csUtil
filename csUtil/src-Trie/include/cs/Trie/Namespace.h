@@ -29,34 +29,17 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSFLATTRIEUTIL_H
-#define CSFLATTRIEUTIL_H
+#ifndef CS_TRIEMATCH_H
+#define CS_TRIEMATCH_H
 
-#include "csUtil/csFlatTrie.h"
+namespace cs {
 
-namespace priv {
-
-  enum LinkBits : csFlatTrie::link_type {
-    Mask_EOL = 0x80000000, // End-of-List
-    Mask_EOW = 0x40000000, // End-of-Word
-    Mask_IDX = 0x3FFFFFFF  // Index
+  enum class TrieMatch {
+    None = 0,
+    Partial,
+    Exact
   };
 
-  constexpr bool isEndOfList(const csFlatTrie::link_type& link)
-  {
-    return (link & Mask_EOL) != 0;
-  }
+} // namespace cs
 
-  constexpr bool isEndOfWord(const csFlatTrie::link_type& link)
-  {
-    return (link & Mask_EOW) != 0;
-  }
-
-  constexpr std::size_t linkIndex(const csFlatTrie::link_type& link)
-  {
-    return link & Mask_IDX;
-  }
-
-} // namespace priv
-
-#endif // CSFLATTRIEUTIL_H
+#endif // CS_TRIEMATCH_H

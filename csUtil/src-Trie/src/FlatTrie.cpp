@@ -29,10 +29,10 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include "csUtil/csFlatTrie.h"
+#include "cs/Trie/FlatTrie.h"
 
-#include "csUtil/csTypeTraits.h"
-#include "internal/csFlatTrieUtil.h"
+#include "cs/Core/TypeTraits.h"
+#include "internal/FlatTrieUtil.h"
 
 ////// Private ///////////////////////////////////////////////////////////////
 

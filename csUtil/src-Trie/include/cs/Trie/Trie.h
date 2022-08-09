@@ -29,76 +29,91 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSFLATTRIE_H
-#define CSFLATTRIE_H
-
-#include <cstdint>
+#ifndef CS_TRIE_H
+#define CS_TRIE_H
 
 #include <list>
+#include <memory>
 #include <string>
-#include <vector>
 
-#include <csUtil/csutil_config.h>
-#include <csUtil/csNamespace.h>
+#include <cs/Core/csutil_config.h>
+#include <cs/Trie/FlatTrie.h>
+#include <cs/Trie/Namespace.h>
 
-class CS_UTIL_EXPORT csFlatTrie {
+class csTrieNode;
+
+class CS_UTIL_EXPORT csTrie {
 public:
-  using Letters = std::vector<uint16_t>;
-  using   Links = std::vector<uint32_t>;
+  csTrie();
+  ~csTrie();
 
-  using letter_type = Letters::value_type;
-  using   link_type =   Links::value_type;
-
-  csFlatTrie() = default;
-  ~csFlatTrie() = default;
-
-  csFlatTrie(csFlatTrie&&) = default;
-  csFlatTrie& operator=(csFlatTrie&&) = default;
-
-  csFlatTrie(Links&& link, Letters&& letters);
+  csTrie(csTrie&&);
+  csTrie& operator=(csTrie&&);
 
   void clear();
-  bool isEmpty() const;
+
+  csFlatTrie flattened() const;
+
+  bool isNull() const;
+
   std::size_t nodeCount() const;
+
   std::size_t size() const;
 
   template<typename T>
-  std::list<std::basic_string<T>> complete(const std::basic_string<T>& str) const;
+  std::list<std::basic_string<T>> complete(const std::basic_string<T>& base) const;
 
   template<typename T>
   cs::TrieMatch find(const std::basic_string<T>& str) const;
 
   template<typename T>
-  std::list<std::basic_string<T>> list() const;
+  void insert(const std::basic_string<T>& str);
+
+  template<typename T>
+  void insertReverse(const std::basic_string<T>& str);
+
+  template<typename T>
+  std::list<std::basic_string<T>> list(T * = nullptr) const;
 
 private:
-  csFlatTrie(const csFlatTrie&) = delete;
-  csFlatTrie& operator=(const csFlatTrie&) = delete;
+  csTrie(const csTrie&) = delete;
+  csTrie& operator=(const csTrie&) = delete;
 
-  Letters _letters;
-  Links   _links;
+  std::unique_ptr<csTrieNode> _root;
 };
 
 // char methods //////////////////////////////////////////////////////////////
 
 template<>
-CS_UTIL_EXPORT std::list<std::string> csFlatTrie::complete(const std::string& str) const;
+CS_UTIL_EXPORT std::list<std::string> csTrie::complete(const std::string& base) const;
 
 template<>
-CS_UTIL_EXPORT cs::TrieMatch csFlatTrie::find(const std::string& str) const;
+CS_UTIL_EXPORT cs::TrieMatch csTrie::find(const std::string& str) const;
 
 template<>
-CS_UTIL_EXPORT std::list<std::string> csFlatTrie::list() const;
+CS_UTIL_EXPORT void csTrie::insert(const std::string& str);
+
+template<>
+CS_UTIL_EXPORT void csTrie::insertReverse(const std::string& str);
+
+template<>
+CS_UTIL_EXPORT std::list<std::string> csTrie::list(char *) const;
 
 // char16_t methods //////////////////////////////////////////////////////////
 
 template<>
-CS_UTIL_EXPORT std::list<std::u16string> csFlatTrie::complete(const std::u16string& str) const;
+CS_UTIL_EXPORT std::list<std::u16string> csTrie::complete(const std::u16string& base) const;
 
 template<>
-CS_UTIL_EXPORT cs::TrieMatch csFlatTrie::find(const std::u16string& str) const;
+CS_UTIL_EXPORT cs::TrieMatch csTrie::find(const std::u16string& str) const;
 
 template<>
-CS_UTIL_EXPORT std::list<std::u16string> csFlatTrie::list() const;
+CS_UTIL_EXPORT void csTrie::insert(const std::u16string& str);
 
-#endif // CSFLATTRIE_H
+template<>
+CS_UTIL_EXPORT void csTrie::insertReverse(const std::u16string& str);
+
+template<>
+CS_UTIL_EXPORT std::list<std::u16string> csTrie::list(char16_t *) const;
+
+#endif // CS_TRIE_H

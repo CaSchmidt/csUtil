@@ -29,9 +29,9 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include "csUtil/csTrie.h"
+#include "cs/Trie/Trie.h"
 
-#include "internal/csTrieNode.h"
+#include "internal/TrieNode.h"
 
 ////// Private ///////////////////////////////////////////////////////////////
 
