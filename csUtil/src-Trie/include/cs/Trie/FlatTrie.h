@@ -39,7 +39,7 @@
 #include <vector>
 
 #include <cs/Core/csutil_config.h>
-#include <cs/Trie/Namespace.h>
+#include <cs/Trie/TrieMatch.h>
 
 class CS_UTIL_EXPORT csFlatTrie {
 public:

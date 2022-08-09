@@ -1,7 +1,7 @@
 list(APPEND csTrie_HEADERS
   include/cs/Trie/FlatTrie.h
-  include/cs/Trie/Namespace.h
   include/cs/Trie/Trie.h
+  include/cs/Trie/TrieMatch.h
   include/internal/FlatTrieUtil.h
   include/internal/TrieNode.h
   )

@@ -38,7 +38,7 @@
 
 #include <cs/Core/csutil_config.h>
 #include <cs/Trie/FlatTrie.h>
-#include <cs/Trie/Namespace.h>
+#include <cs/Trie/TrieMatch.h>
 
 class csTrieNode;
 

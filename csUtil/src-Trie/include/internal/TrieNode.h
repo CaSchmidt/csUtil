@@ -39,7 +39,7 @@
 #include <string>
 #include <type_traits>
 
-#include "cs/Trie/Namespace.h"
+#include "cs/Trie/TrieMatch.h"
 #include "internal/FlatTrieUtil.h"
 
 class csTrieNode {
