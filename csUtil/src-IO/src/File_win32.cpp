@@ -35,177 +35,181 @@
 
 #include "internal/Win32Handle.h"
 
-////// Implementation ////////////////////////////////////////////////////////
+namespace cs {
 
-class csFileImpl : public Win32Handle {
-public:
-  csFileImpl() noexcept
-    : Win32Handle()
+  ////// Implementation //////////////////////////////////////////////////////
+
+  class FileImpl : public Win32Handle {
+  public:
+    FileImpl() noexcept
+      : Win32Handle()
+    {
+    }
+
+    ~FileImpl() noexcept
+    {
+    }
+
+    bool seek(const IODevice::pos_type pos) const
+    {
+      LARGE_INTEGER li;
+      li.QuadPart = pos;
+
+      return isOpen()  &&  SetFilePointerEx(handle, li, NULL, FILE_BEGIN) != 0;
+    }
+
+    bool seekToEnd() const
+    {
+      LARGE_INTEGER li;
+      li.QuadPart = 0;
+
+      return isOpen()  &&  SetFilePointerEx(handle, li, NULL, FILE_END) != 0;
+    }
+
+    bool truncate() const
+    {
+      return isOpen()  &&  seek(0)  &&  SetEndOfFile(handle) != 0;
+    }
+  };
+
+  ////// public //////////////////////////////////////////////////////////////
+
+  File::File() noexcept
+    : _impl{nullptr}
   {
   }
 
-  ~csFileImpl() noexcept
+  File::~File() noexcept
   {
   }
 
-  bool seek(const csIODevice::pos_type pos) const
+  void File::close()
   {
-    LARGE_INTEGER li;
-    li.QuadPart = pos;
-
-    return isOpen()  &&  SetFilePointerEx(handle, li, NULL, FILE_BEGIN) != 0;
+    _impl.reset(nullptr);
   }
 
-  bool seekToEnd() const
+  bool File::isOpen() const
+  {
+    return _impl  &&  _impl->isOpen();
+  }
+
+  bool File::open(const std::filesystem::path& path, const OpenFlags flags)
+  {
+    // (1) Close (possibly) open file ////////////////////////////////////////
+
+    close();
+
+    // (2) Sanity check //////////////////////////////////////////////////////
+
+    if( !flags.testFlag(cs::FileOpenFlag::ReadWrite) ) {
+      return false;
+    }
+
+    // (3) Allocate file handle //////////////////////////////////////////////
+
+    try {
+      _impl = std::make_unique<FileImpl>();
+    } catch(...) {
+      return false;
+    }
+
+    // (4) Open file /////////////////////////////////////////////////////////
+
+    DWORD dwDesiredAccess = 0;
+    if( flags.testFlag(cs::FileOpenFlag::Read) ) {
+      dwDesiredAccess |= GENERIC_READ;
+    }
+    if( flags.testFlag(cs::FileOpenFlag::Write) ) {
+      dwDesiredAccess |= GENERIC_WRITE;
+    }
+
+    DWORD dwCreationDisposition = 0;
+    if( flags.testFlag(cs::FileOpenFlag::Write) ) {
+      dwCreationDisposition = flags.testFlag(cs::FileOpenFlag::Append)
+          ? OPEN_ALWAYS
+          : CREATE_ALWAYS;
+    } else {
+      dwCreationDisposition = OPEN_EXISTING;
+    }
+
+    const std::u16string path_utf16 = path.generic_u16string();
+    _impl->handle = CreateFileW(reinterpret_cast<LPCWSTR>(path_utf16.data()),
+                                dwDesiredAccess,
+                                0,
+                                NULL,
+                                dwCreationDisposition,
+                                FILE_ATTRIBUTE_NORMAL,
+                                NULL);
+
+    // (5) Handling of remaining flags ///////////////////////////////////////
+
+    if( isOpen() ) {
+      _impl->path = path;
+
+      if( flags.testMask(cs::FileOpenFlag::Write | cs::FileOpenFlag::Append) ) {
+        _impl->seekToEnd();
+      }
+      if( flags.testMask(cs::FileOpenFlag::Write | cs::FileOpenFlag::Truncate) ) {
+        _impl->truncate();
+      }
+    } else {
+      close();
+    }
+
+    return isOpen();
+  }
+
+  std::filesystem::path File::path() const
+  {
+    if( !isOpen() ) {
+      return std::u8string();
+    }
+    return _impl->path;
+  }
+
+  bool File::seek(const pos_type pos) const
+  {
+    return isOpen()  &&  _impl->seek(pos);
+  }
+
+  IODevice::pos_type File::tell() const
+  {
+    LARGE_INTEGER in;
+    in.QuadPart = 0;
+    LARGE_INTEGER out;
+    out.QuadPart = 0;
+
+    if( !isOpen()  ||  SetFilePointerEx(_impl->handle, in, &out, FILE_CURRENT) == 0 ) {
+      return 0;
+    }
+
+    return out.QuadPart;
+  }
+
+  IODevice::size_type File::size() const
   {
     LARGE_INTEGER li;
     li.QuadPart = 0;
 
-    return isOpen()  &&  SetFilePointerEx(handle, li, NULL, FILE_END) != 0;
+    if( !isOpen()  ||  GetFileSizeEx(_impl->handle, &li) == 0 ) {
+      return 0;
+    }
+
+    return static_cast<size_type>(li.QuadPart);
   }
 
-  bool truncate() const
+  IODevice::size_type File::read(void *buffer, const size_type length) const
   {
-    return isOpen()  &&  seek(0)  &&  SetEndOfFile(handle) != 0;
-  }
-};
-
-////// public ////////////////////////////////////////////////////////////////
-
-csFile::csFile() noexcept
-  : _impl{nullptr}
-{
-}
-
-csFile::~csFile() noexcept
-{
-}
-
-void csFile::close()
-{
-  _impl.reset(nullptr);
-}
-
-bool csFile::isOpen() const
-{
-  return _impl  &&  _impl->isOpen();
-}
-
-bool csFile::open(const std::filesystem::path& path, const OpenFlags flags)
-{
-  // (1) Close (possibly) open file //////////////////////////////////////////
-
-  close();
-
-  // (2) Sanity check ////////////////////////////////////////////////////////
-
-  if( !flags.testFlag(cs::FileOpenFlag::ReadWrite) ) {
-    return false;
+    return isOpen()
+        ? _impl->read(buffer, length)
+        : 0;
   }
 
-  // (3) Allocate file handle ////////////////////////////////////////////////
-
-  try {
-    _impl = std::make_unique<csFileImpl>();
-  } catch(...) {
-    return false;
+  IODevice::size_type File::write(const void *buffer, const size_type length) const
+  {
+    return isOpen()
+        ? _impl->write(buffer, length)
+        : 0;
   }
 
-  // (4) Open file ///////////////////////////////////////////////////////////
-
-  DWORD dwDesiredAccess = 0;
-  if( flags.testFlag(cs::FileOpenFlag::Read) ) {
-    dwDesiredAccess |= GENERIC_READ;
-  }
-  if( flags.testFlag(cs::FileOpenFlag::Write) ) {
-    dwDesiredAccess |= GENERIC_WRITE;
-  }
-
-  DWORD dwCreationDisposition = 0;
-  if( flags.testFlag(cs::FileOpenFlag::Write) ) {
-    dwCreationDisposition = flags.testFlag(cs::FileOpenFlag::Append)
-        ? OPEN_ALWAYS
-        : CREATE_ALWAYS;
-  } else {
-    dwCreationDisposition = OPEN_EXISTING;
-  }
-
-  const std::u16string path_utf16 = path.generic_u16string();
-  _impl->handle = CreateFileW(reinterpret_cast<LPCWSTR>(path_utf16.data()),
-                              dwDesiredAccess,
-                              0,
-                              NULL,
-                              dwCreationDisposition,
-                              FILE_ATTRIBUTE_NORMAL,
-                              NULL);
-
-  // (5) Handling of remaining flags /////////////////////////////////////////
-
-  if( isOpen() ) {
-    _impl->path = path;
-
-    if( flags.testMask(cs::FileOpenFlag::Write | cs::FileOpenFlag::Append) ) {
-      _impl->seekToEnd();
-    }
-    if( flags.testMask(cs::FileOpenFlag::Write | cs::FileOpenFlag::Truncate) ) {
-      _impl->truncate();
-    }
-  } else {
-    close();
-  }
-
-  return isOpen();
-}
-
-std::filesystem::path csFile::path() const
-{
-  if( !isOpen() ) {
-    return std::u8string();
-  }
-  return _impl->path;
-}
-
-bool csFile::seek(const pos_type pos) const
-{
-  return isOpen()  &&  _impl->seek(pos);
-}
-
-csIODevice::pos_type csFile::tell() const
-{
-  LARGE_INTEGER in;
-  in.QuadPart = 0;
-  LARGE_INTEGER out;
-  out.QuadPart = 0;
-
-  if( !isOpen()  ||  SetFilePointerEx(_impl->handle, in, &out, FILE_CURRENT) == 0 ) {
-    return 0;
-  }
-
-  return out.QuadPart;
-}
-
-csIODevice::size_type csFile::size() const
-{
-  LARGE_INTEGER li;
-  li.QuadPart = 0;
-
-  if( !isOpen()  ||  GetFileSizeEx(_impl->handle, &li) == 0 ) {
-    return 0;
-  }
-
-  return static_cast<size_type>(li.QuadPart);
-}
-
-csIODevice::size_type csFile::read(void *buffer, const size_type length) const
-{
-  return isOpen()
-      ? _impl->read(buffer, length)
-      : 0;
-}
-
-csIODevice::size_type csFile::write(const void *buffer, const size_type length) const
-{
-  return isOpen()
-      ? _impl->write(buffer, length)
-      : 0;
-}
+} // namespace cs

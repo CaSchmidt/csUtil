@@ -56,35 +56,39 @@ namespace cs {
 
 CS_ENABLE_FLAGS(cs::FileOpenFlag);
 
-class csFileImpl;
+namespace cs {
 
-using csFileImplPtr = std::unique_ptr<csFileImpl>;
+  class FileImpl;
 
-class CS_UTIL_EXPORT csFile : public csIODevice {
-public:
-  using OpenFlags = cs::Flags<cs::FileOpenFlag>;
+  using FileImplPtr = std::unique_ptr<FileImpl>;
 
-  csFile() noexcept;
-  ~csFile() noexcept;
+  class CS_UTIL_EXPORT File : public IODevice {
+  public:
+    using OpenFlags = Flags<FileOpenFlag>;
 
-  void close();
-  bool isOpen() const;
-  bool open(const std::filesystem::path& path, const OpenFlags flags = cs::FileOpenFlag::Read);
+    File() noexcept;
+    ~File() noexcept;
 
-  std::filesystem::path path() const;
+    void close();
+    bool isOpen() const;
+    bool open(const std::filesystem::path& path, const OpenFlags flags = cs::FileOpenFlag::Read);
 
-  bool seek(const pos_type pos) const;
-  pos_type tell() const;
+    std::filesystem::path path() const;
 
-  size_type size() const;
+    bool seek(const pos_type pos) const;
+    pos_type tell() const;
 
-  size_type read(void *buffer, const size_type length) const;
-  size_type write(const void *buffer, const size_type length) const;
+    size_type size() const;
 
-  std::vector<uint8_t> readAll() const;
+    size_type read(void *buffer, const size_type length) const;
+    size_type write(const void *buffer, const size_type length) const;
 
-private:
-  csFileImplPtr _impl{nullptr};
-};
+    std::vector<uint8_t> readAll() const;
+
+  private:
+    FileImplPtr _impl{nullptr};
+  };
+
+} // namespace cs
 
 #endif // CS_FILE_H

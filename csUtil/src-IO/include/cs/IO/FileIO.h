@@ -37,10 +37,14 @@
 
 #include <cs/Core/csutil_config.h>
 
-CS_UTIL_EXPORT std::list<std::string> csReadLines(const std::filesystem::path& path,
+namespace cs {
+
+  CS_UTIL_EXPORT std::list<std::string> readLines(const std::filesystem::path& path,
                                                   const bool skipBlank = false,
                                                   const bool doTrim = false);
 
-CS_UTIL_EXPORT std::string csReadTextFile(const std::filesystem::path& path, bool *ok = nullptr);
+  CS_UTIL_EXPORT std::string readTextFile(const std::filesystem::path& path, bool *ok = nullptr);
+
+} // namespace cs
 
 #endif // CS_FILEIO_H

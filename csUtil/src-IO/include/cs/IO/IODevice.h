@@ -36,18 +36,22 @@
 
 #include <cs/Core/csutil_config.h>
 
-class CS_UTIL_EXPORT csIODevice {
-public:
-  using  pos_type =  int64_t;
-  using size_type = uint64_t;
+namespace cs {
 
-  csIODevice() noexcept;
-  virtual ~csIODevice() noexcept;
+  class CS_UTIL_EXPORT IODevice {
+  public:
+    using  pos_type =  int64_t;
+    using size_type = uint64_t;
 
-  virtual void close() = 0;
+    IODevice() noexcept;
+    virtual ~IODevice() noexcept;
 
-  virtual size_type read(void *buffer, const size_type length) const = 0;
-  virtual size_type write(const void *buffer, const size_type length) const = 0;
-};
+    virtual void close() = 0;
+
+    virtual size_type read(void *buffer, const size_type length) const = 0;
+    virtual size_type write(const void *buffer, const size_type length) const = 0;
+  };
+
+} // namespace cs
 
 #endif // CS_IODEVICE_H

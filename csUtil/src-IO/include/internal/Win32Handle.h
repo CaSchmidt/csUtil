@@ -39,50 +39,54 @@
 #define NOMINMAX
 #include <Windows.h>
 
-class Win32Handle {
-public:
-  Win32Handle() noexcept;
-  ~Win32Handle() noexcept;
+namespace cs {
 
-  bool isOpen() const;
+  class Win32Handle {
+  public:
+    Win32Handle() noexcept;
+    ~Win32Handle() noexcept;
 
-  template<typename CS_SIZE_T>
-  inline static bool isRWLength(const CS_SIZE_T length)
-  {
-    static_assert(std::is_integral_v<CS_SIZE_T>  &&  sizeof(CS_SIZE_T) > sizeof(DWORD));
+    bool isOpen() const;
 
-    constexpr CS_SIZE_T MAX_DWORD = std::numeric_limits<DWORD>::max();
-    constexpr CS_SIZE_T       ONE = 1;
+    template<typename CS_SIZE_T>
+    inline static bool isRWLength(const CS_SIZE_T length)
+    {
+      static_assert(std::is_integral_v<CS_SIZE_T>  &&  sizeof(CS_SIZE_T) > sizeof(DWORD));
 
-    return ONE <= length  &&  length <= MAX_DWORD;
-  }
+      constexpr CS_SIZE_T MAX_DWORD = std::numeric_limits<DWORD>::max();
+      constexpr CS_SIZE_T       ONE = 1;
 
-  template<typename CS_SIZE_T>
-  inline CS_SIZE_T read(void *buffer, const CS_SIZE_T length) const
-  {
-    const DWORD numToRead = static_cast<DWORD>(length);
-    DWORD numRead = 0;
-    if( !isOpen()  ||  !isRWLength(length)  ||
-        ReadFile(handle, buffer, numToRead, &numRead, NULL) == 0 ) {
-      return 0;
+      return ONE <= length  &&  length <= MAX_DWORD;
     }
-    return numRead;
-  }
 
-  template<typename CS_SIZE_T>
-  inline CS_SIZE_T write(const void *buffer, const CS_SIZE_T length) const
-  {
-    const DWORD numToWrite = static_cast<DWORD>(length);
-    DWORD numWritten = 0;
-    if( !isOpen()  ||  !isRWLength(length)  ||
-        WriteFile(handle, buffer, numToWrite, &numWritten, NULL) == 0 ) {
-      return 0;
+    template<typename CS_SIZE_T>
+    inline CS_SIZE_T read(void *buffer, const CS_SIZE_T length) const
+    {
+      const DWORD numToRead = static_cast<DWORD>(length);
+      DWORD numRead = 0;
+      if( !isOpen()  ||  !isRWLength(length)  ||
+          ReadFile(handle, buffer, numToRead, &numRead, NULL) == 0 ) {
+        return 0;
+      }
+      return numRead;
     }
-    return numWritten;
-  }
 
-  HANDLE handle{INVALID_HANDLE_VALUE};
-  std::filesystem::path path{};
-};
+    template<typename CS_SIZE_T>
+    inline CS_SIZE_T write(const void *buffer, const CS_SIZE_T length) const
+    {
+      const DWORD numToWrite = static_cast<DWORD>(length);
+      DWORD numWritten = 0;
+      if( !isOpen()  ||  !isRWLength(length)  ||
+          WriteFile(handle, buffer, numToWrite, &numWritten, NULL) == 0 ) {
+        return 0;
+      }
+      return numWritten;
+    }
+
+    HANDLE handle{INVALID_HANDLE_VALUE};
+    std::filesystem::path path{};
+  };
+
+} // namespace cs
 
 #endif // WIN32HANDLE_H

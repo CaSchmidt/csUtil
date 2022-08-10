@@ -31,24 +31,28 @@
 
 #include "internal/Win32Handle.h"
 
-////// public ////////////////////////////////////////////////////////////////
+namespace cs {
 
-Win32Handle::Win32Handle() noexcept
-  : handle{INVALID_HANDLE_VALUE}
-  , path{}
-{
-}
+  ////// public //////////////////////////////////////////////////////////////
 
-Win32Handle::~Win32Handle() noexcept
-{
-  if( isOpen() ) {
-    CloseHandle(handle);
+  Win32Handle::Win32Handle() noexcept
+    : handle{INVALID_HANDLE_VALUE}
+    , path{}
+  {
   }
-  handle = INVALID_HANDLE_VALUE;
-  path.clear();
-}
 
-bool Win32Handle::isOpen() const
-{
-  return handle != INVALID_HANDLE_VALUE;
-}
+  Win32Handle::~Win32Handle() noexcept
+  {
+    if( isOpen() ) {
+      CloseHandle(handle);
+    }
+    handle = INVALID_HANDLE_VALUE;
+    path.clear();
+  }
+
+  bool Win32Handle::isOpen() const
+  {
+    return handle != INVALID_HANDLE_VALUE;
+  }
+
+} // namespace cs

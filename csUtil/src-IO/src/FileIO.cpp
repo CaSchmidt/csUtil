@@ -34,58 +34,57 @@
 #include "cs/Core/StringUtil.h"
 #include "cs/IO/File.h"
 
-////// Types /////////////////////////////////////////////////////////////////
+namespace cs {
 
-using String     = std::string;
-using StringList = std::list<String>;
+  ////// Public ////////////////////////////////////////////////////////////////
 
-////// Public ////////////////////////////////////////////////////////////////
-
-CS_UTIL_EXPORT std::list<std::string> csReadLines(const std::filesystem::path& path,
+  CS_UTIL_EXPORT std::list<std::string> readLines(const std::filesystem::path& path,
                                                   const bool skipBlank,
                                                   const bool doTrim)
-{
-  constexpr auto lambda_is_blank = [](const String& str) -> bool {
-    return str.empty()  ||  cs::isSpace(str);
-  };
+  {
+    constexpr auto lambda_is_blank = [](const String<char>& str) -> bool {
+      return str.empty()  ||  cs::isSpace(str);
+    };
 
-  const std::string text = csReadTextFile(path);
-  if( text.empty() ) {
-    return StringList();
+    const std::string text = readTextFile(path);
+    if( text.empty() ) {
+      return StringList<char>();
+    }
+
+    StringList<char> lines = cs::split(text, '\n', false, doTrim);
+    if( skipBlank ) {
+      lines.remove_if(lambda_is_blank);
+    }
+
+    return lines;
   }
 
-  StringList lines = cs::split(text, '\n', false, doTrim);
-  if( skipBlank ) {
-    lines.remove_if(lambda_is_blank);
+  CS_UTIL_EXPORT std::string readTextFile(const std::filesystem::path& path, bool *ok)
+  {
+    using Buffer = std::vector<uint8_t>;
+
+    if( ok != nullptr ) {
+      *ok = false;
+    }
+
+    File file;
+    if( !file.open(path) ) {
+      return String<char>();
+    }
+    const Buffer buffer = file.readAll();
+    file.close();
+
+    if( buffer.empty() ) {
+      return String<char>();
+    }
+
+    const String<char> text(reinterpret_cast<const char*>(buffer.data()), buffer.size());
+
+    if( ok != nullptr ) {
+      *ok = true;
+    }
+
+    return text;
   }
 
-  return lines;
-}
-
-CS_UTIL_EXPORT std::string csReadTextFile(const std::filesystem::path& path, bool *ok)
-{
-  using Buffer = std::vector<uint8_t>;
-
-  if( ok != nullptr ) {
-    *ok = false;
-  }
-
-  csFile file;
-  if( !file.open(path) ) {
-    return String();
-  }
-  const Buffer buffer = file.readAll();
-  file.close();
-
-  if( buffer.empty() ) {
-    return String();
-  }
-
-  const String text(reinterpret_cast<const char*>(buffer.data()), buffer.size());
-
-  if( ok != nullptr ) {
-    *ok = true;
-  }
-
-  return text;
-}
+} // namespace cs

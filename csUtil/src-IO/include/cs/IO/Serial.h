@@ -37,24 +37,28 @@
 
 #include <cs/IO/IODevice.h>
 
-class csSerialImpl;
+namespace cs {
 
-using csSerialImplPtr = std::unique_ptr<csSerialImpl>;
+  class SerialImpl;
 
-class CS_UTIL_EXPORT csSerial : public csIODevice {
-public:
-  csSerial() noexcept;
-  ~csSerial() noexcept;
+  using SerialImplPtr = std::unique_ptr<SerialImpl>;
 
-  void close();
-  bool isOpen() const;
-  bool open(const std::filesystem::path& device, const int rate);
+  class CS_UTIL_EXPORT Serial : public IODevice {
+  public:
+    Serial() noexcept;
+    ~Serial() noexcept;
 
-  size_type read(void *buffer, const size_type length) const;
-  size_type write(const void *buffer, const size_type length) const;
+    void close();
+    bool isOpen() const;
+    bool open(const std::filesystem::path& device, const int rate);
 
-private:
-  csSerialImplPtr _impl;
-};
+    size_type read(void *buffer, const size_type length) const;
+    size_type write(const void *buffer, const size_type length) const;
+
+  private:
+    SerialImplPtr _impl;
+  };
+
+} // namespace cs
 
 #endif // CS_SERIAL_H

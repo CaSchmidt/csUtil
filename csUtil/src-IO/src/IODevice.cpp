@@ -33,15 +33,19 @@
 
 #include "cs/IO/IODevice.h"
 
-static_assert( std::is_signed_v<csIODevice::pos_type>     &&  sizeof(csIODevice::pos_type)  == 8 );
-static_assert( std::is_unsigned_v<csIODevice::size_type>  &&  sizeof(csIODevice::size_type) == 8 );
+static_assert( std::is_signed_v<cs::IODevice::pos_type>     &&  sizeof(cs::IODevice::pos_type)  == 8 );
+static_assert( std::is_unsigned_v<cs::IODevice::size_type>  &&  sizeof(cs::IODevice::size_type) == 8 );
 
-////// public ////////////////////////////////////////////////////////////////
+namespace cs {
 
-csIODevice::csIODevice() noexcept
-{
-}
+  ////// public //////////////////////////////////////////////////////////////
 
-csIODevice::~csIODevice() noexcept
-{
-}
+  IODevice::IODevice() noexcept
+  {
+  }
+
+  IODevice::~IODevice() noexcept
+  {
+  }
+
+} // namespace cs
