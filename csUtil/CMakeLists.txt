@@ -40,38 +40,20 @@ endif()
 
 list(APPEND csUtil_HEADERS
   include/csUtil/csDualLogger.h
-  include/csUtil/csFile.h
-  include/csUtil/csFileIO.h
   include/csUtil/csILogger.h
-  include/csUtil/csIODevice.h
   include/csUtil/csIProgress.h
   include/csUtil/csLogger.h
   include/csUtil/csOutputContext.h
-  include/csUtil/csSerial.h
   include/internal/csutil_internal.h
   )
 
 list(APPEND csUtil_SOURCES
   src/csDualLogger.cpp
-  src/csFile_generic.cpp
-  src/csFileIO.cpp
   src/csILogger.cpp
-  src/csIODevice.cpp
   src/csIProgress.cpp
   src/csLogger.cpp
   src/csOutputContext.cpp
   )
-
-if(WIN32)
-  list(APPEND csUtil_HEADERS
-    include/internal/Win32Handle.h
-    )
-  list(APPEND csUtil_SOURCES
-    src/csFile_win32.cpp
-    src/csSerial_win32.cpp
-    src/Win32Handle.cpp
-    )
-endif()
 
 if(ENABLE_QT)
   list(APPEND csUtil_FORMS
@@ -104,6 +86,7 @@ target_compile_definitions(csUtilLib
   )
 
 add_subdirectory(src-Core)
+add_subdirectory(src-IO)
 add_subdirectory(src-SIMD)
 add_subdirectory(src-Math) # depends on SIMD
 add_subdirectory(src-System)

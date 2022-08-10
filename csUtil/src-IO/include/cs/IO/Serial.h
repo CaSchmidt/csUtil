@@ -29,19 +29,32 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <type_traits>
+#ifndef CS_SERIAL_H
+#define CS_SERIAL_H
 
-#include "csUtil/csIODevice.h"
+#include <filesystem>
+#include <memory>
 
-static_assert( std::is_signed_v<csIODevice::pos_type>     &&  sizeof(csIODevice::pos_type)  == 8 );
-static_assert( std::is_unsigned_v<csIODevice::size_type>  &&  sizeof(csIODevice::size_type) == 8 );
+#include <cs/IO/IODevice.h>
 
-////// public ////////////////////////////////////////////////////////////////
+class csSerialImpl;
 
-csIODevice::csIODevice() noexcept
-{
-}
+using csSerialImplPtr = std::unique_ptr<csSerialImpl>;
 
-csIODevice::~csIODevice() noexcept
-{
-}
+class CS_UTIL_EXPORT csSerial : public csIODevice {
+public:
+  csSerial() noexcept;
+  ~csSerial() noexcept;
+
+  void close();
+  bool isOpen() const;
+  bool open(const std::filesystem::path& device, const int rate);
+
+  size_type read(void *buffer, const size_type length) const;
+  size_type write(const void *buffer, const size_type length) const;
+
+private:
+  csSerialImplPtr _impl;
+};
+
+#endif // CS_SERIAL_H

@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2021, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2018, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,62 +29,63 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSFILE_H
-#define CSFILE_H
+#include "cs/IO/FileIO.h"
 
-#include <cstdint>
+#include "cs/Core/StringUtil.h"
+#include "cs/IO/File.h"
 
-#include <filesystem>
-#include <memory>
-#include <vector>
+////// Types /////////////////////////////////////////////////////////////////
 
-#include <csUtil/csIODevice.h>
-#include <csUtil/csFlags.h>
+using String     = std::string;
+using StringList = std::list<String>;
 
-namespace cs {
+////// Public ////////////////////////////////////////////////////////////////
 
-  enum class FileOpenFlag : unsigned int {
-    None      = 0,
-    Read      = 0x01,
-    Write     = 0x02,
-    ReadWrite = Read | Write,
-    Append    = 0x10,
-    Truncate  = 0x11
+CS_UTIL_EXPORT std::list<std::string> csReadLines(const std::filesystem::path& path,
+                                                  const bool skipBlank,
+                                                  const bool doTrim)
+{
+  constexpr auto lambda_is_blank = [](const String& str) -> bool {
+    return str.empty()  ||  cs::isSpace(str);
   };
 
-} // namespace cs
+  const std::string text = csReadTextFile(path);
+  if( text.empty() ) {
+    return StringList();
+  }
 
-CS_ENABLE_FLAGS(cs::FileOpenFlag);
+  StringList lines = cs::split(text, '\n', false, doTrim);
+  if( skipBlank ) {
+    lines.remove_if(lambda_is_blank);
+  }
 
-class csFileImpl;
+  return lines;
+}
 
-using csFileImplPtr = std::unique_ptr<csFileImpl>;
+CS_UTIL_EXPORT std::string csReadTextFile(const std::filesystem::path& path, bool *ok)
+{
+  using Buffer = std::vector<uint8_t>;
 
-class CS_UTIL_EXPORT csFile : public csIODevice {
-public:
-  using OpenFlags = csFlags<cs::FileOpenFlag>;
+  if( ok != nullptr ) {
+    *ok = false;
+  }
 
-  csFile() noexcept;
-  ~csFile() noexcept;
+  csFile file;
+  if( !file.open(path) ) {
+    return String();
+  }
+  const Buffer buffer = file.readAll();
+  file.close();
 
-  void close();
-  bool isOpen() const;
-  bool open(const std::filesystem::path& path, const OpenFlags flags = cs::FileOpenFlag::Read);
+  if( buffer.empty() ) {
+    return String();
+  }
 
-  std::filesystem::path path() const;
+  const String text(reinterpret_cast<const char*>(buffer.data()), buffer.size());
 
-  bool seek(const pos_type pos) const;
-  pos_type tell() const;
+  if( ok != nullptr ) {
+    *ok = true;
+  }
 
-  size_type size() const;
-
-  size_type read(void *buffer, const size_type length) const;
-  size_type write(const void *buffer, const size_type length) const;
-
-  std::vector<uint8_t> readAll() const;
-
-private:
-  csFileImplPtr _impl{nullptr};
-};
-
-#endif // CSFILE_H
+  return text;
+}

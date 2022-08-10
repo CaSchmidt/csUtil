@@ -29,34 +29,62 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <limits>
+#ifndef CS_FILE_H
+#define CS_FILE_H
 
-#include "csUtil/csFile.h"
+#include <cstdint>
 
-std::vector<uint8_t> csFile::readAll() const
-{
-  using Buffer = std::vector<uint8_t>;
+#include <filesystem>
+#include <memory>
+#include <vector>
 
-  constexpr size_type MAX_SIZE = std::numeric_limits<Buffer::size_type>::max();
-  constexpr size_type      ONE = 1;
+#include <cs/Core/Flags.h>
+#include <cs/IO/IODevice.h>
 
-  const size_type numToRead = size();
+namespace cs {
 
-  const bool is_size = ONE <= numToRead  &&  numToRead <= MAX_SIZE;
-  if( !isOpen()  ||  !is_size ) {
-    return Buffer();
-  }
+  enum class FileOpenFlag : unsigned int {
+    None      = 0,
+    Read      = 0x01,
+    Write     = 0x02,
+    ReadWrite = Read | Write,
+    Append    = 0x10,
+    Truncate  = 0x11
+  };
 
-  Buffer buffer;
-  try {
-    buffer.resize(static_cast<Buffer::size_type>(numToRead), 0);
-  } catch(...) {
-    return Buffer();
-  }
+} // namespace cs
 
-  if( read(buffer.data(), numToRead) != numToRead ) {
-    return Buffer();
-  }
+CS_ENABLE_FLAGS(cs::FileOpenFlag);
 
-  return buffer;
-}
+class csFileImpl;
+
+using csFileImplPtr = std::unique_ptr<csFileImpl>;
+
+class CS_UTIL_EXPORT csFile : public csIODevice {
+public:
+  using OpenFlags = cs::Flags<cs::FileOpenFlag>;
+
+  csFile() noexcept;
+  ~csFile() noexcept;
+
+  void close();
+  bool isOpen() const;
+  bool open(const std::filesystem::path& path, const OpenFlags flags = cs::FileOpenFlag::Read);
+
+  std::filesystem::path path() const;
+
+  bool seek(const pos_type pos) const;
+  pos_type tell() const;
+
+  size_type size() const;
+
+  size_type read(void *buffer, const size_type length) const;
+  size_type write(const void *buffer, const size_type length) const;
+
+  std::vector<uint8_t> readAll() const;
+
+private:
+  csFileImplPtr _impl{nullptr};
+};
+
+#endif // CS_FILE_H

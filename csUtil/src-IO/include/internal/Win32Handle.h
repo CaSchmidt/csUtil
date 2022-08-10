@@ -33,6 +33,8 @@
 #define WIN32HANDLE_H
 
 #include <filesystem>
+#include <limits>
+#include <type_traits>
 
 #define NOMINMAX
 #include <Windows.h>

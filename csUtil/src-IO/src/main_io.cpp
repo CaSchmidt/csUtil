@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2021, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2022, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,32 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSSERIAL_H
-#define CSSERIAL_H
+#include "cs/Core/csutil_config.h"
 
-#include <filesystem>
-#include <memory>
-
-#include <csUtil/csIODevice.h>
-
-class csSerialImpl;
-
-using csSerialImplPtr = std::unique_ptr<csSerialImpl>;
-
-class CS_UTIL_EXPORT csSerial : public csIODevice {
-public:
-  csSerial() noexcept;
-  ~csSerial() noexcept;
-
-  void close();
-  bool isOpen() const;
-  bool open(const std::filesystem::path& device, const int rate);
-
-  size_type read(void *buffer, const size_type length) const;
-  size_type write(const void *buffer, const size_type length) const;
-
-private:
-  csSerialImplPtr _impl;
-};
-
-#endif // CSSERIAL_H
+CS_UTIL_EXPORT void main_io()
+{
+}

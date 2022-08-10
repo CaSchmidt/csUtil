@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2018, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2021, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,18 +29,25 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSFILEIO_H
-#define CSFILEIO_H
+#ifndef CS_IODEVICE_H
+#define CS_IODEVICE_H
 
-#include <filesystem>
-#include <list>
+#include <cstdint>
 
-#include <csUtil/csutil_config.h>
+#include <cs/Core/csutil_config.h>
 
-CS_UTIL_EXPORT std::list<std::string> csReadLines(const std::filesystem::path& path,
-                                                  const bool skipBlank = false,
-                                                  const bool doTrim = false);
+class CS_UTIL_EXPORT csIODevice {
+public:
+  using  pos_type =  int64_t;
+  using size_type = uint64_t;
 
-CS_UTIL_EXPORT std::string csReadTextFile(const std::filesystem::path& path, bool *ok = nullptr);
+  csIODevice() noexcept;
+  virtual ~csIODevice() noexcept;
 
-#endif // CSFILEIO_H
+  virtual void close() = 0;
+
+  virtual size_type read(void *buffer, const size_type length) const = 0;
+  virtual size_type write(const void *buffer, const size_type length) const = 0;
+};
+
+#endif // CS_IODEVICE_H

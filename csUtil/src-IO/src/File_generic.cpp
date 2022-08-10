@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2018, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2021, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,63 +29,34 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include "csUtil/csFileIO.h"
+#include <limits>
 
-#include "csUtil/csFile.h"
-#include "csUtil/csStringUtil.h"
+#include "cs/IO/File.h"
 
-////// Types /////////////////////////////////////////////////////////////////
-
-using String     = std::string;
-using StringList = std::list<String>;
-
-////// Public ////////////////////////////////////////////////////////////////
-
-CS_UTIL_EXPORT std::list<std::string> csReadLines(const std::filesystem::path& path,
-                                                  const bool skipBlank,
-                                                  const bool doTrim)
-{
-  constexpr auto lambda_is_blank = [](const String& str) -> bool {
-    return str.empty()  ||  cs::isSpace(str);
-  };
-
-  const std::string text = csReadTextFile(path);
-  if( text.empty() ) {
-    return StringList();
-  }
-
-  StringList lines = cs::split(text, '\n', false, doTrim);
-  if( skipBlank ) {
-    lines.remove_if(lambda_is_blank);
-  }
-
-  return lines;
-}
-
-CS_UTIL_EXPORT std::string csReadTextFile(const std::filesystem::path& path, bool *ok)
+std::vector<uint8_t> csFile::readAll() const
 {
   using Buffer = std::vector<uint8_t>;
 
-  if( ok != nullptr ) {
-    *ok = false;
+  constexpr size_type MAX_SIZE = std::numeric_limits<Buffer::size_type>::max();
+  constexpr size_type      ONE = 1;
+
+  const size_type numToRead = size();
+
+  const bool is_size = ONE <= numToRead  &&  numToRead <= MAX_SIZE;
+  if( !isOpen()  ||  !is_size ) {
+    return Buffer();
   }
 
-  csFile file;
-  if( !file.open(path) ) {
-    return String();
-  }
-  const Buffer buffer = file.readAll();
-  file.close();
-
-  if( buffer.empty() ) {
-    return String();
+  Buffer buffer;
+  try {
+    buffer.resize(static_cast<Buffer::size_type>(numToRead), 0);
+  } catch(...) {
+    return Buffer();
   }
 
-  const String text(reinterpret_cast<const char*>(buffer.data()), buffer.size());
-
-  if( ok != nullptr ) {
-    *ok = true;
+  if( read(buffer.data(), numToRead) != numToRead ) {
+    return Buffer();
   }
 
-  return text;
+  return buffer;
 }
