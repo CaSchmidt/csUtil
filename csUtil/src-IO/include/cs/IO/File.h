@@ -71,7 +71,7 @@ namespace cs {
 
     void close();
     bool isOpen() const;
-    bool open(const std::filesystem::path& path, const OpenFlags flags = cs::FileOpenFlag::Read);
+    bool open(const std::filesystem::path& path, const OpenFlags flags = FileOpenFlag::Read);
 
     std::filesystem::path path() const;
 

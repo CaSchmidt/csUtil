@@ -68,7 +68,7 @@ namespace cs {
       }
 
       const std::size_t baseIndex = base(0, baseStr, 0);
-      if( baseIndex == cs::MAX_SIZE_T ) {
+      if( baseIndex == MAX_SIZE_T ) {
         return words;
       }
 
@@ -133,7 +133,7 @@ namespace cs {
         }
       } while( !impl_trie::isEndOfList(_links[i++]) );
 
-      return cs::MAX_SIZE_T;
+      return MAX_SIZE_T;
     }
 
     TrieMatch find(const std::size_t idxStr, const String& str,

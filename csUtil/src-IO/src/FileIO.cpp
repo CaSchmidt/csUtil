@@ -43,7 +43,7 @@ namespace cs {
                                                   const bool doTrim)
   {
     constexpr auto lambda_is_blank = [](const String<char>& str) -> bool {
-      return str.empty()  ||  cs::isSpace(str);
+      return str.empty()  ||  isSpace(str);
     };
 
     const std::string text = readTextFile(path);
@@ -51,7 +51,7 @@ namespace cs {
       return StringList<char>();
     }
 
-    StringList<char> lines = cs::split(text, '\n', false, doTrim);
+    StringList<char> lines = split(text, '\n', false, doTrim);
     if( skipBlank ) {
       lines.remove_if(lambda_is_blank);
     }
