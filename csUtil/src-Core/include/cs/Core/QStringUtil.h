@@ -29,14 +29,14 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSQSTRINGUTIL_H
-#define CSQSTRINGUTIL_H
+#ifndef CS_QSTRINGUTIL_H
+#define CS_QSTRINGUTIL_H
 
 #include <string>
 
 #include <QtCore/QString>
 
-#include <csUtil/csTypeTraits.h>
+#include <cs/Core/TypeTraits.h>
 
 namespace cs {
 
@@ -87,4 +87,4 @@ namespace cs {
 
 } // namespace cs
 
-#endif // CSQSTRINGUTIL_H
+#endif // CS_QSTRINGUTIL_H

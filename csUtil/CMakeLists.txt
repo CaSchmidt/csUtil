@@ -33,7 +33,7 @@ option(ENABLE_UNITTESTS "Enable unit tests" OFF)
 option(ENABLE_QT "Enable support for Qt" OFF)
 
 if(ENABLE_QT)
-  find_package(Qt5Widgets 5.6 REQUIRED)
+  find_package(Qt5Widgets 5.12 REQUIRED)
 endif()
 
 ### csUtil ###################################################################
@@ -50,7 +50,6 @@ if(ENABLE_QT)
     forms/csWProgressLogger.ui
     )
   list(APPEND csUtil_HEADERS
-    include/csUtil/csQStringUtil.h
     include/csUtil/csWLogger.h
     include/csUtil/csWProgressLogger.h
     )
@@ -73,7 +72,14 @@ set_target_properties(csUtilLib PROPERTIES
 
 target_compile_definitions(csUtilLib
   PRIVATE CS_BUILD_UTIL_LIB
+  PRIVATE HAVE_STD_FORMAT
   )
+
+if(ENABLE_QT)
+  target_link_libraries(csUtilLib
+    PUBLIC Qt5::Widgets
+    )
+endif()
 
 add_subdirectory(src-Core)
 add_subdirectory(src-IO)

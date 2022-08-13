@@ -12,6 +12,12 @@ list(APPEND csCore_SOURCES
   src/main_core.cpp
   )
 
+if(ENABLE_QT)
+  list(APPEND csCore_HEADERS
+    include/cs/Core/QStringUtil.h
+    )
+endif()
+
 ### Interface ################################################################
 
 add_library(csCore INTERFACE)

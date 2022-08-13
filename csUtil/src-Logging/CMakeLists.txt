@@ -34,10 +34,6 @@ target_sources(csUtilLib
   PRIVATE ${csLogging_SOURCES}
   )
 
-target_compile_definitions(csUtilLib
-  PRIVATE HAVE_STD_FORMAT
-  )
-
 target_link_libraries(csUtilLib
   PRIVATE csLogging
   )
