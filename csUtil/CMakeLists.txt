@@ -81,6 +81,25 @@ if(ENABLE_QT)
     )
 endif()
 
+#if(ENABLE_QT)
+#  set_target_properties(csUtil PROPERTIES
+#    AUTOMOC ON
+#    AUTOUIC ON
+#    AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/forms
+#    )
+#endif()
+
+#if(UNIX)
+#  list(APPEND csUtil_LIBS
+#    PUBLIC pthread # std::unique_ptr<>
+#    )
+#endif()
+#target_link_libraries(csUtil
+#  ${csUtil_LIBS}
+#  )
+
+### Modules ##################################################################
+
 add_subdirectory(src-Core)
 add_subdirectory(src-IO)
 add_subdirectory(src-Logging)
@@ -97,66 +116,6 @@ if(ENABLE_CHARCONV)
   add_subdirectory(src-CharConv)
   add_subdirectory(src-Format) # depends on CharConv
 endif()
-
-#add_library(csUtil
-#  ${csUtil_HEADERS}
-#  ${csUtil_SOURCES}
-#  )
-
-#if(ENABLE_QT)
-#  target_sources(csUtil
-#    PRIVATE ${csUtil_FORMS}
-#    )
-#endif()
-
-#set_cxx_properties(csUtil)
-
-#set_target_properties(csUtil PROPERTIES
-#  CXX_STANDARD 20
-#  CXX_STANDARD_REQUIRED ON
-#  )
-
-#if(ENABLE_QT)
-#  set_target_properties(csUtil PROPERTIES
-#    AUTOMOC ON
-#    AUTOUIC ON
-#    AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/forms
-#    )
-#endif()
-
-#target_compile_definitions(csUtil
-#  PRIVATE CS_BUILD_UTIL_LIB
-#  PRIVATE HAVE_STD_FORMAT
-#  )
-
-#if(MSVC)
-#  target_compile_options(csUtil
-#    PRIVATE /wd4251
-#    )
-#endif()
-
-#target_include_directories(csUtil
-#  PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include
-#  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
-#  )
-
-#list(APPEND csUtil_LIBS
-#  PUBLIC dblcnv
-#  PUBLIC icu
-#  )
-#if(ENABLE_QT)
-#  list(APPEND csUtil_LIBS
-#    PUBLIC Qt5::Widgets
-#    )
-#endif()
-#if(UNIX)
-#  list(APPEND csUtil_LIBS
-#    PUBLIC pthread # std::unique_ptr<>
-#    )
-#endif()
-#target_link_libraries(csUtil
-#  ${csUtil_LIBS}
-#  )
 
 ### Install ##################################################################
 
