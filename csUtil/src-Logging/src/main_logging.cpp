@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2021, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2022, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,25 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSIPROGRESS_H
-#define CSIPROGRESS_H
+#include "cs/Core/csutil_config.h"
 
-#include <csUtil/csutil_config.h>
-
-class CS_UTIL_EXPORT csIProgress {
-public:
-  csIProgress() noexcept;
-  virtual ~csIProgress() noexcept;
-
-  virtual void progressFlush() const;
-  virtual void setProgressMaximum(const int max) const = 0;
-  virtual void setProgressMinimum(const int min) const = 0;
-  virtual void setProgressRange(const int min, const int max) const = 0;
-  virtual void setProgressValue(const int val) const = 0;
-
-private:
-  csIProgress(const csIProgress&) noexcept = delete;
-  csIProgress& operator=(const csIProgress&) noexcept = delete;
-};
-
-#endif // CSIPROGRESS_H
+CS_UTIL_EXPORT void main_logging()
+{
+}

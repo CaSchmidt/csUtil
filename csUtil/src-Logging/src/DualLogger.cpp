@@ -29,16 +29,52 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include "csUtil/csIProgress.h"
+#include "cs/Logging/DualLogger.h"
 
-csIProgress::csIProgress() noexcept
+////// public ////////////////////////////////////////////////////////////////
+
+csDualLogger::csDualLogger(const csILogger *a, const csILogger *b) noexcept
+  : _a(a)
+  , _b(b)
 {
 }
 
-csIProgress::~csIProgress() noexcept
+csDualLogger::~csDualLogger() noexcept
 {
 }
 
-void csIProgress::progressFlush() const
+void csDualLogger::logFlush() const
 {
+  _a->logFlush();
+  _b->logFlush();
+}
+
+void csDualLogger::logText(const char8_t *s) const
+{
+  _a->logText(s);
+  _b->logText(s);
+}
+
+void csDualLogger::logWarning(const char8_t *s) const
+{
+  _a->logWarning(s);
+  _b->logWarning(s);
+}
+
+void csDualLogger::logWarning(const int lineno, const char8_t *s) const
+{
+  _a->logWarning(lineno, s);
+  _b->logWarning(lineno, s);
+}
+
+void csDualLogger::logError(const char8_t *s) const
+{
+  _a->logError(s);
+  _b->logError(s);
+}
+
+void csDualLogger::logError(const int lineno, const char8_t *s) const
+{
+  _a->logError(lineno, s);
+  _b->logError(lineno, s);
 }

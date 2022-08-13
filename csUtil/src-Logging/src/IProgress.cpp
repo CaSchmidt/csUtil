@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2018, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2021, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,31 +29,16 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSLOGGER_H
-#define CSLOGGER_H
+#include "cs/Logging/IProgress.h"
 
-#include <cstdio>
+csIProgress::csIProgress() noexcept
+{
+}
 
-#include <csUtil/csILogger.h>
+csIProgress::~csIProgress() noexcept
+{
+}
 
-class CS_UTIL_EXPORT csLogger : public csILogger {
-public:
-  csLogger(FILE *file = stderr, const bool owner = true);
-  ~csLogger();
-
-  void logFlush() const;
-
-  void logText(const char8_t *s) const final;
-
-  void logWarning(const char8_t *s) const final;
-  void logWarning(const int lineno, const char8_t *s) const final;
-
-  void logError(const char8_t *s) const final;
-  void logError(const int lineno, const char8_t *s) const final;
-
-private:
-  FILE *_file;
-  bool _owner;
-};
-
-#endif // CSLOGGER_H
+void csIProgress::progressFlush() const
+{
+}

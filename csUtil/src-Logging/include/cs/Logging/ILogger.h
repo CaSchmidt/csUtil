@@ -29,18 +29,18 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSILOGGER_H
-#define CSILOGGER_H
+#ifndef CS_ILOGGER_H
+#define CS_ILOGGER_H
 
 #ifdef HAVE_STD_FORMAT
 # include <format>
 #endif
 #include <string>
 
-#include <csUtil/csutil_config.h>
+#include <cs/Core/csutil_config.h>
 
 #ifdef HAVE_STD_FORMAT
-# include <csUtil/csTypeTraits.h>
+# include <cs/Core/TypeTraits.h>
 #endif
 
 class CS_UTIL_EXPORT csILogger {
@@ -115,4 +115,4 @@ private:
   csILogger& operator=(csILogger&&) noexcept = delete;
 };
 
-#endif // CSILOGGER_H
+#endif // CS_ILOGGER_H

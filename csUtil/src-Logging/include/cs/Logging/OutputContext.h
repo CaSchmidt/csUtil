@@ -29,12 +29,12 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSOUTPUTCONTEXT_H
-#define CSOUTPUTCONTEXT_H
+#ifndef CS_OUTPUTCONTEXT_H
+#define CS_OUTPUTCONTEXT_H
 
 #include <string>
 
-#include <csUtil/csutil_config.h>
+#include <cs/Core/csutil_config.h>
 
 class csILogger;
 class csIProgress;
@@ -82,4 +82,4 @@ private:
   bool _progress_flush{false};
 };
 
-#endif // CSOUTPUTCONTEXT_H
+#endif // CS_OUTPUTCONTEXT_H

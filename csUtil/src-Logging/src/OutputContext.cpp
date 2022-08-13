@@ -29,10 +29,10 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <csUtil/csOutputContext.h>
+#include "cs/Logging/OutputContext.h"
 
-#include <csUtil/csILogger.h>
-#include <csUtil/csIProgress.h>
+#include "cs/Logging/ILogger.h"
+#include "cs/Logging/IProgress.h"
 
 csOutputContext::csOutputContext(const csILogger *logger, const bool logger_flush) noexcept
   : csOutputContext(logger, logger_flush, nullptr, false)

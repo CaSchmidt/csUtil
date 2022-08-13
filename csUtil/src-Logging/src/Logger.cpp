@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2021, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2018, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,52 +29,51 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include "csUtil/csDualLogger.h"
+#include "cs/Logging/Logger.h"
+
+#include "cs/Core/TypeTraits.h"
 
 ////// public ////////////////////////////////////////////////////////////////
 
-csDualLogger::csDualLogger(const csILogger *a, const csILogger *b) noexcept
-  : _a(a)
-  , _b(b)
+csLogger::csLogger(FILE *file, const bool owner)
+  : _file(file)
+  , _owner(owner)
 {
 }
 
-csDualLogger::~csDualLogger() noexcept
+csLogger::~csLogger()
 {
+  if( _owner  &&  _file != stderr  &&  _file != stdout ) {
+    fclose(_file);
+  }
 }
 
-void csDualLogger::logFlush() const
+void csLogger::logFlush() const
 {
-  _a->logFlush();
-  _b->logFlush();
+  fflush(_file);
 }
 
-void csDualLogger::logText(const char8_t *s) const
+void csLogger::logText(const char8_t *s) const
 {
-  _a->logText(s);
-  _b->logText(s);
+  fprintf(_file, "%s\n", cs::CSTR(s));
 }
 
-void csDualLogger::logWarning(const char8_t *s) const
+void csLogger::logWarning(const char8_t *s) const
 {
-  _a->logWarning(s);
-  _b->logWarning(s);
+  fprintf(_file, "WARNING: %s\n", cs::CSTR(s));
 }
 
-void csDualLogger::logWarning(const int lineno, const char8_t *s) const
+void csLogger::logWarning(const int lineno, const char8_t *s) const
 {
-  _a->logWarning(lineno, s);
-  _b->logWarning(lineno, s);
+  fprintf(_file, "WARNING:%d: %s\n", lineno, cs::CSTR(s));
 }
 
-void csDualLogger::logError(const char8_t *s) const
+void csLogger::logError(const char8_t *s) const
 {
-  _a->logError(s);
-  _b->logError(s);
+  fprintf(_file, "ERROR: %s\n", cs::CSTR(s));
 }
 
-void csDualLogger::logError(const int lineno, const char8_t *s) const
+void csLogger::logError(const int lineno, const char8_t *s) const
 {
-  _a->logError(lineno, s);
-  _b->logError(lineno, s);
+  fprintf(_file, "ERROR:%d: %s\n", lineno, cs::CSTR(s));
 }

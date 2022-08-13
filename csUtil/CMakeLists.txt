@@ -39,20 +39,10 @@ endif()
 ### csUtil ###################################################################
 
 list(APPEND csUtil_HEADERS
-  include/csUtil/csDualLogger.h
-  include/csUtil/csILogger.h
-  include/csUtil/csIProgress.h
-  include/csUtil/csLogger.h
-  include/csUtil/csOutputContext.h
   include/internal/csutil_internal.h
   )
 
 list(APPEND csUtil_SOURCES
-  src/csDualLogger.cpp
-  src/csILogger.cpp
-  src/csIProgress.cpp
-  src/csLogger.cpp
-  src/csOutputContext.cpp
   )
 
 if(ENABLE_QT)
@@ -87,6 +77,7 @@ target_compile_definitions(csUtilLib
 
 add_subdirectory(src-Core)
 add_subdirectory(src-IO)
+add_subdirectory(src-Logging)
 add_subdirectory(src-SIMD)
 add_subdirectory(src-Math) # depends on SIMD
 add_subdirectory(src-System)

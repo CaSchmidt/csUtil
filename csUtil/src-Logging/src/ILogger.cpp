@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2021, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2018, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -29,29 +29,43 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSDUALLOGGER_H
-#define CSDUALLOGGER_H
+#include "cs/Logging/ILogger.h"
 
-#include <csUtil/csILogger.h>
+////// public ////////////////////////////////////////////////////////////////
 
-class CS_UTIL_EXPORT csDualLogger : public csILogger {
-public:
-  csDualLogger(const csILogger *a, const csILogger *b) noexcept;
-  ~csDualLogger() noexcept;
+csILogger::csILogger() noexcept
+{
+}
 
-  void logFlush() const;
+csILogger::~csILogger() noexcept
+{
+}
 
-  void logText(const char8_t *) const;
+void csILogger::logFlush() const
+{
+}
 
-  void logWarning(const char8_t *) const;
-  void logWarning(const int, const char8_t *) const;
+void csILogger::logText(const std::u8string& text) const
+{
+  logText(text.data());
+}
 
-  void logError(const char8_t *) const;
-  void logError(const int, const char8_t *) const;
+void csILogger::logWarning(const std::u8string& warning) const
+{
+  logWarning(warning.data());
+}
 
-private:
-  const csILogger *_a{nullptr};
-  const csILogger *_b{nullptr};
-};
+void csILogger::logWarning(const int line, const std::u8string& warning) const
+{
+  logWarning(line, warning.data());
+}
 
-#endif // CSDUALLOGGER_H
+void csILogger::logError(const std::u8string& error) const
+{
+  logError(error.data());
+}
+
+void csILogger::logError(const int line, const std::u8string& error) const
+{
+  logError(line, error.data());
+}

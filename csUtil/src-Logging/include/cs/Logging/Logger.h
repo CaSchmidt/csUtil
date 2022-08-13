@@ -29,51 +29,31 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include "csUtil/csLogger.h"
+#ifndef CS_LOGGER_H
+#define CS_LOGGER_H
 
-#include <csUtil/csTypeTraits.h>
+#include <cstdio>
 
-////// public ////////////////////////////////////////////////////////////////
+#include <cs/Logging/ILogger.h>
 
-csLogger::csLogger(FILE *file, const bool owner)
-  : _file(file)
-  , _owner(owner)
-{
-}
+class CS_UTIL_EXPORT csLogger : public csILogger {
+public:
+  csLogger(FILE *file = stderr, const bool owner = true);
+  ~csLogger();
 
-csLogger::~csLogger()
-{
-  if( _owner  &&  _file != stderr  &&  _file != stdout ) {
-    fclose(_file);
-  }
-}
+  void logFlush() const;
 
-void csLogger::logFlush() const
-{
-  fflush(_file);
-}
+  void logText(const char8_t *s) const final;
 
-void csLogger::logText(const char8_t *s) const
-{
-  fprintf(_file, "%s\n", cs::CSTR(s));
-}
+  void logWarning(const char8_t *s) const final;
+  void logWarning(const int lineno, const char8_t *s) const final;
 
-void csLogger::logWarning(const char8_t *s) const
-{
-  fprintf(_file, "WARNING: %s\n", cs::CSTR(s));
-}
+  void logError(const char8_t *s) const final;
+  void logError(const int lineno, const char8_t *s) const final;
 
-void csLogger::logWarning(const int lineno, const char8_t *s) const
-{
-  fprintf(_file, "WARNING:%d: %s\n", lineno, cs::CSTR(s));
-}
+private:
+  FILE *_file;
+  bool _owner;
+};
 
-void csLogger::logError(const char8_t *s) const
-{
-  fprintf(_file, "ERROR: %s\n", cs::CSTR(s));
-}
-
-void csLogger::logError(const int lineno, const char8_t *s) const
-{
-  fprintf(_file, "ERROR:%d: %s\n", lineno, cs::CSTR(s));
-}
+#endif // CS_LOGGER_H
