@@ -29,12 +29,12 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSWLOGGER_H
-#define CSWLOGGER_H
+#ifndef CS_WLOGGER_H
+#define CS_WLOGGER_H
 
 #include <QtWidgets/QTextBrowser>
 
-#include <csUtil/csILogger.h>
+#include <cs/Logging/ILogger.h>
 
 class CS_UTIL_EXPORT csWLogger
     : public QTextBrowser
@@ -60,4 +60,4 @@ private slots:
   void impl_logError(const QString& s);
 };
 
-#endif // CSWLOGGER_H
+#endif // CS_WLOGGER_H

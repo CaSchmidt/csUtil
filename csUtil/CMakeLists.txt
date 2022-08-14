@@ -42,23 +42,6 @@ list(APPEND csUtil_HEADERS
   include/internal/csutil_internal.h
   )
 
-list(APPEND csUtil_SOURCES
-  )
-
-if(ENABLE_QT)
-  list(APPEND csUtil_FORMS
-    forms/csWProgressLogger.ui
-    )
-  list(APPEND csUtil_HEADERS
-    include/csUtil/csWLogger.h
-    include/csUtil/csWProgressLogger.h
-    )
-  list(APPEND csUtil_SOURCES
-    src/csWLogger.cpp
-    src/csWProgressLogger.cpp
-    )
-endif()
-
 ### Target ###################################################################
 
 add_library(csUtilLib)
@@ -79,24 +62,20 @@ if(ENABLE_QT)
   target_link_libraries(csUtilLib
     PUBLIC Qt5::Widgets
     )
+
+  set_target_properties(csUtilLib PROPERTIES
+    AUTOMOC ON
+    AUTOUIC ON
+    )
+
+  # set_property(TARGET <target> APPEND PROPERTY AUTOUIC_SEARCH_PATHS <path>)
 endif()
 
-#if(ENABLE_QT)
-#  set_target_properties(csUtil PROPERTIES
-#    AUTOMOC ON
-#    AUTOUIC ON
-#    AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/forms
-#    )
-#endif()
-
-#if(UNIX)
-#  list(APPEND csUtil_LIBS
-#    PUBLIC pthread # std::unique_ptr<>
-#    )
-#endif()
-#target_link_libraries(csUtil
-#  ${csUtil_LIBS}
-#  )
+if(UNIX)
+  target_link_libraries(csUtilLib
+    PUBLIC pthread # std::unique_ptr<>
+    )
+endif()
 
 ### Modules ##################################################################
 

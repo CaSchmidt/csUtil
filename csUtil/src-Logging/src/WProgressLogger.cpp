@@ -31,10 +31,10 @@
 
 #include <QtWidgets/QPushButton>
 
-#include <csUtil/csWProgressLogger.h>
-#include "ui_csWProgressLogger.h"
+#include "cs/Logging/WProgressLogger.h"
+#include "ui_WProgressLogger.h"
 
-#include <csUtil/csIProgress.h>
+#include "cs/Logging/IProgress.h"
 
 ////// Private ///////////////////////////////////////////////////////////////
 

@@ -32,9 +32,9 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QMetaObject>
 
-#include <csUtil/csWLogger.h>
+#include "cs/Logging/WLogger.h"
 
-#include <csUtil/csQStringUtil.h>
+#include "cs/Core/QStringUtil.h"
 
 ////// Private ///////////////////////////////////////////////////////////////
 

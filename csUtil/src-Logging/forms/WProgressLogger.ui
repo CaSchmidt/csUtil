@@ -103,7 +103,7 @@
   <customwidget>
    <class>csWLogger</class>
    <extends>QTextBrowser</extends>
-   <header location="global">csUtil/csWLogger.h</header>
+   <header>cs/Logging/WLogger.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

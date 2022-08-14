@@ -15,6 +15,20 @@ list(APPEND csLogging_SOURCES
   src/OutputContext.cpp
   )
 
+if(ENABLE_QT)
+  list(APPEND csLogging_FORMS
+    forms/WProgressLogger.ui
+    )
+  list(APPEND csLogging_HEADERS
+    include/cs/Logging/WLogger.h
+    include/cs/Logging/WProgressLogger.h
+    )
+  list(APPEND csLogging_SOURCES
+    src/WLogger.cpp
+    src/WProgressLogger.cpp
+    )
+endif()
+
 ### Interface ################################################################
 
 add_library(csLogging INTERFACE)
@@ -33,6 +47,16 @@ target_sources(csUtilLib
   PRIVATE ${csLogging_HEADERS}
   PRIVATE ${csLogging_SOURCES}
   )
+
+if(ENABLE_QT)
+  target_sources(csUtilLib
+    PRIVATE ${csLogging_FORMS}
+    )
+
+  set_property(TARGET csUtilLib
+    APPEND PROPERTY AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/forms
+    )
+endif()
 
 target_link_libraries(csUtilLib
   PRIVATE csLogging

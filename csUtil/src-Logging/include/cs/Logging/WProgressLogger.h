@@ -29,8 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSWPROGRESSLOGGER_H
-#define CSWPROGRESSLOGGER_H
+#ifndef CS_WPROGRESSLOGGER_H
+#define CS_WPROGRESSLOGGER_H
 
 #include <memory>
 
@@ -38,7 +38,7 @@
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QProgressBar>
 
-#include <csUtil/csutil_config.h>
+#include <cs/Core/csutil_config.h>
 
 class csILogger;
 class csIProgress;
@@ -105,4 +105,4 @@ void csWProgressLogger::setFutureWatcher(QFutureWatcher<T> *watcher)
           progressBar(), &QProgressBar::setValue);
 }
 
-#endif // CSWPROGRESSLOGGER_H
+#endif // CS_WPROGRESSLOGGER_H
