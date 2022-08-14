@@ -37,7 +37,7 @@ namespace cs {
 
   ////// Private ///////////////////////////////////////////////////////////////
 
-  namespace priv {
+  namespace impl_trie {
 
     template<typename T>
     using String = std::basic_string<T>;
@@ -107,7 +107,7 @@ namespace cs {
       return words;
     }
 
-  } // namespace priv
+  } // namespace impl_trie
 
   ////// public ////////////////////////////////////////////////////////////////
 
@@ -170,31 +170,31 @@ namespace cs {
   template<>
   std::list<std::string> Trie::complete(const std::string& base) const
   {
-    return priv::complete(_root.get(), base);
+    return impl_trie::complete(_root.get(), base);
   }
 
   template<>
   TrieMatch Trie::find(const std::string& str) const
   {
-    return priv::find(_root.get(), str);
+    return impl_trie::find(_root.get(), str);
   }
 
   template<>
   void Trie::insert(const std::string& str)
   {
-    priv::insert(_root.get(), str);
+    impl_trie::insert(_root.get(), str);
   }
 
   template<>
   void Trie::insertReverse(const std::string& str)
   {
-    priv::insertReverse(_root.get(), str);
+    impl_trie::insertReverse(_root.get(), str);
   }
 
   template<>
   std::list<std::string> Trie::list(char *) const
   {
-    return priv::list<char>(_root.get());
+    return impl_trie::list<char>(_root.get());
   }
 
   // char16_t methods //////////////////////////////////////////////////////////
@@ -202,31 +202,31 @@ namespace cs {
   template<>
   std::list<std::u16string> Trie::complete(const std::u16string& base) const
   {
-    return priv::complete(_root.get(), base);
+    return impl_trie::complete(_root.get(), base);
   }
 
   template<>
   TrieMatch Trie::find(const std::u16string& str) const
   {
-    return priv::find(_root.get(), str);
+    return impl_trie::find(_root.get(), str);
   }
 
   template<>
   void Trie::insert(const std::u16string& str)
   {
-    priv::insert(_root.get(), str);
+    impl_trie::insert(_root.get(), str);
   }
 
   template<>
   void Trie::insertReverse(const std::u16string& str)
   {
-    priv::insertReverse(_root.get(), str);
+    impl_trie::insertReverse(_root.get(), str);
   }
 
   template<>
   std::list<std::u16string> Trie::list(char16_t *) const
   {
-    return priv::list<char16_t>(_root.get());
+    return impl_trie::list<char16_t>(_root.get());
   }
 
 } // namespace cs

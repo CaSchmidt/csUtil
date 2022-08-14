@@ -67,7 +67,7 @@ namespace cs {
 
   ////// Length Functions ////////////////////////////////////////////////////
 
-  namespace impl {
+  namespace impl_str {
 
     template<typename T> requires IsCharacter<T>
     constexpr std::size_t length2(const T *str)
@@ -77,14 +77,14 @@ namespace cs {
           : 1 + length2(str + 1);
     }
 
-  } // namespace impl
+  } // namespace impl_str
 
   template<typename T> requires IsCharacter<T>
   constexpr std::size_t length(const T *str) noexcept
   {
     return str == nullptr
         ? 0
-        : impl::length2(str);
+        : impl_str::length2(str);
   }
 
   template<typename T> requires IsCharacter<T>
@@ -431,7 +431,7 @@ namespace cs {
 
   ////// Split string at delimiter... ////////////////////////////////////////
 
-  namespace impl {
+  namespace impl_str {
 
     template<typename T> requires IsCharacter<T>
     inline void extract(StringList<T>& result, const String<T>& txt,
@@ -454,7 +454,7 @@ namespace cs {
       result.push_back(std::move(part));
     }
 
-  } // namespace impl
+  } // namespace impl_str
 
   template<typename T> requires IsCharacter<T>
   inline StringList<T> split(const String<T>& txt,
@@ -474,9 +474,9 @@ namespace cs {
 
     std::size_t pos = 0;
     for(std::size_t hit; (hit = txt.find(del, pos, maxdel)) != NPOS<T>; pos = hit + maxdel) {
-      impl::extract(result, txt, pos, hit, skipEmpty, doTrim);
+      impl_str::extract(result, txt, pos, hit, skipEmpty, doTrim);
     }
-    impl::extract(result, txt, pos, txt.size(), skipEmpty, doTrim);
+    impl_str::extract(result, txt, pos, txt.size(), skipEmpty, doTrim);
 
     return result;
   }

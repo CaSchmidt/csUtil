@@ -40,7 +40,7 @@ namespace cs {
 
   ////// Private /////////////////////////////////////////////////////////////
 
-  namespace priv {
+  namespace impl_log {
 
     void invokeLogText(QObject *o, const QString& s)
     {
@@ -57,7 +57,7 @@ namespace cs {
       QMetaObject::invokeMethod(o, "impl_logError", Qt::AutoConnection, Q_ARG(QString, s));
     }
 
-  } // namespace priv
+  } // namespace impl_log
 
   ////// public //////////////////////////////////////////////////////////////
 
@@ -80,31 +80,31 @@ namespace cs {
   void WLogger::logText(const char8_t *text) const
   {
     const QString s = cs::toQString(text);
-    priv::invokeLogText(const_cast<WLogger*>(this), s);
+    impl_log::invokeLogText(const_cast<WLogger*>(this), s);
   }
 
   void WLogger::logWarning(const char8_t *warning) const
   {
     const QString s = tr("WARNING: %1").arg(cs::toQString(warning));
-    priv::invokeLogWarning(const_cast<WLogger*>(this), s);
+    impl_log::invokeLogWarning(const_cast<WLogger*>(this), s);
   }
 
   void WLogger::logWarning(const int lineno, const char8_t *warning) const
   {
     const QString s = tr("WARNING:%1: %2").arg(lineno).arg(cs::toQString(warning));
-    priv::invokeLogWarning(const_cast<WLogger*>(this), s);
+    impl_log::invokeLogWarning(const_cast<WLogger*>(this), s);
   }
 
   void WLogger::logError(const char8_t *error) const
   {
     const QString s = tr("ERROR: %1").arg(cs::toQString(error));
-    priv::invokeLogError(const_cast<WLogger*>(this), s);
+    impl_log::invokeLogError(const_cast<WLogger*>(this), s);
   }
 
   void WLogger::logError(const int lineno, const char8_t *error) const
   {
     const QString s = tr("ERROR:%1: %2").arg(lineno).arg(cs::toQString(error));
-    priv::invokeLogError(const_cast<WLogger*>(this), s);
+    impl_log::invokeLogError(const_cast<WLogger*>(this), s);
   }
 
   ////// private slots ///////////////////////////////////////////////////////

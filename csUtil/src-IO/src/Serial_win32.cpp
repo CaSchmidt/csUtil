@@ -53,7 +53,7 @@ namespace cs {
 
   ////// Private /////////////////////////////////////////////////////////////
 
-  namespace priv {
+  namespace impl_ser {
 
     bool handleError(HANDLE handle,
                      const DWORD dwErrorMask, const DWORD dwPurgeMask)
@@ -126,7 +126,7 @@ namespace cs {
       return 0;
     }
 
-  } // namespace priv
+  } // namespace impl_ser
 
   ////// public //////////////////////////////////////////////////////////////
 
@@ -192,7 +192,7 @@ namespace cs {
     }
 
     DCB dcb;
-    priv::setupDCB(&dcb, priv::toBaudRate(rate), 8, NOPARITY, ONESTOPBIT);
+    impl_ser::setupDCB(&dcb, impl_ser::toBaudRate(rate), 8, NOPARITY, ONESTOPBIT);
     if( SetCommState(_impl->handle, &dcb) == 0 ) {
       close();
       return false;
@@ -207,7 +207,7 @@ namespace cs {
       return 0;
     }
 
-    if( !priv::handleError(_impl->handle, CE_OVERRUN | CE_RXOVER, PURGE_RXABORT | PURGE_RXCLEAR) ) {
+    if( !impl_ser::handleError(_impl->handle, CE_OVERRUN | CE_RXOVER, PURGE_RXABORT | PURGE_RXCLEAR) ) {
       return 0;
     }
 

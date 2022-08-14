@@ -49,9 +49,9 @@ namespace cs {
   class ILogger;
   class IProgress;
 
-  namespace priv {
+  namespace impl_prog {
     class IProgressImpl;
-  } // namespace priv
+  } // namespace impl_prog
 
   class CS_UTIL_EXPORT WProgressLogger : public QDialog {
     Q_OBJECT
@@ -77,7 +77,7 @@ namespace cs {
 
     Ui::WProgressLogger *ui{nullptr};
 
-    std::unique_ptr<priv::IProgressImpl> _progress{nullptr};
+    std::unique_ptr<impl_prog::IProgressImpl> _progress{nullptr};
 
   signals:
     void canceled();

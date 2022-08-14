@@ -40,7 +40,7 @@ namespace cs {
 
   ////// Private /////////////////////////////////////////////////////////////
 
-  namespace priv {
+  namespace impl_prog {
 
     class IProgressImpl : public IProgress {
     public:
@@ -94,7 +94,7 @@ namespace cs {
       return box->buttons().isEmpty();
     }
 
-  } // namespace priv
+  } // namespace impl_prog
 
   ////// public //////////////////////////////////////////////////////////////
 
@@ -104,14 +104,14 @@ namespace cs {
   {
     ui->setupUi(this);
 
-    _progress = std::make_unique<priv::IProgressImpl>(ui->progressBar);
+    _progress = std::make_unique<impl_prog::IProgressImpl>(ui->progressBar);
 
     // User Interface ////////////////////////////////////////////////////////
 
     setWindowFlag(Qt::WindowCloseButtonHint, false);
     setWindowFlag(Qt::WindowContextHelpButtonHint, false);
 
-    priv::removeAllButtons(ui->buttonBox);
+    impl_prog::removeAllButtons(ui->buttonBox);
 
     ui->buttonBox->addButton(QDialogButtonBox::Cancel);
     QPushButton *cancel = ui->buttonBox->button(QDialogButtonBox::Cancel);
@@ -170,7 +170,7 @@ namespace cs {
 
   void WProgressLogger::finish()
   {
-    priv::removeAllButtons(ui->buttonBox);
+    impl_prog::removeAllButtons(ui->buttonBox);
 
     ui->buttonBox->addButton(QDialogButtonBox::Close);
     QPushButton *close = ui->buttonBox->button(QDialogButtonBox::Close);
