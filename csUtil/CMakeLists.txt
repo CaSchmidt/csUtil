@@ -36,12 +36,6 @@ if(ENABLE_QT)
   find_package(Qt5Widgets 5.12 REQUIRED)
 endif()
 
-### csUtil ###################################################################
-
-list(APPEND csUtil_HEADERS
-  include/internal/csutil_internal.h
-  )
-
 ### Target ###################################################################
 
 add_library(csUtilLib)
