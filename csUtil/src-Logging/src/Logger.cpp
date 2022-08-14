@@ -33,47 +33,51 @@
 
 #include "cs/Core/TypeTraits.h"
 
-////// public ////////////////////////////////////////////////////////////////
+namespace cs {
 
-csLogger::csLogger(FILE *file, const bool owner)
-  : _file(file)
-  , _owner(owner)
-{
-}
+  ////// public //////////////////////////////////////////////////////////////
 
-csLogger::~csLogger()
-{
-  if( _owner  &&  _file != stderr  &&  _file != stdout ) {
-    fclose(_file);
+  Logger::Logger(FILE *file, const bool owner)
+    : _file(file)
+    , _owner(owner)
+  {
   }
-}
 
-void csLogger::logFlush() const
-{
-  fflush(_file);
-}
+  Logger::~Logger()
+  {
+    if( _owner  &&  _file != stderr  &&  _file != stdout ) {
+      fclose(_file);
+    }
+  }
 
-void csLogger::logText(const char8_t *s) const
-{
-  fprintf(_file, "%s\n", cs::CSTR(s));
-}
+  void Logger::logFlush() const
+  {
+    fflush(_file);
+  }
 
-void csLogger::logWarning(const char8_t *s) const
-{
-  fprintf(_file, "WARNING: %s\n", cs::CSTR(s));
-}
+  void Logger::logText(const char8_t *s) const
+  {
+    fprintf(_file, "%s\n", cs::CSTR(s));
+  }
 
-void csLogger::logWarning(const int lineno, const char8_t *s) const
-{
-  fprintf(_file, "WARNING:%d: %s\n", lineno, cs::CSTR(s));
-}
+  void Logger::logWarning(const char8_t *s) const
+  {
+    fprintf(_file, "WARNING: %s\n", cs::CSTR(s));
+  }
 
-void csLogger::logError(const char8_t *s) const
-{
-  fprintf(_file, "ERROR: %s\n", cs::CSTR(s));
-}
+  void Logger::logWarning(const int lineno, const char8_t *s) const
+  {
+    fprintf(_file, "WARNING:%d: %s\n", lineno, cs::CSTR(s));
+  }
 
-void csLogger::logError(const int lineno, const char8_t *s) const
-{
-  fprintf(_file, "ERROR:%d: %s\n", lineno, cs::CSTR(s));
-}
+  void Logger::logError(const char8_t *s) const
+  {
+    fprintf(_file, "ERROR: %s\n", cs::CSTR(s));
+  }
+
+  void Logger::logError(const int lineno, const char8_t *s) const
+  {
+    fprintf(_file, "ERROR:%d: %s\n", lineno, cs::CSTR(s));
+  }
+
+} // namespace cs

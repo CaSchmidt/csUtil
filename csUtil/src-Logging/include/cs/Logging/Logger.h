@@ -36,24 +36,28 @@
 
 #include <cs/Logging/ILogger.h>
 
-class CS_UTIL_EXPORT csLogger : public csILogger {
-public:
-  csLogger(FILE *file = stderr, const bool owner = true);
-  ~csLogger();
+namespace cs {
 
-  void logFlush() const;
+  class CS_UTIL_EXPORT Logger : public ILogger {
+  public:
+    Logger(FILE *file = stderr, const bool owner = true);
+    ~Logger();
 
-  void logText(const char8_t *s) const final;
+    void logFlush() const;
 
-  void logWarning(const char8_t *s) const final;
-  void logWarning(const int lineno, const char8_t *s) const final;
+    void logText(const char8_t *s) const final;
 
-  void logError(const char8_t *s) const final;
-  void logError(const int lineno, const char8_t *s) const final;
+    void logWarning(const char8_t *s) const final;
+    void logWarning(const int lineno, const char8_t *s) const final;
 
-private:
-  FILE *_file;
-  bool _owner;
-};
+    void logError(const char8_t *s) const final;
+    void logError(const int lineno, const char8_t *s) const final;
+
+  private:
+    FILE *_file;
+    bool _owner;
+  };
+
+} // namespace cs
 
 #endif // CS_LOGGER_H

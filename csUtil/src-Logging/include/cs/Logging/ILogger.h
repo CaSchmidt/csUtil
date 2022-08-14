@@ -43,76 +43,80 @@
 # include <cs/Core/TypeTraits.h>
 #endif
 
-class CS_UTIL_EXPORT csILogger {
-public:
-  csILogger() noexcept;
-  virtual ~csILogger() noexcept;
+namespace cs {
 
-  virtual void logFlush() const;
+  class CS_UTIL_EXPORT ILogger {
+  public:
+    ILogger() noexcept;
+    virtual ~ILogger() noexcept;
 
-  virtual void logText(const char8_t *) const = 0;
-  virtual void logText(const std::u8string&) const;
+    virtual void logFlush() const;
 
-  virtual void logWarning(const char8_t *) const = 0;
-  virtual void logWarning(const std::u8string&) const;
-  virtual void logWarning(const int, const char8_t *) const = 0;
-  virtual void logWarning(const int, const std::u8string&) const;
+    virtual void logText(const char8_t *) const = 0;
+    virtual void logText(const std::u8string&) const;
 
-  virtual void logError(const char8_t *) const = 0;
-  virtual void logError(const std::u8string&) const;
-  virtual void logError(const int, const char8_t *) const = 0;
-  virtual void logError(const int, const std::u8string&) const;
+    virtual void logWarning(const char8_t *) const = 0;
+    virtual void logWarning(const std::u8string&) const;
+    virtual void logWarning(const int, const char8_t *) const = 0;
+    virtual void logWarning(const int, const std::u8string&) const;
+
+    virtual void logError(const char8_t *) const = 0;
+    virtual void logError(const std::u8string&) const;
+    virtual void logError(const int, const char8_t *) const = 0;
+    virtual void logError(const int, const std::u8string&) const;
 
 #ifdef HAVE_STD_FORMAT
-public:
-  template<typename... Args>
-  inline void logTextf(const char8_t *fmt, Args&&... args) const
-  {
-    const std::string msg = vformat(fmt, args...);
-    logText(cs::UTF8(msg.data()));
-  }
+  public:
+    template<typename... Args>
+    inline void logTextf(const char8_t *fmt, Args&&... args) const
+    {
+      const std::string msg = vformat(fmt, args...);
+      logText(cs::UTF8(msg.data()));
+    }
 
-  template<typename... Args>
-  inline void logWarningf(const char8_t *fmt, Args&&... args) const
-  {
-    const std::string msg = vformat(fmt, args...);
-    logWarning(cs::UTF8(msg.data()));
-  }
+    template<typename... Args>
+    inline void logWarningf(const char8_t *fmt, Args&&... args) const
+    {
+      const std::string msg = vformat(fmt, args...);
+      logWarning(cs::UTF8(msg.data()));
+    }
 
-  template<typename... Args>
-  inline void logWarningf(const int lineno, const char8_t *fmt, Args&&... args) const
-  {
-    const std::string msg = vformat(fmt, args...);
-    logWarning(lineno, cs::UTF8(msg.data()));
-  }
+    template<typename... Args>
+    inline void logWarningf(const int lineno, const char8_t *fmt, Args&&... args) const
+    {
+      const std::string msg = vformat(fmt, args...);
+      logWarning(lineno, cs::UTF8(msg.data()));
+    }
 
-  template<typename... Args>
-  inline void logErrorf(const char8_t *fmt, Args&&... args) const
-  {
-    const std::string msg = vformat(fmt, args...);
-    logError(cs::UTF8(msg.data()));
-  }
+    template<typename... Args>
+    inline void logErrorf(const char8_t *fmt, Args&&... args) const
+    {
+      const std::string msg = vformat(fmt, args...);
+      logError(cs::UTF8(msg.data()));
+    }
 
-  template<typename... Args>
-  inline void logErrorf(const int lineno, const char8_t *fmt, Args&&... args) const
-  {
-    const std::string msg = vformat(fmt, args...);
-    logError(lineno, cs::UTF8(msg.data()));
-  }
+    template<typename... Args>
+    inline void logErrorf(const int lineno, const char8_t *fmt, Args&&... args) const
+    {
+      const std::string msg = vformat(fmt, args...);
+      logError(lineno, cs::UTF8(msg.data()));
+    }
 
-private:
-  template<typename... Args>
-  inline static std::string vformat(const char8_t *fmt, Args&&... args)
-  {
-    return std::vformat(cs::CSTR(fmt), std::make_format_args(args...));
-  }
+  private:
+    template<typename... Args>
+    inline static std::string vformat(const char8_t *fmt, Args&&... args)
+    {
+      return std::vformat(cs::CSTR(fmt), std::make_format_args(args...));
+    }
 #endif
 
-private:
-  csILogger(const csILogger&) noexcept = delete;
-  csILogger& operator=(const csILogger&) noexcept = delete;
-  csILogger(csILogger&&) noexcept = delete;
-  csILogger& operator=(csILogger&&) noexcept = delete;
-};
+  private:
+    ILogger(const ILogger&) noexcept = delete;
+    ILogger& operator=(const ILogger&) noexcept = delete;
+    ILogger(ILogger&&) noexcept = delete;
+    ILogger& operator=(ILogger&&) noexcept = delete;
+  };
+
+} // namespace cs
 
 #endif // CS_ILOGGER_H

@@ -34,24 +34,28 @@
 
 #include <cs/Logging/ILogger.h>
 
-class CS_UTIL_EXPORT csDualLogger : public csILogger {
-public:
-  csDualLogger(const csILogger *a, const csILogger *b) noexcept;
-  ~csDualLogger() noexcept;
+namespace cs {
 
-  void logFlush() const;
+  class CS_UTIL_EXPORT DualLogger : public ILogger {
+  public:
+    DualLogger(const ILogger *a, const ILogger *b) noexcept;
+    ~DualLogger() noexcept;
 
-  void logText(const char8_t *) const;
+    void logFlush() const;
 
-  void logWarning(const char8_t *) const;
-  void logWarning(const int, const char8_t *) const;
+    void logText(const char8_t *) const;
 
-  void logError(const char8_t *) const;
-  void logError(const int, const char8_t *) const;
+    void logWarning(const char8_t *) const;
+    void logWarning(const int, const char8_t *) const;
 
-private:
-  const csILogger *_a{nullptr};
-  const csILogger *_b{nullptr};
-};
+    void logError(const char8_t *) const;
+    void logError(const int, const char8_t *) const;
+
+  private:
+    const ILogger *_a{nullptr};
+    const ILogger *_b{nullptr};
+  };
+
+} // namespace cs
 
 #endif // CS_DUALLOGGER_H

@@ -31,14 +31,18 @@
 
 #include "cs/Logging/IProgress.h"
 
-csIProgress::csIProgress() noexcept
-{
-}
+namespace cs {
 
-csIProgress::~csIProgress() noexcept
-{
-}
+  IProgress::IProgress() noexcept
+  {
+  }
 
-void csIProgress::progressFlush() const
-{
-}
+  IProgress::~IProgress() noexcept
+  {
+  }
+
+  void IProgress::progressFlush() const
+  {
+  }
+
+} // namespace cs

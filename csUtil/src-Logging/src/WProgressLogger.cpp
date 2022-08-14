@@ -36,163 +36,167 @@
 
 #include "cs/Logging/IProgress.h"
 
-////// Private ///////////////////////////////////////////////////////////////
+namespace cs {
 
-namespace priv {
+  ////// Private /////////////////////////////////////////////////////////////
 
-  class IProgressImpl : public csIProgress {
-  public:
-    IProgressImpl(QProgressBar *bar) noexcept
-      : _bar{bar}
+  namespace priv {
+
+    class IProgressImpl : public IProgress {
+    public:
+      IProgressImpl(QProgressBar *bar) noexcept
+        : _bar{bar}
+      {
+      }
+
+      ~IProgressImpl() noexcept
+      {
+      }
+
+      void progressFlush() const
+      {
+        QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+      }
+
+      void setProgressMaximum(const int max) const
+      {
+        _bar->setMaximum(max);
+      }
+
+      void setProgressMinimum(const int min) const
+      {
+        _bar->setMinimum(min);
+      }
+
+      void setProgressRange(const int min, const int max) const
+      {
+        _bar->setRange(min, max);
+      }
+
+      void setProgressValue(const int val) const
+      {
+        _bar->setValue(val);
+      }
+
+    private:
+      IProgressImpl() noexcept = delete;
+
+      QProgressBar *_bar;
+    };
+
+    bool removeAllButtons(QDialogButtonBox *box)
     {
+      QList<QAbstractButton*> buttons = box->buttons();
+      for(QAbstractButton *button : buttons) {
+        box->removeButton(button);
+        delete button;
+      }
+      return box->buttons().isEmpty();
     }
 
-    ~IProgressImpl() noexcept
-    {
-    }
+  } // namespace priv
 
-    void progressFlush() const
-    {
-      QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
-    }
+  ////// public //////////////////////////////////////////////////////////////
 
-    void setProgressMaximum(const int max) const
-    {
-      _bar->setMaximum(max);
-    }
-
-    void setProgressMinimum(const int min) const
-    {
-      _bar->setMinimum(min);
-    }
-
-    void setProgressRange(const int min, const int max) const
-    {
-      _bar->setRange(min, max);
-    }
-
-    void setProgressValue(const int val) const
-    {
-      _bar->setValue(val);
-    }
-
-  private:
-    IProgressImpl() noexcept = delete;
-
-    QProgressBar *_bar;
-  };
-
-  bool removeAllButtons(QDialogButtonBox *box)
+  WProgressLogger::WProgressLogger(QWidget *parent, Qt::WindowFlags f)
+    : QDialog(parent, f)
+    , ui{new Ui::WProgressLogger}
   {
-    QList<QAbstractButton*> buttons = box->buttons();
-    for(QAbstractButton *button : buttons) {
-      box->removeButton(button);
-      delete button;
+    ui->setupUi(this);
+
+    _progress = std::make_unique<priv::IProgressImpl>(ui->progressBar);
+
+    // User Interface ////////////////////////////////////////////////////////
+
+    setWindowFlag(Qt::WindowCloseButtonHint, false);
+    setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+
+    priv::removeAllButtons(ui->buttonBox);
+
+    ui->buttonBox->addButton(QDialogButtonBox::Cancel);
+    QPushButton *cancel = ui->buttonBox->button(QDialogButtonBox::Cancel);
+    if( cancel != nullptr ) {
+      cancel->disconnect();
+
+      connect(cancel, &QPushButton::clicked, this, &WProgressLogger::canceled);
+
+      connect(cancel, &QPushButton::clicked, this, &WProgressLogger::rejected);
+      connect(cancel, &QPushButton::clicked, this, &WProgressLogger::reject);
+
+      cancel->setAutoDefault(false);
+      cancel->setDefault(false);
     }
-    return box->buttons().isEmpty();
+
+    // Signals & Slots ///////////////////////////////////////////////////////
+
+    connect(ui->progressBar, &QProgressBar::valueChanged,
+            this, &WProgressLogger::valueChanged);
+    connect(this, &WProgressLogger::valueChanged,
+            this, &WProgressLogger::monitorProgress);
   }
 
-} // namespace priv
-
-////// public ////////////////////////////////////////////////////////////////
-
-csWProgressLogger::csWProgressLogger(QWidget *parent, Qt::WindowFlags f)
-  : QDialog(parent, f)
-  , ui{new Ui::csWProgressLogger}
-{
-  ui->setupUi(this);
-
-  _progress = std::make_unique<priv::IProgressImpl>(ui->progressBar);
-
-  // User Interface //////////////////////////////////////////////////////////
-
-  setWindowFlag(Qt::WindowCloseButtonHint, false);
-  setWindowFlag(Qt::WindowContextHelpButtonHint, false);
-
-  priv::removeAllButtons(ui->buttonBox);
-
-  ui->buttonBox->addButton(QDialogButtonBox::Cancel);
-  QPushButton *cancel = ui->buttonBox->button(QDialogButtonBox::Cancel);
-  if( cancel != nullptr ) {
-    cancel->disconnect();
-
-    connect(cancel, &QPushButton::clicked, this, &csWProgressLogger::canceled);
-
-    connect(cancel, &QPushButton::clicked, this, &csWProgressLogger::rejected);
-    connect(cancel, &QPushButton::clicked, this, &csWProgressLogger::reject);
-
-    cancel->setAutoDefault(false);
-    cancel->setDefault(false);
+  WProgressLogger::~WProgressLogger()
+  {
+    delete ui;
   }
 
-  // Signals & Slots /////////////////////////////////////////////////////////
-
-  connect(ui->progressBar, &QProgressBar::valueChanged,
-          this, &csWProgressLogger::valueChanged);
-  connect(this, &csWProgressLogger::valueChanged,
-          this, &csWProgressLogger::monitorProgress);
-}
-
-csWProgressLogger::~csWProgressLogger()
-{
-  delete ui;
-}
-
-const csILogger *csWProgressLogger::logger() const
-{
-  return ui->logBrowser;
-}
-
-const csIProgress *csWProgressLogger::progress() const
-{
-  return _progress.get();
-}
-
-////// public slots //////////////////////////////////////////////////////////
-
-void csWProgressLogger::stepValue(int dir)
-{
-  if( dir == 0 ) {
-    return;
+  const ILogger *WProgressLogger::logger() const
+  {
+    return ui->logBrowser;
   }
-  const int inc = dir >= 0
-      ? 1
-      : -1;
-  const int min = ui->progressBar->minimum();
-  const int val = ui->progressBar->value();
-  const int max = ui->progressBar->maximum();
-  ui->progressBar->setValue(qBound<int>(min, val + inc, max));
-}
 
-////// private slots /////////////////////////////////////////////////////////
-
-void csWProgressLogger::finish()
-{
-  priv::removeAllButtons(ui->buttonBox);
-
-  ui->buttonBox->addButton(QDialogButtonBox::Close);
-  QPushButton *close = ui->buttonBox->button(QDialogButtonBox::Close);
-  if( close != nullptr ) {
-    close->disconnect();
-
-    connect(close, &QPushButton::clicked, this, &csWProgressLogger::accepted);
-    connect(close, &QPushButton::clicked, this, &csWProgressLogger::accept);
-
-    close->setAutoDefault(true);
-    close->setDefault(true);
+  const IProgress *WProgressLogger::progress() const
+  {
+    return _progress.get();
   }
-}
 
-void csWProgressLogger::monitorProgress(int value)
-{
-  if( value >= ui->progressBar->maximum() ) {
-    finish();
+  ////// public slots ////////////////////////////////////////////////////////
+
+  void WProgressLogger::stepValue(int dir)
+  {
+    if( dir == 0 ) {
+      return;
+    }
+    const int inc = dir >= 0
+        ? 1
+        : -1;
+    const int min = ui->progressBar->minimum();
+    const int val = ui->progressBar->value();
+    const int max = ui->progressBar->maximum();
+    ui->progressBar->setValue(qBound<int>(min, val + inc, max));
   }
-}
 
-////// private ///////////////////////////////////////////////////////////////
+  ////// private slots ///////////////////////////////////////////////////////
 
-QProgressBar *csWProgressLogger::progressBar()
-{
-  return ui->progressBar;
-}
+  void WProgressLogger::finish()
+  {
+    priv::removeAllButtons(ui->buttonBox);
+
+    ui->buttonBox->addButton(QDialogButtonBox::Close);
+    QPushButton *close = ui->buttonBox->button(QDialogButtonBox::Close);
+    if( close != nullptr ) {
+      close->disconnect();
+
+      connect(close, &QPushButton::clicked, this, &WProgressLogger::accepted);
+      connect(close, &QPushButton::clicked, this, &WProgressLogger::accept);
+
+      close->setAutoDefault(true);
+      close->setDefault(true);
+    }
+  }
+
+  void WProgressLogger::monitorProgress(int value)
+  {
+    if( value >= ui->progressBar->maximum() ) {
+      finish();
+    }
+  }
+
+  ////// private /////////////////////////////////////////////////////////////
+
+  QProgressBar *WProgressLogger::progressBar()
+  {
+    return ui->progressBar;
+  }
+
+} // namespace cs

@@ -36,50 +36,54 @@
 
 #include <cs/Core/csutil_config.h>
 
-class csILogger;
-class csIProgress;
+namespace cs {
 
-class CS_UTIL_EXPORT csOutputContext {
-public:
-  csOutputContext(const csILogger *logger, const bool logger_flush = false) noexcept;
-  csOutputContext(const csIProgress *progress, const bool progress_flush = false) noexcept;
-  csOutputContext(const csILogger *logger, const bool logger_flush,
-                  const csIProgress *progress, const bool progress_flush) noexcept;
-  ~csOutputContext() noexcept;
+  class ILogger;
+  class IProgress;
 
-  void logFlush() const;
+  class CS_UTIL_EXPORT OutputContext {
+  public:
+    OutputContext(const ILogger *logger, const bool logger_flush = false) noexcept;
+    OutputContext(const IProgress *progress, const bool progress_flush = false) noexcept;
+    OutputContext(const ILogger *logger, const bool logger_flush,
+                  const IProgress *progress, const bool progress_flush) noexcept;
+    ~OutputContext() noexcept;
 
-  void logText(const char8_t *text) const;
-  void logText(const std::u8string& text) const;
+    void logFlush() const;
 
-  void logWarning(const char8_t *warning) const;
-  void logWarning(const std::u8string& warning) const;
-  void logWarning(const int line, const char8_t *warning) const;
-  void logWarning(const int line, const std::u8string& warning) const;
+    void logText(const char8_t *text) const;
+    void logText(const std::u8string& text) const;
 
-  void logError(const char8_t *error) const;
-  void logError(const std::u8string& error) const;
-  void logError(const int line, const char8_t *error) const;
-  void logError(const int line, const std::u8string& error) const;
+    void logWarning(const char8_t *warning) const;
+    void logWarning(const std::u8string& warning) const;
+    void logWarning(const int line, const char8_t *warning) const;
+    void logWarning(const int line, const std::u8string& warning) const;
 
-  void progressFlush() const;
+    void logError(const char8_t *error) const;
+    void logError(const std::u8string& error) const;
+    void logError(const int line, const char8_t *error) const;
+    void logError(const int line, const std::u8string& error) const;
 
-  void setProgressMaximum(const int max) const;
-  void setProgressMinimum(const int min) const;
-  void setProgressRange(const int min, const int max) const;
-  void setProgressValue(const int val) const;
+    void progressFlush() const;
 
-private:
-  csOutputContext(const csOutputContext&) noexcept = delete;
-  csOutputContext& operator=(const csOutputContext&) noexcept = delete;
+    void setProgressMaximum(const int max) const;
+    void setProgressMinimum(const int min) const;
+    void setProgressRange(const int min, const int max) const;
+    void setProgressValue(const int val) const;
 
-  csOutputContext(csOutputContext&&) noexcept = delete;
-  csOutputContext& operator=(csOutputContext&&) noexcept = delete;
+  private:
+    OutputContext(const OutputContext&) noexcept = delete;
+    OutputContext& operator=(const OutputContext&) noexcept = delete;
 
-  const csILogger *_logger{nullptr};
-  bool _logger_flush{false};
-  const csIProgress *_progress{nullptr};
-  bool _progress_flush{false};
-};
+    OutputContext(OutputContext&&) noexcept = delete;
+    OutputContext& operator=(OutputContext&&) noexcept = delete;
+
+    const ILogger *_logger{nullptr};
+    bool _logger_flush{false};
+    const IProgress *_progress{nullptr};
+    bool _progress_flush{false};
+  };
+
+} // namespace cs
 
 #endif // CS_OUTPUTCONTEXT_H

@@ -34,179 +34,183 @@
 #include "cs/Logging/ILogger.h"
 #include "cs/Logging/IProgress.h"
 
-csOutputContext::csOutputContext(const csILogger *logger, const bool logger_flush) noexcept
-  : csOutputContext(logger, logger_flush, nullptr, false)
-{
-}
+namespace cs {
 
-csOutputContext::csOutputContext(const csIProgress *progress, const bool progress_flush) noexcept
-  : csOutputContext(nullptr, false, progress, progress_flush)
-{
-}
-
-csOutputContext::csOutputContext(const csILogger *logger, const bool logger_flush,
-                                 const csIProgress *progress, const bool progress_flush) noexcept
-  : _logger{logger}
-  , _logger_flush{logger_flush}
-  , _progress{progress}
-  , _progress_flush{progress_flush}
-{
-}
-
-csOutputContext::~csOutputContext() noexcept
-{
-}
-
-void csOutputContext::logFlush() const
-{
-  if( _logger != nullptr ) {
-    _logger->logFlush();
+  OutputContext::OutputContext(const ILogger *logger, const bool logger_flush) noexcept
+    : OutputContext(logger, logger_flush, nullptr, false)
+  {
   }
-}
 
-void csOutputContext::logText(const char8_t *text) const
-{
-  if( _logger != nullptr ) {
-    _logger->logText(text);
-    if( _logger_flush ) {
+  OutputContext::OutputContext(const IProgress *progress, const bool progress_flush) noexcept
+    : OutputContext(nullptr, false, progress, progress_flush)
+  {
+  }
+
+  OutputContext::OutputContext(const ILogger *logger, const bool logger_flush,
+                               const IProgress *progress, const bool progress_flush) noexcept
+    : _logger{logger}
+    , _logger_flush{logger_flush}
+    , _progress{progress}
+    , _progress_flush{progress_flush}
+  {
+  }
+
+  OutputContext::~OutputContext() noexcept
+  {
+  }
+
+  void OutputContext::logFlush() const
+  {
+    if( _logger != nullptr ) {
       _logger->logFlush();
     }
   }
-}
 
-void csOutputContext::logText(const std::u8string& text) const
-{
-  if( _logger != nullptr ) {
-    _logger->logText(text);
-    if( _logger_flush ) {
-      _logger->logFlush();
+  void OutputContext::logText(const char8_t *text) const
+  {
+    if( _logger != nullptr ) {
+      _logger->logText(text);
+      if( _logger_flush ) {
+        _logger->logFlush();
+      }
     }
   }
-}
 
-void csOutputContext::logWarning(const char8_t *warning) const
-{
-  if( _logger != nullptr ) {
-    _logger->logWarning(warning);
-    if( _logger_flush ) {
-      _logger->logFlush();
+  void OutputContext::logText(const std::u8string& text) const
+  {
+    if( _logger != nullptr ) {
+      _logger->logText(text);
+      if( _logger_flush ) {
+        _logger->logFlush();
+      }
     }
   }
-}
 
-void csOutputContext::logWarning(const std::u8string& warning) const
-{
-  if( _logger != nullptr ) {
-    _logger->logWarning(warning);
-    if( _logger_flush ) {
-      _logger->logFlush();
+  void OutputContext::logWarning(const char8_t *warning) const
+  {
+    if( _logger != nullptr ) {
+      _logger->logWarning(warning);
+      if( _logger_flush ) {
+        _logger->logFlush();
+      }
     }
   }
-}
 
-void csOutputContext::logWarning(const int line, const char8_t *warning) const
-{
-  if( _logger != nullptr ) {
-    _logger->logWarning(line, warning);
-    if( _logger_flush ) {
-      _logger->logFlush();
+  void OutputContext::logWarning(const std::u8string& warning) const
+  {
+    if( _logger != nullptr ) {
+      _logger->logWarning(warning);
+      if( _logger_flush ) {
+        _logger->logFlush();
+      }
     }
   }
-}
 
-void csOutputContext::logWarning(const int line, const std::u8string& warning) const
-{
-  if( _logger != nullptr ) {
-    _logger->logWarning(line, warning);
-    if( _logger_flush ) {
-      _logger->logFlush();
+  void OutputContext::logWarning(const int line, const char8_t *warning) const
+  {
+    if( _logger != nullptr ) {
+      _logger->logWarning(line, warning);
+      if( _logger_flush ) {
+        _logger->logFlush();
+      }
     }
   }
-}
 
-void csOutputContext::logError(const char8_t *error) const
-{
-  if( _logger != nullptr ) {
-    _logger->logError(error);
-    if( _logger_flush ) {
-      _logger->logFlush();
+  void OutputContext::logWarning(const int line, const std::u8string& warning) const
+  {
+    if( _logger != nullptr ) {
+      _logger->logWarning(line, warning);
+      if( _logger_flush ) {
+        _logger->logFlush();
+      }
     }
   }
-}
 
-void csOutputContext::logError(const std::u8string& error) const
-{
-  if( _logger != nullptr ) {
-    _logger->logError(error);
-    if( _logger_flush ) {
-      _logger->logFlush();
+  void OutputContext::logError(const char8_t *error) const
+  {
+    if( _logger != nullptr ) {
+      _logger->logError(error);
+      if( _logger_flush ) {
+        _logger->logFlush();
+      }
     }
   }
-}
 
-void csOutputContext::logError(const int line, const char8_t *error) const
-{
-  if( _logger != nullptr ) {
-    _logger->logError(line, error);
-    if( _logger_flush ) {
-      _logger->logFlush();
+  void OutputContext::logError(const std::u8string& error) const
+  {
+    if( _logger != nullptr ) {
+      _logger->logError(error);
+      if( _logger_flush ) {
+        _logger->logFlush();
+      }
     }
   }
-}
 
-void csOutputContext::logError(const int line, const std::u8string& error) const
-{
-  if( _logger != nullptr ) {
-    _logger->logError(line, error);
-    if( _logger_flush ) {
-      _logger->logFlush();
+  void OutputContext::logError(const int line, const char8_t *error) const
+  {
+    if( _logger != nullptr ) {
+      _logger->logError(line, error);
+      if( _logger_flush ) {
+        _logger->logFlush();
+      }
     }
   }
-}
 
-void csOutputContext::progressFlush() const
-{
-  if( _progress != nullptr ) {
-    _progress->progressFlush();
+  void OutputContext::logError(const int line, const std::u8string& error) const
+  {
+    if( _logger != nullptr ) {
+      _logger->logError(line, error);
+      if( _logger_flush ) {
+        _logger->logFlush();
+      }
+    }
   }
-}
 
-void csOutputContext::setProgressMaximum(const int max) const
-{
-  if( _progress != nullptr ) {
-    _progress->setProgressMaximum(max);
-    if( _progress_flush ) {
+  void OutputContext::progressFlush() const
+  {
+    if( _progress != nullptr ) {
       _progress->progressFlush();
     }
   }
-}
 
-void csOutputContext::setProgressMinimum(const int min) const
-{
-  if( _progress != nullptr ) {
-    _progress->setProgressMinimum(min);
-    if( _progress_flush ) {
-      _progress->progressFlush();
+  void OutputContext::setProgressMaximum(const int max) const
+  {
+    if( _progress != nullptr ) {
+      _progress->setProgressMaximum(max);
+      if( _progress_flush ) {
+        _progress->progressFlush();
+      }
     }
   }
-}
 
-void csOutputContext::setProgressRange(const int min, const int max) const
-{
-  if( _progress != nullptr ) {
-    _progress->setProgressRange(min, max);
-    if( _progress_flush ) {
-      _progress->progressFlush();
+  void OutputContext::setProgressMinimum(const int min) const
+  {
+    if( _progress != nullptr ) {
+      _progress->setProgressMinimum(min);
+      if( _progress_flush ) {
+        _progress->progressFlush();
+      }
     }
   }
-}
 
-void csOutputContext::setProgressValue(const int val) const
-{
-  if( _progress != nullptr ) {
-    _progress->setProgressValue(val);
-    if( _progress_flush ) {
-      _progress->progressFlush();
+  void OutputContext::setProgressRange(const int min, const int max) const
+  {
+    if( _progress != nullptr ) {
+      _progress->setProgressRange(min, max);
+      if( _progress_flush ) {
+        _progress->progressFlush();
+      }
     }
   }
-}
+
+  void OutputContext::setProgressValue(const int val) const
+  {
+    if( _progress != nullptr ) {
+      _progress->setProgressValue(val);
+      if( _progress_flush ) {
+        _progress->progressFlush();
+      }
+    }
+  }
+
+} // namespace cs

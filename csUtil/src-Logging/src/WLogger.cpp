@@ -36,91 +36,95 @@
 
 #include "cs/Core/QStringUtil.h"
 
-////// Private ///////////////////////////////////////////////////////////////
+namespace cs {
 
-namespace priv {
+  ////// Private /////////////////////////////////////////////////////////////
 
-  void invokeLogText(QObject *o, const QString& s)
+  namespace priv {
+
+    void invokeLogText(QObject *o, const QString& s)
+    {
+      QMetaObject::invokeMethod(o, "impl_logText", Qt::AutoConnection, Q_ARG(QString, s));
+    }
+
+    void invokeLogWarning(QObject *o, const QString& s)
+    {
+      QMetaObject::invokeMethod(o, "impl_logWarning", Qt::AutoConnection, Q_ARG(QString, s));
+    }
+
+    void invokeLogError(QObject *o, const QString& s)
+    {
+      QMetaObject::invokeMethod(o, "impl_logError", Qt::AutoConnection, Q_ARG(QString, s));
+    }
+
+  } // namespace priv
+
+  ////// public //////////////////////////////////////////////////////////////
+
+  WLogger::WLogger(QWidget *parent)
+    : QTextBrowser(parent)
+    , ILogger()
   {
-    QMetaObject::invokeMethod(o, "impl_logText", Qt::AutoConnection, Q_ARG(QString, s));
+    setReadOnly(true);
   }
 
-  void invokeLogWarning(QObject *o, const QString& s)
+  WLogger::~WLogger()
   {
-    QMetaObject::invokeMethod(o, "impl_logWarning", Qt::AutoConnection, Q_ARG(QString, s));
   }
 
-  void invokeLogError(QObject *o, const QString& s)
+  void WLogger::logFlush() const
   {
-    QMetaObject::invokeMethod(o, "impl_logError", Qt::AutoConnection, Q_ARG(QString, s));
+    QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
   }
 
-} // namespace priv
+  void WLogger::logText(const char8_t *text) const
+  {
+    const QString s = cs::toQString(text);
+    priv::invokeLogText(const_cast<WLogger*>(this), s);
+  }
 
-////// public ////////////////////////////////////////////////////////////////
+  void WLogger::logWarning(const char8_t *warning) const
+  {
+    const QString s = tr("WARNING: %1").arg(cs::toQString(warning));
+    priv::invokeLogWarning(const_cast<WLogger*>(this), s);
+  }
 
-csWLogger::csWLogger(QWidget *parent)
-  : QTextBrowser(parent)
-  , csILogger()
-{
-  setReadOnly(true);
-}
+  void WLogger::logWarning(const int lineno, const char8_t *warning) const
+  {
+    const QString s = tr("WARNING:%1: %2").arg(lineno).arg(cs::toQString(warning));
+    priv::invokeLogWarning(const_cast<WLogger*>(this), s);
+  }
 
-csWLogger::~csWLogger()
-{
-}
+  void WLogger::logError(const char8_t *error) const
+  {
+    const QString s = tr("ERROR: %1").arg(cs::toQString(error));
+    priv::invokeLogError(const_cast<WLogger*>(this), s);
+  }
 
-void csWLogger::logFlush() const
-{
-  QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
-}
+  void WLogger::logError(const int lineno, const char8_t *error) const
+  {
+    const QString s = tr("ERROR:%1: %2").arg(lineno).arg(cs::toQString(error));
+    priv::invokeLogError(const_cast<WLogger*>(this), s);
+  }
 
-void csWLogger::logText(const char8_t *text) const
-{
-  const QString s = cs::toQString(text);
-  priv::invokeLogText(const_cast<csWLogger*>(this), s);
-}
+  ////// private slots ///////////////////////////////////////////////////////
 
-void csWLogger::logWarning(const char8_t *warning) const
-{
-  const QString s = tr("WARNING: %1").arg(cs::toQString(warning));
-  priv::invokeLogWarning(const_cast<csWLogger*>(this), s);
-}
+  void WLogger::impl_logText(const QString& s)
+  {
+    setTextColor(Qt::black);
+    append(s);
+  }
 
-void csWLogger::logWarning(const int lineno, const char8_t *warning) const
-{
-  const QString s = tr("WARNING:%1: %2").arg(lineno).arg(cs::toQString(warning));
-  priv::invokeLogWarning(const_cast<csWLogger*>(this), s);
-}
+  void WLogger::impl_logWarning(const QString& s)
+  {
+    setTextColor(Qt::blue);
+    append(s);
+  }
 
-void csWLogger::logError(const char8_t *error) const
-{
-  const QString s = tr("ERROR: %1").arg(cs::toQString(error));
-  priv::invokeLogError(const_cast<csWLogger*>(this), s);
-}
+  void WLogger::impl_logError(const QString& s)
+  {
+    setTextColor(Qt::red);
+    append(s);
+  }
 
-void csWLogger::logError(const int lineno, const char8_t *error) const
-{
-  const QString s = tr("ERROR:%1: %2").arg(lineno).arg(cs::toQString(error));
-  priv::invokeLogError(const_cast<csWLogger*>(this), s);
-}
-
-////// private slots /////////////////////////////////////////////////////////
-
-void csWLogger::impl_logText(const QString& s)
-{
-  setTextColor(Qt::black);
-  append(s);
-}
-
-void csWLogger::impl_logWarning(const QString& s)
-{
-  setTextColor(Qt::blue);
-  append(s);
-}
-
-void csWLogger::impl_logError(const QString& s)
-{
-  setTextColor(Qt::red);
-  append(s);
-}
+} // namespace cs

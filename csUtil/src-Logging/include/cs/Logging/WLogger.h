@@ -36,28 +36,32 @@
 
 #include <cs/Logging/ILogger.h>
 
-class CS_UTIL_EXPORT csWLogger
-    : public QTextBrowser
-    , public csILogger {
-  Q_OBJECT
-public:
-  csWLogger(QWidget *parent = nullptr);
-  ~csWLogger();
+namespace cs {
 
-  void logFlush() const;
+  class CS_UTIL_EXPORT WLogger
+      : public QTextBrowser
+      , public ILogger {
+    Q_OBJECT
+  public:
+    WLogger(QWidget *parent = nullptr);
+    ~WLogger();
 
-  void logText(const char8_t *) const;
+    void logFlush() const;
 
-  void logWarning(const char8_t *) const;
-  void logWarning(const int, const char8_t *) const;
+    void logText(const char8_t *) const;
 
-  void logError(const char8_t *) const;
-  void logError(const int, const char8_t *) const;
+    void logWarning(const char8_t *) const;
+    void logWarning(const int, const char8_t *) const;
 
-private slots:
-  void impl_logText(const QString& s);
-  void impl_logWarning(const QString& s);
-  void impl_logError(const QString& s);
-};
+    void logError(const char8_t *) const;
+    void logError(const int, const char8_t *) const;
+
+  private slots:
+    void impl_logText(const QString& s);
+    void impl_logWarning(const QString& s);
+    void impl_logError(const QString& s);
+  };
+
+} // namespace cs
 
 #endif // CS_WLOGGER_H

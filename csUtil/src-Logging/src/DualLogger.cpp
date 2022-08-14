@@ -31,50 +31,54 @@
 
 #include "cs/Logging/DualLogger.h"
 
-////// public ////////////////////////////////////////////////////////////////
+namespace cs {
 
-csDualLogger::csDualLogger(const csILogger *a, const csILogger *b) noexcept
-  : _a(a)
-  , _b(b)
-{
-}
+  ////// public //////////////////////////////////////////////////////////////
 
-csDualLogger::~csDualLogger() noexcept
-{
-}
+  DualLogger::DualLogger(const ILogger *a, const ILogger *b) noexcept
+    : _a(a)
+    , _b(b)
+  {
+  }
 
-void csDualLogger::logFlush() const
-{
-  _a->logFlush();
-  _b->logFlush();
-}
+  DualLogger::~DualLogger() noexcept
+  {
+  }
 
-void csDualLogger::logText(const char8_t *s) const
-{
-  _a->logText(s);
-  _b->logText(s);
-}
+  void DualLogger::logFlush() const
+  {
+    _a->logFlush();
+    _b->logFlush();
+  }
 
-void csDualLogger::logWarning(const char8_t *s) const
-{
-  _a->logWarning(s);
-  _b->logWarning(s);
-}
+  void DualLogger::logText(const char8_t *s) const
+  {
+    _a->logText(s);
+    _b->logText(s);
+  }
 
-void csDualLogger::logWarning(const int lineno, const char8_t *s) const
-{
-  _a->logWarning(lineno, s);
-  _b->logWarning(lineno, s);
-}
+  void DualLogger::logWarning(const char8_t *s) const
+  {
+    _a->logWarning(s);
+    _b->logWarning(s);
+  }
 
-void csDualLogger::logError(const char8_t *s) const
-{
-  _a->logError(s);
-  _b->logError(s);
-}
+  void DualLogger::logWarning(const int lineno, const char8_t *s) const
+  {
+    _a->logWarning(lineno, s);
+    _b->logWarning(lineno, s);
+  }
 
-void csDualLogger::logError(const int lineno, const char8_t *s) const
-{
-  _a->logError(lineno, s);
-  _b->logError(lineno, s);
-}
+  void DualLogger::logError(const char8_t *s) const
+  {
+    _a->logError(s);
+    _b->logError(s);
+  }
+
+  void DualLogger::logError(const int lineno, const char8_t *s) const
+  {
+    _a->logError(lineno, s);
+    _b->logError(lineno, s);
+  }
+
+} // namespace cs

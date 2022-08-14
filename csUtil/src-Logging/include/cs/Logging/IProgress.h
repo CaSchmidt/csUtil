@@ -34,20 +34,24 @@
 
 #include <cs/Core/csutil_config.h>
 
-class CS_UTIL_EXPORT csIProgress {
-public:
-  csIProgress() noexcept;
-  virtual ~csIProgress() noexcept;
+namespace cs {
 
-  virtual void progressFlush() const;
-  virtual void setProgressMaximum(const int max) const = 0;
-  virtual void setProgressMinimum(const int min) const = 0;
-  virtual void setProgressRange(const int min, const int max) const = 0;
-  virtual void setProgressValue(const int val) const = 0;
+  class CS_UTIL_EXPORT IProgress {
+  public:
+    IProgress() noexcept;
+    virtual ~IProgress() noexcept;
 
-private:
-  csIProgress(const csIProgress&) noexcept = delete;
-  csIProgress& operator=(const csIProgress&) noexcept = delete;
-};
+    virtual void progressFlush() const;
+    virtual void setProgressMaximum(const int max) const = 0;
+    virtual void setProgressMinimum(const int min) const = 0;
+    virtual void setProgressRange(const int min, const int max) const = 0;
+    virtual void setProgressValue(const int val) const = 0;
+
+  private:
+    IProgress(const IProgress&) noexcept = delete;
+    IProgress& operator=(const IProgress&) noexcept = delete;
+  };
+
+} // namespace cs
 
 #endif // CS_IPROGRESS_H

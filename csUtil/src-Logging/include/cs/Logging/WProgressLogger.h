@@ -40,69 +40,73 @@
 
 #include <cs/Core/csutil_config.h>
 
-class csILogger;
-class csIProgress;
-
-namespace priv {
-  class IProgressImpl;
-} // namespace priv
-
 namespace Ui {
-  class csWProgressLogger;
+  class WProgressLogger;
 } // namespace Ui
 
-class CS_UTIL_EXPORT csWProgressLogger : public QDialog {
-  Q_OBJECT
-public:
-  csWProgressLogger(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
-  ~csWProgressLogger();
+namespace cs {
 
-  const csILogger *logger() const;
-  const csIProgress *progress() const;
+  class ILogger;
+  class IProgress;
+
+  namespace priv {
+    class IProgressImpl;
+  } // namespace priv
+
+  class CS_UTIL_EXPORT WProgressLogger : public QDialog {
+    Q_OBJECT
+  public:
+    WProgressLogger(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
+    ~WProgressLogger();
+
+    const ILogger *logger() const;
+    const IProgress *progress() const;
+
+    template<typename T>
+    void setFutureWatcher(QFutureWatcher<T> *watcher);
+
+  public slots:
+    void stepValue(int dir = 1);
+
+  private slots:
+    void finish();
+    void monitorProgress(int value);
+
+  private:
+    QProgressBar *progressBar();
+
+    Ui::WProgressLogger *ui{nullptr};
+
+    std::unique_ptr<priv::IProgressImpl> _progress{nullptr};
+
+  signals:
+    void canceled();
+    void valueChanged(int value);
+  };
+
+  ////// Implementation //////////////////////////////////////////////////////
 
   template<typename T>
-  void setFutureWatcher(QFutureWatcher<T> *watcher);
+  void WProgressLogger::setFutureWatcher(QFutureWatcher<T> *watcher)
+  {
+    if( watcher == nullptr ) {
+      return;
+    }
 
-public slots:
-  void stepValue(int dir = 1);
+    disconnect(this, &WProgressLogger::valueChanged,
+               this, &WProgressLogger::monitorProgress);
 
-private slots:
-  void finish();
-  void monitorProgress(int value);
+    connect(this, &WProgressLogger::canceled,
+            watcher, &QFutureWatcher<T>::cancel);
 
-private:  
-  QProgressBar *progressBar();
-
-  Ui::csWProgressLogger *ui{nullptr};
-
-  std::unique_ptr<priv::IProgressImpl> _progress{nullptr};
-
-signals:
-  void canceled();
-  void valueChanged(int value);
-};
-
-////// Implementation ////////////////////////////////////////////////////////
-
-template<typename T>
-void csWProgressLogger::setFutureWatcher(QFutureWatcher<T> *watcher)
-{
-  if( watcher == nullptr ) {
-    return;
+    connect(watcher, &QFutureWatcher<T>::finished,
+            this, &WProgressLogger::finish);
+    connect(watcher, &QFutureWatcher<T>::progressRangeChanged,
+            progressBar(), &QProgressBar::setRange);
+    connect(watcher, &QFutureWatcher<T>::progressValueChanged,
+            progressBar(), &QProgressBar::setValue);
   }
 
-  disconnect(this, &csWProgressLogger::valueChanged,
-             this, &csWProgressLogger::monitorProgress);
-
-  connect(this, &csWProgressLogger::canceled,
-          watcher, &QFutureWatcher<T>::cancel);
-
-  connect(watcher, &QFutureWatcher<T>::finished,
-          this, &csWProgressLogger::finish);
-  connect(watcher, &QFutureWatcher<T>::progressRangeChanged,
-          progressBar(), &QProgressBar::setRange);
-  connect(watcher, &QFutureWatcher<T>::progressValueChanged,
-          progressBar(), &QProgressBar::setValue);
-}
+} // namespace cs
 
 #endif // CS_WPROGRESSLOGGER_H
