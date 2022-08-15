@@ -52,7 +52,7 @@ namespace cs {
     {
       std::basic_string<CharT> result;
 
-      if( len == cs::MAX_SIZE_T  &&  s != nullptr ) {
+      if( len == MAX_SIZE_T  &&  s != nullptr ) {
         len = static_cast<std::size_t>(u_strlen(s));
       }
 
@@ -106,7 +106,7 @@ namespace cs {
     {
       std::u16string result;
 
-      if( len == cs::MAX_SIZE_T  &&  s != nullptr ) {
+      if( len == MAX_SIZE_T  &&  s != nullptr ) {
         len = static_cast<std::size_t>(std::strlen(s));
       }
 
@@ -317,7 +317,7 @@ namespace cs {
 
   CS_UTIL_EXPORT std::u16string utf8ToUnicode(const char8_t *s, const std::size_t len)
   {
-    return impl_txtcnv::toUnicode("UTF-8", cs::CSTR(s), len);
+    return impl_txtcnv::toUnicode("UTF-8", CSTR(s), len);
   }
 
   CS_UTIL_EXPORT std::string unicodeToAscii(const char16_t *s, const std::size_t len)

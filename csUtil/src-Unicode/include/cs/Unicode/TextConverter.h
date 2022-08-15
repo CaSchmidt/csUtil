@@ -57,14 +57,14 @@ namespace cs {
 
     const char *name() const;
 
-    std::string fromUnicode(const char16_t *s, const std::size_t len = cs::MAX_SIZE_T) const;
+    std::string fromUnicode(const char16_t *s, const std::size_t len = MAX_SIZE_T) const;
 
     inline std::string fromUnicode(const std::u16string& s) const
     {
       return fromUnicode(s.data(), s.size());
     }
 
-    std::u16string toUnicode(const char *s, const std::size_t len = cs::MAX_SIZE_T) const;
+    std::u16string toUnicode(const char *s, const std::size_t len = MAX_SIZE_T) const;
 
     inline std::u16string toUnicode(const std::string& s) const
     {
@@ -90,14 +90,14 @@ namespace cs {
 
   // 8bit -> UTF-16 ////////////////////////////////////////////////////////////
 
-  CS_UTIL_EXPORT std::u16string asciiToUnicode(const char *s, const std::size_t len = cs::MAX_SIZE_T);
+  CS_UTIL_EXPORT std::u16string asciiToUnicode(const char *s, const std::size_t len = MAX_SIZE_T);
 
   inline std::u16string asciiToUnicode(const std::string& s)
   {
     return asciiToUnicode(s.data(), s.size());
   }
 
-  CS_UTIL_EXPORT std::u16string utf8ToUnicode(const char8_t *s, const std::size_t len = cs::MAX_SIZE_T);
+  CS_UTIL_EXPORT std::u16string utf8ToUnicode(const char8_t *s, const std::size_t len = MAX_SIZE_T);
 
   inline std::u16string utf8ToUnicode(const std::u8string& s)
   {
@@ -106,14 +106,14 @@ namespace cs {
 
   // UTF-16 -> 8bit ////////////////////////////////////////////////////////////
 
-  CS_UTIL_EXPORT std::string unicodeToAscii(const char16_t *s, const std::size_t len = cs::MAX_SIZE_T);
+  CS_UTIL_EXPORT std::string unicodeToAscii(const char16_t *s, const std::size_t len = MAX_SIZE_T);
 
   inline std::string unicodeToAscii(const std::u16string& s)
   {
     return unicodeToAscii(s.data(), s.size());
   }
 
-  CS_UTIL_EXPORT std::u8string unicodeToUtf8(const char16_t *s, const std::size_t len = cs::MAX_SIZE_T);
+  CS_UTIL_EXPORT std::u8string unicodeToUtf8(const char16_t *s, const std::size_t len = MAX_SIZE_T);
 
   inline std::u8string unicodeToUtf8(const std::u16string& s)
   {

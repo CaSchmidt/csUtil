@@ -43,14 +43,14 @@ namespace cs {
   inline QString toQString(const char8_t *s)
   {
     return s != nullptr
-        ? QString::fromUtf8(cs::CSTR(s))
+        ? QString::fromUtf8(CSTR(s))
         : QString();
   }
 
   inline QString toQString(const std::u8string& s)
   {
     return !s.empty()
-        ? QString::fromUtf8(cs::CSTR(s.data()), int(s.size()))
+        ? QString::fromUtf8(CSTR(s.data()), int(s.size()))
         : QString();
   }
 
@@ -73,7 +73,7 @@ namespace cs {
     using size_type = std::u8string::size_type;
     const QByteArray utf8 = s.toUtf8();
     return !utf8.isEmpty()
-        ? std::u8string(cs::UTF8(utf8.constData()), size_type(utf8.size()))
+        ? std::u8string(UTF8(utf8.constData()), size_type(utf8.size()))
         : std::u8string();
   }
 

@@ -79,31 +79,31 @@ namespace cs {
 
   void WLogger::logText(const char8_t *text) const
   {
-    const QString s = cs::toQString(text);
+    const QString s = toQString(text);
     impl_log::invokeLogText(const_cast<WLogger*>(this), s);
   }
 
   void WLogger::logWarning(const char8_t *warning) const
   {
-    const QString s = tr("WARNING: %1").arg(cs::toQString(warning));
+    const QString s = tr("WARNING: %1").arg(toQString(warning));
     impl_log::invokeLogWarning(const_cast<WLogger*>(this), s);
   }
 
   void WLogger::logWarning(const int lineno, const char8_t *warning) const
   {
-    const QString s = tr("WARNING:%1: %2").arg(lineno).arg(cs::toQString(warning));
+    const QString s = tr("WARNING:%1: %2").arg(lineno).arg(toQString(warning));
     impl_log::invokeLogWarning(const_cast<WLogger*>(this), s);
   }
 
   void WLogger::logError(const char8_t *error) const
   {
-    const QString s = tr("ERROR: %1").arg(cs::toQString(error));
+    const QString s = tr("ERROR: %1").arg(toQString(error));
     impl_log::invokeLogError(const_cast<WLogger*>(this), s);
   }
 
   void WLogger::logError(const int lineno, const char8_t *error) const
   {
-    const QString s = tr("ERROR:%1: %2").arg(lineno).arg(cs::toQString(error));
+    const QString s = tr("ERROR:%1: %2").arg(lineno).arg(toQString(error));
     impl_log::invokeLogError(const_cast<WLogger*>(this), s);
   }
 

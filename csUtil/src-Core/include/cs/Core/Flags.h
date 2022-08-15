@@ -134,8 +134,8 @@ namespace cs {
   template<typename EnumT>
   class Flags {
   public:
-    using  enum_type = cs::if_flags_t<EnumT>;
-    using value_type = cs::safe_underlying_type_t<enum_type>;
+    using  enum_type = if_flags_t<EnumT>;
+    using value_type = safe_underlying_type_t<enum_type>;
 
     Flags() noexcept = default;
     ~Flags() noexcept = default;

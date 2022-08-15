@@ -57,27 +57,27 @@ namespace cs {
 
   void Logger::logText(const char8_t *s) const
   {
-    fprintf(_file, "%s\n", cs::CSTR(s));
+    fprintf(_file, "%s\n", CSTR(s));
   }
 
   void Logger::logWarning(const char8_t *s) const
   {
-    fprintf(_file, "WARNING: %s\n", cs::CSTR(s));
+    fprintf(_file, "WARNING: %s\n", CSTR(s));
   }
 
   void Logger::logWarning(const int lineno, const char8_t *s) const
   {
-    fprintf(_file, "WARNING:%d: %s\n", lineno, cs::CSTR(s));
+    fprintf(_file, "WARNING:%d: %s\n", lineno, CSTR(s));
   }
 
   void Logger::logError(const char8_t *s) const
   {
-    fprintf(_file, "ERROR: %s\n", cs::CSTR(s));
+    fprintf(_file, "ERROR: %s\n", CSTR(s));
   }
 
   void Logger::logError(const int lineno, const char8_t *s) const
   {
-    fprintf(_file, "ERROR:%d: %s\n", lineno, cs::CSTR(s));
+    fprintf(_file, "ERROR:%d: %s\n", lineno, CSTR(s));
   }
 
 } // namespace cs

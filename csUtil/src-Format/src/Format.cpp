@@ -108,8 +108,8 @@ namespace cs {
                std::enable_if_t<std::is_integral_v<ValueT>> * = nullptr)
       {
         _temp.fill(0);
-        const cs::to_chars_result res =
-            cs::to_chars(_temp.data(), _temp.data() + _temp.size(), value, base);
+        const to_chars_result res =
+            to_chars(_temp.data(), _temp.data() + _temp.size(), value, base);
         if( res.ec != std::errc() ) {
           return;
         }
@@ -123,16 +123,16 @@ namespace cs {
                std::enable_if_t<std::is_floating_point_v<ValueT>> * = nullptr)
       {
         _temp.fill(0);
-        cs::chars_format fmt;
+        chars_format fmt;
         if(        format == CharT('e')  ||  format == CharT('E') ) {
-          fmt = cs::chars_format::scientific;
+          fmt = chars_format::scientific;
         } else if( format == CharT('f')  ||  format == CharT('F') ) {
-          fmt = cs::chars_format::fixed;
+          fmt = chars_format::fixed;
         } else { // Default
-          fmt = cs::chars_format::general;
+          fmt = chars_format::general;
         }
-        const cs::to_chars_result res =
-            cs::to_chars(_temp.data(), _temp.data() + _temp.size(), value, fmt, precision);
+        const to_chars_result res =
+            to_chars(_temp.data(), _temp.data() + _temp.size(), value, fmt, precision);
         if( res.ec != std::errc() ) {
           return;
         }
@@ -187,8 +187,8 @@ namespace cs {
               append_token(copy, pos, count);
 
               index_type index = 0;
-              const cs::from_chars_result res =
-                  cs::from_chars(pos+1, end, index, 10);
+              const from_chars_result res =
+                  from_chars(pos+1, end, index, 10);
 
               if( res.ec == std::errc() ) {
                 _tokens.emplace_back(index, std::string());
@@ -335,7 +335,7 @@ namespace cs {
     : impl()
   {
     try {
-      impl = std::make_unique<Formatter>(s, s + cs::length(s));
+      impl = std::make_unique<Formatter>(s, s + length(s));
     } catch(...) {
       impl.reset(nullptr);
     }

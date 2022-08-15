@@ -71,42 +71,42 @@ namespace cs {
     inline void logTextf(const char8_t *fmt, Args&&... args) const
     {
       const std::string msg = vformat(fmt, args...);
-      logText(cs::UTF8(msg.data()));
+      logText(UTF8(msg.data()));
     }
 
     template<typename... Args>
     inline void logWarningf(const char8_t *fmt, Args&&... args) const
     {
       const std::string msg = vformat(fmt, args...);
-      logWarning(cs::UTF8(msg.data()));
+      logWarning(UTF8(msg.data()));
     }
 
     template<typename... Args>
     inline void logWarningf(const int lineno, const char8_t *fmt, Args&&... args) const
     {
       const std::string msg = vformat(fmt, args...);
-      logWarning(lineno, cs::UTF8(msg.data()));
+      logWarning(lineno, UTF8(msg.data()));
     }
 
     template<typename... Args>
     inline void logErrorf(const char8_t *fmt, Args&&... args) const
     {
       const std::string msg = vformat(fmt, args...);
-      logError(cs::UTF8(msg.data()));
+      logError(UTF8(msg.data()));
     }
 
     template<typename... Args>
     inline void logErrorf(const int lineno, const char8_t *fmt, Args&&... args) const
     {
       const std::string msg = vformat(fmt, args...);
-      logError(lineno, cs::UTF8(msg.data()));
+      logError(lineno, UTF8(msg.data()));
     }
 
   private:
     template<typename... Args>
     inline static std::string vformat(const char8_t *fmt, Args&&... args)
     {
-      return std::vformat(cs::CSTR(fmt), std::make_format_args(args...));
+      return std::vformat(CSTR(fmt), std::make_format_args(args...));
     }
 #endif
 
