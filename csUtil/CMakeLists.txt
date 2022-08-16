@@ -90,6 +90,30 @@ if(ENABLE_CHARCONV)
   add_subdirectory(src-Format) # depends on CharConv
 endif()
 
+### Interfaces ###############################################################
+
+add_library(csUtilHeaders INTERFACE)
+
+target_link_libraries(csUtilHeaders
+  INTERFACE csIO
+  INTERFACE csLogging
+  INTERFACE csMath # includes SIMD
+  INTERFACE csSystem
+  INTERFACE csTrie
+  )
+
+if(ENABLE_UNICODE)
+  target_link_libraries(csUtilHeaders
+    INTERFACE csUnicode
+    )
+endif()
+
+if(ENABLE_CHARCONV)
+  target_link_libraries(csUtilHeaders
+    INTERFACE csFormat # includes CharConv
+    )
+endif()
+
 ### Install ##################################################################
 
 #install(TARGETS csUtil
