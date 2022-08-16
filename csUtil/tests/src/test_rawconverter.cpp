@@ -1,13 +1,14 @@
 #include <cstdio>
 #include <cstdlib>
 
+#include <iostream>
+
 #undef HAVE_BENCHMARK
 
-#ifdef HAVE_BENCHMARK
-# include <Windows.h>
-#endif
-
 #include <cs/Math/RawConverter.h>
+#ifdef HAVE_BENCHMARK
+# include <cs/System/Time.h>
+#endif
 
 ////// Names /////////////////////////////////////////////////////////////////
 
@@ -89,7 +90,7 @@ void test_signed()
     dest[i] = 0;
   }
 
-  csConvert<DataT>(dest, raw, N);
+  cs::convert<DataT>(dest, raw, N);
 
   printf("%s\n", Name<DataT>::get());
   for(int i = 0; i < N; i++) {
@@ -113,7 +114,7 @@ void test_unsigned()
     dest[i] = 0;
   }
 
-  csConvert<DataT>(dest, raw, N);
+  cs::convert<DataT>(dest, raw, N);
 
   printf("%s\n", Name<DataT>::get());
   for(int i = 0; i < N; i++) {
@@ -162,7 +163,7 @@ void test_signed(const double c1)
     dest[i] = 0;
   }
 
-  csConvert<DataT>(dest, raw, N, c1);
+  cs::convert<DataT>(dest, raw, N, c1);
 
   printf("%s, c1=%.1f\n", Name<DataT>::get(), c1);
   for(int i = 0; i < N; i++) {
@@ -186,7 +187,7 @@ void test_unsigned(const double c1)
     dest[i] = 0;
   }
 
-  csConvert<DataT>(dest, raw, N, c1);
+  cs::convert<DataT>(dest, raw, N, c1);
 
   printf("%s, c1=%.1f\n", Name<DataT>::get(), c1);
   for(int i = 0; i < N; i++) {
@@ -235,7 +236,7 @@ void test_signed(const double c1, const double c0)
     dest[i] = 0;
   }
 
-  csConvert<DataT>(dest, raw, N, c1, c0);
+  cs::convert<DataT>(dest, raw, N, c1, c0);
 
   printf("%s, c1=%.1f, c0=%.1f\n", Name<DataT>::get(), c1, c0);
   for(int i = 0; i < N; i++) {
@@ -259,7 +260,7 @@ void test_unsigned(const double c1, const double c0)
     dest[i] = 0;
   }
 
-  csConvert<DataT>(dest, raw, N, c1, c0);
+  cs::convert<DataT>(dest, raw, N, c1, c0);
 
   printf("%s, c1=%.1f, c0=%.1f\n", Name<DataT>::get(), c1, c0);
   for(int i = 0; i < N; i++) {
@@ -333,7 +334,7 @@ void benchmark()
 #define HAVE_LINEAR
 #define HAVE_OPT
 
-  const DWORD beg = GetTickCount();
+  const uint64_t beg = cs::tickCountMs();
 #ifdef HAVE_LINEAR
 # ifdef HAVE_OPT
   cs::convert(phy, raw, N, c1, c0);
@@ -342,14 +343,14 @@ void benchmark()
 # endif
 #else
 # ifdef HAVE_OPT
-  csConvert(phy, raw, N);
+  cs::convert(phy, raw, N);
 # else
   convert(phy, raw, N);
 # endif
 #endif
-  const DWORD end = GetTickCount();
+  const uint64_t end = cs::tickCountMs();
 
-  printf("duration = %dms\n", end-beg);
+  std::cout << "duration = " << end - beg << "ms" << std::endl;
 
   delete[] raw;
   delete[] phy;
