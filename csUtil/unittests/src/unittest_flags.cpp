@@ -1,15 +1,14 @@
 #include <cstdio>
 #include <cstdlib>
 
-#define CATCH_CONFIG_MAIN
 #include <catch.hpp>
 
-#include <csUtil/csFlags.h>
+#include <cs/Core/Flags.h>
 
 template<typename EnumT>
-void print(const csFlags<EnumT>& flags)
+void print(const cs::Flags<EnumT>& flags)
 {
-  const typename csFlags<EnumT>::value_type v = flags;
+  const typename cs::Flags<EnumT>::value_type v = flags;
   printf("value = 0x%X\n", v);
 }
 
@@ -30,7 +29,7 @@ CS_ENABLE_FLAGS(flags::Bit)
 
 namespace flags {
 
-  using Bits = csFlags<Bit>;
+  using Bits = cs::Flags<Bit>;
 
   TEST_CASE("Basic manipulation of csFlags<>", "[flags]") {
     Bits bits;

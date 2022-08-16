@@ -5,7 +5,7 @@
 
 #include <catch.hpp>
 
-#include <csUtil/csNumeric.h>
+#include <cs/Math/Numeric.h>
 
 namespace numeric {
 

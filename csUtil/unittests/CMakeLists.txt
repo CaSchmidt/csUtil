@@ -16,17 +16,19 @@ macro(cs_unittest target)
     PRIVATE ${csUtil_SOURCE_DIR}/3rdparty/catch2/include
     PRIVATE ${csUtil_SOURCE_DIR}/testutils/include
     )
-  target_link_libraries(${target} csUtil)
+  target_link_libraries(${target} csUtilHeaders csUtilLib)
 endmacro()
 
 ### Unit Tests ###############################################################
 
-cs_unittest(unittest_endian src/unittest_endian.cpp src/unittest_endian_impl.cpp)
+cs_unittest(unittest_endian src/unittest_endian.cpp src/unittest_endian_impl.cpp src/unittest_endian_main.cpp)
 cs_unittest(unittest_fileio src/unittest_fileio.cpp src/unittest_fileio_main.cpp)
-cs_unittest(unittest_flags src/unittest_flags.cpp)
+cs_unittest(unittest_flags src/unittest_flags.cpp src/unittest_flags_main.cpp)
 cs_unittest(unittest_numeric src/unittest_numeric.cpp src/unittest_numeric_main.cpp)
 cs_unittest(unittest_simd src/unittest_simd.cpp src/unittest_simd_main.cpp)
 cs_unittest(unittest_statistics src/unittest_statistics.cpp src/unittest_statistics_main.cpp)
 cs_unittest(unittest_stringutil src/unittest_stringutil.cpp src/unittest_stringutil_main.cpp)
-cs_unittest(unittest_textconverter src/unittest_textconverter.cpp)
-cs_unittest(unittest_trie src/unittest_trie.cpp)
+if(ENABLE_UNICODE)
+  cs_unittest(unittest_textconverter src/unittest_textconverter.cpp src/unittest_textconverter_main.cpp)
+endif()
+cs_unittest(unittest_trie src/unittest_trie.cpp src/unittest_trie_main.cpp)

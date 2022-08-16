@@ -1,9 +1,8 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include <csUtil/csTextConverter.h>
+#include <cs/Unicode/TextConverter.h>
 
-#define CATCH_CONFIG_MAIN
 #include <catch.hpp>
 
 #define TEST_UTF8_STRING  "für€²³°"
@@ -12,7 +11,7 @@
 namespace test_unicode {
 
   TEST_CASE("Convert UTF-8 string to Unicode.", "[unicode]") {
-    const csTextConverter conv = csTextConverter::createUtf8();
+    const cs::TextConverter conv = cs::TextConverter::createUtf8();
     REQUIRE( !conv.isNull() );
 
     const std::u16string unicode = conv.toUnicode(TEST_UTF8_STRING);
@@ -32,7 +31,7 @@ namespace test_unicode {
 namespace test_ascii {
 
   TEST_CASE("Convert Unicode string to ASCII.", "[ascii]") {
-    const csTextConverter conv = csTextConverter::createAscii();
+    const cs::TextConverter conv = cs::TextConverter::createAscii();
     REQUIRE( !conv.isNull() );
 
     const std::string ascii = conv.fromUnicode(TEST_UTF16_STRING);
@@ -52,7 +51,7 @@ namespace test_ascii {
 namespace test_latin1 {
 
   TEST_CASE("Convert Unicode string to ISO 8859-1 / Latin-1.", "[latin1]") {
-    const csTextConverter conv = csTextConverter::createLatin1();
+    const cs::TextConverter conv = cs::TextConverter::createLatin1();
     REQUIRE( !conv.isNull() );
 
     const std::string latin1 = conv.fromUnicode(TEST_UTF16_STRING);
@@ -72,7 +71,7 @@ namespace test_latin1 {
 namespace test_latin9 {
 
   TEST_CASE("Convert Unicode string to ISO 8859-15 / Latin-9.", "[latin9]") {
-    const csTextConverter conv = csTextConverter::createLatin9();
+    const cs::TextConverter conv = cs::TextConverter::createLatin9();
     REQUIRE( !conv.isNull() );
 
     const std::string latin9 = conv.fromUnicode(TEST_UTF16_STRING);
@@ -94,7 +93,7 @@ namespace test_latin9 {
 namespace test_utf8 {
 
   TEST_CASE("Convert Unicode string to UTF-8.", "[utf8]") {
-    const csTextConverter conv = csTextConverter::createUtf8();
+    const cs::TextConverter conv = cs::TextConverter::createUtf8();
     REQUIRE( !conv.isNull() );
 
     const std::string utf8 = conv.fromUnicode(TEST_UTF16_STRING);
@@ -120,7 +119,7 @@ namespace test_utf8 {
 namespace test_windows1252 {
 
   TEST_CASE("Convert Unicode string to Windows-1252.", "[windows1252]") {
-    const csTextConverter conv = csTextConverter::createWindows1252();
+    const cs::TextConverter conv = cs::TextConverter::createWindows1252();
     REQUIRE( !conv.isNull() );
 
     const std::string windows1252 = conv.fromUnicode(TEST_UTF16_STRING);

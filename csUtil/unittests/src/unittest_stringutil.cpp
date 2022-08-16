@@ -6,7 +6,7 @@
 
 #include <catch.hpp>
 
-#include <csUtil/csStringUtil.h>
+#include <cs/Core/StringUtil.h>
 
 namespace stringutil {
 

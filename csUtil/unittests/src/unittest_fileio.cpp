@@ -6,9 +6,9 @@
 
 #include <catch.hpp>
 
-#include <csUtil/csFile.h>
-#include <csUtil/csFileIO.h>
-#include <csUtil/csStringUtil.h>
+#include <cs/Core/StringUtil.h>
+#include <cs/IO/File.h>
+#include <cs/IO/FileIO.h>
 
 namespace fileio {
 
@@ -22,7 +22,7 @@ namespace fileio {
 
     const char8_t *filename = u8"./csReadLines.txt";
 
-    csFile file;
+    cs::File file;
     REQUIRE( file.open(filename, cs::FileOpenFlag::Write) );
 
     const char *STR_lines = "\n abc \n\n xyz \n   \n";
@@ -33,7 +33,7 @@ namespace fileio {
     // (2) Read lines as-is //////////////////////////////////////////////////
 
     {
-      const StringList lines = csReadLines(filename);
+      const StringList lines = cs::readLines(filename);
       REQUIRE(  lines.size() == 6 );
       REQUIRE(  std::next(lines.cbegin(), 0)->empty() );
       REQUIRE( *std::next(lines.cbegin(), 1) == " abc " );
@@ -46,7 +46,7 @@ namespace fileio {
     // (3) Read & trim lines /////////////////////////////////////////////////
 
     {
-      const StringList lines = csReadLines(filename, false, true);
+      const StringList lines = cs::readLines(filename, false, true);
       REQUIRE(  lines.size() == 6 );
       REQUIRE(  std::next(lines.cbegin(), 0)->empty() );
       REQUIRE( *std::next(lines.cbegin(), 1) == "abc" );
@@ -59,7 +59,7 @@ namespace fileio {
     // (4) Read & skip blank/empty lines /////////////////////////////////////
 
     {
-      const StringList lines = csReadLines(filename, true, false);
+      const StringList lines = cs::readLines(filename, true, false);
       REQUIRE(  lines.size() == 2 );
       REQUIRE( *std::next(lines.cbegin(), 0) == " abc " );
       REQUIRE( *std::next(lines.cbegin(), 1) == " xyz " );
@@ -68,7 +68,7 @@ namespace fileio {
     // (5) Read, trim & skip blank lines /////////////////////////////////////
 
     {
-      const StringList lines = csReadLines(filename, true, true);
+      const StringList lines = cs::readLines(filename, true, true);
       REQUIRE(  lines.size() == 2 );
       REQUIRE( *std::next(lines.cbegin(), 0) == "abc" );
       REQUIRE( *std::next(lines.cbegin(), 1) == "xyz" );

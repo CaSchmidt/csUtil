@@ -1,12 +1,13 @@
+#include <iostream>
 #include <unordered_set>
 
-#include <csUtil/csFileIO.h>
-#include <csUtil/csTrie.h>
+#include <cs/IO/FileIO.h>
+#include <cs/Trie/Trie.h>
 
-#include <internal/csTrieNode.h>
+#include "internal/TrieNode.h"
 
+// NOTE: Needs to be defined in main module as well!
 #define CATCH_CONFIG_ENABLE_BENCHMARKING
-#define CATCH_CONFIG_MAIN
 #include <catch.hpp>
 
 #include "util.h"
@@ -115,9 +116,9 @@ namespace priv {
     return count == words.size();
   }
 
-  csTrie insertAll(const StringList& words)
+  cs::Trie insertAll(const StringList& words)
   {
-    csTrie result;
+    cs::Trie result;
     for(const StringList::value_type& word : words) {
       result.insert(word);
     }
@@ -126,7 +127,7 @@ namespace priv {
 
   StringList readWords()
   {
-    StringList result = csReadLines(WORD_LIST, true, true);
+    StringList result = cs::readLines(WORD_LIST, true, true);
     if( result.empty() ) {
       return result;
     }
@@ -143,7 +144,7 @@ namespace test_compiler {
   TEST_CASE("Compiler information.", "[compiler]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
-    std::cout << "sizeof(csTrieNode): " << sizeof(csTrieNode) << std::endl;
+    std::cout << "sizeof(csTrieNode): " << sizeof(cs::TrieNode) << std::endl;
 
     std::cout << "sizeof(std::string): " << sizeof(std::string) << std::endl;
 
@@ -171,7 +172,7 @@ namespace test_basic {
 
     // (2) Insertion /////////////////////////////////////////////////////////
 
-    const csTrie trie = priv::insertAll(words);
+    const cs::Trie trie = priv::insertAll(words);
     std::cout << "size(trie): " << trie.size() << ", nodes: " << trie.nodeCount() << std::endl;
 
     REQUIRE( priv::findAll(trie, words) );
@@ -224,14 +225,14 @@ namespace test_flat {
 
     // (2) Insertion /////////////////////////////////////////////////////////
 
-    const csTrie trie = priv::insertAll(words);
+    const cs::Trie trie = priv::insertAll(words);
     std::cout << "size(trie): " << trie.size() << ", nodes: " << trie.nodeCount() << std::endl;
 
     REQUIRE( priv::findAll(trie, words) );
 
     // (3) Flatten ///////////////////////////////////////////////////////////
 
-    const csFlatTrie flat = trie.flattened();
+    const cs::FlatTrie flat = trie.flattened();
     std::cout << "size(flat): " << flat.size() << ", nodes: " << flat.nodeCount() << std::endl;
 
     REQUIRE( priv::findAll(flat, words) );

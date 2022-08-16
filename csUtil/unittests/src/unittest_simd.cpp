@@ -8,8 +8,8 @@
 #include <catch.hpp>
 
 #define HAVE_SIMD128_PREFETCH
-#include <csUtil/csSIMD.h>
-#include <csUtil/csSIMD128.h>
+#include <cs/SIMD/SIMD.h>
+#include <cs/SIMD/SIMD128.h>
 
 namespace test_mean {
 

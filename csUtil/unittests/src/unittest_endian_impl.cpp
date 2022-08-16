@@ -1,4 +1,4 @@
-#include <csUtil/csEndian.h>
+#include <cs/Core/Endian.h>
 
 namespace test_integral {
 
