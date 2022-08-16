@@ -28,7 +28,8 @@ cs_unittest(unittest_numeric src/unittest_numeric.cpp src/unittest_numeric_main.
 cs_unittest(unittest_simd src/unittest_simd.cpp src/unittest_simd_main.cpp)
 cs_unittest(unittest_statistics src/unittest_statistics.cpp src/unittest_statistics_main.cpp)
 cs_unittest(unittest_stringutil src/unittest_stringutil.cpp src/unittest_stringutil_main.cpp)
+cs_unittest(unittest_trie src/unittest_trie.cpp src/unittest_trie_main.cpp)
+
 if(ENABLE_UNICODE)
   cs_unittest(unittest_textconverter src/unittest_textconverter.cpp src/unittest_textconverter_main.cpp)
 endif()
-cs_unittest(unittest_trie src/unittest_trie.cpp src/unittest_trie_main.cpp)
