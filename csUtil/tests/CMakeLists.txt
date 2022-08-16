@@ -10,19 +10,25 @@ macro(cs_test target)
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
     PRIVATE ${csUtil_SOURCE_DIR}/testutils/include
     )
-  target_link_libraries(${target} csUtil)
+  target_link_libraries(${target} csUtilHeaders csUtilLib)
 endmacro()
 
 ### Tests ####################################################################
 
-cs_test(test_charconv src/test_charconv.cpp)
 cs_test(test_dot src/test_dot.cpp)
 cs_test(test_endian src/test_endian.cpp ../testutils/include/util.h)
 cs_test(test_excd src/test_excd.cpp)
 cs_test(test_fileio src/test_fileio.cpp)
-cs_test(test_format src/test_format.cpp)
 cs_test(test_rawconverter src/test_rawconverter.cpp)
 cs_test(test_serial src/test_serial.cpp)
 cs_test(test_stringutil src/test_stringutil.cpp)
-cs_test(test_textconverter src/test_textconverter.cpp)
 cs_test(test_trie src/test_trie.cpp)
+
+if(ENABLE_CHARCONV)
+  cs_test(test_charconv src/test_charconv.cpp)
+  cs_test(test_format src/test_format.cpp)
+endif()
+
+if(ENABLE_UNICODE)
+  cs_test(test_textconverter src/test_textconverter.cpp)
+endif()

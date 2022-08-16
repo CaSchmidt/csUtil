@@ -6,8 +6,8 @@
 #include <vector>
 
 #define HAVE_SIMD128_PREFETCH
-#include <csUtil/csSIMD.h>
-#include <csUtil/csSIMD128.h>
+#include <cs/SIMD/SIMD.h>
+#include <cs/SIMD/SIMD128.h>
 
 using real_T = double;
 using NumVec = std::vector<real_T>;
@@ -25,6 +25,8 @@ void clflush(const std::vector<T>& v)
   for(size_type i = 0; i < v.size(); i += NUM_ELEMS_LINE) {
     _mm_clflush(v.data() + i);
   }
+
+  _mm_mfence();
 }
 
 extern "C" real_T dot(const real_T *a, const real_T *b, const std::size_t count)

@@ -6,7 +6,7 @@
 #include <array>
 #include <vector>
 
-#include <csUtil/csFile.h>
+#include <cs/IO/File.h>
 
 template<typename T>
 bool resize(std::vector<T>& v, const std::size_t count, const T& value = T())
@@ -79,7 +79,7 @@ uint8_t scanBuffer(const Buffer& buffer, const std::size_t have)
   return result;
 }
 
-void writeBuffer(const csFile& out, const Buffer& buffer, const std::size_t have,
+void writeBuffer(const cs::File& out, const Buffer& buffer, const std::size_t have,
                  const std::size_t data_size)
 {
   if( have < 1  ||  data_size < 1  ||  data_size > cdrom::SIZ_Data2 ) {
@@ -104,7 +104,7 @@ void writeBuffer(const csFile& out, const Buffer& buffer, const std::size_t have
 int main(int /*argc*/, char **argv)
 {
   const char *inname = argv[1];
-  csFile infile;
+  cs::File infile;
   if( !infile.open(cs::UTF8(inname)) ) {
     fprintf(stderr, "ERROR: Unable to open file \"%s\"!\n", inname);
     return EXIT_FAILURE;
@@ -153,7 +153,7 @@ int main(int /*argc*/, char **argv)
   // (2) Write ///////////////////////////////////////////////////////////////
 
   const char *outname = "output.iso";
-  csFile outfile;
+  cs::File outfile;
   if( !outfile.open(outname, cs::FileOpenFlag::Write) ) {
     fprintf(stderr, "ERROR: Unable to open file \"%s\" for writing!\n", outname);
     return EXIT_FAILURE;

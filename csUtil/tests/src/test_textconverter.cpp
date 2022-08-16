@@ -1,8 +1,8 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include <csUtil/csFileIO.h>
-#include <csUtil/csTextConverter.h>
+#include <cs/IO/FileIO.h>
+#include <cs/Unicode/TextConverter.h>
 
 void print(const std::string& s)
 {
@@ -25,11 +25,11 @@ void print_sep()
 
 int main(int /*argc*/, char ** /*argv*/)
 {
-  const csTextConverter c_ascii = csTextConverter::createAscii();
-  const csTextConverter    c_l1 = csTextConverter::createLatin1();
-  const csTextConverter    c_l9 = csTextConverter::createLatin9();
-  const csTextConverter  c_utf8 = csTextConverter::createUtf8();
-  const csTextConverter  c_1252 = csTextConverter::createWindows1252();
+  const cs::TextConverter c_ascii = cs::TextConverter::createAscii();
+  const cs::TextConverter    c_l1 = cs::TextConverter::createLatin1();
+  const cs::TextConverter    c_l9 = cs::TextConverter::createLatin9();
+  const cs::TextConverter  c_utf8 = cs::TextConverter::createUtf8();
+  const cs::TextConverter  c_1252 = cs::TextConverter::createWindows1252();
 
   const std::string utf8("für€");
   print(utf8); print_sep();
@@ -42,7 +42,7 @@ int main(int /*argc*/, char ** /*argv*/)
 
   printf("*** File I/O\n");
 
-  const std::string fileutf8 = csReadTextFile(cs::UTF8("../../csUtil/csUtil/testutils/data/test äuml.txt"));
+  const std::string fileutf8 = cs::readTextFile(cs::UTF8("../../csUtil/csUtil/testutils/data/test äuml.txt"));
   print(fileutf8); print_sep();
 
   return EXIT_SUCCESS;

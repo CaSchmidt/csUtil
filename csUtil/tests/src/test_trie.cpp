@@ -4,10 +4,10 @@
 #include <regex>
 #include <set>
 
-#include <csUtil/csFileIO.h>
-#include <csUtil/csFlatTrie.h>
-#include <csUtil/csTrie.h>
-#include <csUtil/csTypeTraits.h>
+#include <cs/Core/TypeTraits.h>
+#include <cs/IO/FileIO.h>
+#include <cs/Trie/FlatTrie.h>
+#include <cs/Trie/Trie.h>
 
 #undef HAVE_REVERSE
 
@@ -32,7 +32,7 @@ Words readWords(const std::u8string& filename)
   Words words;
 
   bool ok;
-  const std::string content = csReadTextFile(filename, &ok);
+  const std::string content = cs::readTextFile(filename, &ok);
   if( !ok ) {
     fprintf(stderr, "ERROR: Unable to open file \"%s\"!\n",
             cs::CSTR(filename.data()));
@@ -64,7 +64,7 @@ int main(int /*argc*/, char **argv)
 {
   const Words words = readWords(cs::UTF8(argv[1]));
 
-  csTrie trie;
+  cs::Trie trie;
   for(const std::string& w : words) {
 #ifndef HAVE_REVERSE
     trie.insert(w);
@@ -73,7 +73,7 @@ int main(int /*argc*/, char **argv)
 #endif
   }
 
-  csFlatTrie flatTrie = trie.flattened();
+  cs::FlatTrie flatTrie = trie.flattened();
 
   std::size_t cntTrie(0), cntFlatTrie(0);
   for(const std::string& w : words) {

@@ -5,7 +5,7 @@
 #include <iomanip>
 #include <iostream>
 
-#include <csUtil/csEndian.h>
+#include <cs/Core/Endian.h>
 
 #include "util.h"
 

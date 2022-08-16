@@ -7,7 +7,7 @@
 # include <Windows.h>
 #endif
 
-#include <csUtil/csRawConverter.h>
+#include <cs/Math/RawConverter.h>
 
 ////// Names /////////////////////////////////////////////////////////////////
 
@@ -136,7 +136,7 @@ void test_float()
     dest[i] = 0;
   }
 
-  csConvert<float>(dest, raw, N);
+  cs::convert<float>(dest, raw, N);
 
   printf("%s\n", Name<float>::get());
   for(int i = 0; i < N; i++) {
@@ -209,7 +209,7 @@ void test_float(const double c1)
     dest[i] = 0;
   }
 
-  csConvert<float>(dest, raw, N, c1);
+  cs::convert<float>(dest, raw, N, c1);
 
   printf("%s, c1=%.1f\n", Name<float>::get(), c1);
   for(int i = 0; i < N; i++) {
@@ -282,7 +282,7 @@ void test_float(const double c1, const double c0)
     dest[i] = 0;
   }
 
-  csConvert<float>(dest, raw, N, c1, c0);
+  cs::convert<float>(dest, raw, N, c1, c0);
 
   printf("%s, c1=%.1f, c0=%.1f\n", Name<float>::get(), c1, c0);
   for(int i = 0; i < N; i++) {
@@ -336,7 +336,7 @@ void benchmark()
   const DWORD beg = GetTickCount();
 #ifdef HAVE_LINEAR
 # ifdef HAVE_OPT
-  csConvert(phy, raw, N, c1, c0);
+  cs::convert(phy, raw, N, c1, c0);
 # else
   convert(phy, raw, N, c1, c0);
 # endif

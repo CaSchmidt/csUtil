@@ -4,8 +4,8 @@
 
 #include <array>
 
-#include <csUtil/csSerial.h>
-#include <csUtil/csTime.h>
+#include <cs/IO/Serial.h>
+#include <cs/System/Time.h>
 
 int main(int /*argc*/, char ** /*argv*/)
 {
@@ -28,7 +28,7 @@ int main(int /*argc*/, char ** /*argv*/)
   printf("Rate   = %d\n", rate);
   printf("-------\n");
 
-  csSerial serial;
+  cs::Serial serial;
 
   if( !serial.open(device, rate) ) {
     fprintf(stderr, "ERROR: Unable to open device!\n");
@@ -46,7 +46,7 @@ int main(int /*argc*/, char ** /*argv*/)
 
     buffer[strlen(buffer.data())] = '\n';
     serial.write(buffer.data(), strlen(buffer.data()));
-    csSleep(2);
+    cs::sleep(2);
 
     buffer.fill(0);
     serial.read(buffer.data(), bufferSize);

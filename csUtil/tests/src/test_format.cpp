@@ -4,12 +4,12 @@
 
 #include <iostream>
 
-#include <csUtil/csFormat.h>
+#include <cs/Format/Format.h>
 
 template<typename CharT>
 void print_format(const CharT *str)
 {
-  std::cout << (std::string)csFormat(str) << std::endl;
+  std::cout << (std::string)cs::Format(str) << std::endl;
 }
 
 template<typename ValueT>
@@ -24,7 +24,7 @@ void format_floating(const ValueT value,
       :  width;
 
   const std::string output =
-      csFormat("   le = %1|   ri = %2|   no = %3")
+      cs::Format("   le = %1|   ri = %2|   no = %3")
       .arg(value, -abswidth, format, precision, fill)
       .arg(value,  abswidth, format, precision, fill)
       .arg(value,         0, format, precision, fill);
@@ -44,7 +44,7 @@ void format_integral(const ValueT value,
       :  width;
 
   const std::string output =
-      csFormat("   le = %1|   ri = %2|   no = %3")
+      cs::Format("   le = %1|   ri = %2|   no = %3")
       .arg(value, -abswidth, base, fill)
       .arg(value,  abswidth, base, fill)
       .arg(value,         0, base, fill);
@@ -60,7 +60,7 @@ void format_string(const std::string& value,
       :  width;
 
   const std::string output =
-      csFormat("   le = %1|   ri = %2|   no = %3")
+      cs::Format("   le = %1|   ri = %2|   no = %3")
       .arg(value, -abswidth, fill)
       .arg(value,  abswidth, fill)
       .arg(value,         0, fill);
@@ -93,7 +93,7 @@ int main(int /*argc*/, char ** /*argv*/)
 
   format_test();
 
-  const std::string output = csFormat("%1 = %2") % "samurai" % 7;
+  const std::string output = cs::Format("%1 = %2") % "samurai" % 7;
   printf("%s\n", output.data());
 
   return EXIT_SUCCESS;
