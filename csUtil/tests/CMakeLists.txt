@@ -29,6 +29,10 @@ if(ENABLE_CHARCONV)
   cs_test(test_format src/test_format.cpp)
 endif()
 
+if(ENABLE_QT)
+  cs_test(test_wprogresslogger src/test_wprogresslogger.cpp)
+endif()
+
 if(ENABLE_UNICODE)
   cs_test(test_textconverter src/test_textconverter.cpp)
 endif()
