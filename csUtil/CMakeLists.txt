@@ -81,13 +81,17 @@ add_subdirectory(src-Math) # depends on SIMD
 add_subdirectory(src-System)
 add_subdirectory(src-Trie)
 
-if(ENABLE_UNICODE)
-  add_subdirectory(src-Unicode)
-endif()
-
 if(ENABLE_CHARCONV)
   add_subdirectory(src-CharConv)
   add_subdirectory(src-Format) # depends on CharConv
+endif()
+
+if(ENABLE_QT)
+  add_subdirectory(src-Qt)
+endif()
+
+if(ENABLE_UNICODE)
+  add_subdirectory(src-Unicode)
 endif()
 
 ### Interfaces ###############################################################
