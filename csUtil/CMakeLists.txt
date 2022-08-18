@@ -102,15 +102,15 @@ target_link_libraries(csUtilHeaders
   INTERFACE csTrie
   )
 
-if(ENABLE_UNICODE)
-  target_link_libraries(csUtilHeaders
-    INTERFACE csUnicode
-    )
-endif()
-
 if(ENABLE_CHARCONV)
   target_link_libraries(csUtilHeaders
     INTERFACE csFormat # includes CharConv
+    )
+endif()
+
+if(ENABLE_UNICODE)
+  target_link_libraries(csUtilHeaders
+    INTERFACE csUnicode
     )
 endif()
 
