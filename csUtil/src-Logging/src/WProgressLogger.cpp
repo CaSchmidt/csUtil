@@ -35,6 +35,7 @@
 #include "ui_WProgressLogger.h"
 
 #include "cs/Logging/IProgress.h"
+#include "cs/Qt/DialogButtonBox.h"
 
 namespace cs {
 
@@ -84,16 +85,6 @@ namespace cs {
       QProgressBar *_bar;
     };
 
-    bool removeAllButtons(QDialogButtonBox *box)
-    {
-      QList<QAbstractButton*> buttons = box->buttons();
-      for(QAbstractButton *button : buttons) {
-        box->removeButton(button);
-        delete button;
-      }
-      return box->buttons().isEmpty();
-    }
-
   } // namespace impl_prog
 
   ////// public //////////////////////////////////////////////////////////////
@@ -111,10 +102,9 @@ namespace cs {
     setWindowFlag(Qt::WindowCloseButtonHint, false);
     setWindowFlag(Qt::WindowContextHelpButtonHint, false);
 
-    impl_prog::removeAllButtons(ui->buttonBox);
+    removeAllButtons(ui->buttonBox);
 
-    ui->buttonBox->addButton(QDialogButtonBox::Cancel);
-    QPushButton *cancel = ui->buttonBox->button(QDialogButtonBox::Cancel);
+    QPushButton *cancel = addButton(ui->buttonBox, QDialogButtonBox::Cancel);
     if( cancel != nullptr ) {
       cancel->disconnect();
 
@@ -122,9 +112,6 @@ namespace cs {
 
       connect(cancel, &QPushButton::clicked, this, &WProgressLogger::rejected);
       connect(cancel, &QPushButton::clicked, this, &WProgressLogger::reject);
-
-      cancel->setAutoDefault(false);
-      cancel->setDefault(false);
     }
 
     // Signals & Slots ///////////////////////////////////////////////////////
@@ -170,18 +157,14 @@ namespace cs {
 
   void WProgressLogger::finish()
   {
-    impl_prog::removeAllButtons(ui->buttonBox);
+    removeAllButtons(ui->buttonBox);
 
-    ui->buttonBox->addButton(QDialogButtonBox::Close);
-    QPushButton *close = ui->buttonBox->button(QDialogButtonBox::Close);
+    QPushButton *close = addButton(ui->buttonBox, QDialogButtonBox::Close, true, true);
     if( close != nullptr ) {
       close->disconnect();
 
       connect(close, &QPushButton::clicked, this, &WProgressLogger::accepted);
       connect(close, &QPushButton::clicked, this, &WProgressLogger::accept);
-
-      close->setAutoDefault(true);
-      close->setDefault(true);
     }
   }
 
