@@ -35,16 +35,37 @@
 
 namespace cs {
 
+  namespace impl_btnbx {
+
+    void setDefaults(QPushButton *button,
+                     const bool set_auto_default, const bool set_default)
+    {
+      if( button == nullptr ) {
+        return;
+      }
+      button->setAutoDefault(set_auto_default);
+      button->setDefault(set_default);
+    }
+
+  } // namespace impl_btnbx
+
+  CS_UTIL_EXPORT QPushButton *addButton(QDialogButtonBox *box,
+                                        const QDialogButtonBox::StandardButton button,
+                                        const bool set_auto_default,
+                                        const bool set_default)
+  {
+    QPushButton *pb = box->addButton(button);
+    impl_btnbx::setDefaults(pb, set_auto_default, set_default);
+    return pb;
+  }
+
   CS_UTIL_EXPORT QPushButton *addButton(QDialogButtonBox *box, const QString& text,
                                         const QDialogButtonBox::ButtonRole role,
                                         const bool set_auto_default,
                                         const bool set_default)
   {
     QPushButton *pb = box->addButton(text, role);
-    if( pb != nullptr ) {
-      pb->setAutoDefault(set_auto_default);
-      pb->setDefault(set_default);
-    }
+    impl_btnbx::setDefaults(pb, set_auto_default, set_default);
     return pb;
   }
 

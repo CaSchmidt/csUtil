@@ -38,6 +38,11 @@
 
 namespace cs {
 
+  CS_UTIL_EXPORT QPushButton *addButton(QDialogButtonBox *box,
+                                        const QDialogButtonBox::StandardButton button,
+                                        const bool set_auto_default = false,
+                                        const bool set_default = false);
+
   CS_UTIL_EXPORT QPushButton *addButton(QDialogButtonBox *box, const QString& text,
                                         const QDialogButtonBox::ButtonRole role,
                                         const bool set_auto_default = false,
