@@ -37,9 +37,15 @@ target_include_directories(csLogging
   INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include
   )
 
-target_link_libraries(csLogging
-  INTERFACE csCore
-  )
+if(ENABLE_QT)
+  target_link_libraries(csLogging
+    INTERFACE csQt
+    )
+else()
+  target_link_libraries(csLogging
+    INTERFACE csCore
+    )
+endif()
 
 ### csUtil ###################################################################
 

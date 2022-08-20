@@ -75,7 +75,7 @@ endif()
 
 add_subdirectory(src-Core)
 add_subdirectory(src-IO)
-add_subdirectory(src-Logging)
+add_subdirectory(src-Logging) # optionally depends on Qt
 add_subdirectory(src-SIMD)
 add_subdirectory(src-Math) # depends on SIMD
 add_subdirectory(src-System)
@@ -100,7 +100,7 @@ add_library(csUtilHeaders INTERFACE)
 
 target_link_libraries(csUtilHeaders
   INTERFACE csIO
-  INTERFACE csLogging
+  INTERFACE csLogging # optionally includes Qt
   INTERFACE csMath # includes SIMD
   INTERFACE csSystem
   INTERFACE csTrie
