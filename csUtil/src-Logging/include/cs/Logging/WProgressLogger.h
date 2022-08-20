@@ -40,18 +40,19 @@
 
 #include <cs/Core/csutil_config.h>
 
-namespace Ui {
-  class WProgressLogger;
-} // namespace Ui
+class QDialogButtonBox;
 
 namespace cs {
 
   class ILogger;
   class IProgress;
+  class WLogger;
 
   namespace impl_prog {
     class IProgressImpl;
   } // namespace impl_prog
+
+  using ProgressPtr = std::unique_ptr<impl_prog::IProgressImpl>;
 
   class CS_UTIL_EXPORT WProgressLogger : public QDialog {
     Q_OBJECT
@@ -73,11 +74,12 @@ namespace cs {
     void monitorProgress(int value);
 
   private:
-    QProgressBar *progressBar();
+    void setupUi();
 
-    Ui::WProgressLogger *ui{nullptr};
-
-    std::unique_ptr<impl_prog::IProgressImpl> _progress{nullptr};
+    QDialogButtonBox *_buttonBox{nullptr};
+    WLogger          *_logger{nullptr};
+    ProgressPtr       _progress{nullptr};
+    QProgressBar     *_progressBar{nullptr};
 
   signals:
     void canceled();
@@ -102,9 +104,9 @@ namespace cs {
     connect(watcher, &QFutureWatcher<T>::finished,
             this, &WProgressLogger::finish);
     connect(watcher, &QFutureWatcher<T>::progressRangeChanged,
-            progressBar(), &QProgressBar::setRange);
+            _progressBar, &QProgressBar::setRange);
     connect(watcher, &QFutureWatcher<T>::progressValueChanged,
-            progressBar(), &QProgressBar::setValue);
+            _progressBar, &QProgressBar::setValue);
   }
 
 } // namespace cs

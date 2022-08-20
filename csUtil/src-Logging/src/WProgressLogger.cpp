@@ -29,14 +29,17 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <QtCore/QCoreApplication>
+#include <QtWidgets/QGroupBox>
 #include <QtWidgets/QPushButton>
 
 #include "cs/Logging/WProgressLogger.h"
-#include "ui_WProgressLogger.h"
 
 #include "cs/Logging/IProgress.h"
+#include "cs/Logging/WLogger.h"
 #include "cs/Qt/DialogButtonBox.h"
 #include "cs/Qt/FilterCancel.h"
+#include "cs/Qt/Layout.h"
 
 namespace cs {
 
@@ -92,20 +95,19 @@ namespace cs {
 
   WProgressLogger::WProgressLogger(QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
-    , ui{new Ui::WProgressLogger}
   {
-    ui->setupUi(this);
+    setupUi();
 
-    _progress = std::make_unique<impl_prog::IProgressImpl>(ui->progressBar);
+    _progress = std::make_unique<impl_prog::IProgressImpl>(_progressBar);
 
     // User Interface ////////////////////////////////////////////////////////
 
     setWindowFlag(Qt::WindowCloseButtonHint, false);
     setWindowFlag(Qt::WindowContextHelpButtonHint, false);
 
-    removeAllButtons(ui->buttonBox);
+    removeAllButtons(_buttonBox);
 
-    QPushButton *cancel = addButton(ui->buttonBox, QDialogButtonBox::Cancel);
+    QPushButton *cancel = addButton(_buttonBox, QDialogButtonBox::Cancel);
     if( cancel != nullptr ) {
       cancel->disconnect();
 
@@ -122,7 +124,7 @@ namespace cs {
 
     // Signals & Slots ///////////////////////////////////////////////////////
 
-    connect(ui->progressBar, &QProgressBar::valueChanged,
+    connect(_progressBar, &QProgressBar::valueChanged,
             this, &WProgressLogger::valueChanged);
     connect(this, &WProgressLogger::valueChanged,
             this, &WProgressLogger::monitorProgress);
@@ -130,12 +132,11 @@ namespace cs {
 
   WProgressLogger::~WProgressLogger()
   {
-    delete ui;
   }
 
   const ILogger *WProgressLogger::logger() const
   {
-    return ui->logBrowser;
+    return _logger;
   }
 
   const IProgress *WProgressLogger::progress() const
@@ -153,19 +154,19 @@ namespace cs {
     const int inc = dir >= 0
         ? 1
         : -1;
-    const int min = ui->progressBar->minimum();
-    const int val = ui->progressBar->value();
-    const int max = ui->progressBar->maximum();
-    ui->progressBar->setValue(qBound<int>(min, val + inc, max));
+    const int min = _progressBar->minimum();
+    const int val = _progressBar->value();
+    const int max = _progressBar->maximum();
+    _progressBar->setValue(qBound<int>(min, val + inc, max));
   }
 
   ////// private slots ///////////////////////////////////////////////////////
 
   void WProgressLogger::finish()
   {
-    removeAllButtons(ui->buttonBox);
+    removeAllButtons(_buttonBox);
 
-    QPushButton *close = addButton(ui->buttonBox, QDialogButtonBox::Close, true, true);
+    QPushButton *close = addButton(_buttonBox, QDialogButtonBox::Close, true, true);
     if( close != nullptr ) {
       close->disconnect();
 
@@ -176,16 +177,53 @@ namespace cs {
 
   void WProgressLogger::monitorProgress(int value)
   {
-    if( value >= ui->progressBar->maximum() ) {
+    if( value >= _progressBar->maximum() ) {
       finish();
     }
   }
 
   ////// private /////////////////////////////////////////////////////////////
 
-  QProgressBar *WProgressLogger::progressBar()
+  void WProgressLogger::setupUi()
   {
-    return ui->progressBar;
+    constexpr int MY_MARGIN  = 4;
+    constexpr int MY_SPACING = 4;
+
+    addLayout<QVBoxLayout>(this, MY_MARGIN, MY_SPACING);
+    resize(640, 480);
+
+    // (1) Progress //////////////////////////////////////////////////////////
+    {
+      QGroupBox *progressGroup = new QGroupBox(tr("Progress"), this);
+      layout()->addWidget(progressGroup);
+
+      addLayout<QVBoxLayout>(progressGroup, MY_MARGIN, MY_SPACING);
+
+      _progressBar = new QProgressBar(progressGroup);
+      progressGroup->layout()->addWidget(_progressBar);
+    }
+
+    // (2) Output ////////////////////////////////////////////////////////////
+    {
+      QGroupBox *outputGroup = new QGroupBox(tr("Output"), this);
+      layout()->addWidget(outputGroup);
+
+      addLayout<QVBoxLayout>(outputGroup, MY_MARGIN, MY_SPACING);
+
+      _logger = new WLogger(outputGroup);
+      outputGroup->layout()->addWidget(_logger);
+    }
+
+    // (3) Button Box ////////////////////////////////////////////////////////
+    {
+      _buttonBox = new QDialogButtonBox(this);
+      layout()->addWidget(_buttonBox);
+    }
+
+    // Tab Order /////////////////////////////////////////////////////////////
+
+    QWidget::setTabOrder(_progressBar, _logger);
+    QWidget::setTabOrder(_logger, _buttonBox);
   }
 
 } // namespace cs
