@@ -29,8 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef FILTERCANCEL_H
-#define FILTERCANCEL_H
+#ifndef CS_FILTERCANCEL_H
+#define CS_FILTERCANCEL_H
 
 #include <QtCore/QObject>
 
@@ -49,4 +49,4 @@ namespace cs {
 
 } // namespace cs
 
-#endif // FILTERCANCEL_H
+#endif // CS_FILTERCANCEL_H

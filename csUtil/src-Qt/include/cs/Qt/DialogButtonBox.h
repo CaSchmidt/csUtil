@@ -29,8 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef DIALOGBUTTONBOX_H
-#define DIALOGBUTTONBOX_H
+#ifndef CS_DIALOGBUTTONBOX_H
+#define CS_DIALOGBUTTONBOX_H
 
 #include <QtWidgets/QDialogButtonBox>
 
@@ -54,4 +54,4 @@ namespace cs {
 
 } // namespace cs
 
-#endif // DIALOGBUTTONBOX_H
+#endif // CS_DIALOGBUTTONBOX_H
