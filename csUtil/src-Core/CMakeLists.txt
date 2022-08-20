@@ -18,22 +18,14 @@ if(ENABLE_QT)
     )
 endif()
 
-### Interface ################################################################
-
-add_library(csCore INTERFACE)
-
-target_include_directories(csCore
-  INTERFACE ${csUtil_BINARY_DIR}/include
-  INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include
-  )
-
 ### csUtil ###################################################################
 
-target_sources(csUtilLib
+target_sources(csUtil
   PRIVATE ${csCore_HEADERS}
   PRIVATE ${csCore_SOURCES}
   )
 
-target_link_libraries(csUtilLib
-  PRIVATE csCore
+target_include_directories(csUtil
+  PUBLIC ${csUtil_BINARY_DIR}/include
+  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
   )

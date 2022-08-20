@@ -7,25 +7,13 @@ list(APPEND csFormat_SOURCES
   src/main_format.cpp
   )
 
-### Interface ################################################################
-
-add_library(csFormat INTERFACE)
-
-target_include_directories(csFormat
-  INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include
-  )
-
-target_link_libraries(csFormat
-  INTERFACE csCharConv
-  )
-
 ### csUtil ###################################################################
 
-target_sources(csUtilLib
+target_sources(csUtil
   PRIVATE ${csFormat_HEADERS}
   PRIVATE ${csFormat_SOURCES}
   )
 
-target_link_libraries(csUtilLib
-  PRIVATE csFormat
+target_include_directories(csUtil
+  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
   )

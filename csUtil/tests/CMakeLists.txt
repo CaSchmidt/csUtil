@@ -10,7 +10,7 @@ macro(cs_test target)
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
     PRIVATE ${csUtil_SOURCE_DIR}/testutils/include
     )
-  target_link_libraries(${target} csUtilHeaders csUtilLib)
+  target_link_libraries(${target} csUtil)
 endmacro()
 
 ### Tests ####################################################################

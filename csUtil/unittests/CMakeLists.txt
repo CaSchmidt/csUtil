@@ -16,7 +16,7 @@ macro(cs_unittest target)
     PRIVATE ${csUtil_SOURCE_DIR}/3rdparty/catch2/include
     PRIVATE ${csUtil_SOURCE_DIR}/testutils/include
     )
-  target_link_libraries(${target} csUtilHeaders csUtilLib)
+  target_link_libraries(${target} csUtil)
 endmacro()
 
 ### Unit Tests ###############################################################

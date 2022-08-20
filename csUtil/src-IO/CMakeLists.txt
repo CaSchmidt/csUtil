@@ -23,25 +23,13 @@ if(WIN32)
     )
 endif()
 
-### Interfaces ###############################################################
-
-add_library(csIO INTERFACE)
-
-target_include_directories(csIO
-  INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include
-  )
-
-target_link_libraries(csIO
-  INTERFACE csCore
-  )
-
 ### csUtil ###################################################################
 
-target_sources(csUtilLib
+target_sources(csUtil
   PRIVATE ${csIO_HEADERS}
   PRIVATE ${csIO_SOURCES}
   )
 
-target_link_libraries(csUtilLib
-  PRIVATE csIO
+target_include_directories(csUtil
+  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
   )

@@ -7,25 +7,13 @@ list(APPEND csSystem_SOURCES
   src/Time.cpp
   )
 
-### Interface ################################################################
-
-add_library(csSystem INTERFACE)
-
-target_include_directories(csSystem
-  INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include
-  )
-
-target_link_libraries(csSystem
-  INTERFACE csCore
-  )
-
 ### csUtil ###################################################################
 
-target_sources(csUtilLib
+target_sources(csUtil
   PRIVATE ${csSystem_HEADERS}
   PRIVATE ${csSystem_SOURCES}
   )
 
-target_link_libraries(csUtilLib
-  PRIVATE csSystem
+target_include_directories(csUtil
+  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
   )

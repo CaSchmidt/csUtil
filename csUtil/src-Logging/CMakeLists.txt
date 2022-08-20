@@ -26,31 +26,13 @@ if(ENABLE_QT)
     )
 endif()
 
-### Interface ################################################################
-
-add_library(csLogging INTERFACE)
-
-target_include_directories(csLogging
-  INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include
-  )
-
-if(ENABLE_QT)
-  target_link_libraries(csLogging
-    INTERFACE csQt
-    )
-else()
-  target_link_libraries(csLogging
-    INTERFACE csCore
-    )
-endif()
-
 ### csUtil ###################################################################
 
-target_sources(csUtilLib
+target_sources(csUtil
   PRIVATE ${csLogging_HEADERS}
   PRIVATE ${csLogging_SOURCES}
   )
 
-target_link_libraries(csUtilLib
-  PRIVATE csLogging
+target_include_directories(csUtil
+  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
   )

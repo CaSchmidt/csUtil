@@ -12,25 +12,13 @@ list(APPEND csTrie_SOURCES
   src/Trie.cpp
   )
 
-### Interface ################################################################
-
-add_library(csTrie INTERFACE)
-
-target_include_directories(csTrie
-  INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include
-  )
-
-target_link_libraries(csTrie
-  INTERFACE csCore
-  )
-
 ### csUtil ###################################################################
 
-target_sources(csUtilLib
+target_sources(csUtil
   PRIVATE ${csTrie_HEADERS}
   PRIVATE ${csTrie_SOURCES}
   )
 
-target_link_libraries(csUtilLib
-  PRIVATE csTrie
+target_include_directories(csUtil
+  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
   )

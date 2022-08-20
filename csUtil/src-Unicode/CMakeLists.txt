@@ -13,26 +13,17 @@ add_subdirectory(${csUtil_SOURCE_DIR}/3rdparty/icu-651
   ${csUtil_BINARY_DIR}/3rdparty/icu-651
   )
 
-### Interface ################################################################
-
-add_library(csUnicode INTERFACE)
-
-target_include_directories(csUnicode
-  INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include
-  )
-
-target_link_libraries(csUnicode
-  INTERFACE csCore
-  )
-
 ### csUtil ###################################################################
 
-target_sources(csUtilLib
+target_sources(csUtil
   PRIVATE ${csUnicode_HEADERS}
   PRIVATE ${csUnicode_SOURCES}
   )
 
-target_link_libraries(csUtilLib
+target_include_directories(csUtil
+  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+  )
+
+target_link_libraries(csUtil
   PRIVATE icu
-  PRIVATE csUnicode
   )
