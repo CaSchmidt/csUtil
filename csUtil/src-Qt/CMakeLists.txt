@@ -1,6 +1,7 @@
 list(APPEND csQt_HEADERS
   include/cs/Qt/DialogButtonBox.h
   include/cs/Qt/FilterCancel.h
+  include/cs/Qt/Layout.h
   )
 
 list(APPEND csQt_SOURCES
