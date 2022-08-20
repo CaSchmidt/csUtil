@@ -36,6 +36,7 @@
 
 #include "cs/Logging/IProgress.h"
 #include "cs/Qt/DialogButtonBox.h"
+#include "cs/Qt/FilterCancel.h"
 
 namespace cs {
 
@@ -113,6 +114,11 @@ namespace cs {
       connect(cancel, &QPushButton::clicked, this, &WProgressLogger::rejected);
       connect(cancel, &QPushButton::clicked, this, &WProgressLogger::reject);
     }
+
+    // Event Filter //////////////////////////////////////////////////////////
+
+    FilterCancel *filter = new FilterCancel(this);
+    installEventFilter(filter);
 
     // Signals & Slots ///////////////////////////////////////////////////////
 
