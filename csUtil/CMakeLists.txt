@@ -53,6 +53,11 @@ target_compile_definitions(csUtil
   )
 
 if(ENABLE_QT)
+  target_compile_definitions(csUtil
+    PRIVATE QT_NO_CAST_FROM_ASCII
+    PRIVATE QT_NO_CAST_TO_ASCII
+    )
+
   target_link_libraries(csUtil
     PUBLIC Qt5::Widgets
     )
