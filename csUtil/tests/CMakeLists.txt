@@ -11,6 +11,18 @@ macro(cs_test target)
     PRIVATE ${csUtil_SOURCE_DIR}/testutils/include
     )
   target_link_libraries(${target} csUtil)
+  if(ENABLE_QT)
+    target_compile_definitions(${target} PRIVATE
+      QT_NO_CAST_FROM_ASCII
+      QT_NO_CAST_TO_ASCII
+      )
+    set_target_properties(${target} PROPERTIES
+      AUTOMOC ON
+      AUTORCC ON
+      AUTOUIC ON
+      AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/forms
+      )
+  endif()
 endmacro()
 
 ### Tests ####################################################################
@@ -30,6 +42,8 @@ if(ENABLE_CHARCONV)
 endif()
 
 if(ENABLE_QT)
+  cs_test(test_imagetip forms/imagetip.ui include/imagetip.h src/imagetip.cpp src/test_imagetip.cpp)
+  cs_test(test_tree src/test_tree.cpp)
   cs_test(test_wprogresslogger src/test_wprogresslogger.cpp)
 endif()
 
