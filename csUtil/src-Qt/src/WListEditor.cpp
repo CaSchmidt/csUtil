@@ -34,95 +34,99 @@
 
 #include "cs/Qt/Widget.h"
 
-////// public ////////////////////////////////////////////////////////////////
+namespace cs {
 
-csWListEditor::csWListEditor(QWidget *parent, Qt::WindowFlags f)
-  : QWidget(parent, f)
-  , ui{new Ui::csWListEditor}
-{
-  ui->setupUi(this);
+  ////// public //////////////////////////////////////////////////////////////
 
-  // Signals & Slots /////////////////////////////////////////////////////////
+  WListEditor::WListEditor(QWidget *parent, Qt::WindowFlags f)
+    : QWidget(parent, f)
+    , ui{new Ui::WListEditor}
+  {
+    ui->setupUi(this);
 
-  connect(ui->addButton,    &QPushButton::clicked, this, &csWListEditor::onAdd);
-  connect(ui->downButton,   &QPushButton::clicked, this, &csWListEditor::onDown);
-  connect(ui->removeButton, &QPushButton::clicked, this, &csWListEditor::onRemove);
-  connect(ui->upButton,     &QPushButton::clicked, this, &csWListEditor::onUp);
-}
+    // Signals & Slots ///////////////////////////////////////////////////////
 
-csWListEditor::~csWListEditor()
-{
-  delete ui;
-}
-
-////// protected /////////////////////////////////////////////////////////////
-
-const QPushButton *csWListEditor::button(const Button id) const
-{
-  return const_cast<csWListEditor*>(this)->button(id);
-}
-
-QPushButton *csWListEditor::button(const Button id)
-{
-  if(        id == Add ) {
-    return ui->addButton;
-  } else if( id == Down ) {
-    return ui->downButton;
-  } else if( id == Remove ) {
-    return ui->removeButton;
-  } else if( id == Up ) {
-    return ui->upButton;
+    connect(ui->addButton,    &QPushButton::clicked, this, &WListEditor::onAdd);
+    connect(ui->downButton,   &QPushButton::clicked, this, &WListEditor::onDown);
+    connect(ui->removeButton, &QPushButton::clicked, this, &WListEditor::onRemove);
+    connect(ui->upButton,     &QPushButton::clicked, this, &WListEditor::onUp);
   }
-  return nullptr;
-}
 
-void csWListEditor::setShowContextMenu(const bool on)
-{
-  if( on ) {
-    ui->listView->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(ui->listView, &QListView::customContextMenuRequested,
-            this, &csWListEditor::showContextMenu);
-  } else {
-    ui->listView->setContextMenuPolicy(Qt::NoContextMenu);
-    disconnect(ui->listView, &QListView::customContextMenuRequested,
-               this, &csWListEditor::showContextMenu);
+  WListEditor::~WListEditor()
+  {
+    delete ui;
   }
-}
 
-const QListView *csWListEditor::view() const
-{
-  return ui->listView;
-}
+  ////// protected ///////////////////////////////////////////////////////////
 
-QListView *csWListEditor::view()
-{
-  return ui->listView;
-}
+  const QPushButton *WListEditor::button(const Button id) const
+  {
+    return const_cast<WListEditor*>(this)->button(id);
+  }
 
-////// private slots /////////////////////////////////////////////////////////
+  QPushButton *WListEditor::button(const Button id)
+  {
+    if(        id == Add ) {
+      return ui->addButton;
+    } else if( id == Down ) {
+      return ui->downButton;
+    } else if( id == Remove ) {
+      return ui->removeButton;
+    } else if( id == Up ) {
+      return ui->upButton;
+    }
+    return nullptr;
+  }
 
-void csWListEditor::onAdd()
-{
-}
+  void WListEditor::setShowContextMenu(const bool on)
+  {
+    if( on ) {
+      ui->listView->setContextMenuPolicy(Qt::CustomContextMenu);
+      connect(ui->listView, &QListView::customContextMenuRequested,
+              this, &WListEditor::showContextMenu);
+    } else {
+      ui->listView->setContextMenuPolicy(Qt::NoContextMenu);
+      disconnect(ui->listView, &QListView::customContextMenuRequested,
+                 this, &WListEditor::showContextMenu);
+    }
+  }
 
-void csWListEditor::onContextMenu(const QPoint& globalPos)
-{
-  Q_UNUSED(globalPos);
-}
+  const QListView *WListEditor::view() const
+  {
+    return ui->listView;
+  }
 
-void csWListEditor::onDown()
-{
-}
+  QListView *WListEditor::view()
+  {
+    return ui->listView;
+  }
 
-void csWListEditor::onRemove()
-{
-}
+  ////// private slots ///////////////////////////////////////////////////////
 
-void csWListEditor::onUp()
-{
-}
+  void WListEditor::onAdd()
+  {
+  }
 
-void csWListEditor::showContextMenu(const QPoint& p)
-{
-  onContextMenu(cs::mapToGlobal(ui->listView, p));
-}
+  void WListEditor::onContextMenu(const QPoint& globalPos)
+  {
+    Q_UNUSED(globalPos);
+  }
+
+  void WListEditor::onDown()
+  {
+  }
+
+  void WListEditor::onRemove()
+  {
+  }
+
+  void WListEditor::onUp()
+  {
+  }
+
+  void WListEditor::showContextMenu(const QPoint& p)
+  {
+    onContextMenu(cs::mapToGlobal(ui->listView, p));
+  }
+
+} // namespace cs

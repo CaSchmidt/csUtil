@@ -40,42 +40,46 @@ class QListView;
 class QPushButton;
 
 namespace Ui {
-  class csWListEditor;
+  class WListEditor;
 } // namespace Ui
 
-class CS_UTIL_EXPORT csWListEditor : public QWidget {
-  Q_OBJECT
-public:
-  csWListEditor(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
-  ~csWListEditor();
+namespace cs {
 
-private slots:
-  virtual void onAdd();
-  virtual void onContextMenu(const QPoint& globalPos);
-  virtual void onDown();
-  virtual void onRemove();
-  virtual void onUp();
+  class CS_UTIL_EXPORT WListEditor : public QWidget {
+    Q_OBJECT
+  public:
+    WListEditor(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
+    ~WListEditor();
 
-  void showContextMenu(const QPoint& p);
+  private slots:
+    virtual void onAdd();
+    virtual void onContextMenu(const QPoint& globalPos);
+    virtual void onDown();
+    virtual void onRemove();
+    virtual void onUp();
 
-protected:
-  enum Button {
-    Add = 0,
-    Down,
-    Remove,
-    Up
+    void showContextMenu(const QPoint& p);
+
+  protected:
+    enum Button {
+      Add = 0,
+      Down,
+      Remove,
+      Up
+    };
+
+    const QPushButton *button(const Button id) const;
+    QPushButton *button(const Button id);
+
+    void setShowContextMenu(const bool on);
+
+    const QListView *view() const;
+    QListView *view();
+
+  private:
+    Ui::WListEditor *ui{nullptr};
   };
 
-  const QPushButton *button(const Button id) const;
-  QPushButton *button(const Button id);
-
-  void setShowContextMenu(const bool on);
-
-  const QListView *view() const;
-  QListView *view();
-
-private:
-  Ui::csWListEditor *ui{nullptr};
-};
+} // namespace cs
 
 #endif // CS_WLISTEDITOR_H

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>csWListEditor</class>
- <widget class="QWidget" name="csWListEditor">
+ <class>WListEditor</class>
+ <widget class="QWidget" name="WListEditor">
   <property name="geometry">
    <rect>
     <x>0</x>
