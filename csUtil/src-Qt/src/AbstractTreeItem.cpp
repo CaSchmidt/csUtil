@@ -33,78 +33,82 @@
 
 #include "cs/Qt/AbstractTreeItem.h"
 
-////// Public ////////////////////////////////////////////////////////////////
+namespace cs {
 
-CS_UTIL_EXPORT csAbstractTreeItem *csTreeItem(const QModelIndex& index)
-{
-  return static_cast<csAbstractTreeItem*>(index.internalPointer());
-}
+  ////// Public //////////////////////////////////////////////////////////////
 
-////// public ////////////////////////////////////////////////////////////////
-
-csAbstractTreeItem::csAbstractTreeItem(csAbstractTreeItem *parent)
-  : _children()
-  , _parent(parent)
-{
-}
-
-csAbstractTreeItem::~csAbstractTreeItem()
-{
-  qDeleteAll(_children);
-}
-
-void csAbstractTreeItem::appendChild(csAbstractTreeItem *child)
-{
-  if( child != nullptr ) {
-    child->_parent = this;
-    _children.append(child);
+  CS_UTIL_EXPORT AbstractTreeItem *csTreeItem(const QModelIndex& index)
+  {
+    return static_cast<AbstractTreeItem*>(index.internalPointer());
   }
-}
 
-void csAbstractTreeItem::insertChild(int row, csAbstractTreeItem *child)
-{
-  if( child != nullptr ) {
-    child->_parent = this;
-    _children.insert(row, child);
+  ////// public //////////////////////////////////////////////////////////////
+
+  AbstractTreeItem::AbstractTreeItem(AbstractTreeItem *parent)
+    : _children()
+    , _parent(parent)
+  {
   }
-}
 
-csAbstractTreeItem *csAbstractTreeItem::takeChild(int row)
-{
-  if( row < 0  ||  row >= _children.size() ) {
-    return nullptr;
+  AbstractTreeItem::~AbstractTreeItem()
+  {
+    qDeleteAll(_children);
   }
-  csAbstractTreeItem *child = _children.takeAt(row);
-  child->_parent = nullptr;
-  return child;
-}
 
-void csAbstractTreeItem::removeChild(int row)
-{
-  if( row >= 0  &&  row < _children.size() ) {
-    delete _children.takeAt(row);
+  void AbstractTreeItem::appendChild(AbstractTreeItem *child)
+  {
+    if( child != nullptr ) {
+      child->_parent = this;
+      _children.append(child);
+    }
   }
-}
 
-csAbstractTreeItem *csAbstractTreeItem::childItem(int row) const
-{
-  return _children.value(row, nullptr);
-}
-
-csAbstractTreeItem *csAbstractTreeItem::parentItem() const
-{
-  return _parent;
-}
-
-int csAbstractTreeItem::row() const
-{
-  if( _parent != nullptr ) {
-    return _parent->_children.indexOf(const_cast<csAbstractTreeItem*>(this));
+  void AbstractTreeItem::insertChild(int row, AbstractTreeItem *child)
+  {
+    if( child != nullptr ) {
+      child->_parent = this;
+      _children.insert(row, child);
+    }
   }
-  return 0;
-}
 
-int csAbstractTreeItem::rowCount() const
-{
-  return _children.size();
-}
+  AbstractTreeItem *AbstractTreeItem::takeChild(int row)
+  {
+    if( row < 0  ||  row >= _children.size() ) {
+      return nullptr;
+    }
+    AbstractTreeItem *child = _children.takeAt(row);
+    child->_parent = nullptr;
+    return child;
+  }
+
+  void AbstractTreeItem::removeChild(int row)
+  {
+    if( row >= 0  &&  row < _children.size() ) {
+      delete _children.takeAt(row);
+    }
+  }
+
+  AbstractTreeItem *AbstractTreeItem::childItem(int row) const
+  {
+    return _children.value(row, nullptr);
+  }
+
+  AbstractTreeItem *AbstractTreeItem::parentItem() const
+  {
+    return _parent;
+  }
+
+  int AbstractTreeItem::row() const
+  {
+    if( _parent != nullptr ) {
+      return _parent->_children.indexOf(const_cast<AbstractTreeItem*>(this));
+    }
+    return 0;
+  }
+
+  int AbstractTreeItem::rowCount() const
+  {
+    return _children.size();
+  }
+
+} // namespace cs

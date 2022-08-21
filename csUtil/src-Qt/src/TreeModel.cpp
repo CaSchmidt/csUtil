@@ -33,110 +33,114 @@
 
 #include "cs/Qt/AbstractTreeItem.h"
 
-////// public ////////////////////////////////////////////////////////////////
+namespace cs {
 
-csTreeModel::csTreeModel(csAbstractTreeItem *rootItem, QObject *parent)
-  : QAbstractItemModel(parent)
-  , _root(rootItem)
-{
-}
+  ////// public //////////////////////////////////////////////////////////////
 
-csTreeModel::~csTreeModel()
-{
-}
-
-csAbstractTreeItem *csTreeModel::root() const
-{
-  return _root.get();
-}
-
-void csTreeModel::setRoot(csAbstractTreeItem *rootItem)
-{
-  if( rootItem == nullptr ) {
-    return;
+  TreeModel::TreeModel(AbstractTreeItem *rootItem, QObject *parent)
+    : QAbstractItemModel(parent)
+    , _root(rootItem)
+  {
   }
-  beginResetModel();
-  _root.reset(rootItem);
-  endResetModel();
-}
 
-int csTreeModel::columnCount(const QModelIndex& parent) const
-{
-  if( parent.isValid() ) {
-    return csTreeItem(parent)->columnCount();
+  TreeModel::~TreeModel()
+  {
   }
-  return _root->columnCount();
-}
 
-QVariant csTreeModel::data(const QModelIndex& index, int role) const
-{
-  if( !index.isValid() ) {
+  AbstractTreeItem *TreeModel::root() const
+  {
+    return _root.get();
+  }
+
+  void TreeModel::setRoot(AbstractTreeItem *rootItem)
+  {
+    if( rootItem == nullptr ) {
+      return;
+    }
+    beginResetModel();
+    _root.reset(rootItem);
+    endResetModel();
+  }
+
+  int TreeModel::columnCount(const QModelIndex& parent) const
+  {
+    if( parent.isValid() ) {
+      return csTreeItem(parent)->columnCount();
+    }
+    return _root->columnCount();
+  }
+
+  QVariant TreeModel::data(const QModelIndex& index, int role) const
+  {
+    if( !index.isValid() ) {
+      return QVariant();
+    }
+    return csTreeItem(index)->data(index.column(), role);
+  }
+
+  Qt::ItemFlags TreeModel::flags(const QModelIndex& index) const
+  {
+    if( !index.isValid() ) {
+      return Qt::NoItemFlags;
+    }
+    return QAbstractItemModel::flags(index);
+  }
+
+  QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
+                                 int role) const
+  {
+    if( orientation == Qt::Horizontal ) {
+      return _root->data(section, role);
+    }
     return QVariant();
   }
-  return csTreeItem(index)->data(index.column(), role);
-}
 
-Qt::ItemFlags csTreeModel::flags(const QModelIndex& index) const
-{
-  if( !index.isValid() ) {
-    return Qt::NoItemFlags;
-  }
-  return QAbstractItemModel::flags(index);
-}
-
-QVariant csTreeModel::headerData(int section, Qt::Orientation orientation,
-                                 int role) const
-{
-  if( orientation == Qt::Horizontal ) {
-    return _root->data(section, role);
-  }
-  return QVariant();
-}
-
-QModelIndex csTreeModel::index(int row, int column,
+  QModelIndex TreeModel::index(int row, int column,
                                const QModelIndex& parent) const
-{
-  if( !hasIndex(row, column, parent) ) {
+  {
+    if( !hasIndex(row, column, parent) ) {
+      return QModelIndex();
+    }
+
+    AbstractTreeItem *parentItem = parent.isValid()
+        ? csTreeItem(parent)
+        : _root.get();
+
+    AbstractTreeItem *childItem = parentItem->childItem(row);
+    if( childItem != nullptr ) {
+      return createIndex(row, column, childItem);
+    }
+
     return QModelIndex();
   }
 
-  csAbstractTreeItem *parentItem = parent.isValid()
-      ? csTreeItem(parent)
-      : _root.get();
+  QModelIndex TreeModel::parent(const QModelIndex& child) const
+  {
+    if( !child.isValid() ) {
+      return QModelIndex();
+    }
 
-  csAbstractTreeItem *childItem = parentItem->childItem(row);
-  if( childItem != nullptr ) {
-    return createIndex(row, column, childItem);
+    AbstractTreeItem  *childItem = csTreeItem(child);
+    AbstractTreeItem *parentItem = childItem->parentItem();
+
+    if( parentItem == _root.get() ) {
+      return QModelIndex();
+    }
+
+    return createIndex(parentItem->row(), 0, parentItem);
   }
 
-  return QModelIndex();
-}
+  int TreeModel::rowCount(const QModelIndex& parent) const
+  {
+    if( parent.column() > 0 ) {
+      return 0;
+    }
 
-QModelIndex csTreeModel::parent(const QModelIndex& child) const
-{
-  if( !child.isValid() ) {
-    return QModelIndex();
+    AbstractTreeItem *parentItem = parent.isValid()
+        ? csTreeItem(parent)
+        : _root.get();
+
+    return parentItem->rowCount();
   }
 
-  csAbstractTreeItem  *childItem = csTreeItem(child);
-  csAbstractTreeItem *parentItem = childItem->parentItem();
-
-  if( parentItem == _root.get() ) {
-    return QModelIndex();
-  }
-
-  return createIndex(parentItem->row(), 0, parentItem);
-}
-
-int csTreeModel::rowCount(const QModelIndex& parent) const
-{
-  if( parent.column() > 0 ) {
-    return 0;
-  }
-
-  csAbstractTreeItem *parentItem = parent.isValid()
-      ? csTreeItem(parent)
-      : _root.get();
-
-  return parentItem->rowCount();
-}
+} // namespace cs

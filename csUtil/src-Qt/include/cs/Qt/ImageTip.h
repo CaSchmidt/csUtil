@@ -40,24 +40,28 @@ class QImage;
 class QPoint;
 class QWidget;
 
-class CS_UTIL_EXPORT csImageTip {
-public:
-  enum Flag {
-    NoFlags       = 0x00,
-    ForcePosition = 0x01,
-    DrawBorder    = 0x02,
-    NoEffects     = 0x04
+namespace cs {
+
+  class CS_UTIL_EXPORT ImageTip {
+  public:
+    enum Flag {
+      NoFlags       = 0x00,
+      ForcePosition = 0x01,
+      DrawBorder    = 0x02,
+      NoEffects     = 0x04
+    };
+    Q_DECLARE_FLAGS(Flags, Flag)
+
+    static void showImage(const QPoint& globalPos, const QImage& image,
+                          QWidget *widget = nullptr,
+                          const ImageTip::Flags flags = ImageTip::NoFlags);
+
+  private:
+    ImageTip();
   };
-  Q_DECLARE_FLAGS(Flags, Flag)
 
-  static void showImage(const QPoint& globalPos, const QImage& image,
-                        QWidget *widget = nullptr,
-                        const csImageTip::Flags flags = csImageTip::NoFlags);
+} // namespace cs
 
-private:
-  csImageTip();
-};
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(csImageTip::Flags)
+Q_DECLARE_OPERATORS_FOR_FLAGS(cs::ImageTip::Flags)
 
 #endif // CS_IMAGETIP_H

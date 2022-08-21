@@ -44,171 +44,175 @@
 
 #include "cs/Qt/Widget.h"
 
-////// Private ///////////////////////////////////////////////////////////////
+namespace cs {
 
-class csTipWidget : public QWidget {
-  Q_OBJECT
-public:
-  csTipWidget(const QImage& image,
-              const csImageTip::Flags flags = csImageTip::NoFlags,
+  ////// Private /////////////////////////////////////////////////////////////
+
+  class TipWidget : public QWidget {
+    Q_OBJECT
+  public:
+    TipWidget(const QImage& image,
+              const ImageTip::Flags flags = ImageTip::NoFlags,
               QWidget *parent = nullptr, Qt::WindowFlags winFlags = 0);
-  ~csTipWidget();
+    ~TipWidget();
 
-  static csTipWidget *instance;
+    static TipWidget *instance;
 
-  bool eventFilter(QObject *watched, QEvent *event);
-  void hideTip();
-  void placeTip(const QPoint& globalPos, QWidget *widget);
+    bool eventFilter(QObject *watched, QEvent *event);
+    void hideTip();
+    void placeTip(const QPoint& globalPos, QWidget *widget);
 
-protected:
-  void paintEvent(QPaintEvent *event);
+  protected:
+    void paintEvent(QPaintEvent *event);
 
-private:
-  QPixmap pixmap;
-};
+  private:
+    QPixmap pixmap;
+  };
 
-csTipWidget *csTipWidget::instance = nullptr;
+  TipWidget *TipWidget::instance = nullptr;
 
-csTipWidget::csTipWidget(const QImage& image,
-                         const csImageTip::Flags flags,
-                         QWidget *parent, Qt::WindowFlags)
-  : QWidget(parent,
-            Qt::ToolTip | Qt::BypassGraphicsProxyWidget | Qt::FramelessWindowHint)
-  , pixmap()
-{
-  delete instance;
-  instance = this;
+  TipWidget::TipWidget(const QImage& image,
+                       const ImageTip::Flags flags,
+                       QWidget *parent, Qt::WindowFlags)
+    : QWidget(parent,
+              Qt::ToolTip | Qt::BypassGraphicsProxyWidget | Qt::FramelessWindowHint)
+    , pixmap()
+  {
+    delete instance;
+    instance = this;
 
-  setAttribute(Qt::WA_TranslucentBackground, true);
-  setObjectName(QLatin1String("csTipWidget"));
+    setAttribute(Qt::WA_TranslucentBackground, true);
+    setObjectName(QLatin1String("csTipWidget"));
 
-  pixmap = QPixmap::fromImage(image);
-  if( flags.testFlag(csImageTip::DrawBorder) ) {
-    QPainter painter(&pixmap);
-    painter.setBackgroundMode(Qt::TransparentMode);
-    painter.setBackground(QBrush(Qt::NoBrush));
-    painter.setBrush(QBrush(Qt::NoBrush));
-    painter.setPen(QPen(QBrush(Qt::black, Qt::SolidPattern),
-                        0, Qt::SolidLine));
-    painter.drawRect(0, 0, image.width()-1, image.height()-1);
+    pixmap = QPixmap::fromImage(image);
+    if( flags.testFlag(ImageTip::DrawBorder) ) {
+      QPainter painter(&pixmap);
+      painter.setBackgroundMode(Qt::TransparentMode);
+      painter.setBackground(QBrush(Qt::NoBrush));
+      painter.setBrush(QBrush(Qt::NoBrush));
+      painter.setPen(QPen(QBrush(Qt::black, Qt::SolidPattern),
+                          0, Qt::SolidLine));
+      painter.drawRect(0, 0, image.width()-1, image.height()-1);
+    }
+
+    resize(pixmap.width(), pixmap.height());
+
+    setMouseTracking(true);
+
+    QApplication::instance()->installEventFilter(this);
   }
 
-  resize(pixmap.width(), pixmap.height());
-
-  setMouseTracking(true);
-
-  QApplication::instance()->installEventFilter(this);
-}
-
-csTipWidget::~csTipWidget()
-{
-  instance = nullptr;
-}
-
-bool csTipWidget::eventFilter(QObject *, QEvent *event)
-{
-  switch( event->type() ) {
-  // NOTE: If the Image ToolTip is Placed with ZERO Offset to the
-  //       Mouse's Cursor, the Image Will be immediately Hidden
-  //       Due to FocusIn/Out, Leave, WindowActivate/Deactivate
-  //       Events Passed to This Widget.
-  case QEvent::FocusIn:
-  case QEvent::FocusOut:
-  case QEvent::KeyPress:
-  case QEvent::KeyRelease:
-  case QEvent::Leave:
-  case QEvent::MouseButtonDblClick:
-  case QEvent::MouseButtonPress:
-  case QEvent::MouseButtonRelease:
-  case QEvent::MouseMove:
-  case QEvent::Wheel:
-  case QEvent::WindowActivate:
-  case QEvent::WindowDeactivate:
-    hideTip();
-    break;
-
-  default:
-    break;
+  TipWidget::~TipWidget()
+  {
+    instance = nullptr;
   }
 
-  return false;
-}
+  bool TipWidget::eventFilter(QObject *, QEvent *event)
+  {
+    switch( event->type() ) {
+    // NOTE: If the Image ToolTip is Placed with ZERO Offset to the
+    //       Mouse's Cursor, the Image Will be immediately Hidden
+    //       Due to FocusIn/Out, Leave, WindowActivate/Deactivate
+    //       Events Passed to This Widget.
+    case QEvent::FocusIn:
+    case QEvent::FocusOut:
+    case QEvent::KeyPress:
+    case QEvent::KeyRelease:
+    case QEvent::Leave:
+    case QEvent::MouseButtonDblClick:
+    case QEvent::MouseButtonPress:
+    case QEvent::MouseButtonRelease:
+    case QEvent::MouseMove:
+    case QEvent::Wheel:
+    case QEvent::WindowActivate:
+    case QEvent::WindowDeactivate:
+      hideTip();
+      break;
 
-void csTipWidget::hideTip()
-{
-  close();
-  deleteLater();
-}
+    default:
+      break;
+    }
 
-void csTipWidget::placeTip(const QPoint& globalPos, QWidget *widget)
-{
-  const QPoint offset(8, 8);
-
-  QPoint placePos(offset+globalPos);
-
-  const QRect screenRect = cs::screenGeometry(globalPos, widget);
-
-  if( placePos.x() + width() > screenRect.right()  &&
-      width() < screenRect.width() ) {
-    placePos.rx() = globalPos.x() - offset.x() - width();
+    return false;
   }
 
-  if( placePos.y() + height() > screenRect.bottom()  &&
-      height() < screenRect.height() ) {
-    placePos.ry() = globalPos.y() - offset.y() - height();
+  void TipWidget::hideTip()
+  {
+    close();
+    deleteLater();
   }
 
-  move(placePos);
-}
+  void TipWidget::placeTip(const QPoint& globalPos, QWidget *widget)
+  {
+    const QPoint offset(8, 8);
 
-void csTipWidget::paintEvent(QPaintEvent *event)
-{
-  QPainter painter(this);
-  painter.setCompositionMode(QPainter::CompositionMode_Source);
-  painter.drawPixmap(0, 0, pixmap);
+    QPoint placePos(offset+globalPos);
 
-  event->accept();
-}
+    const QRect screenRect = screenGeometry(globalPos, widget);
 
-////// Public ////////////////////////////////////////////////////////////////
+    if( placePos.x() + width() > screenRect.right()  &&
+        width() < screenRect.width() ) {
+      placePos.rx() = globalPos.x() - offset.x() - width();
+    }
 
-void csImageTip::showImage(const QPoint& globalPos, const QImage& image,
+    if( placePos.y() + height() > screenRect.bottom()  &&
+        height() < screenRect.height() ) {
+      placePos.ry() = globalPos.y() - offset.y() - height();
+    }
+
+    move(placePos);
+  }
+
+  void TipWidget::paintEvent(QPaintEvent *event)
+  {
+    QPainter painter(this);
+    painter.setCompositionMode(QPainter::CompositionMode_Source);
+    painter.drawPixmap(0, 0, pixmap);
+
+    event->accept();
+  }
+
+  ////// Public ////////////////////////////////////////////////////////////////
+
+  void ImageTip::showImage(const QPoint& globalPos, const QImage& image,
                            QWidget *widget,
-                           const csImageTip::Flags flags)
-{
+                           const ImageTip::Flags flags)
+  {
 #ifndef Q_WS_WIN
-  new csTipWidget(image, flags, widget);
+    new TipWidget(image, flags, widget);
 #else
-  new csTipWidget(image, flags,
-                  QApplication::desktop()->screen(cs::screenNumber(globalPos,
-                                                                   widget)));
+    new TipWidget(image, flags,
+                  QApplication::desktop()->screen(screenNumber(globalPos,
+                                                               widget)));
 #endif
 
-  if( flags.testFlag(ForcePosition) ) {
-    csTipWidget::instance->move(globalPos);
-  } else {
-    csTipWidget::instance->placeTip(globalPos, widget);
+    if( flags.testFlag(ForcePosition) ) {
+      TipWidget::instance->move(globalPos);
+    } else {
+      TipWidget::instance->placeTip(globalPos, widget);
+    }
+
+    if( flags.testFlag(ImageTip::NoEffects) ) {
+      TipWidget::instance->show();
+
+    } else {
+      QGraphicsOpacityEffect *opacity =
+          new QGraphicsOpacityEffect(TipWidget::instance);
+      opacity->setOpacity(0);
+      TipWidget::instance->setGraphicsEffect(opacity);
+
+      QPropertyAnimation *animation =
+          new QPropertyAnimation(opacity, "opacity", TipWidget::instance);
+      animation->setDuration(250);
+      animation->setStartValue(qreal(0));
+      animation->setEndValue(qreal(1));
+      animation->setEasingCurve(QEasingCurve::InQuad);
+
+      TipWidget::instance->show();
+      animation->start(QAbstractAnimation::DeleteWhenStopped);
+    }
   }
 
-  if( flags.testFlag(csImageTip::NoEffects) ) {
-    csTipWidget::instance->show();
-
-  } else {
-    QGraphicsOpacityEffect *opacity =
-        new QGraphicsOpacityEffect(csTipWidget::instance);
-    opacity->setOpacity(0);
-    csTipWidget::instance->setGraphicsEffect(opacity);
-
-    QPropertyAnimation *animation =
-        new QPropertyAnimation(opacity, "opacity", csTipWidget::instance);
-    animation->setDuration(250);
-    animation->setStartValue(qreal(0));
-    animation->setEndValue(qreal(1));
-    animation->setEasingCurve(QEasingCurve::InQuad);
-
-    csTipWidget::instance->show();
-    animation->start(QAbstractAnimation::DeleteWhenStopped);
-  }
-}
+} // namespace cs
 
 #include "ImageTip.moc"

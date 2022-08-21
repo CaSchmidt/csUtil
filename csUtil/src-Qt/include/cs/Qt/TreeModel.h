@@ -38,30 +38,34 @@
 
 #include <cs/Core/csutil_config.h>
 
-class csAbstractTreeItem;
+namespace cs {
 
-class CS_UTIL_EXPORT csTreeModel : public QAbstractItemModel {
-  Q_OBJECT
-public:
-  csTreeModel(csAbstractTreeItem *rootItem, QObject *parent);
-  ~csTreeModel();
+  class AbstractTreeItem;
 
-  csAbstractTreeItem *root() const;
-  void setRoot(csAbstractTreeItem *rootItem);
+  class CS_UTIL_EXPORT TreeModel : public QAbstractItemModel {
+    Q_OBJECT
+  public:
+    TreeModel(AbstractTreeItem *rootItem, QObject *parent);
+    ~TreeModel();
 
-  int columnCount(const QModelIndex& parent = QModelIndex()) const;
-  QVariant data(const QModelIndex& index,
-                int role = Qt::DisplayRole) const;
-  Qt::ItemFlags flags(const QModelIndex& index) const;
-  QVariant headerData(int section, Qt::Orientation orientation,
-                      int role = Qt::DisplayRole) const;
-  QModelIndex index(int row, int column,
-                    const QModelIndex& parent = QModelIndex()) const;
-  QModelIndex parent(const QModelIndex& child) const;
-  int rowCount(const QModelIndex& parent = QModelIndex()) const;
+    AbstractTreeItem *root() const;
+    void setRoot(AbstractTreeItem *rootItem);
 
-private:
-  std::unique_ptr<csAbstractTreeItem> _root;
-};
+    int columnCount(const QModelIndex& parent = QModelIndex()) const;
+    QVariant data(const QModelIndex& index,
+                  int role = Qt::DisplayRole) const;
+    Qt::ItemFlags flags(const QModelIndex& index) const;
+    QVariant headerData(int section, Qt::Orientation orientation,
+                        int role = Qt::DisplayRole) const;
+    QModelIndex index(int row, int column,
+                      const QModelIndex& parent = QModelIndex()) const;
+    QModelIndex parent(const QModelIndex& child) const;
+    int rowCount(const QModelIndex& parent = QModelIndex()) const;
+
+  private:
+    std::unique_ptr<AbstractTreeItem> _root;
+  };
+
+} // namespace cs
 
 #endif // CS_TREEMODEL_H
