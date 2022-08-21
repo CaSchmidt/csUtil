@@ -43,6 +43,7 @@ endif()
 
 if(ENABLE_QT)
   cs_test(test_imagetip forms/imagetip.ui include/imagetip.h src/imagetip.cpp src/test_imagetip.cpp)
+  cs_test(test_listeditor src/test_listeditor.cpp)
   cs_test(test_tree src/test_tree.cpp)
   cs_test(test_wprogresslogger src/test_wprogresslogger.cpp)
 endif()
