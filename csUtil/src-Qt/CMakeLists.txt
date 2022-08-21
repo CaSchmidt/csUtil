@@ -25,22 +25,13 @@ list(APPEND csQt_SOURCES
   src/WListEditor.cpp
   )
 
-list(APPEND csQt_FORMS
-  forms/WListEditor.ui
-  )
-
 ### csUtil ###################################################################
 
 target_sources(csUtil
-  PRIVATE ${csQt_FORMS}
   PRIVATE ${csQt_HEADERS}
   PRIVATE ${csQt_SOURCES}
   )
 
 target_include_directories(csUtil
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
-  )
-
-set_property(TARGET csUtil
-  APPEND PROPERTY AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/forms
   )

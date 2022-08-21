@@ -29,32 +29,43 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QListView>
+#include <QtWidgets/QPushButton>
+
 #include "cs/Qt/WListEditor.h"
-#include "ui_WListEditor.h"
 
 #include "cs/Qt/Widget.h"
 
 namespace cs {
 
+  namespace impl_lstedt {
+
+    void setupButton(QPushButton *button, const QString& iconPath)
+    {
+      button->setIcon(QIcon(iconPath));
+      button->setText(QString());
+    }
+
+  } // namespace impl_lstedt
+
   ////// public //////////////////////////////////////////////////////////////
 
   WListEditor::WListEditor(QWidget *parent, Qt::WindowFlags f)
     : QWidget(parent, f)
-    , ui{new Ui::WListEditor}
   {
-    ui->setupUi(this);
+    setupUi();
 
     // Signals & Slots ///////////////////////////////////////////////////////
 
-    connect(ui->addButton,    &QPushButton::clicked, this, &WListEditor::onAdd);
-    connect(ui->downButton,   &QPushButton::clicked, this, &WListEditor::onDown);
-    connect(ui->removeButton, &QPushButton::clicked, this, &WListEditor::onRemove);
-    connect(ui->upButton,     &QPushButton::clicked, this, &WListEditor::onUp);
+    connect(_addButton,    &QPushButton::clicked, this, &WListEditor::onAdd);
+    connect(_downButton,   &QPushButton::clicked, this, &WListEditor::onDown);
+    connect(_removeButton, &QPushButton::clicked, this, &WListEditor::onRemove);
+    connect(_upButton,     &QPushButton::clicked, this, &WListEditor::onUp);
   }
 
   WListEditor::~WListEditor()
   {
-    delete ui;
   }
 
   ////// protected ///////////////////////////////////////////////////////////
@@ -67,13 +78,13 @@ namespace cs {
   QPushButton *WListEditor::button(const Button id)
   {
     if(        id == Add ) {
-      return ui->addButton;
+      return _addButton;
     } else if( id == Down ) {
-      return ui->downButton;
+      return _downButton;
     } else if( id == Remove ) {
-      return ui->removeButton;
+      return _removeButton;
     } else if( id == Up ) {
-      return ui->upButton;
+      return _upButton;
     }
     return nullptr;
   }
@@ -81,24 +92,24 @@ namespace cs {
   void WListEditor::setShowContextMenu(const bool on)
   {
     if( on ) {
-      ui->listView->setContextMenuPolicy(Qt::CustomContextMenu);
-      connect(ui->listView, &QListView::customContextMenuRequested,
+      _listView->setContextMenuPolicy(Qt::CustomContextMenu);
+      connect(_listView, &QListView::customContextMenuRequested,
               this, &WListEditor::showContextMenu);
     } else {
-      ui->listView->setContextMenuPolicy(Qt::NoContextMenu);
-      disconnect(ui->listView, &QListView::customContextMenuRequested,
+      _listView->setContextMenuPolicy(Qt::NoContextMenu);
+      disconnect(_listView, &QListView::customContextMenuRequested,
                  this, &WListEditor::showContextMenu);
     }
   }
 
   const QListView *WListEditor::view() const
   {
-    return ui->listView;
+    return _listView;
   }
 
   QListView *WListEditor::view()
   {
-    return ui->listView;
+    return _listView;
   }
 
   ////// private slots ///////////////////////////////////////////////////////
@@ -126,7 +137,58 @@ namespace cs {
 
   void WListEditor::showContextMenu(const QPoint& p)
   {
-    onContextMenu(cs::mapToGlobal(ui->listView, p));
+    onContextMenu(cs::mapToGlobal(_listView, p));
+  }
+
+  ////// private /////////////////////////////////////////////////////////////
+
+  void WListEditor::setupUi()
+  {
+    constexpr int MY_MARGIN  = 0;
+    constexpr int MY_SPACING = 4;
+
+    // (1) Grid Layout ///////////////////////////////////////////////////////
+
+    QGridLayout *layout = new QGridLayout(this);
+    layout->setContentsMargins(MY_MARGIN, MY_MARGIN, MY_MARGIN, MY_MARGIN);
+    layout->setSpacing(MY_SPACING);
+
+    // (2) List View /////////////////////////////////////////////////////////
+
+    _listView = new QListView(this);
+    layout->addWidget(_listView, 0, 0, 6, 1);
+
+    // (3) Add Button ////////////////////////////////////////////////////////
+
+    _addButton = new QPushButton(tr("add"), this);
+    impl_lstedt::setupButton(_addButton, QStringLiteral(":/icons/plus.svg"));
+    layout->addWidget(_addButton, 0, 1);
+
+    // (4) Spacer #1 /////////////////////////////////////////////////////////
+
+    // layout->setRowMinimumHeight(1, MY_HEIGHT);
+
+    // (5) Up Button /////////////////////////////////////////////////////////
+
+    _upButton = new QPushButton(tr("up"), this);
+    impl_lstedt::setupButton(_upButton, QStringLiteral(":/icons/up.svg"));
+    layout->addWidget(_upButton, 2, 1);
+
+    // (6) Down Button ///////////////////////////////////////////////////////
+
+    _downButton = new QPushButton(tr("down"), this);
+    impl_lstedt::setupButton(_downButton, QStringLiteral(":/icons/down.svg"));
+    layout->addWidget(_downButton, 3, 1);
+
+    // (7) Spacer #2 /////////////////////////////////////////////////////////
+
+    // layout->setRowMinimumHeight(4, MY_HEIGHT);
+
+    // (8) Remove Button /////////////////////////////////////////////////////
+
+    _removeButton = new QPushButton(tr("remove"), this);
+    impl_lstedt::setupButton(_removeButton, QStringLiteral(":/icons/minus.svg"));
+    layout->addWidget(_removeButton, 5, 1);
   }
 
 } // namespace cs

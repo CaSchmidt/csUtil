@@ -39,10 +39,6 @@
 class QListView;
 class QPushButton;
 
-namespace Ui {
-  class WListEditor;
-} // namespace Ui
-
 namespace cs {
 
   class CS_UTIL_EXPORT WListEditor : public QWidget {
@@ -77,7 +73,13 @@ namespace cs {
     QListView *view();
 
   private:
-    Ui::WListEditor *ui{nullptr};
+    void setupUi();
+
+    QListView   *_listView{nullptr};
+    QPushButton *_addButton{nullptr};
+    QPushButton *_downButton{nullptr};
+    QPushButton *_removeButton{nullptr};
+    QPushButton *_upButton{nullptr};
   };
 
 } // namespace cs
