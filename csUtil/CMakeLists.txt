@@ -64,6 +64,7 @@ if(ENABLE_QT)
 
   set_target_properties(csUtil PROPERTIES
     AUTOMOC ON
+    AUTORCC ON
     AUTOUIC ON
     )
 
@@ -79,23 +80,21 @@ endif()
 ### Modules ##################################################################
 
 add_subdirectory(src-Core)
+add_subdirectory(src-IO)
+add_subdirectory(src-Logging) # optionally depends on Qt
+add_subdirectory(src-SIMD)
+add_subdirectory(src-Math) # depends on SIMD
+add_subdirectory(src-System)
+add_subdirectory(src-Trie)
 
 if(ENABLE_CHARCONV)
   add_subdirectory(src-CharConv)
   add_subdirectory(src-Format) # depends on CharConv
 endif()
 
-add_subdirectory(src-IO)
-
 if(ENABLE_QT)
   add_subdirectory(src-Qt)
 endif()
-
-add_subdirectory(src-Logging) # optionally depends on Qt
-add_subdirectory(src-SIMD)
-add_subdirectory(src-Math) # depends on SIMD
-add_subdirectory(src-System)
-add_subdirectory(src-Trie)
 
 if(ENABLE_UNICODE)
   add_subdirectory(src-Unicode)
