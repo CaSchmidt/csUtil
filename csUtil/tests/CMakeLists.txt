@@ -47,6 +47,10 @@ if(ENABLE_QT)
   cs_test(test_wprogresslogger src/test_wprogresslogger.cpp)
 endif()
 
+if(ENABLE_QT AND ENABLE_QTCREATOR)
+  cs_test(test_highlight include/ProxyDelegate.h src/ProxyDelegate.cpp src/test_highlight.cpp)
+endif()
+
 if(ENABLE_UNICODE)
   cs_test(test_textconverter src/test_textconverter.cpp)
 endif()
