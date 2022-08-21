@@ -54,6 +54,10 @@ target_compile_definitions(csUtil
   )
 
 if(ENABLE_QT)
+  target_sources(csUtil
+    PRIVATE resources/csUtil.qrc
+    )
+
   target_compile_definitions(csUtil
     PRIVATE QT_NO_CAST_FROM_ASCII
     PRIVATE QT_NO_CAST_TO_ASCII
