@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_IMAGETIP_H
-#define CS_IMAGETIP_H
+#pragma once
 
 #include <QtCore/QFlags>
 
@@ -63,5 +62,3 @@ namespace cs {
 } // namespace cs
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(cs::ImageTip::Flags)
-
-#endif // CS_IMAGETIP_H

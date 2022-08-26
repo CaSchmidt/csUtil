@@ -1,5 +1,4 @@
-#ifndef TEST_UTIL_H
-#define TEST_UTIL_H
+#pragma once
 
 #include <iomanip>
 #include <ostream>
@@ -66,5 +65,3 @@ constexpr std::basic_ostream<CharT,Traits>& operator<<(std::basic_ostream<CharT,
            << std::setbase(fmt.base())
            << fmt.value() );
 }
-
-#endif // TEST_UTIL_H

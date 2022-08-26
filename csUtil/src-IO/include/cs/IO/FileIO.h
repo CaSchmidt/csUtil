@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_FILEIO_H
-#define CS_FILEIO_H
+#pragma once
 
 #include <filesystem>
 #include <list>
@@ -46,5 +45,3 @@ namespace cs {
   CS_UTIL_EXPORT std::string readTextFile(const std::filesystem::path& path, bool *ok = nullptr);
 
 } // namespace cs
-
-#endif // CS_FILEIO_H

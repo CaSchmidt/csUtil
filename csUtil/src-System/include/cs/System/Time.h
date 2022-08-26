@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_TIME_H
-#define CS_TIME_H
+#pragma once
 
 #include <cstdint>
 
@@ -49,5 +48,3 @@ namespace cs {
   CS_UTIL_EXPORT uint64_t tickCountUs();
 
 } // namespace cs
-
-#endif // CS_TIME_H

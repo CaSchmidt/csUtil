@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_SIMD128_H
-#define CS_SIMD128_H
+#pragma once
 
 #include <cs/Core/Concepts.h>
 #include <cs/SIMD/SIMD128Util.h>
@@ -149,5 +148,3 @@ namespace cs {
   using simd128 = simd128_impl<sizeof(T)>;
 
 } // namespace cs
-
-#endif // CS_SIMD128_H

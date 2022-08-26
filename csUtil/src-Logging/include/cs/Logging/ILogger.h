@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_ILOGGER_H
-#define CS_ILOGGER_H
+#pragma once
 
 #ifdef HAVE_STD_FORMAT
 # include <format>
@@ -118,5 +117,3 @@ namespace cs {
   };
 
 } // namespace cs
-
-#endif // CS_ILOGGER_H

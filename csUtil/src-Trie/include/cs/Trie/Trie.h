@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_TRIE_H
-#define CS_TRIE_H
+#pragma once
 
 #include <list>
 #include <memory>
@@ -119,5 +118,3 @@ namespace cs {
   CS_UTIL_EXPORT std::list<std::u16string> Trie::list(char16_t *) const;
 
 } // namespace cs
-
-#endif // CS_TRIE_H

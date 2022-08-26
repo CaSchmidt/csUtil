@@ -1,5 +1,4 @@
-#ifndef IMAGETIP_H
-#define IMAGETIP_H
+#pragma once
 
 #include <QtWidgets/QMainWindow>
 
@@ -23,5 +22,3 @@ private:
   Ui::WMainWindow *ui;
   QImage _image;
 };
-
-#endif // IMAGETIP_H

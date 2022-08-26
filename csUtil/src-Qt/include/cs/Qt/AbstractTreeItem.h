@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_ABSTRACTTREEITEM_H
-#define CS_ABSTRACTTREEITEM_H
+#pragma once
 
 #include <QtCore/QList>
 #include <QtCore/QVariant>
@@ -68,5 +67,3 @@ namespace cs {
   CS_UTIL_EXPORT AbstractTreeItem *csTreeItem(const QModelIndex& index);
 
 } // namespace cs
-
-#endif // CS_ABSTRACTTREEITEM_H

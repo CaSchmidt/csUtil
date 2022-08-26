@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_ENDIAN_H
-#define CS_ENDIAN_H
+#pragma once
 
 #ifdef _MSC_VER
 # include <cstdlib>
@@ -158,5 +157,3 @@ namespace cs {
   }
 
 } // namespace cs
-
-#endif // CS_ENDIAN_H

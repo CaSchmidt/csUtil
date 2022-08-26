@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_RAWCONVERTER_H
-#define CS_RAWCONVERTER_H
+#pragma once
 
 #include <cstdint>
 
@@ -505,5 +504,3 @@ namespace cs {
   }
 
 } // namespace cs
-
-#endif // CS_RAWCONVERTER_H

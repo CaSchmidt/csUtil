@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_STRINGUTIL_H
-#define CS_STRINGUTIL_H
+#pragma once
 
 #include <algorithm>
 #include <list>
@@ -611,5 +610,3 @@ namespace cs {
   }
 
 } // namespace cs
-
-#endif // CS_STRINGUTIL_H

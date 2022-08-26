@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_CHARCONV_CONFIG_H
-#define CS_CHARCONV_CONFIG_H
+#pragma once
 
 ////// Feature Configuration /////////////////////////////////////////////////
 
@@ -38,5 +37,3 @@
 #undef CS_FROM_CHARS_HAVE_PLUS
 
 #define CS_TO_CHARS_HAVE_REMOVE_TRAILING_ZEROS
-
-#endif // CS_CHARCONV_CONFIG_H

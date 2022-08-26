@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_SIMD_H
-#define CS_SIMD_H
+#pragma once
 
 #include <limits>
 
@@ -288,5 +287,3 @@ namespace cs {
   } // namespace simd
 
 } // namespace cs
-
-#endif // CS_SIMD_H

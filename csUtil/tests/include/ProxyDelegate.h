@@ -1,5 +1,4 @@
-#ifndef PROXYDELEGATE_H
-#define PROXYDELEGATE_H
+#pragma once
 
 #include <QtWidgets/QAbstractItemDelegate>
 
@@ -23,5 +22,3 @@ private:
   QAbstractItemDelegate *_delegate;
   QtCreator::HighlightingItemDelegate *_highlight;
 };
-
-#endif // PROXYDELEGATE_H

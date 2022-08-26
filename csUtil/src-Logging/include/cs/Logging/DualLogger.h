@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_DUALLOGGER_H
-#define CS_DUALLOGGER_H
+#pragma once
 
 #include <cs/Logging/ILogger.h>
 
@@ -57,5 +56,3 @@ namespace cs {
   };
 
 } // namespace cs
-
-#endif // CS_DUALLOGGER_H

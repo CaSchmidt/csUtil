@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_NUMERIC_H
-#define CS_NUMERIC_H
+#pragma once
 
 #include <cs/Core/Concepts.h>
 
@@ -70,5 +69,3 @@ namespace cs {
   }
 
 } // namespace cs
-
-#endif // CS_NUMERIC_H

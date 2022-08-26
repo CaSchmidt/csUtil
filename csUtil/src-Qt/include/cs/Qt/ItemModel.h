@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_ITEMMODEL_H
-#define CS_ITEMMODEL_H
+#pragma once
 
 #include <cs/Core/csutil_config.h>
 
@@ -41,5 +40,3 @@ namespace cs {
   CS_UTIL_EXPORT int indexDepth(const QModelIndex& index);
 
 } // namespace cs
-
-#endif // CS_ITEMMODEL_H

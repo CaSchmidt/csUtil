@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_WIDGET_H
-#define CS_WIDGET_H
+#pragma once
 
 #include <QtWidgets/QWidget>
 
@@ -68,5 +67,3 @@ namespace cs {
                                          const bool inactive = true);
 
 } // namespace cs
-
-#endif // CS_WIDGET_H

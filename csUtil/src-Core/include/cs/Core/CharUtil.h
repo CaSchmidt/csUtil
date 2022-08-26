@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_CHARUTIL_H
-#define CS_CHARUTIL_H
+#pragma once
 
 #include <cs/Core/Concepts.h>
 
@@ -159,5 +158,3 @@ namespace cs {
   }
 
 } // namespace cs
-
-#endif // CS_CHARUTIL_H

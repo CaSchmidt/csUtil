@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_TRIEMATCH_H
-#define CS_TRIEMATCH_H
+#pragma once
 
 namespace cs {
 
@@ -41,5 +40,3 @@ namespace cs {
   };
 
 } // namespace cs
-
-#endif // CS_TRIEMATCH_H

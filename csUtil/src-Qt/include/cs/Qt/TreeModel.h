@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_TREEMODEL_H
-#define CS_TREEMODEL_H
+#pragma once
 
 #include <memory>
 
@@ -67,5 +66,3 @@ namespace cs {
   };
 
 } // namespace cs
-
-#endif // CS_TREEMODEL_H

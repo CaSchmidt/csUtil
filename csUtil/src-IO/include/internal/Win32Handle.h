@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef WIN32HANDLE_H
-#define WIN32HANDLE_H
+#pragma once
 
 #include <filesystem>
 #include <limits>
@@ -88,5 +87,3 @@ namespace cs {
   };
 
 } // namespace cs
-
-#endif // WIN32HANDLE_H

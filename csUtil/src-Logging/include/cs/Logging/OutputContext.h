@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_OUTPUTCONTEXT_H
-#define CS_OUTPUTCONTEXT_H
+#pragma once
 
 #include <string>
 
@@ -85,5 +84,3 @@ namespace cs {
   };
 
 } // namespace cs
-
-#endif // CS_OUTPUTCONTEXT_H

@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_MATH_H
-#define CS_MATH_H
+#pragma once
 
 #include <math.h>
 
@@ -111,5 +110,3 @@ namespace cs {
   using math = math_impl<sizeof(T)>;
 
 } // namespace cs
-
-#endif // CS_MATH_H

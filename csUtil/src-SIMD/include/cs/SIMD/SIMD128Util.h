@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_SIMD128UTIL_H
-#define CS_SIMD128UTIL_H
+#pragma once
 
 #include <emmintrin.h>
 
@@ -72,5 +71,3 @@ namespace cs {
   }
 
 } // namespace cs
-
-#endif // CS_SIMD128UTIL_H

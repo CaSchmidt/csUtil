@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_TEXTCONVERTER_H
-#define CS_TEXTCONVERTER_H
+#pragma once
 
 #include <list>
 #include <memory>
@@ -121,5 +120,3 @@ namespace cs {
   }
 
 } // namespace cs
-
-#endif // CS_TEXTCONVERTER_H

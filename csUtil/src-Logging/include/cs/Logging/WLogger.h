@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_WLOGGER_H
-#define CS_WLOGGER_H
+#pragma once
 
 #include <QtWidgets/QTextBrowser>
 
@@ -63,5 +62,3 @@ namespace cs {
   };
 
 } // namespace cs
-
-#endif // CS_WLOGGER_H

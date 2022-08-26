@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_WLISTEDITOR_H
-#define CS_WLISTEDITOR_H
+#pragma once
 
 #include <QtWidgets/QWidget>
 
@@ -83,5 +82,3 @@ namespace cs {
   };
 
 } // namespace cs
-
-#endif // CS_WLISTEDITOR_H

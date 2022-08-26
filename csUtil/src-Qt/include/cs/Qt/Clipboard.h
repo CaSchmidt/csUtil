@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_CLIPBOARD_H
-#define CS_CLIPBOARD_H
+#pragma once
 
 #include <QtCore/QString>
 
@@ -43,5 +42,3 @@ namespace cs {
   CS_UTIL_EXPORT void setClipboardText(const QStringList& list, const QString& sep = QString());
 
 } // namespace cs
-
-#endif // CS_CLIPBOARD_H

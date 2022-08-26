@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_FLATTRIEUTIL_H
-#define CS_FLATTRIEUTIL_H
+#pragma once
 
 #include "cs/Trie/FlatTrie.h"
 
@@ -62,5 +61,3 @@ namespace cs {
   } // namespace impl_trie
 
 } // namespace cs
-
-#endif // CS_FLATTRIEUTIL_H

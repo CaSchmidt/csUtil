@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_CHARCONV_H
-#define CS_CHARCONV_H
+#pragma once
 
 #include <cstdint>
 
@@ -134,5 +133,3 @@ namespace cs {
                                           chars_format fmt, int precision);
 
 } // namespace cs
-
-#endif // CS_CHARCONV_H

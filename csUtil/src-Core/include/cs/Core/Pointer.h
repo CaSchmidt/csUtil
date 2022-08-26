@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_POINTER_H
-#define CS_POINTER_H
+#pragma once
 
 #include <cs/Core/TypeTraits.h>
 
@@ -53,5 +52,3 @@ namespace cs {
   };
 
 } // namespace cs
-
-#endif // CS_POINTER_H

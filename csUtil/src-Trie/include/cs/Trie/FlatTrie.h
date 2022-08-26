@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_FLATTRIE_H
-#define CS_FLATTRIE_H
+#pragma once
 
 #include <cstdint>
 
@@ -104,5 +103,3 @@ namespace cs {
   CS_UTIL_EXPORT std::list<std::u16string> FlatTrie::list() const;
 
 } // namespace cs
-
-#endif // CS_FLATTRIE_H

@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CSUTIL_CONFIG_H
-#define CSUTIL_CONFIG_H
+#pragma once
 
 ////// Configured by CMake ///////////////////////////////////////////////////
 
@@ -57,5 +56,3 @@
 #  define CS_UTIL_EXPORT  CS_DECL_IMPORT
 # endif
 #endif
-
-#endif // CSUTIL_CONFIG_H

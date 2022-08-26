@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_DIALOGBUTTONBOX_H
-#define CS_DIALOGBUTTONBOX_H
+#pragma once
 
 #include <QtWidgets/QDialogButtonBox>
 
@@ -53,5 +52,3 @@ namespace cs {
   CS_UTIL_EXPORT void removeDefaults(QDialogButtonBox *box, const bool disconnect = false);
 
 } // namespace cs
-
-#endif // CS_DIALOGBUTTONBOX_H

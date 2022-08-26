@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_SERIAL_H
-#define CS_SERIAL_H
+#pragma once
 
 #include <filesystem>
 #include <memory>
@@ -60,5 +59,3 @@ namespace cs {
   };
 
 } // namespace cs
-
-#endif // CS_SERIAL_H

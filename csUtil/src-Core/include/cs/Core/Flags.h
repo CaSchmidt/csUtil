@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_FLAGS_H
-#define CS_FLAGS_H
+#pragma once
 
 #include <cs/Core/TypeTraits.h>
 
@@ -220,5 +219,3 @@ namespace cs {
     template<>                                       \
     struct is_flags_enabled<T> : std::true_type {};  \
   }
-
-#endif // CS_FLAGS_H

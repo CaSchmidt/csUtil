@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_CONCEPTS_H
-#define CS_CONCEPTS_H
+#pragma once
 
 #include <cs/Core/TypeTraits.h>
 
@@ -49,5 +48,3 @@ namespace cs {
   concept IsReal = is_real_v<T>;
 
 } // namespace cs
-
-#endif // CS_CONCEPTS_H

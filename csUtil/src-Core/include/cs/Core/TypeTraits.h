@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_TYPETRAITS_H
-#define CS_TYPETRAITS_H
+#pragma once
 
 #include <cstddef>
 #include <cstdint>
@@ -152,5 +151,3 @@ namespace cs {
   }
 
 } // namespace cs
-
-#endif // CS_TYPETRAITS_H

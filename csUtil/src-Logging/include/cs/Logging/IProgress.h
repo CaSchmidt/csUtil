@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_IPROGRESS_H
-#define CS_IPROGRESS_H
+#pragma once
 
 #include <cs/Core/csutil_config.h>
 
@@ -53,5 +52,3 @@ namespace cs {
   };
 
 } // namespace cs
-
-#endif // CS_IPROGRESS_H

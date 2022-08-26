@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef CS_WPROGRESSLOGGER_H
-#define CS_WPROGRESSLOGGER_H
+#pragma once
 
 #include <memory>
 
@@ -110,5 +109,3 @@ namespace cs {
   }
 
 } // namespace cs
-
-#endif // CS_WPROGRESSLOGGER_H
