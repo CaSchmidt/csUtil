@@ -52,9 +52,9 @@ namespace plot {
     PlotSeriesHandle handle(const QString& name) const;
     PlotSeriesHandle insert(IPlotSeriesData *data, const QColor& color = QColor());
 
-    plot::DrawFlags drawFlags() const;
-    void setDrawFlags(const plot::DrawFlags flags);
-    void setDrawFlag(const plot::DrawFlag flag, const bool on);
+    DrawFlags drawFlags() const;
+    void setDrawFlags(const DrawFlags flags);
+    void setDrawFlag(const DrawFlag flag, const bool on);
 
     void setTitleX(const QString& title);
 

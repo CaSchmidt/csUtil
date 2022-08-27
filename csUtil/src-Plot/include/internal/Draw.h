@@ -60,7 +60,7 @@ namespace plot {
     void series(QPainter *painter,
                 const QRectF& screen, const Series& theSeries,
                 const PlotRange& viewX, const  PlotRange& viewY,
-                const plot::DrawFlags flags = plot::NoDrawFlags);
+                const DrawFlags flags = NoDrawFlags);
 
   } // namespace Draw
 
