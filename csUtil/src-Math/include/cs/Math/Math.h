@@ -53,6 +53,29 @@ namespace cs {
       return ::fabsf(x);
     }
 
+    inline static value_type ceil(const value_type x)
+    {
+      return ::ceilf(x);
+    }
+
+    inline static value_type floor(const value_type x)
+    {
+      return ::floorf(x);
+    }
+
+    inline static value_type fract(const value_type x)
+    {
+      value_type i;
+      return ::modff(x, &i);
+    }
+
+    inline static value_type intgr(const value_type x)
+    {
+      value_type i;
+      ::modff(x, &i);
+      return i;
+    }
+
     inline static bool isFinite(const value_type x)
     {
       return isfinite(x) != 0;
@@ -66,6 +89,21 @@ namespace cs {
     inline static bool isNaN(const value_type x)
     {
       return isnan(x) != 0;
+    }
+
+    inline static value_type log10(const value_type x)
+    {
+      return ::log10f(x);
+    }
+
+    inline static value_type pow(const value_type base, const value_type exponent)
+    {
+      return ::powf(base, exponent);
+    }
+
+    inline static value_type round(const value_type x)
+    {
+      return ::roundf(x);
     }
 
     inline static value_type sqrt(const value_type x)
@@ -85,6 +123,29 @@ namespace cs {
       return ::fabs(x);
     }
 
+    inline static value_type ceil(const value_type x)
+    {
+      return ::ceil(x);
+    }
+
+    inline static value_type floor(const value_type x)
+    {
+      return ::floor(x);
+    }
+
+    inline static value_type fract(const value_type x)
+    {
+      value_type i;
+      return ::modf(x, &i);
+    }
+
+    inline static value_type intgr(const value_type x)
+    {
+      value_type i;
+      ::modf(x, &i);
+      return i;
+    }
+
     inline static bool isFinite(const value_type x)
     {
       return isfinite(x) != 0;
@@ -98,6 +159,21 @@ namespace cs {
     inline static bool isNaN(const value_type x)
     {
       return isnan(x) != 0;
+    }
+
+    inline static value_type log10(const value_type x)
+    {
+      return ::log10(x);
+    }
+
+    inline static value_type pow(const value_type base, const value_type exponent)
+    {
+      return ::pow(base, exponent);
+    }
+
+    inline static value_type round(const value_type x)
+    {
+      return ::round(x);
     }
 
     inline static value_type sqrt(const value_type x)
