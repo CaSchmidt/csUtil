@@ -29,167 +29,171 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <Plot/PlotTheme.h>
+#include "Plot/PlotTheme.h"
 
 #include "internal/SeriesStore.h"
 
-////// private static ////////////////////////////////////////////////////////
+namespace plot {
 
-Series SeriesStore::_nullSeries;
+  ////// private static //////////////////////////////////////////////////////
 
-////// public ////////////////////////////////////////////////////////////////
+  Series SeriesStore::_nullSeries;
 
-SeriesStore::SeriesStore()
-  : _scales()
-  , _series()
-{
-}
+  ////// public //////////////////////////////////////////////////////////////
 
-SeriesStore::~SeriesStore()
-{
-}
-
-bool SeriesStore::contains(const QString& seriesName) const
-{
-  return _series.contains(seriesName);
-}
-
-QStringList SeriesStore::names() const
-{
-  return _series.keys();
-}
-
-bool SeriesStore::insert(const Series& series)
-{
-  if( _series.contains(series.name()) ) {
-    return false;
-  }
-  if( _series.insert(series.name(), series) == _series.end() ) {
-    return false;
-  }
-  if( !addToScales(series.name()) ) {
-    _series.remove(series.name());
-    return false;
-  }
-  return true;
-}
-
-bool SeriesStore::remove(const QString& seriesName)
-{
-  if( !_series.contains(seriesName) ) {
-    return false;
-  }
-  removeFromScales(seriesName);
-  _series.remove(seriesName);
-  return true;
-}
-
-SimPlotRange SeriesStore::rangeX(const QString& seriesName) const
-{
-  SimPlotRange result;
-
-  if( !_series.contains(seriesName) ) {
-    return result;
+  SeriesStore::SeriesStore()
+    : _scales()
+    , _series()
+  {
   }
 
-  const QString scaleName = _series[seriesName].unit();
-  if( isGroupedScale(seriesName, scaleName) ) {
-    result = _scales[scaleName].rangeX();
-  } else {
-    result = _series[seriesName].constData()->rangeX();
+  SeriesStore::~SeriesStore()
+  {
   }
 
-  return result;
-}
-
-SimPlotRange SeriesStore::rangeY(const QString& seriesName) const
-{
-  SimPlotRange result;
-
-  if( !_series.contains(seriesName) ) {
-    return result;
+  bool SeriesStore::contains(const QString& seriesName) const
+  {
+    return _series.contains(seriesName);
   }
 
-  const QString scaleName = _series[seriesName].unit();
-  if( isGroupedScale(seriesName, scaleName) ) {
-    result = _scales[scaleName].rangeY();
-  } else {
-    result = _series[seriesName].constData()->rangeY();
+  QStringList SeriesStore::names() const
+  {
+    return _series.keys();
   }
 
-  return result;
-}
-
-SimPlotRange SeriesStore::totalRangeX() const
-{
-  SimPlotRange result;
-
-  for(const Series& series : _series) {
-    result.update(series.constData()->rangeX());
-  }
-
-  return result;
-}
-
-Series& SeriesStore::series(const QString& seriesName)
-{
-  QHash<QString,Series>::iterator it = _series.find(seriesName);
-  if( it == _series.end() ) {
-    _nullSeries = Series();
-    return _nullSeries;
-  }
-  return it.value();
-}
-
-const Series& SeriesStore::series(const QString& seriesName) const
-{
-  QHash<QString,Series>::const_iterator it = _series.constFind(seriesName);
-  if( it == _series.constEnd() ) {
-    return _nullSeries;
-  }
-  return it.value();
-}
-
-////// public ////////////////////////////////////////////////////////////////
-
-bool SeriesStore::addToScales(const QString& seriesName)
-{
-  if( !_series.contains(seriesName) ) {
-    return false;
-  }
-  const QString scaleName = _series[seriesName].unit();
-  if( SimPlotTheme::isEmptyUnit(scaleName) ) {
+  bool SeriesStore::insert(const Series& series)
+  {
+    if( _series.contains(series.name()) ) {
+      return false;
+    }
+    if( _series.insert(series.name(), series) == _series.end() ) {
+      return false;
+    }
+    if( !addToScales(series.name()) ) {
+      _series.remove(series.name());
+      return false;
+    }
     return true;
   }
-  if( !_scales.contains(scaleName)  &&
-      _scales.insert(scaleName, Scale(&_series)) == _scales.end() ) {
-    return false;
+
+  bool SeriesStore::remove(const QString& seriesName)
+  {
+    if( !_series.contains(seriesName) ) {
+      return false;
+    }
+    removeFromScales(seriesName);
+    _series.remove(seriesName);
+    return true;
   }
-  if( !_scales[scaleName].insert(seriesName) ) {
+
+  PlotRange SeriesStore::rangeX(const QString& seriesName) const
+  {
+    PlotRange result;
+
+    if( !_series.contains(seriesName) ) {
+      return result;
+    }
+
+    const QString scaleName = _series[seriesName].unit();
+    if( isGroupedScale(seriesName, scaleName) ) {
+      result = _scales[scaleName].rangeX();
+    } else {
+      result = _series[seriesName].constData()->rangeX();
+    }
+
+    return result;
+  }
+
+  PlotRange SeriesStore::rangeY(const QString& seriesName) const
+  {
+    PlotRange result;
+
+    if( !_series.contains(seriesName) ) {
+      return result;
+    }
+
+    const QString scaleName = _series[seriesName].unit();
+    if( isGroupedScale(seriesName, scaleName) ) {
+      result = _scales[scaleName].rangeY();
+    } else {
+      result = _series[seriesName].constData()->rangeY();
+    }
+
+    return result;
+  }
+
+  PlotRange SeriesStore::totalRangeX() const
+  {
+    PlotRange result;
+
+    for(const Series& series : _series) {
+      result.update(series.constData()->rangeX());
+    }
+
+    return result;
+  }
+
+  Series& SeriesStore::series(const QString& seriesName)
+  {
+    QHash<QString,Series>::iterator it = _series.find(seriesName);
+    if( it == _series.end() ) {
+      _nullSeries = Series();
+      return _nullSeries;
+    }
+    return it.value();
+  }
+
+  const Series& SeriesStore::series(const QString& seriesName) const
+  {
+    QHash<QString,Series>::const_iterator it = _series.constFind(seriesName);
+    if( it == _series.constEnd() ) {
+      return _nullSeries;
+    }
+    return it.value();
+  }
+
+  ////// public ////////////////////////////////////////////////////////////////
+
+  bool SeriesStore::addToScales(const QString& seriesName)
+  {
+    if( !_series.contains(seriesName) ) {
+      return false;
+    }
+    const QString scaleName = _series[seriesName].unit();
+    if( PlotTheme::isEmptyUnit(scaleName) ) {
+      return true;
+    }
+    if( !_scales.contains(scaleName)  &&
+        _scales.insert(scaleName, Scale(&_series)) == _scales.end() ) {
+      return false;
+    }
+    if( !_scales[scaleName].insert(seriesName) ) {
+      if( _scales[scaleName].isEmpty() ) {
+        _scales.remove(scaleName);
+      }
+      return false;
+    }
+    return true;
+  }
+
+  void SeriesStore::removeFromScales(const QString& seriesName)
+  {
+    if( !_series.contains(seriesName) ) {
+      return;
+    }
+    const QString scaleName = _series[seriesName].unit();
+    if( !_scales.contains(scaleName) ) {
+      return;
+    }
+    _scales[scaleName].remove(seriesName);
     if( _scales[scaleName].isEmpty() ) {
       _scales.remove(scaleName);
     }
-    return false;
   }
-  return true;
-}
 
-void SeriesStore::removeFromScales(const QString& seriesName)
-{
-  if( !_series.contains(seriesName) ) {
-    return;
+  bool SeriesStore::isGroupedScale(const QString& seriesName, const QString& scaleName) const
+  {
+    return _scales.contains(scaleName)  &&  _scales[scaleName].contains(seriesName);
   }
-  const QString scaleName = _series[seriesName].unit();
-  if( !_scales.contains(scaleName) ) {
-    return;
-  }
-  _scales[scaleName].remove(seriesName);
-  if( _scales[scaleName].isEmpty() ) {
-    _scales.remove(scaleName);
-  }
-}
 
-bool SeriesStore::isGroupedScale(const QString& seriesName, const QString& scaleName) const
-{
-  return _scales.contains(scaleName)  &&  _scales[scaleName].contains(seriesName);
-}
+} // namespace plot

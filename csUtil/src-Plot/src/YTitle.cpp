@@ -36,65 +36,69 @@
 #include "internal/IPlotImplementation.h"
 #include "internal/ScopeRow.h"
 
-////// public ////////////////////////////////////////////////////////////////
+namespace plot {
 
-YTitle::YTitle(ScopeRow *row)
-  : _rect()
-  , _row(row)
-  , _title()
-{
-}
+  ////// public //////////////////////////////////////////////////////////////
 
-YTitle::~YTitle()
-{
-}
-
-QRectF YTitle::boundingRect() const
-{
-  return _rect;
-}
-
-void YTitle::resize(const QPointF& topLeft, const QSizeF& hint)
-{
-  const QFontMetricsF metrics(_row->plot()->widget()->font());
-  _rect = QRectF(topLeft, QSizeF(metrics.height(), hint.height()));
-}
-
-void YTitle::paint(QPainter *painter) const
-{
-  if( _title.isEmpty() ) {
-    return;
+  YTitle::YTitle(ScopeRow *row)
+    : _rect()
+    , _row(row)
+    , _title()
+  {
   }
 
-  const QFontMetricsF metrics(_row->plot()->widget()->font());
-  const Series& series = _row->activeSeries();
+  YTitle::~YTitle()
+  {
+  }
 
-  painter->save();
+  QRectF YTitle::boundingRect() const
+  {
+    return _rect;
+  }
 
-  painter->setFont(_row->plot()->widget()->font());
-  painter->setPen(SimPlotTheme::yAxisPen(series.color()));
+  void YTitle::resize(const QPointF& topLeft, const QSizeF& hint)
+  {
+    const QFontMetricsF metrics(_row->plot()->widget()->font());
+    _rect = QRectF(topLeft, QSizeF(metrics.height(), hint.height()));
+  }
 
-  const QTransform xform =
-      QTransform(0, -1,
-                 1,  0,
-                 0,  0) *
-      QTransform::fromTranslate(_rect.center().x(),
-                                _rect.center().y()) *
-      QTransform::fromTranslate(metrics.ascent() - metrics.height()/2.0,
-                                metrics.width(_title)/2.0);
-  painter->setTransform(xform);
+  void YTitle::paint(QPainter *painter) const
+  {
+    if( _title.isEmpty() ) {
+      return;
+    }
 
-  painter->drawText(QPointF(0, 0), _title);
+    const QFontMetricsF metrics(_row->plot()->widget()->font());
+    const Series& series = _row->activeSeries();
 
-  painter->restore();
-}
+    painter->save();
 
-QString YTitle::title() const
-{
-  return _title;
-}
+    painter->setFont(_row->plot()->widget()->font());
+    painter->setPen(PlotTheme::yAxisPen(series.color()));
 
-void YTitle::setTitle(const QString& title)
-{
-  _title = title;
-}
+    const QTransform xform =
+        QTransform(0, -1,
+                   1,  0,
+                   0,  0) *
+        QTransform::fromTranslate(_rect.center().x(),
+                                  _rect.center().y()) *
+        QTransform::fromTranslate(metrics.ascent() - metrics.height()/2.0,
+                                  metrics.width(_title)/2.0);
+    painter->setTransform(xform);
+
+    painter->drawText(QPointF(0, 0), _title);
+
+    painter->restore();
+  }
+
+  QString YTitle::title() const
+  {
+    return _title;
+  }
+
+  void YTitle::setTitle(const QString& title)
+  {
+    _title = title;
+  }
+
+} // namespace plot

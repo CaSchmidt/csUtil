@@ -29,14 +29,15 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __LAYOUT_H__
-#define __LAYOUT_H__
+#pragma once
 
-#define LAYOUT_MARGIN  2.0
+namespace plot {
 
-#define LAYOUT_SPACING  4.0
+  inline constexpr double LAYOUT_MARGIN = 2.0;
 
-#define LAYOUT_MIN_SCOPE_WIDTH   200.0
-#define LAYOUT_MIN_SCOPE_HEIGHT  200.0
+  inline constexpr double LAYOUT_SPACING = 4.0;
 
-#endif // __LAYOUT_H__
+  inline constexpr double LAYOUT_MIN_SCOPE_WIDTH  = 200.0;
+  inline constexpr double LAYOUT_MIN_SCOPE_HEIGHT = 200.0;
+
+} // namespace plot

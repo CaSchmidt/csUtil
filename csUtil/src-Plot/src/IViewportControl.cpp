@@ -31,8 +31,12 @@
 
 #include "internal/IViewportControl.h"
 
-////// public ////////////////////////////////////////////////////////////////
+namespace plot {
 
-IViewportControl::~IViewportControl()
-{
-}
+  ////// public //////////////////////////////////////////////////////////////
+
+  IViewportControl::~IViewportControl()
+  {
+  }
+
+} // namespace plot

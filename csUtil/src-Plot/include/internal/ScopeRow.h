@@ -29,64 +29,65 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __SCOPEROW_H__
-#define __SCOPEROW_H__
+#pragma once
 
 #include "internal/IPlotElement.h"
 #include "internal/SeriesStore.h"
 
-class IAxisElement;
-class IPlotImplementation;
-class ITitleElement;
-class Scope;
+namespace plot {
 
-class ScopeRow : public IPlotElement {
-public:
-  ScopeRow(IPlotImplementation *plot);
-  ~ScopeRow();
+  class IAxisElement;
+  class IPlotImplementation;
+  class ITitleElement;
+  class Scope;
 
-  QRectF boundingRect() const;
+  class ScopeRow : public IPlotElement {
+  public:
+    ScopeRow(IPlotImplementation *plot);
+    ~ScopeRow();
 
-  void resize(const QPointF& topLeft, const QSizeF& hint);
+    QRectF boundingRect() const;
 
-  void paint(QPainter *painter) const;
+    void resize(const QPointF& topLeft, const QSizeF& hint);
 
-  const Scope *scope() const;
+    void paint(QPainter *painter) const;
 
-  IAxisElement *yAxis();
-  const IAxisElement *yAxis() const;
+    const Scope *scope() const;
 
-  ITitleElement *yTitle();
-  const ITitleElement *yTitle() const;
+    IAxisElement *yAxis();
+    const IAxisElement *yAxis() const;
 
-  const IPlotImplementation *plot() const;
+    ITitleElement *yTitle();
+    const ITitleElement *yTitle() const;
 
-  const SeriesStore& store() const;
-  SeriesStore& store();
+    const IPlotImplementation *plot() const;
 
-  QString activeSeriesName() const;
-  const Series& activeSeries() const;
-  void clearActiveSeries();
-  bool setActiveSeries(const QString& seriesName);
+    const SeriesStore& store() const;
+    SeriesStore& store();
 
-  SimPlotRange rangeY() const;
+    QString activeSeriesName() const;
+    const Series& activeSeries() const;
+    void clearActiveSeries();
+    bool setActiveSeries(const QString& seriesName);
 
-  SimPlotRange viewY() const;
-  void setViewY(const SimPlotRange& viewY);
+    PlotRange rangeY() const;
 
-  QTransform mapScaleToScreen() const;
-  QTransform mapViewToScreen() const;
+    PlotRange viewY() const;
+    void setViewY(const PlotRange& viewY);
 
-  void resetView();
+    QTransform mapScaleToScreen() const;
+    QTransform mapViewToScreen() const;
 
-private:
-  ITitleElement *_yTitle;
-  IAxisElement *_yAxis;
-  Scope *_scope;
-  IPlotImplementation *_plot;
-  SeriesStore _store;
-  QString _activeSeriesName;
-  SimPlotRange _viewY;
-};
+    void resetView();
 
-#endif // __SCOPEROW_H__
+  private:
+    ITitleElement *_yTitle;
+    IAxisElement *_yAxis;
+    Scope *_scope;
+    IPlotImplementation *_plot;
+    SeriesStore _store;
+    QString _activeSeriesName;
+    PlotRange _viewY;
+  };
+
+} // namespace plot

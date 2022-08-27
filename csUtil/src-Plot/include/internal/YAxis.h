@@ -29,36 +29,37 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __YAXIS_H__
-#define __YAXIS_H__
+#pragma once
 
 #include "internal/IAxisElement.h"
 
-class ScopeRow;
+namespace plot {
 
-class YAxis : public IAxisElement {
-public:
-  YAxis(ScopeRow *row);
-  ~YAxis();
+  class ScopeRow;
 
-  QRectF boundingRect() const;
+  class YAxis : public IAxisElement {
+  public:
+    YAxis(ScopeRow *row);
+    ~YAxis();
 
-  void resize(const QPointF& topLeft, const QSizeF& hint);
+    QRectF boundingRect() const;
 
-  void paint(QPainter *painter) const;
+    void resize(const QPointF& topLeft, const QSizeF& hint);
 
-  AxisLabels labels() const;
+    void paint(QPainter *painter) const;
 
-  void clearLabels();
+    AxisLabels labels() const;
 
-protected:
-  void updateLabels(const QSizeF& newSize);
+    void clearLabels();
 
-private:
-  AxisLabels _labels;
-  QSizeF _labelsSize;
-  QRectF _rect;
-  ScopeRow *_row;
-};
+  protected:
+    void updateLabels(const QSizeF& newSize);
 
-#endif // __YAXIS_H__
+  private:
+    AxisLabels _labels;
+    QSizeF _labelsSize;
+    QRectF _rect;
+    ScopeRow *_row;
+  };
+
+} // namespace plot

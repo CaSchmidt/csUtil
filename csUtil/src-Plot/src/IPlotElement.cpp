@@ -31,33 +31,37 @@
 
 #include "internal/IPlotElement.h"
 
-////// public ////////////////////////////////////////////////////////////////
+namespace plot {
 
-IPlotElement::~IPlotElement()
-{
-}
+  ////// public //////////////////////////////////////////////////////////////
 
-QPointF IPlotElement::bottomLeft() const
-{
-  return boundingRect().bottomLeft();
-}
+  IPlotElement::~IPlotElement()
+  {
+  }
 
-QPointF IPlotElement::bottomRight() const
-{
-  return boundingRect().bottomRight();
-}
+  QPointF IPlotElement::bottomLeft() const
+  {
+    return boundingRect().bottomLeft();
+  }
 
-QPointF IPlotElement::topLeft() const
-{
-  return boundingRect().topLeft();
-}
+  QPointF IPlotElement::bottomRight() const
+  {
+    return boundingRect().bottomRight();
+  }
 
-QPointF IPlotElement::topRight() const
-{
-  return boundingRect().topRight();
-}
+  QPointF IPlotElement::topLeft() const
+  {
+    return boundingRect().topLeft();
+  }
 
-QSizeF IPlotElement::size() const
-{
-  return boundingRect().size();
-}
+  QPointF IPlotElement::topRight() const
+  {
+    return boundingRect().topRight();
+  }
+
+  QSizeF IPlotElement::size() const
+  {
+    return boundingRect().size();
+  }
+
+} // namespace plot

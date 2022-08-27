@@ -33,49 +33,53 @@
 
 #include "internal/Series.h"
 
-////// public ////////////////////////////////////////////////////////////////
+namespace plot {
 
-Series::Series(ISimPlotSeriesData *data, const QColor& color)
-  : _dataPtr(data)
-  , _color(color)
-{
-}
+  ////// public ////////////////////////////////////////////////////////////////
 
-Series::~Series()
-{
-}
+  Series::Series(IPlotSeriesData *data, const QColor& color)
+    : _dataPtr(data)
+    , _color(color)
+  {
+  }
 
-bool Series::isEmpty() const
-{
-  return _dataPtr.isNull()  ||  _dataPtr->name().isEmpty();
-}
+  Series::~Series()
+  {
+  }
 
-QColor Series::color() const
-{
-  return _color;
-}
+  bool Series::isEmpty() const
+  {
+    return _dataPtr.isNull()  ||  _dataPtr->name().isEmpty();
+  }
 
-void Series::setColor(const QColor& color)
-{
-  _color = color;
-}
+  QColor Series::color() const
+  {
+    return _color;
+  }
 
-QString Series::name() const
-{
-  return _dataPtr->name();
-}
+  void Series::setColor(const QColor& color)
+  {
+    _color = color;
+  }
 
-QString Series::unit() const
-{
-  return _dataPtr->unit();
-}
+  QString Series::name() const
+  {
+    return _dataPtr->name();
+  }
 
-const ISimPlotSeriesData *Series::constData() const
-{
-  return _dataPtr.data();
-}
+  QString Series::unit() const
+  {
+    return _dataPtr->unit();
+  }
 
-ISimPlotSeriesData *Series::data()
-{
-  return _dataPtr.data();
-}
+  const IPlotSeriesData *Series::constData() const
+  {
+    return _dataPtr.data();
+  }
+
+  IPlotSeriesData *Series::data()
+  {
+    return _dataPtr.data();
+  }
+
+} // namespace plot

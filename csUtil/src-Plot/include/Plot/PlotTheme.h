@@ -38,35 +38,39 @@
 
 #include <cs/Core/csutil_config.h>
 
-struct CS_UTIL_EXPORT SimPlotTheme {
-  SimPlotTheme();
+namespace plot {
 
-  QColor backgroundColor;
-  QColor frameColor;
-  QColor gridColor;
-  QColor rubberColor;
-  QColor textColor;
-  QVector<QColor> seriesColors;
+  struct CS_UTIL_EXPORT PlotTheme {
+    PlotTheme();
 
-  QColor nextColor();
+    QColor backgroundColor;
+    QColor frameColor;
+    QColor gridColor;
+    QColor rubberColor;
+    QColor textColor;
+    QVector<QColor> seriesColors;
 
-  QBrush backgroundBrush() const;
-  QPen framePen() const;
-  QPen gridPen() const;
-  QPen rubberPen() const;
-  QPen textPen() const;
+    QColor nextColor();
 
-  static QPen seriesPen(const QColor& color, const qreal width = 1.0);
-  static QPen yAxisPen(const QColor& color);
+    QBrush backgroundBrush() const;
+    QPen framePen() const;
+    QPen gridPen() const;
+    QPen rubberPen() const;
+    QPen textPen() const;
 
-  static bool isEmptyUnit(const QString& unit);
-  static QString cleanUnit(const QString& unit);
+    static QPen seriesPen(const QColor& color, const qreal width = 1.0);
+    static QPen yAxisPen(const QColor& color);
 
-  static QString titleString(const QString& name, const QString& unit);
+    static bool isEmptyUnit(const QString& unit);
+    static QString cleanUnit(const QString& unit);
 
-  static SimPlotTheme themeTextbook();
-  static SimPlotTheme themeOscilloscope();
+    static QString titleString(const QString& name, const QString& unit);
 
-private:
-  int _colorIndex;
-};
+    static PlotTheme themeTextbook();
+    static PlotTheme themeOscilloscope();
+
+  private:
+    int _colorIndex;
+  };
+
+} // namespace plot

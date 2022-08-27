@@ -29,23 +29,24 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __ISERIESCONTROL_H__
-#define __ISERIESCONTROL_H__
+#pragma once
 
 #include <Plot/PlotSeriesHandle.h>
 
-class Series;
+namespace plot {
 
-class ISeriesControl {
-public:
-  virtual ~ISeriesControl();
+  class Series;
 
-  virtual SimPlotSeriesHandle handle(const QString& name) const = 0;
-  virtual SimPlotSeriesHandle insert(ISimPlotSeriesData *data, const QColor& color) = 0;
-  virtual bool remove(const QString& name) = 0;
-  virtual const Series& series(const QString& name) const = 0;
-  virtual Series& series(const QString& name) = 0;
-  virtual bool setActiveSeries(const QString& name) = 0;
-};
+  class ISeriesControl {
+  public:
+    virtual ~ISeriesControl();
 
-#endif // __ISERIESCONTROL_H__
+    virtual PlotSeriesHandle handle(const QString& name) const = 0;
+    virtual PlotSeriesHandle insert(IPlotSeriesData *data, const QColor& color) = 0;
+    virtual bool remove(const QString& name) = 0;
+    virtual const Series& series(const QString& name) const = 0;
+    virtual Series& series(const QString& name) = 0;
+    virtual bool setActiveSeries(const QString& name) = 0;
+  };
+
+} // namespace plot

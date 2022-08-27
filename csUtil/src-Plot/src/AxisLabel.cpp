@@ -33,101 +33,105 @@
 
 #include "cs/Math/Math.h"
 
-////// public ////////////////////////////////////////////////////////////////
+namespace plot {
 
-AxisLabel::AxisLabel(const qreal value,
-                     const int prec, const char fmt)
-  : _value(value)
-  , _text()
-{
-  _text = format(value, prec, fmt);
-}
+  ////// public //////////////////////////////////////////////////////////////
 
-AxisLabel::~AxisLabel()
-{
-}
+  AxisLabel::AxisLabel(const qreal value,
+                       const int prec, const char fmt)
+    : _value(value)
+    , _text()
+  {
+    _text = format(value, prec, fmt);
+  }
 
-qreal AxisLabel::value() const
-{
-  return _value;
-}
+  AxisLabel::~AxisLabel()
+  {
+  }
 
-QString AxisLabel::text() const
-{
-  return _text;
-}
+  qreal AxisLabel::value() const
+  {
+    return _value;
+  }
 
-std::vector<double> AxisLabel::computeValues(const double min, const double max,
-                                             const double N, const double xN)
-{
-  using m = cs::math<double>;
+  QString AxisLabel::text() const
+  {
+    return _text;
+  }
 
-  std::vector<double> result;
+  std::vector<double> AxisLabel::computeValues(const double min, const double max,
+                                               const double N, const double xN)
+  {
+    using m = cs::math<double>;
 
-  if( max <= min ) {
+    std::vector<double> result;
+
+    if( max <= min ) {
+      return result;
+    }
+
+    const double rawSpan = max - min;
+
+    const double x10 = m::pow(10.0, m::floor(m::log10(rawSpan)));
+
+    const double startStep = m::round(min/x10)*x10;
+    const double   endStep = m::round(max/x10)*x10;
+    const double  stepSpan = endStep - startStep;
+
+    const double step = stepSpan/N*xN;
+
+    const double startLabel = m::ceil( min/step)*step;
+    const double   endLabel = m::floor(max/step)*step;
+    const double  labelSpan = endLabel - startLabel;
+
+    const int num = (int)m::intgr(labelSpan/step) + 1;
+    result.resize(num, 0);
+    for(int i = 0; i < num; i++) {
+      result[i] = startLabel + (double)i*step;
+    }
+
     return result;
   }
 
-  const double rawSpan = max - min;
+  QString AxisLabel::format(const qreal value,
+                            const int prec, const char fmt)
+  {
+    QString text = QString::number(value, fmt, prec);
 
-  const double x10 = m::pow(10.0, m::floor(m::log10(rawSpan)));
-
-  const double startStep = m::round(min/x10)*x10;
-  const double   endStep = m::round(max/x10)*x10;
-  const double  stepSpan = endStep - startStep;
-
-  const double step = stepSpan/N*xN;
-
-  const double startLabel = m::ceil( min/step)*step;
-  const double   endLabel = m::floor(max/step)*step;
-  const double  labelSpan = endLabel - startLabel;
-
-  const int num = (int)m::intgr(labelSpan/step) + 1;
-  result.resize(num, 0);
-  for(int i = 0; i < num; i++) {
-    result[i] = startLabel + (double)i*step;
-  }
-
-  return result;
-}
-
-QString AxisLabel::format(const qreal value,
-                          const int prec, const char fmt)
-{
-  QString text = QString::number(value, fmt, prec);
-
-  const int hit = text.lastIndexOf(QLatin1Char('.'));
-  if( fmt == 'f'  &&  hit > 0 ) {
-    // for each trailing zero
-    for(int i = text.size()-1; i > hit; i--) {
-      if( text.endsWith(QLatin1Char('0')) ) {
+    const int hit = text.lastIndexOf(QLatin1Char('.'));
+    if( fmt == 'f'  &&  hit > 0 ) {
+      // for each trailing zero
+      for(int i = text.size()-1; i > hit; i--) {
+        if( text.endsWith(QLatin1Char('0')) ) {
+          text.chop(1);
+        } else {
+          break;
+        }
+      }
+      // remove possible trailing dot
+      if( hit == text.size()-1 ) {
         text.chop(1);
-      } else {
-        break;
       }
     }
-    // remove possible trailing dot
-    if( hit == text.size()-1 ) {
-      text.chop(1);
-    }
+
+    return text;
   }
 
-  return text;
-}
+  QList<AxisLabel> AxisLabel::fromValues(const std::vector<double>& values,
+                                         const int prec, const char fmt)
+  {
+    AxisLabels result;
 
-QList<AxisLabel> AxisLabel::fromValues(const std::vector<double>& values,
-                                       const int prec, const char fmt)
-{
-  AxisLabels result;
+    if( values.empty() ) {
+      return result;
+    }
 
-  if( values.empty() ) {
+    result.reserve((int)values.size());
+    for(const double value : values) {
+      result.push_back(AxisLabel(value, prec, fmt));
+    }
+
     return result;
   }
 
-  result.reserve((int)values.size());
-  for(const double value : values) {
-    result.push_back(AxisLabel(value, prec, fmt));
-  }
-
-  return result;
-}
+} // namespace plot

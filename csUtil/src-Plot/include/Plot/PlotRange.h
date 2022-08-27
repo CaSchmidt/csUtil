@@ -35,26 +35,30 @@
 
 #include <cs/Core/csutil_config.h>
 
-class CS_UTIL_EXPORT SimPlotRange {
-public:
-  SimPlotRange();
-  SimPlotRange(const qreal min, const qreal max);
-  ~SimPlotRange();
+namespace plot {
 
-  bool isValid() const;
+  class CS_UTIL_EXPORT PlotRange {
+  public:
+    PlotRange();
+    PlotRange(const qreal min, const qreal max);
+    ~PlotRange();
 
-  void adjust();
-  void initialize();
-  void update(const qreal value);
-  void update(const SimPlotRange& other);
+    bool isValid() const;
 
-  SimPlotRange clamped(const SimPlotRange& other, const qreal norm = 1.0) const;
+    void adjust();
+    void initialize();
+    void update(const qreal value);
+    void update(const PlotRange& other);
 
-  qreal min() const;
-  qreal max() const;
-  qreal span() const;
+    PlotRange clamped(const PlotRange& other, const qreal norm = 1.0) const;
 
-private:
-  qreal _min;
-  qreal _max;
-};
+    qreal min() const;
+    qreal max() const;
+    qreal span() const;
+
+  private:
+    qreal _min;
+    qreal _max;
+  };
+
+} // namespace plot

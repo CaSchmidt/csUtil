@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __SERIES_H__
-#define __SERIES_H__
+#pragma once
 
 #include <QtCore/QSharedPointer>
 #include <QtGui/QColor>
@@ -39,32 +38,34 @@
 
 class QPainter;
 
-typedef QSharedPointer<ISimPlotSeriesData> SeriesDataPtr;
+namespace plot {
 
-class Series {
-public:
-  Series(ISimPlotSeriesData *data = 0, const QColor& color = Qt::black);
-  ~Series();
+  using SeriesDataPtr = QSharedPointer<IPlotSeriesData>;
 
-  bool isEmpty() const;
+  class Series {
+  public:
+    Series(IPlotSeriesData *data = 0, const QColor& color = Qt::black);
+    ~Series();
 
-  QColor color() const;
-  void setColor(const QColor& color);
+    bool isEmpty() const;
 
-  QString name() const;
-  QString unit() const;
+    QColor color() const;
+    void setColor(const QColor& color);
 
-  const ISimPlotSeriesData *constData() const;
-  ISimPlotSeriesData *data();
+    QString name() const;
+    QString unit() const;
 
-private:
-  SeriesDataPtr _dataPtr;
-  QColor _color;
-};
+    const IPlotSeriesData *constData() const;
+    IPlotSeriesData *data();
 
-inline bool operator==(const Series& a, const Series& b)
-{
-  return !a.isEmpty()  &&  !b.isEmpty()  &&  a.name() == b.name();
-}
+  private:
+    SeriesDataPtr _dataPtr;
+    QColor _color;
+  };
 
-#endif // __SERIES_H__
+  inline bool operator==(const Series& a, const Series& b)
+  {
+    return !a.isEmpty()  &&  !b.isEmpty()  &&  a.name() == b.name();
+  }
+
+} // namespace plot

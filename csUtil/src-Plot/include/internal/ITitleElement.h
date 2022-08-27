@@ -29,18 +29,19 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __ITITLEELEMENT_H__
-#define __ITITLEELEMENT_H__
+#pragma once
 
 #include "internal/IPlotElement.h"
 
-class ITitleElement : public IPlotElement {
-public:
-  ~ITitleElement();
+namespace plot  {
 
-  virtual QString title() const = 0;
+  class ITitleElement : public IPlotElement {
+  public:
+    ~ITitleElement();
 
-  virtual void setTitle(const QString& title) = 0;
-};
+    virtual QString title() const = 0;
 
-#endif // __ITITLEELEMENT_H__
+    virtual void setTitle(const QString& title) = 0;
+  };
+
+} // namespace plot

@@ -29,7 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <Plot/PlotTheme.h>
+#include "Plot/PlotTheme.h"
 
 #include "internal/Scope.h"
 
@@ -38,76 +38,80 @@
 #include "internal/Mapping.h"
 #include "internal/ScopeRow.h"
 
-////// public ////////////////////////////////////////////////////////////////
+namespace plot {
 
-Scope::Scope(ScopeRow *row)
-  : _rect()
-  , _row(row)
-{
-}
+  ////// public //////////////////////////////////////////////////////////////
 
-Scope::~Scope()
-{
-}
-
-QRectF Scope::boundingRect() const
-{
-  return _rect;
-}
-
-void Scope::resize(const QPointF& topLeft, const QSizeF& hint)
-{
-  _rect = QRectF(topLeft, hint);
-}
-
-void Scope::paint(QPainter *painter) const
-{
-  painter->save();
-
-  painter->setBrush(Qt::NoBrush);
-
-  // (1) Grid ////////////////////////////////////////////////////////////////
-
-  const QTransform mapping = _row->mapScaleToScreen();
-
-  Draw::gridX(painter,
-              _row->plot()->xAxis(), mapping, _rect, _row->plot()->theme().gridPen());
-  Draw::gridY(painter,
-              _row->yAxis(), mapping, _rect, _row->plot()->theme().gridPen());
-
-  // (2) Frame ///////////////////////////////////////////////////////////////
-
-  Draw::frame(painter,
-              _rect, _row->plot()->theme().framePen());
-
-  // (3) Series (Excluding Active Series) ////////////////////////////////////
-
-  const Series& activeSeries = _row->activeSeries();
-  const SimPlotRange  rangeX = _row->plot()->rangeX();
-
-  painter->resetTransform();
-  painter->setClipRect(_rect);
-  for(const QString& seriesName : _row->store().names()) {
-    const Series& series = _row->store().series(seriesName);
-    if( series.isEmpty()  ||  series == activeSeries ) {
-      continue;
-    }
-    const SimPlotRange rangeY =
-        _row->store().rangeY(series.name()).clamped(_row->viewY(), 100);
-    Draw::series(painter,
-                 _rect, series, rangeX, rangeY, _row->plot()->drawFlags());
+  Scope::Scope(ScopeRow *row)
+    : _rect()
+    , _row(row)
+  {
   }
 
-  // (4) Active Series ///////////////////////////////////////////////////////
+  Scope::~Scope()
+  {
+  }
 
-  if( !activeSeries.isEmpty() ) {
+  QRectF Scope::boundingRect() const
+  {
+    return _rect;
+  }
+
+  void Scope::resize(const QPointF& topLeft, const QSizeF& hint)
+  {
+    _rect = QRectF(topLeft, hint);
+  }
+
+  void Scope::paint(QPainter *painter) const
+  {
+    painter->save();
+
+    painter->setBrush(Qt::NoBrush);
+
+    // (1) Grid //////////////////////////////////////////////////////////////
+
+    const QTransform mapping = _row->mapScaleToScreen();
+
+    Draw::gridX(painter,
+                _row->plot()->xAxis(), mapping, _rect, _row->plot()->theme().gridPen());
+    Draw::gridY(painter,
+                _row->yAxis(), mapping, _rect, _row->plot()->theme().gridPen());
+
+    // (2) Frame /////////////////////////////////////////////////////////////
+
+    Draw::frame(painter,
+                _rect, _row->plot()->theme().framePen());
+
+    // (3) Series (Excluding Active Series) //////////////////////////////////
+
+    const Series& activeSeries = _row->activeSeries();
+    const PlotRange  rangeX = _row->plot()->rangeX();
+
     painter->resetTransform();
-    painter->setClipRect(_rect.adjusted(-1, -1, 1, 1));
-    const SimPlotRange rangeY =
-        _row->store().rangeY(activeSeries.name()).clamped(_row->viewY(), 100);
-    Draw::series(painter,
-                 _rect, activeSeries, rangeX, rangeY, _row->plot()->drawFlags() | SimPlot::IsActive);
+    painter->setClipRect(_rect);
+    for(const QString& seriesName : _row->store().names()) {
+      const Series& series = _row->store().series(seriesName);
+      if( series.isEmpty()  ||  series == activeSeries ) {
+        continue;
+      }
+      const PlotRange rangeY =
+          _row->store().rangeY(series.name()).clamped(_row->viewY(), 100);
+      Draw::series(painter,
+                   _rect, series, rangeX, rangeY, _row->plot()->drawFlags());
+    }
+
+    // (4) Active Series /////////////////////////////////////////////////////
+
+    if( !activeSeries.isEmpty() ) {
+      painter->resetTransform();
+      painter->setClipRect(_rect.adjusted(-1, -1, 1, 1));
+      const PlotRange rangeY =
+          _row->store().rangeY(activeSeries.name()).clamped(_row->viewY(), 100);
+      Draw::series(painter,
+                   _rect, activeSeries, rangeX, rangeY, _row->plot()->drawFlags() | IsActive);
+    }
+
+    painter->restore();
   }
 
-  painter->restore();
-}
+} // namespace plot

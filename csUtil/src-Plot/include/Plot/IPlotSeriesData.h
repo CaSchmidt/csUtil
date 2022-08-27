@@ -38,40 +38,44 @@
 
 class QPainter;
 
-class CS_UTIL_EXPORT ISimPlotSeriesData {
-public:
-  ISimPlotSeriesData();
-  virtual ~ISimPlotSeriesData();
+namespace plot {
 
-  bool isEmpty() const;
+  class CS_UTIL_EXPORT IPlotSeriesData {
+  public:
+    IPlotSeriesData();
+    virtual ~IPlotSeriesData();
 
-  // Returns i := x[i]   <= x  &&  x <  x[i+1]
-  int findLeft(const qreal x) const;
-  // Returns i := x[i-1] <  x  &&  x <= x[i]
-  int findRight(const qreal x) const;
+    bool isEmpty() const;
 
-  void drawLines(QPainter *painter, const int L, const int R) const;
-  void drawSteps(QPainter *painter, const int L, const int R) const;
+    // Returns i := x[i]   <= x  &&  x <  x[i+1]
+    int findLeft(const qreal x) const;
+    // Returns i := x[i-1] <  x  &&  x <= x[i]
+    int findRight(const qreal x) const;
 
-  virtual QString name() const = 0;
-  virtual QString unit() const = 0;
+    void drawLines(QPainter *painter, const int L, const int R) const;
+    void drawSteps(QPainter *painter, const int L, const int R) const;
 
-  virtual QPointF value(const int i) const = 0;
-  virtual int size() const = 0;
+    virtual QString name() const = 0;
+    virtual QString unit() const = 0;
 
-  virtual qreal valueX(const int i) const;
-  virtual qreal valueY(const int i) const;
+    virtual QPointF value(const int i) const = 0;
+    virtual int size() const = 0;
 
-  // NOTE: QPointF points[R - L + 1] required!
-  virtual void values(QPointF *points, const int L, const int R) const;
+    virtual qreal valueX(const int i) const;
+    virtual qreal valueY(const int i) const;
 
-  virtual SimPlotRange rangeX() const;
-  virtual SimPlotRange rangeY() const;
+    // NOTE: QPointF points[R - L + 1] required!
+    virtual void values(QPointF *points, const int L, const int R) const;
 
-protected:
-  virtual void updateRange();
+    virtual PlotRange rangeX() const;
+    virtual PlotRange rangeY() const;
 
-private:
-  SimPlotRange _rangeX;
-  SimPlotRange _rangeY;
-};
+  protected:
+    virtual void updateRange();
+
+  private:
+    PlotRange _rangeX;
+    PlotRange _rangeY;
+  };
+
+} // namespace plot

@@ -29,42 +29,43 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __AXISLABEL_H__
-#define __AXISLABEL_H__
+#pragma once
 
 #include <vector>
 
 #include <QtCore/QList>
 #include <QtCore/QString>
 
-#define AXISLABEL_PREC  3
-#define AXISLABEL_FMT  'f'
+namespace plot {
 
-class AxisLabel {
-public:
-  AxisLabel(const qreal value,
-            const int prec = AXISLABEL_PREC, const char fmt = AXISLABEL_FMT);
-  ~AxisLabel();
+  inline constexpr int AXISLABEL_PREC = 3;
+  inline constexpr char AXISLABEL_FMT = 'f';
 
-  qreal value() const;
-  QString text() const;
+  class AxisLabel {
+  public:
+    AxisLabel(const qreal value,
+              const int prec = AXISLABEL_PREC, const char fmt = AXISLABEL_FMT);
+    ~AxisLabel();
 
-  // N == 10  ->  xN = { 1, 2, 2.5, 5 }
-  static std::vector<double> computeValues(const double min, const double max,
-                                           const double N, const double xN);
-  static QString format(const qreal value,
-                        const int prec = AXISLABEL_PREC, const char fmt = AXISLABEL_FMT);
+    qreal value() const;
+    QString text() const;
 
-  static QList<AxisLabel> fromValues(const std::vector<double>& values,
-                                     const int prec = AXISLABEL_PREC, const char fmt = AXISLABEL_FMT);
+    // N == 10  ->  xN = { 1, 2, 2.5, 5 }
+    static std::vector<double> computeValues(const double min, const double max,
+                                             const double N, const double xN);
+    static QString format(const qreal value,
+                          const int prec = AXISLABEL_PREC, const char fmt = AXISLABEL_FMT);
 
-private:
-  AxisLabel();
+    static QList<AxisLabel> fromValues(const std::vector<double>& values,
+                                       const int prec = AXISLABEL_PREC, const char fmt = AXISLABEL_FMT);
 
-  qreal _value;
-  QString _text;
-};
+  private:
+    AxisLabel();
 
-typedef QList<AxisLabel> AxisLabels;
+    qreal _value;
+    QString _text;
+  };
 
-#endif // __AXISLABEL_H__
+  typedef QList<AxisLabel> AxisLabels;
+
+} // namespace plot

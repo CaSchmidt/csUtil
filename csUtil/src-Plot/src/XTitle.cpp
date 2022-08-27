@@ -35,57 +35,61 @@
 
 #include "internal/IPlotImplementation.h"
 
-////// public ////////////////////////////////////////////////////////////////
+namespace plot {
 
-XTitle::XTitle(IPlotImplementation *plot)
-  : _rect()
-  , _title()
-  , _plot(plot)
-{
-}
+  ////// public //////////////////////////////////////////////////////////////
 
-XTitle::~XTitle()
-{
-}
-
-QRectF XTitle::boundingRect() const
-{
-  return _rect;
-}
-
-void XTitle::resize(const QPointF& topLeft, const QSizeF& hint)
-{
-  const QFontMetricsF metrics(_plot->widget()->font());
-  _rect = QRectF(topLeft, QSizeF(hint.width(), metrics.height()));
-}
-
-void XTitle::paint(QPainter *painter) const
-{
-  if( _title.isEmpty() ) {
-    return;
+  XTitle::XTitle(IPlotImplementation *plot)
+    : _rect()
+    , _title()
+    , _plot(plot)
+  {
   }
 
-  const QFontMetricsF metrics(_plot->widget()->font());
+  XTitle::~XTitle()
+  {
+  }
 
-  painter->save();
+  QRectF XTitle::boundingRect() const
+  {
+    return _rect;
+  }
 
-  painter->setFont(_plot->widget()->font());
-  painter->setPen(_plot->theme().textColor);
+  void XTitle::resize(const QPointF& topLeft, const QSizeF& hint)
+  {
+    const QFontMetricsF metrics(_plot->widget()->font());
+    _rect = QRectF(topLeft, QSizeF(hint.width(), metrics.height()));
+  }
 
-  painter->drawText(QPointF(_rect.center()) +
-                    QPointF(-metrics.width(_title)/2.0,
-                            metrics.ascent() - metrics.height()/2.0),
-                    _title);
+  void XTitle::paint(QPainter *painter) const
+  {
+    if( _title.isEmpty() ) {
+      return;
+    }
 
-  painter->restore();
-}
+    const QFontMetricsF metrics(_plot->widget()->font());
 
-QString XTitle::title() const
-{
-  return _title;
-}
+    painter->save();
 
-void XTitle::setTitle(const QString& title)
-{
-  _title = title;
-}
+    painter->setFont(_plot->widget()->font());
+    painter->setPen(_plot->theme().textColor);
+
+    painter->drawText(QPointF(_rect.center()) +
+                      QPointF(-metrics.width(_title)/2.0,
+                              metrics.ascent() - metrics.height()/2.0),
+                      _title);
+
+    painter->restore();
+  }
+
+  QString XTitle::title() const
+  {
+    return _title;
+  }
+
+  void XTitle::setTitle(const QString& title)
+  {
+    _title = title;
+  }
+
+} // namespace plot

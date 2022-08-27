@@ -29,32 +29,29 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __IPLOTELEMENT_H__
-#define __IPLOTELEMENT_H__
+#pragma once
 
 #include <QtCore/QRectF>
 #include <QtGui/QPainter>
 
-class QWidget;
+namespace plot {
 
-typedef QWidget Widget;
+  class IPlotElement {
+  public:
+    virtual ~IPlotElement();
 
-class IPlotElement {
-public:
-  virtual ~IPlotElement();
+    virtual QRectF boundingRect() const = 0;
 
-  virtual QRectF boundingRect() const = 0;
+    virtual void resize(const QPointF& topLeft, const QSizeF& hint) = 0;
 
-  virtual void resize(const QPointF& topLeft, const QSizeF& hint) = 0;
+    virtual void paint(QPainter *painter) const = 0;
 
-  virtual void paint(QPainter *painter) const = 0;
+    QPointF bottomLeft() const;
+    QPointF bottomRight() const;
+    QPointF topLeft() const;
+    QPointF topRight() const;
 
-  QPointF bottomLeft() const;
-  QPointF bottomRight() const;
-  QPointF topLeft() const;
-  QPointF topRight() const;
+    QSizeF size() const;
+  };
 
-  QSizeF size() const;
-};
-
-#endif // __IPLOTELEMENT_H__
+} // namespace plot

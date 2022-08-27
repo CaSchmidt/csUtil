@@ -29,61 +29,62 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __SINGLEPLOTIMPL_H__
-#define __SINGLEPLOTIMPL_H__
+#pragma once
 
 #include "internal/IPlotImplementation.h"
 
-class IAxisElement;
-class ITitleElement;
-class ScopeRow;
+namespace plot {
 
-class SinglePlotImpl : public IPlotImplementation {
-public:
-  SinglePlotImpl(const SimPlot::DrawFlags drawFlags, const SimPlotTheme& theme, Widget *widget);
-  ~SinglePlotImpl();
+  class IAxisElement;
+  class ITitleElement;
+  class ScopeRow;
 
-  void replot();
-  void reset();
-  const Widget *widget() const;
+  class SinglePlotImpl : public IPlotImplementation {
+  public:
+    SinglePlotImpl(const DrawFlags drawFlags, const PlotTheme& theme, QWidget *widget);
+    ~SinglePlotImpl();
 
-  // IPlotElement
+    void replot();
+    void reset();
+    const QWidget *widget() const;
 
-  QRectF boundingRect() const;
-  void resize(const QPointF& topLeft, const QSizeF& hint);
-  void paint(QPainter *painter) const;
+    // IPlotElement
 
-  // ISeriesControl
+    QRectF boundingRect() const;
+    void resize(const QPointF& topLeft, const QSizeF& hint);
+    void paint(QPainter *painter) const;
 
-  SimPlotSeriesHandle handle(const QString& name) const;
-  SimPlotSeriesHandle insert(ISimPlotSeriesData *data, const QColor& color);
-  bool remove(const QString& name);
-  const Series& series(const QString& name) const;
-  Series& series(const QString& name);
-  bool setActiveSeries(const QString& name);
+    // ISeriesControl
 
-  // IViewportControl
+    PlotSeriesHandle handle(const QString& name) const;
+    PlotSeriesHandle insert(IPlotSeriesData *data, const QColor& color);
+    bool remove(const QString& name);
+    const Series& series(const QString& name) const;
+    Series& series(const QString& name);
+    bool setActiveSeries(const QString& name);
 
-  void pan(const QPointF& delta);
-  void rectangularZoom(const QRectF& zoomRect);
-  void horizontalZoom(const QRectF& zoomRect);
-  void verticalZoom(const QRectF& zoomRect);
+    // IViewportControl
 
-  // IXAxisControl
+    void pan(const QPointF& delta);
+    void rectangularZoom(const QRectF& zoomRect);
+    void horizontalZoom(const QRectF& zoomRect);
+    void verticalZoom(const QRectF& zoomRect);
 
-  QTransform mapViewToScreenX() const;
-  SimPlotRange rangeX() const;
-  void setTitleX(const QString& title);
-  SimPlotRange totalRangeX() const;
-  const IAxisElement *xAxis() const;
+    // IXAxisControl
 
-private:
-  Widget *_widget;
-  SimPlotRange _rangeX;
-  QRectF _rect;
-  ScopeRow *_row;
-  IAxisElement *_xAxis;
-  ITitleElement *_xTitle;
-};
+    QTransform mapViewToScreenX() const;
+    PlotRange rangeX() const;
+    void setTitleX(const QString& title);
+    PlotRange totalRangeX() const;
+    const IAxisElement *xAxis() const;
 
-#endif // __SINGLEPLOTIMPL_H__
+  private:
+    QWidget *_widget;
+    PlotRange _rangeX;
+    QRectF _rect;
+    ScopeRow *_row;
+    IAxisElement *_xAxis;
+    ITitleElement *_xTitle;
+  };
+
+} // namespace plot

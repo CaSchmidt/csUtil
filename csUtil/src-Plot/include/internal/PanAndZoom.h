@@ -29,33 +29,34 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __PANANDZOOM_H__
-#define __PANANDZOOM_H__
+#pragma once
 
 #include <QtCore/QRectF>
 
 #include <Plot/PlotRange.h>
 
-namespace Pan {
+namespace plot {
 
-  SimPlotRange horizontal(const QPointF& delta, const QSizeF& screen,
-                          const SimPlotRange& viewX,
-                          const SimPlotRange& viewY,
-                          const SimPlotRange& boundsX);
+  namespace Pan {
 
-  SimPlotRange vertical(const QPointF& delta, const QSizeF& screen,
-                        const SimPlotRange& viewX,
-                        const SimPlotRange& viewY,
-                        const SimPlotRange& boundsY);
+    PlotRange horizontal(const QPointF& delta, const QSizeF& screen,
+                         const PlotRange& viewX,
+                         const PlotRange& viewY,
+                         const PlotRange& boundsX);
 
-} // namespace Pan
+    PlotRange vertical(const QPointF& delta, const QSizeF& screen,
+                       const PlotRange& viewX,
+                       const PlotRange& viewY,
+                       const PlotRange& boundsY);
 
-namespace ZoomIn {
+  } // namespace Pan
 
-  QRectF rectangular(const QRectF& zoomRect, const QRectF& screen,
-                     const SimPlotRange& viewX,
-                     const SimPlotRange& viewY);
+  namespace ZoomIn {
 
-} // namespace ZoomIn
+    QRectF rectangular(const QRectF& zoomRect, const QRectF& screen,
+                       const PlotRange& viewX,
+                       const PlotRange& viewY);
 
-#endif // __PANANDZOOM_H__
+  } // namespace ZoomIn
+
+} // namespace plot

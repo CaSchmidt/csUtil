@@ -35,110 +35,114 @@
 
 #include "internal/IPlotImplementation.h"
 
-////// public ////////////////////////////////////////////////////////////////
+namespace plot {
 
-XAxis::XAxis(IPlotImplementation *plot)
-  : _labels()
-  , _labelsSize()
-  , _rect()
-  , _plot(plot)
-{
-}
+  ////// public //////////////////////////////////////////////////////////////
 
-XAxis::~XAxis()
-{
-}
-
-QRectF XAxis::boundingRect() const
-{
-  return _rect;
-}
-
-void XAxis::resize(const QPointF& topLeft, const QSizeF& hint)
-{
-  const QFontMetricsF metrics(_plot->widget()->font());
-  _rect = QRectF(topLeft, QSizeF(hint.width(), metrics.height()));
-
-  const SimPlotRange rangeX = _plot->rangeX();
-  if( !rangeX.isValid() ) {
-    return;
+  XAxis::XAxis(IPlotImplementation *plot)
+    : _labels()
+    , _labelsSize()
+    , _rect()
+    , _plot(plot)
+  {
   }
 
-  updateLabels(hint);
-}
-
-void XAxis::paint(QPainter *painter) const
-{
-  painter->save();
-
-  painter->setFont(_plot->widget()->font());
-  painter->setPen(_plot->theme().textPen());
-
-  const QFontMetricsF metrics(_plot->widget()->font());
-  const QTransform xform = _plot->mapViewToScreenX();
-  const qreal     yshift = metrics.ascent();
-
-  for(const AxisLabel& label : _labels) {
-    const qreal xshift = -metrics.width(label.text())/2.0;
-    const QPointF p = _rect.topLeft() +
-        QPointF(xform.map(QPointF(label.value(), 0)).x() + xshift,
-                yshift);
-    painter->drawText(p, label.text());
+  XAxis::~XAxis()
+  {
   }
 
-  painter->restore();
-}
-
-AxisLabels XAxis::labels() const
-{
-  return _labels;
-}
-
-void XAxis::clearLabels()
-{
-  _labels.clear();
-}
-
-////// protected /////////////////////////////////////////////////////////////
-
-void XAxis::updateLabels(const QSizeF& newSize)
-{
-  if( newSize.width() == _labelsSize.width()  &&  !_labels.isEmpty() ) {
-    return;
+  QRectF XAxis::boundingRect() const
+  {
+    return _rect;
   }
 
-  const QFontMetricsF metrics(_plot->widget()->font());
-  const SimPlotRange rangeX = _plot->rangeX();
+  void XAxis::resize(const QPointF& topLeft, const QSizeF& hint)
+  {
+    const QFontMetricsF metrics(_plot->widget()->font());
+    _rect = QRectF(topLeft, QSizeF(hint.width(), metrics.height()));
 
-  _labels.clear();
-  _labelsSize.setWidth(0);
-  _labelsSize.setHeight(0);
-
-  const std::vector<double> factors = { 1, 2, 2.5, 5 };
-  for(const double xN : factors) {
-    const std::vector<double> values =
-        AxisLabel::computeValues(rangeX.min(), rangeX.max(), 10, xN);
-    if( values.empty() ) {
-      continue;
+    const PlotRange rangeX = _plot->rangeX();
+    if( !rangeX.isValid() ) {
+      return;
     }
 
-    const int numValues = (int)values.size();
+    updateLabels(hint);
+  }
 
-    qreal width = metrics.averageCharWidth()*(numValues - 1);
+  void XAxis::paint(QPainter *painter) const
+  {
+    painter->save();
 
-    _labels = AxisLabel::fromValues(values);
+    painter->setFont(_plot->widget()->font());
+    painter->setPen(_plot->theme().textPen());
+
+    const QFontMetricsF metrics(_plot->widget()->font());
+    const QTransform xform = _plot->mapViewToScreenX();
+    const qreal     yshift = metrics.ascent();
+
     for(const AxisLabel& label : _labels) {
-      width += metrics.width(label.text());
+      const qreal xshift = -metrics.width(label.text())/2.0;
+      const QPointF p = _rect.topLeft() +
+          QPointF(xform.map(QPointF(label.value(), 0)).x() + xshift,
+                  yshift);
+      painter->drawText(p, label.text());
     }
 
-    if( width > newSize.width() ) {
-      _labels.clear();
-      continue;
-    }
-
-    break;
+    painter->restore();
   }
 
-  _labelsSize.setWidth(newSize.width());
-  _labelsSize.setHeight(metrics.height());
-}
+  AxisLabels XAxis::labels() const
+  {
+    return _labels;
+  }
+
+  void XAxis::clearLabels()
+  {
+    _labels.clear();
+  }
+
+  ////// protected ///////////////////////////////////////////////////////////
+
+  void XAxis::updateLabels(const QSizeF& newSize)
+  {
+    if( newSize.width() == _labelsSize.width()  &&  !_labels.isEmpty() ) {
+      return;
+    }
+
+    const QFontMetricsF metrics(_plot->widget()->font());
+    const PlotRange rangeX = _plot->rangeX();
+
+    _labels.clear();
+    _labelsSize.setWidth(0);
+    _labelsSize.setHeight(0);
+
+    const std::vector<double> factors = { 1, 2, 2.5, 5 };
+    for(const double xN : factors) {
+      const std::vector<double> values =
+          AxisLabel::computeValues(rangeX.min(), rangeX.max(), 10, xN);
+      if( values.empty() ) {
+        continue;
+      }
+
+      const int numValues = (int)values.size();
+
+      qreal width = metrics.averageCharWidth()*(numValues - 1);
+
+      _labels = AxisLabel::fromValues(values);
+      for(const AxisLabel& label : _labels) {
+        width += metrics.width(label.text());
+      }
+
+      if( width > newSize.width() ) {
+        _labels.clear();
+        continue;
+      }
+
+      break;
+    }
+
+    _labelsSize.setWidth(newSize.width());
+    _labelsSize.setHeight(metrics.height());
+  }
+
+} // namespace plot

@@ -29,32 +29,33 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __XTITLE_H__
-#define __XTITLE_H__
+#pragma once
 
 #include "internal/ITitleElement.h"
 
-class IPlotImplementation;
+namespace plot {
 
-class XTitle : public ITitleElement {
-public:
-  XTitle(IPlotImplementation *plot);
-  ~XTitle();
+  class IPlotImplementation;
 
-  QRectF boundingRect() const;
+  class XTitle : public ITitleElement {
+  public:
+    XTitle(IPlotImplementation *plot);
+    ~XTitle();
 
-  void resize(const QPointF& topLeft, const QSizeF& hint);
+    QRectF boundingRect() const;
 
-  void paint(QPainter *painter) const;
+    void resize(const QPointF& topLeft, const QSizeF& hint);
 
-  QString title() const;
+    void paint(QPainter *painter) const;
 
-  void setTitle(const QString& title);
+    QString title() const;
 
-private:
-  QRectF _rect;
-  QString _title;
-  IPlotImplementation *_plot;
-};
+    void setTitle(const QString& title);
 
-#endif // __XTITLE_H__
+  private:
+    QRectF _rect;
+    QString _title;
+    IPlotImplementation *_plot;
+  };
+
+} // namespace plot

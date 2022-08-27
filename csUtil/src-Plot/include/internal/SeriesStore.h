@@ -29,42 +29,43 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __SERIESSTORE_H__
-#define __SERIESSTORE_H__
+#pragma once
 
 #include "internal/Scale.h"
 #include "internal/Series.h"
 
-class SeriesStore {
-public:
-  SeriesStore();
-  ~SeriesStore();
+namespace plot {
 
-  bool contains(const QString& seriesName) const;
+  class SeriesStore {
+  public:
+    SeriesStore();
+    ~SeriesStore();
 
-  QStringList names() const;
+    bool contains(const QString& seriesName) const;
 
-  bool insert(const Series& series);
-  bool remove(const QString& seriesName);
+    QStringList names() const;
 
-  SimPlotRange rangeX(const QString& seriesName) const;
-  SimPlotRange rangeY(const QString& seriesName) const;
+    bool insert(const Series& series);
+    bool remove(const QString& seriesName);
 
-  SimPlotRange totalRangeX() const;
+    PlotRange rangeX(const QString& seriesName) const;
+    PlotRange rangeY(const QString& seriesName) const;
 
-  Series& series(const QString& seriesName);
-  const Series& series(const QString& seriesName) const;
+    PlotRange totalRangeX() const;
 
-private:
-  bool addToScales(const QString& seriesName);
-  void removeFromScales(const QString& seriesName);
+    Series& series(const QString& seriesName);
+    const Series& series(const QString& seriesName) const;
 
-  bool isGroupedScale(const QString& seriesName, const QString& scaleName) const;
+  private:
+    bool addToScales(const QString& seriesName);
+    void removeFromScales(const QString& seriesName);
 
-  QHash<QString,Scale> _scales;
-  QHash<QString,Series> _series;
+    bool isGroupedScale(const QString& seriesName, const QString& scaleName) const;
 
-  static Series _nullSeries;
-};
+    QHash<QString,Scale> _scales;
+    QHash<QString,Series> _series;
 
-#endif // __SERIESSTORE_H__
+    static Series _nullSeries;
+  };
+
+} // namespace plot

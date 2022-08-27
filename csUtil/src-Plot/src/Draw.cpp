@@ -31,7 +31,7 @@
 
 #include <QtGui/QPainter>
 
-#include <Plot/PlotTheme.h>
+#include "Plot/PlotTheme.h"
 
 #include "internal/Draw.h"
 
@@ -39,84 +39,88 @@
 #include "internal/Mapping.h"
 #include "internal/Series.h"
 
-namespace Draw {
+namespace plot {
 
-  void frame(QPainter *painter,
-             const QRectF& rect, const QPen& pen)
-  {
-    painter->setPen(pen);
-    painter->drawRect(rect.adjusted(0.5, 0.5, -0.5, -0.5));
-  }
+  namespace Draw {
 
-  void gridX(QPainter *painter,
-             const IAxisElement *xAxis, const QTransform& mapping,
-             const QRectF& rect, const QPen& pen)
-  {
-    painter->setPen(pen);
-
-    const AxisLabels xAxisLabels = xAxis->labels();
-    for(const AxisLabel& label : xAxisLabels) {
-      const qreal x = std::floor(mapping.map(QPointF(label.value(), 0)).x());
-      const QPointF begin(rect.left() + x + 0.5, rect.top() + 0.5);
-      const QPointF end(begin + QPointF(0, rect.height() - 1));
-      painter->drawLine(begin, end);
-    }
-  }
-
-  void gridY(QPainter *painter,
-             const IAxisElement *yAxis, const QTransform& mapping,
-             const QRectF& rect, const QPen& pen)
-  {
-    painter->setPen(pen);
-
-    const AxisLabels yAxisLabels = yAxis->labels();
-    for(const AxisLabel& label : yAxisLabels) {
-      const qreal y = std::floor(mapping.map(QPointF(0, label.value())).y());
-      const QPointF begin(rect.left() + 0.5, rect.top() + y + 0.5);
-      const QPointF end(begin + QPointF(rect.width() - 1, 0));
-      painter->drawLine(begin, end);
-    }
-  }
-
-  void series(QPainter *painter,
-              const QRectF& screen, const Series& theSeries,
-              const SimPlotRange& viewX, const SimPlotRange& viewY,
-              const SimPlot::DrawFlags flags)
-  {
-    if( theSeries.isEmpty() ) {
-      return;
+    void frame(QPainter *painter,
+               const QRectF& rect, const QPen& pen)
+    {
+      painter->setPen(pen);
+      painter->drawRect(rect.adjusted(0.5, 0.5, -0.5, -0.5));
     }
 
-    const ISimPlotSeriesData *data = theSeries.constData();
+    void gridX(QPainter *painter,
+               const IAxisElement *xAxis, const QTransform& mapping,
+               const QRectF& rect, const QPen& pen)
+    {
+      painter->setPen(pen);
 
-    if( !viewX.isValid()  ||  !viewY.isValid()  ||  screen.isEmpty()  ||
-        viewX.min() >= data->rangeX().max()  ||
-        viewX.max() <= data->rangeX().min() ) {
-      return;
+      const AxisLabels xAxisLabels = xAxis->labels();
+      for(const AxisLabel& label : xAxisLabels) {
+        const qreal x = std::floor(mapping.map(QPointF(label.value(), 0)).x());
+        const QPointF begin(rect.left() + x + 0.5, rect.top() + 0.5);
+        const QPointF end(begin + QPointF(0, rect.height() - 1));
+        painter->drawLine(begin, end);
+      }
     }
 
-    QPen pen = SimPlotTheme::seriesPen(theSeries.color(),
-                                       flags.testFlag(SimPlot::IsActive) ? 2.0 : 1.0);
-    pen.setCosmetic(true);
-    painter->setPen(pen);
+    void gridY(QPainter *painter,
+               const IAxisElement *yAxis, const QTransform& mapping,
+               const QRectF& rect, const QPen& pen)
+    {
+      painter->setPen(pen);
 
-    const QTransform xform =
-        Mapping::viewToScreen(screen.size(), viewX, viewY) *
-        QTransform::fromTranslate(screen.topLeft().x(), screen.topLeft().y());
-    painter->setTransform(xform);
-
-    const int L = data->findLeft(viewX.min()) >= 0
-        ? data->findLeft(viewX.min())
-        : 0;
-    const int R = data->findRight(viewX.max()) >= 0
-        ? data->findRight(viewX.max())
-        : data->size() - 1;
-
-    if( L >= R ) {
-      return;
+      const AxisLabels yAxisLabels = yAxis->labels();
+      for(const AxisLabel& label : yAxisLabels) {
+        const qreal y = std::floor(mapping.map(QPointF(0, label.value())).y());
+        const QPointF begin(rect.left() + 0.5, rect.top() + y + 0.5);
+        const QPointF end(begin + QPointF(rect.width() - 1, 0));
+        painter->drawLine(begin, end);
+      }
     }
 
-    data->drawLines(painter, L, R);
-  }
+    void series(QPainter *painter,
+                const QRectF& screen, const Series& theSeries,
+                const PlotRange& viewX, const PlotRange& viewY,
+                const DrawFlags flags)
+    {
+      if( theSeries.isEmpty() ) {
+        return;
+      }
 
-} // namespace Draw
+      const IPlotSeriesData *data = theSeries.constData();
+
+      if( !viewX.isValid()  ||  !viewY.isValid()  ||  screen.isEmpty()  ||
+          viewX.min() >= data->rangeX().max()  ||
+          viewX.max() <= data->rangeX().min() ) {
+        return;
+      }
+
+      QPen pen = PlotTheme::seriesPen(theSeries.color(),
+                                      flags.testFlag(IsActive) ? 2.0 : 1.0);
+      pen.setCosmetic(true);
+      painter->setPen(pen);
+
+      const QTransform xform =
+          Mapping::viewToScreen(screen.size(), viewX, viewY) *
+          QTransform::fromTranslate(screen.topLeft().x(), screen.topLeft().y());
+      painter->setTransform(xform);
+
+      const int L = data->findLeft(viewX.min()) >= 0
+          ? data->findLeft(viewX.min())
+          : 0;
+      const int R = data->findRight(viewX.max()) >= 0
+          ? data->findRight(viewX.max())
+          : data->size() - 1;
+
+      if( L >= R ) {
+        return;
+      }
+
+      data->drawLines(painter, L, R);
+    }
+
+  } // namespace Draw
+
+} // namespace plot

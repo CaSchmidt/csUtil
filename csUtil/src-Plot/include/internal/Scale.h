@@ -29,35 +29,36 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __SCALE_H__
-#define __SCALE_H__
+#pragma once
 
 #include <QtCore/QHash>
 #include <QtCore/QSet>
 
 #include "internal/Series.h"
 
-class Scale {
-public:
-  Scale(QHash<QString,Series> *seriesStore = 0);
-  ~Scale();
+namespace plot {
 
-  bool isEmpty() const;
+  class Scale {
+  public:
+    Scale(QHash<QString,Series> *seriesStore = 0);
+    ~Scale();
 
-  bool contains(const QString& seriesName) const;
-  bool insert(const QString& seriesName);
-  void remove(const QString& seriesName);
+    bool isEmpty() const;
 
-  SimPlotRange rangeX() const;
-  SimPlotRange rangeY() const;
+    bool contains(const QString& seriesName) const;
+    bool insert(const QString& seriesName);
+    void remove(const QString& seriesName);
 
-private:
-  void updateRange();
+    PlotRange rangeX() const;
+    PlotRange rangeY() const;
 
-  SimPlotRange _rangeX;
-  SimPlotRange _rangeY;
-  QSet<QString> _ranges;
-  QHash<QString,Series> *_seriesStore;
-};
+  private:
+    void updateRange();
 
-#endif // __SCALE_H__
+    PlotRange _rangeX;
+    PlotRange _rangeY;
+    QSet<QString> _ranges;
+    QHash<QString,Series> *_seriesStore;
+  };
+
+} // namespace plot

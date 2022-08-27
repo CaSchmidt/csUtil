@@ -35,81 +35,85 @@
 
 #include "internal/Mapping.h"
 
-namespace Pan {
+namespace plot {
 
-  SimPlotRange horizontal(const QPointF& delta, const QSizeF& screen,
-                          const SimPlotRange& viewX,
-                          const SimPlotRange& viewY,
-                          const SimPlotRange& boundsX)
-  {
-    if( !viewX.isValid()  ||  !viewY.isValid()  ||  !boundsX.isValid()  ||  screen.isEmpty() ) {
-      return SimPlotRange();
+  namespace Pan {
+
+    PlotRange horizontal(const QPointF& delta, const QSizeF& screen,
+                         const PlotRange& viewX,
+                         const PlotRange& viewY,
+                         const PlotRange& boundsX)
+    {
+      if( !viewX.isValid()  ||  !viewY.isValid()  ||  !boundsX.isValid()  ||  screen.isEmpty() ) {
+        return PlotRange();
+      }
+
+      const QTransform  xform = Mapping::screenToView(screen, viewX, viewY, true);
+      const QPointF deltaView = xform.map(delta);
+
+      // Horizontal
+
+      qreal leftX = viewX.min() - deltaView.x();
+      if(        leftX < boundsX.min() ) {
+        leftX += boundsX.min() - leftX;
+      } else if( leftX + viewX.span() > boundsX.max() ) {
+        leftX -= leftX + viewX.span() - boundsX.max();
+      }
+
+      return PlotRange(leftX, leftX + viewX.span());
     }
 
-    const QTransform  xform = Mapping::screenToView(screen, viewX, viewY, true);
-    const QPointF deltaView = xform.map(delta);
+    PlotRange vertical(const QPointF& delta, const QSizeF& screen,
+                       const PlotRange& viewX,
+                       const PlotRange& viewY,
+                       const PlotRange& boundsY)
+    {
+      if( !viewX.isValid()  ||  !viewY.isValid()  ||  !boundsY.isValid()  ||  screen.isEmpty() ) {
+        return PlotRange();
+      }
 
-    // Horizontal
+      const QTransform  xform = Mapping::screenToView(screen, viewX, viewY, true);
+      const QPointF deltaView = xform.map(delta);
 
-    qreal leftX = viewX.min() - deltaView.x();
-    if(        leftX < boundsX.min() ) {
-      leftX += boundsX.min() - leftX;
-    } else if( leftX + viewX.span() > boundsX.max() ) {
-      leftX -= leftX + viewX.span() - boundsX.max();
+      // Vertical
+
+      qreal bottomY = viewY.min() + deltaView.y();
+      if(        bottomY < boundsY.min() ) {
+        bottomY += boundsY.min() - bottomY;
+      } else if( bottomY + viewY.span() > boundsY.max() ) {
+        bottomY -= bottomY + viewY.span() - boundsY.max();
+      }
+
+      return PlotRange(bottomY, bottomY + viewY.span());
     }
 
-    return SimPlotRange(leftX, leftX + viewX.span());
-  }
+  } // namespace Pan
 
-  SimPlotRange vertical(const QPointF& delta, const QSizeF& screen,
-                        const SimPlotRange& viewX,
-                        const SimPlotRange& viewY,
-                        const SimPlotRange& boundsY)
-  {
-    if( !viewX.isValid()  ||  !viewY.isValid()  ||  !boundsY.isValid()  ||  screen.isEmpty() ) {
-      return SimPlotRange();
+  namespace ZoomIn {
+
+    QRectF rectangular(const QRectF& zoomRect, const QRectF& screen,
+                       const PlotRange& viewX,
+                       const PlotRange& viewY)
+    {
+      if( !viewX.isValid()  ||  !viewY.isValid()  ||  screen.isEmpty() ) {
+        return QRectF();
+      }
+
+      const QRectF inter = screen & zoomRect;
+      if( inter.isEmpty() ) {
+        return QRectF();
+      }
+
+      const QTransform xform = Mapping::screenToView(screen.size(), viewX, viewY);
+      const QRectF  zoomView =
+          xform.map(inter.translated(-screen.topLeft())).boundingRect();
+
+      const QRectF view(QPointF(viewX.min(), viewY.min()),
+                        QPointF(viewX.max(), viewY.max()));
+
+      return view & zoomView;
     }
 
-    const QTransform  xform = Mapping::screenToView(screen, viewX, viewY, true);
-    const QPointF deltaView = xform.map(delta);
+  } // namespace ZoomIn
 
-    // Vertical
-
-    qreal bottomY = viewY.min() + deltaView.y();
-    if(        bottomY < boundsY.min() ) {
-      bottomY += boundsY.min() - bottomY;
-    } else if( bottomY + viewY.span() > boundsY.max() ) {
-      bottomY -= bottomY + viewY.span() - boundsY.max();
-    }
-
-    return SimPlotRange(bottomY, bottomY + viewY.span());
-  }
-
-} // namespace Pan
-
-namespace ZoomIn {
-
-  QRectF rectangular(const QRectF& zoomRect, const QRectF& screen,
-                     const SimPlotRange& viewX,
-                     const SimPlotRange& viewY)
-  {
-    if( !viewX.isValid()  ||  !viewY.isValid()  ||  screen.isEmpty() ) {
-      return QRectF();
-    }
-
-    const QRectF inter = screen & zoomRect;
-    if( inter.isEmpty() ) {
-      return QRectF();
-    }
-
-    const QTransform xform = Mapping::screenToView(screen.size(), viewX, viewY);
-    const QRectF  zoomView =
-        xform.map(inter.translated(-screen.topLeft())).boundingRect();
-
-    const QRectF view(QPointF(viewX.min(), viewY.min()),
-                      QPointF(viewX.max(), viewY.max()));
-
-    return view & zoomView;
-  }
-
-} // namespace ZoomIn
+} // namespace plot

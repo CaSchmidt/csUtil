@@ -29,23 +29,24 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __MAPPING_H__
-#define __MAPPING_H__
+#pragma once
 
 #include <QtCore/QSizeF>
 #include <QtGui/QTransform>
 
 #include <Plot/PlotRange.h>
 
-namespace Mapping {
+namespace plot {
 
-  QTransform viewToScreen(const QSizeF& screen,
-                          const SimPlotRange& viewX, const SimPlotRange& viewY);
+  namespace Mapping {
 
-  QTransform screenToView(const QSizeF& screen,
-                          const SimPlotRange& viewX, const SimPlotRange& viewY,
-                          const bool isRelative = false);
+    QTransform viewToScreen(const QSizeF& screen,
+                            const PlotRange& viewX, const PlotRange& viewY);
 
-} // namespace Mapping
+    QTransform screenToView(const QSizeF& screen,
+                            const PlotRange& viewX, const PlotRange& viewY,
+                            const bool isRelative = false);
 
-#endif // __MAPPING_H__
+  } // namespace Mapping
+
+} // namespace plot

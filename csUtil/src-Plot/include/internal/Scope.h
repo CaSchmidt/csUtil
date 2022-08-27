@@ -29,28 +29,29 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __SCOPE_H__
-#define __SCOPE_H__
+#pragma once
 
 #include "internal/IPlotElement.h"
 
-class ScopeRow;
-class Series;
+namespace plot {
 
-class Scope : public IPlotElement {
-public:
-  Scope(ScopeRow *row);
-  ~Scope();
+  class ScopeRow;
+  class Series;
 
-  QRectF boundingRect() const;
+  class Scope : public IPlotElement {
+  public:
+    Scope(ScopeRow *row);
+    ~Scope();
 
-  void resize(const QPointF& topLeft, const QSizeF& hint);
+    QRectF boundingRect() const;
 
-  void paint(QPainter *painter) const;
+    void resize(const QPointF& topLeft, const QSizeF& hint);
 
-private:
-  QRectF _rect;
-  ScopeRow *_row;
-};
+    void paint(QPainter *painter) const;
 
-#endif // __SCOPE_H__
+  private:
+    QRectF _rect;
+    ScopeRow *_row;
+  };
+
+} // namespace plot

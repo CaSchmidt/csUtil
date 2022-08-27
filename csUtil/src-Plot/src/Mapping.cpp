@@ -31,61 +31,65 @@
 
 #include "internal/Mapping.h"
 
-////// Public ////////////////////////////////////////////////////////////////
+namespace plot {
 
-namespace Mapping {
+  ////// Public //////////////////////////////////////////////////////////////
 
-  QTransform viewToScreen(const QSizeF& screen,
-                          const SimPlotRange& viewX, const SimPlotRange& viewY)
-  {
-    QTransform result;
+  namespace Mapping {
 
-    if( screen.isEmpty()  ||  !viewX.isValid()  ||  !viewY.isValid() ) {
-      return result;
-    }
+    QTransform viewToScreen(const QSizeF& screen,
+                            const PlotRange& viewX, const PlotRange& viewY)
+    {
+      QTransform result;
 
-    const qreal dx = -viewX.min();
-    const qreal dy = -viewY.min();
+      if( screen.isEmpty()  ||  !viewX.isValid()  ||  !viewY.isValid() ) {
+        return result;
+      }
 
-    const qreal sx = (screen.width()  - 1)/viewX.span();
-    const qreal sy = (screen.height() - 1)/viewY.span();
+      const qreal dx = -viewX.min();
+      const qreal dy = -viewY.min();
 
-    result *= QTransform::fromTranslate(dx, dy);
-    result *= QTransform::fromScale(sx, sy);
-    result *= QTransform(1,  0,
-                         0, -1,
-                         0.5, screen.height() - 0.5);
+      const qreal sx = (screen.width()  - 1)/viewX.span();
+      const qreal sy = (screen.height() - 1)/viewY.span();
 
-    return result;
-  }
-
-  QTransform screenToView(const QSizeF& screen,
-                          const SimPlotRange& viewX, const SimPlotRange& viewY,
-                          const bool isRelative)
-  {
-    QTransform result;
-
-    if( screen.isEmpty()  ||  !viewX.isValid()  ||  !viewY.isValid() ) {
-      return result;
-    }
-
-    const qreal sx = viewX.span()/(screen.width()  - 1);
-    const qreal sy = viewY.span()/(screen.height() - 1);
-
-    const qreal dx = viewX.min();
-    const qreal dy = viewY.min();
-
-    if( !isRelative ) {
+      result *= QTransform::fromTranslate(dx, dy);
+      result *= QTransform::fromScale(sx, sy);
       result *= QTransform(1,  0,
                            0, -1,
-                           0, screen.height() - 1);
-    }
-    result *= QTransform::fromScale(sx, sy);
-    if( !isRelative ) {
-      result *= QTransform::fromTranslate(dx, dy);
+                           0.5, screen.height() - 0.5);
+
+      return result;
     }
 
-    return result;
-  }
+    QTransform screenToView(const QSizeF& screen,
+                            const PlotRange& viewX, const PlotRange& viewY,
+                            const bool isRelative)
+    {
+      QTransform result;
 
-} // namespace Mapping
+      if( screen.isEmpty()  ||  !viewX.isValid()  ||  !viewY.isValid() ) {
+        return result;
+      }
+
+      const qreal sx = viewX.span()/(screen.width()  - 1);
+      const qreal sy = viewY.span()/(screen.height() - 1);
+
+      const qreal dx = viewX.min();
+      const qreal dy = viewY.min();
+
+      if( !isRelative ) {
+        result *= QTransform(1,  0,
+                             0, -1,
+                             0, screen.height() - 1);
+      }
+      result *= QTransform::fromScale(sx, sy);
+      if( !isRelative ) {
+        result *= QTransform::fromTranslate(dx, dy);
+      }
+
+      return result;
+    }
+
+  } // namespace Mapping
+
+} // namespace plot

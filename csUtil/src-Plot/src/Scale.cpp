@@ -31,74 +31,78 @@
 
 #include "internal/Scale.h"
 
-////// public ////////////////////////////////////////////////////////////////
+namespace plot {
 
-Scale::Scale(QHash<QString,Series> *seriesStore)
-  : _rangeX()
-  , _rangeY()
-  , _ranges()
-  , _seriesStore(seriesStore)
-{
-}
+  ////// public //////////////////////////////////////////////////////////////
 
-Scale::~Scale()
-{
-}
-
-bool Scale::isEmpty() const
-{
-  return _ranges.isEmpty();
-}
-
-bool Scale::contains(const QString& seriesName) const
-{
-  return _ranges.contains(seriesName);
-}
-
-bool Scale::insert(const QString& seriesName)
-{
-  if( _seriesStore == 0  ||  !_seriesStore->contains(seriesName) ) {
-    return false;
+  Scale::Scale(QHash<QString,Series> *seriesStore)
+    : _rangeX()
+    , _rangeY()
+    , _ranges()
+    , _seriesStore(seriesStore)
+  {
   }
-  if( _ranges.insert(seriesName) == _ranges.end() ) {
-    return false;
+
+  Scale::~Scale()
+  {
   }
-  updateRange();
-  return true;
-}
 
-void Scale::remove(const QString& seriesName)
-{
-  if( !_ranges.remove(seriesName) ) {
-    return;
+  bool Scale::isEmpty() const
+  {
+    return _ranges.isEmpty();
   }
-  updateRange();
-}
 
-SimPlotRange Scale::rangeX() const
-{
-  return _rangeX;
-}
-
-SimPlotRange Scale::rangeY() const
-{
-  return _rangeY;
-}
-
-////// private ///////////////////////////////////////////////////////////////
-
-void Scale::updateRange()
-{
-  if( _seriesStore == 0 ) {
-    return;
+  bool Scale::contains(const QString& seriesName) const
+  {
+    return _ranges.contains(seriesName);
   }
-  _rangeX.initialize();
-  _rangeY.initialize();
-  for(const QString& seriesName : _ranges) {
-    const ISimPlotSeriesData *data = _seriesStore->value(seriesName).constData();
-    _rangeX.update(data->rangeX());
-    _rangeY.update(data->rangeY());
+
+  bool Scale::insert(const QString& seriesName)
+  {
+    if( _seriesStore == 0  ||  !_seriesStore->contains(seriesName) ) {
+      return false;
+    }
+    if( _ranges.insert(seriesName) == _ranges.end() ) {
+      return false;
+    }
+    updateRange();
+    return true;
   }
-  _rangeX.adjust();
-  _rangeY.adjust();
-}
+
+  void Scale::remove(const QString& seriesName)
+  {
+    if( !_ranges.remove(seriesName) ) {
+      return;
+    }
+    updateRange();
+  }
+
+  PlotRange Scale::rangeX() const
+  {
+    return _rangeX;
+  }
+
+  PlotRange Scale::rangeY() const
+  {
+    return _rangeY;
+  }
+
+  ////// private /////////////////////////////////////////////////////////////
+
+  void Scale::updateRange()
+  {
+    if( _seriesStore == 0 ) {
+      return;
+    }
+    _rangeX.initialize();
+    _rangeY.initialize();
+    for(const QString& seriesName : _ranges) {
+      const IPlotSeriesData *data = _seriesStore->value(seriesName).constData();
+      _rangeX.update(data->rangeX());
+      _rangeY.update(data->rangeY());
+    }
+    _rangeX.adjust();
+    _rangeY.adjust();
+  }
+
+} // namespace plot

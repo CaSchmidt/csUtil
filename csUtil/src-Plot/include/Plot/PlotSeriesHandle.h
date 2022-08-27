@@ -36,31 +36,35 @@
 
 #include <Plot/IPlotSeriesData.h>
 
-class IPlotImplementation;
+namespace plot {
 
-class CS_UTIL_EXPORT SimPlotSeriesHandle {
-public:
-  SimPlotSeriesHandle(const QString& name = QString(),
-                      IPlotImplementation *impl = 0);
-  ~SimPlotSeriesHandle();
+  class IPlotImplementation;
 
-  bool isValid() const;
+  class CS_UTIL_EXPORT PlotSeriesHandle {
+  public:
+    PlotSeriesHandle(const QString& name = QString(),
+                     IPlotImplementation *impl = 0);
+    ~PlotSeriesHandle();
 
-  bool activate();
-  bool remove();
+    bool isValid() const;
 
-  QString name() const;
-  QString unit() const;
+    bool activate();
+    bool remove();
 
-  QColor color() const;
-  void setColor(const QColor& color, const bool replot = true);
+    QString name() const;
+    QString unit() const;
 
-  void replot();
+    QColor color() const;
+    void setColor(const QColor& color, const bool replot = true);
 
-  const ISimPlotSeriesData *constData() const;
-  ISimPlotSeriesData *data();
+    void replot();
 
-private:
-  IPlotImplementation *_impl;
-  QString _name;
-};
+    const IPlotSeriesData *constData() const;
+    IPlotSeriesData *data();
+
+  private:
+    IPlotImplementation *_impl;
+    QString _name;
+  };
+
+} // namespace plot

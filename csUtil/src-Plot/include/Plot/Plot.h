@@ -33,7 +33,7 @@
 
 #include <QtCore/QFlags>
 
-namespace SimPlot {
+namespace plot {
 
   enum DrawFlag {
     NoDrawFlags = 0,
@@ -41,6 +41,6 @@ namespace SimPlot {
   };
   Q_DECLARE_FLAGS(DrawFlags, DrawFlag)
 
-} // namespace SimPlot
+} // namespace plot
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(SimPlot::DrawFlags)
+Q_DECLARE_OPERATORS_FOR_FLAGS(plot::DrawFlags)

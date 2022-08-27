@@ -29,32 +29,33 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __YTITLE_H__
-#define __YTITLE_H__
+#pragma once
 
 #include "internal/ITitleElement.h"
 
-class ScopeRow;
+namespace plot {
 
-class YTitle : public ITitleElement {
-public:
-  YTitle(ScopeRow *row);
-  ~YTitle();
+  class ScopeRow;
 
-  QRectF boundingRect() const;
+  class YTitle : public ITitleElement {
+  public:
+    YTitle(ScopeRow *row);
+    ~YTitle();
 
-  void resize(const QPointF& topLeft, const QSizeF& hint);
+    QRectF boundingRect() const;
 
-  void paint(QPainter *painter) const;
+    void resize(const QPointF& topLeft, const QSizeF& hint);
 
-  QString title() const;
+    void paint(QPainter *painter) const;
 
-  void setTitle(const QString& title);
+    QString title() const;
 
-private:
-  QRectF _rect;
-  ScopeRow *_row;
-  QString _title;
-};
+    void setTitle(const QString& title);
 
-#endif // __YTITLE_H__
+  private:
+    QRectF _rect;
+    ScopeRow *_row;
+    QString _title;
+  };
+
+} // namespace plot

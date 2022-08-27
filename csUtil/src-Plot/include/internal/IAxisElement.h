@@ -29,22 +29,23 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __IAXISELEMENT_H__
-#define __IAXISELEMENT_H__
+#pragma once
 
 #include "internal/AxisLabel.h"
 #include "internal/IPlotElement.h"
 
-class IAxisElement : public IPlotElement {
-public:
-  ~IAxisElement();
+namespace plot {
 
-  virtual AxisLabels labels() const = 0;
+  class IAxisElement : public IPlotElement {
+  public:
+    ~IAxisElement();
 
-  virtual void clearLabels() = 0;
+    virtual AxisLabels labels() const = 0;
 
-protected:
-  virtual void updateLabels(const QSizeF& newSize) = 0;
-};
+    virtual void clearLabels() = 0;
 
-#endif // __IAXISELEMENT_H__
+  protected:
+    virtual void updateLabels(const QSizeF& newSize) = 0;
+  };
+
+} // namespace plot

@@ -29,20 +29,21 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __IVIEWPORTCONTROL_H__
-#define __IVIEWPORTCONTROL_H__
+#pragma once
 
 class QPointF;
 class QRectF;
 
-class IViewportControl {
-public:
-  virtual ~IViewportControl();
+namespace plot {
 
-  virtual void pan(const QPointF& delta) = 0;
-  virtual void rectangularZoom(const QRectF& zoomRect) = 0;
-  virtual void horizontalZoom(const QRectF& zoomRect) = 0;
-  virtual void verticalZoom(const QRectF& zoomRect) = 0;
-};
+  class IViewportControl {
+  public:
+    virtual ~IViewportControl();
 
-#endif // __IVIEWPORTCONTROL_H__
+    virtual void pan(const QPointF& delta) = 0;
+    virtual void rectangularZoom(const QRectF& zoomRect) = 0;
+    virtual void horizontalZoom(const QRectF& zoomRect) = 0;
+    virtual void verticalZoom(const QRectF& zoomRect) = 0;
+  };
+
+} // namespace plot

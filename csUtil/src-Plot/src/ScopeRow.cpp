@@ -40,156 +40,160 @@
 #include "internal/Layout.h"
 #include "internal/Mapping.h"
 
-////// public ////////////////////////////////////////////////////////////////
+namespace plot {
 
-ScopeRow::ScopeRow(IPlotImplementation *plot)
-  : _yTitle()
-  , _yAxis()
-  , _scope()
-  , _plot(plot)
-  , _store()
-  , _activeSeriesName()
-  , _viewY()
-{
-  _yTitle = new YTitle(this);
-  _yAxis  = new YAxis(this);
-  _scope  = new Scope(this);
+  ////// public //////////////////////////////////////////////////////////////
 
-  _viewY.update(0);
-  _viewY.update(100);
-}
+  ScopeRow::ScopeRow(IPlotImplementation *plot)
+    : _yTitle()
+    , _yAxis()
+    , _scope()
+    , _plot(plot)
+    , _store()
+    , _activeSeriesName()
+    , _viewY()
+  {
+    _yTitle = new YTitle(this);
+    _yAxis  = new YAxis(this);
+    _scope  = new Scope(this);
 
-ScopeRow::~ScopeRow()
-{
-  delete _yTitle;
-  delete _yAxis;
-  delete _scope;
-}
-
-QRectF ScopeRow::boundingRect() const
-{
-  return
-      _yTitle->boundingRect() |
-      _yAxis->boundingRect()  |
-      _scope->boundingRect();
-}
-
-void ScopeRow::resize(const QPointF& topLeft, const QSizeF& hint)
-{
-  _yTitle->resize(topLeft,
-                  hint);
-  _yAxis->resize(_yTitle->topRight() + QPointF(LAYOUT_SPACING, 0),
-                 hint);
-  _scope->resize(_yAxis->topRight() + QPointF(LAYOUT_SPACING, 0),
-                 QSizeF(qMax(LAYOUT_MIN_SCOPE_WIDTH,
-                             hint.width() - 2.0*LAYOUT_SPACING
-                             - _yTitle->size().width() - _yAxis->size().width()),
-                        hint.height()));
-}
-
-void ScopeRow::paint(QPainter *painter) const
-{
-  _yTitle->paint(painter);
-  _yAxis->paint(painter);
-  _scope->paint(painter);
-}
-
-const Scope *ScopeRow::scope() const
-{
-  return _scope;
-}
-
-IAxisElement *ScopeRow::yAxis()
-{
-  return _yAxis;
-}
-
-const IAxisElement *ScopeRow::yAxis() const
-{
-  return _yAxis;
-}
-
-ITitleElement *ScopeRow::yTitle()
-{
-  return _yTitle;
-}
-
-const ITitleElement *ScopeRow::yTitle() const
-{
-  return _yTitle;
-}
-
-const IPlotImplementation *ScopeRow::plot() const
-{
-  return _plot;
-}
-
-const SeriesStore& ScopeRow::store() const
-{
-  return _store;
-}
-
-SeriesStore& ScopeRow::store()
-{
-  return _store;
-}
-
-QString ScopeRow::activeSeriesName() const
-{
-  return _activeSeriesName;
-}
-
-const Series& ScopeRow::activeSeries() const
-{
-  return _store.series(_activeSeriesName);
-}
-
-void ScopeRow::clearActiveSeries()
-{
-  _activeSeriesName.clear();
-  _yTitle->setTitle(QString());
-}
-
-bool ScopeRow::setActiveSeries(const QString& seriesName)
-{
-  if( seriesName.isEmpty()  ||  !_store.contains(seriesName)  ||
-      _activeSeriesName == seriesName ) {
-    return false;
+    _viewY.update(0);
+    _viewY.update(100);
   }
-  _activeSeriesName = seriesName;
-  const Series& s = _store.series(_activeSeriesName);
-  _yTitle->setTitle(SimPlotTheme::titleString(s.name(), s.unit()));
-  return true;
-}
 
-SimPlotRange ScopeRow::rangeY() const
-{
-  return _store.rangeY(_activeSeriesName).clamped(_viewY, 100);
-}
+  ScopeRow::~ScopeRow()
+  {
+    delete _yTitle;
+    delete _yAxis;
+    delete _scope;
+  }
 
-SimPlotRange ScopeRow::viewY() const
-{
-  return _viewY;
-}
+  QRectF ScopeRow::boundingRect() const
+  {
+    return
+        _yTitle->boundingRect() |
+        _yAxis->boundingRect()  |
+        _scope->boundingRect();
+  }
 
-void ScopeRow::setViewY(const SimPlotRange& viewY)
-{
-  _viewY = viewY;
-}
+  void ScopeRow::resize(const QPointF& topLeft, const QSizeF& hint)
+  {
+    _yTitle->resize(topLeft,
+                    hint);
+    _yAxis->resize(_yTitle->topRight() + QPointF(LAYOUT_SPACING, 0),
+                   hint);
+    _scope->resize(_yAxis->topRight() + QPointF(LAYOUT_SPACING, 0),
+                   QSizeF(qMax(LAYOUT_MIN_SCOPE_WIDTH,
+                               hint.width() - 2.0*LAYOUT_SPACING
+                               - _yTitle->size().width() - _yAxis->size().width()),
+                          hint.height()));
+  }
 
-QTransform ScopeRow::mapScaleToScreen() const
-{
-  return Mapping::viewToScreen(_scope->size(), _plot->rangeX(), rangeY());
-}
+  void ScopeRow::paint(QPainter *painter) const
+  {
+    _yTitle->paint(painter);
+    _yAxis->paint(painter);
+    _scope->paint(painter);
+  }
 
-QTransform ScopeRow::mapViewToScreen() const
-{
-  return Mapping::viewToScreen(_scope->size(), _plot->rangeX(), _viewY);
-}
+  const Scope *ScopeRow::scope() const
+  {
+    return _scope;
+  }
 
-void ScopeRow::resetView()
-{
-  _viewY.initialize();
-  _viewY.update(0);
-  _viewY.update(100);
-}
+  IAxisElement *ScopeRow::yAxis()
+  {
+    return _yAxis;
+  }
+
+  const IAxisElement *ScopeRow::yAxis() const
+  {
+    return _yAxis;
+  }
+
+  ITitleElement *ScopeRow::yTitle()
+  {
+    return _yTitle;
+  }
+
+  const ITitleElement *ScopeRow::yTitle() const
+  {
+    return _yTitle;
+  }
+
+  const IPlotImplementation *ScopeRow::plot() const
+  {
+    return _plot;
+  }
+
+  const SeriesStore& ScopeRow::store() const
+  {
+    return _store;
+  }
+
+  SeriesStore& ScopeRow::store()
+  {
+    return _store;
+  }
+
+  QString ScopeRow::activeSeriesName() const
+  {
+    return _activeSeriesName;
+  }
+
+  const Series& ScopeRow::activeSeries() const
+  {
+    return _store.series(_activeSeriesName);
+  }
+
+  void ScopeRow::clearActiveSeries()
+  {
+    _activeSeriesName.clear();
+    _yTitle->setTitle(QString());
+  }
+
+  bool ScopeRow::setActiveSeries(const QString& seriesName)
+  {
+    if( seriesName.isEmpty()  ||  !_store.contains(seriesName)  ||
+        _activeSeriesName == seriesName ) {
+      return false;
+    }
+    _activeSeriesName = seriesName;
+    const Series& s = _store.series(_activeSeriesName);
+    _yTitle->setTitle(PlotTheme::titleString(s.name(), s.unit()));
+    return true;
+  }
+
+  PlotRange ScopeRow::rangeY() const
+  {
+    return _store.rangeY(_activeSeriesName).clamped(_viewY, 100);
+  }
+
+  PlotRange ScopeRow::viewY() const
+  {
+    return _viewY;
+  }
+
+  void ScopeRow::setViewY(const PlotRange& viewY)
+  {
+    _viewY = viewY;
+  }
+
+  QTransform ScopeRow::mapScaleToScreen() const
+  {
+    return Mapping::viewToScreen(_scope->size(), _plot->rangeX(), rangeY());
+  }
+
+  QTransform ScopeRow::mapViewToScreen() const
+  {
+    return Mapping::viewToScreen(_scope->size(), _plot->rangeX(), _viewY);
+  }
+
+  void ScopeRow::resetView()
+  {
+    _viewY.initialize();
+    _viewY.update(0);
+    _viewY.update(100);
+  }
+
+} // namespace plot

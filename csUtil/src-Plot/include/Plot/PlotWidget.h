@@ -38,60 +38,64 @@
 
 class QMenu;
 
-class ISimPlotSeriesData;
-class IPlotImplementation;
+namespace plot {
 
-class CS_UTIL_EXPORT SimPlotWidget : public QWidget {
-  Q_OBJECT
-public:
-  SimPlotWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);
-  ~SimPlotWidget();
+  class IPlotSeriesData;
+  class IPlotImplementation;
 
-  SimPlotSeriesHandle handle(const QString& name) const;
-  SimPlotSeriesHandle insert(ISimPlotSeriesData *data, const QColor& color = QColor());
+  class CS_UTIL_EXPORT PlotWidget : public QWidget {
+    Q_OBJECT
+  public:
+    PlotWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);
+    ~PlotWidget();
 
-  SimPlot::DrawFlags drawFlags() const;
-  void setDrawFlags(const SimPlot::DrawFlags flags);
-  void setDrawFlag(const SimPlot::DrawFlag flag, const bool on);
+    PlotSeriesHandle handle(const QString& name) const;
+    PlotSeriesHandle insert(IPlotSeriesData *data, const QColor& color = QColor());
 
-  void setTitleX(const QString& title);
+    plot::DrawFlags drawFlags() const;
+    void setDrawFlags(const plot::DrawFlags flags);
+    void setDrawFlag(const plot::DrawFlag flag, const bool on);
 
-public slots:
-  void setActiveSeries(const QString& seriesName);
-  void exportToClipboard();
-  void panning();
-  void horizontalZoom();
-  void verticalZoom();
-  void rectangularZoom();
-  void reset();
+    void setTitleX(const QString& title);
 
-protected:
-  void changeEvent(QEvent *event);
-  void contextMenuEvent(QContextMenuEvent *event);
-  void enterEvent(QEvent *event);
-  void focusOutEvent(QFocusEvent *event);
-  void leaveEvent(QEvent *event);
-  void mouseMoveEvent(QMouseEvent *event);
-  void mousePressEvent(QMouseEvent *event);
-  void mouseReleaseEvent(QMouseEvent *event);
-  void paintEvent(QPaintEvent *event);
-  void resizeEvent(QResizeEvent *event);
+  public slots:
+    void setActiveSeries(const QString& seriesName);
+    void exportToClipboard();
+    void panning();
+    void horizontalZoom();
+    void verticalZoom();
+    void rectangularZoom();
+    void reset();
 
-private:
-  enum PanZoom {
-    RectangularZoom = 0,
-    HorizontalZoom,
-    VerticalZoom,
-    Panning
+  protected:
+    void changeEvent(QEvent *event);
+    void contextMenuEvent(QContextMenuEvent *event);
+    void enterEvent(QEvent *event);
+    void focusOutEvent(QFocusEvent *event);
+    void leaveEvent(QEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+    void paintEvent(QPaintEvent *event);
+    void resizeEvent(QResizeEvent *event);
+
+  private:
+    enum PanZoom {
+      RectangularZoom = 0,
+      HorizontalZoom,
+      VerticalZoom,
+      Panning
+    };
+
+    QAction *createAction(const QString& text, const QKeySequence& shortcut);
+    void initializeContextMenu();
+    void initializeCursor();
+
+    IPlotImplementation *_impl;
+    QMenu *_contextMenu;
+    PanZoom _panZoom;
+    QPoint _dragStart;
+    QRect _zoomRect;
   };
 
-  QAction *createAction(const QString& text, const QKeySequence& shortcut);
-  void initializeContextMenu();
-  void initializeCursor();
-
-  IPlotImplementation *_impl;
-  QMenu *_contextMenu;
-  PanZoom _panZoom;
-  QPoint _dragStart;
-  QRect _zoomRect;
-};
+} // namespace plot

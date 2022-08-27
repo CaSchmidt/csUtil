@@ -31,102 +31,106 @@
 
 #include <limits>
 
-#include <Plot/PlotRange.h>
+#include "Plot/PlotRange.h"
 
-////// public ////////////////////////////////////////////////////////////////
+namespace plot {
 
-SimPlotRange::SimPlotRange()
-  : _min()
-  , _max()
-{
-  initialize();
-}
+  ////// public //////////////////////////////////////////////////////////////
 
-SimPlotRange::SimPlotRange(const qreal min, const qreal max)
-  : _min(min)
-  , _max(max)
-{
-}
-
-SimPlotRange::~SimPlotRange()
-{
-}
-
-bool SimPlotRange::isValid() const
-{
-  return _min < _max;
-}
-
-void SimPlotRange::adjust()
-{
-  if(        _min == _max ) {
-    _min -= 0.5;
-    _max += 0.5;
-  } else if( _max < _min ) {
-    _min = -0.5;
-    _max =  0.5;
+  PlotRange::PlotRange()
+    : _min()
+    , _max()
+  {
+    initialize();
   }
-}
 
-void SimPlotRange::initialize()
-{
-  _min = std::numeric_limits<qreal>::max();
-  _max = std::numeric_limits<qreal>::lowest();
-}
+  PlotRange::PlotRange(const qreal min, const qreal max)
+    : _min(min)
+    , _max(max)
+  {
+  }
 
-void SimPlotRange::update(const qreal value)
-{
-  if( value < _min ) {
-    _min = value;
+  PlotRange::~PlotRange()
+  {
   }
-  if( value > _max ) {
-    _max = value;
-  }
-}
 
-void SimPlotRange::update(const SimPlotRange& other)
-{
-  if( !other.isValid() ) {
-    return;
+  bool PlotRange::isValid() const
+  {
+    return _min < _max;
   }
-  if( other._min < _min ) {
-    _min = other._min;
-  }
-  if( other._max > _max ) {
-    _max = other._max;
-  }
-}
 
-SimPlotRange SimPlotRange::clamped(const SimPlotRange& other, const qreal norm) const
-{
-  SimPlotRange result;
+  void PlotRange::adjust()
+  {
+    if(        _min == _max ) {
+      _min -= 0.5;
+      _max += 0.5;
+    } else if( _max < _min ) {
+      _min = -0.5;
+      _max =  0.5;
+    }
+  }
 
-  if( !isValid()  ||  !other.isValid() ) {
+  void PlotRange::initialize()
+  {
+    _min = std::numeric_limits<qreal>::max();
+    _max = std::numeric_limits<qreal>::lowest();
+  }
+
+  void PlotRange::update(const qreal value)
+  {
+    if( value < _min ) {
+      _min = value;
+    }
+    if( value > _max ) {
+      _max = value;
+    }
+  }
+
+  void PlotRange::update(const PlotRange& other)
+  {
+    if( !other.isValid() ) {
+      return;
+    }
+    if( other._min < _min ) {
+      _min = other._min;
+    }
+    if( other._max > _max ) {
+      _max = other._max;
+    }
+  }
+
+  PlotRange PlotRange::clamped(const PlotRange& other, const qreal norm) const
+  {
+    PlotRange result;
+
+    if( !isValid()  ||  !other.isValid() ) {
+      return result;
+    }
+
+    const qreal ZERO(0);
+    const qreal  ONE(1);
+    const qreal from = qBound(ZERO, other.min()/norm, ONE);
+    const qreal   to = qBound(ZERO, other.max()/norm, ONE);
+
+    result._min = _min + from*span();
+    result._max = _min +   to*span();
+
     return result;
   }
 
-  const qreal ZERO(0);
-  const qreal  ONE(1);
-  const qreal from = qBound(ZERO, other.min()/norm, ONE);
-  const qreal   to = qBound(ZERO, other.max()/norm, ONE);
+  qreal PlotRange::span() const
+  {
+    return _max - _min;
+  }
 
-  result._min = _min + from*span();
-  result._max = _min +   to*span();
+  qreal PlotRange::min() const
+  {
+    return _min;
+  }
 
-  return result;
-}
+  qreal PlotRange::max() const
+  {
+    return _max;
+  }
 
-qreal SimPlotRange::span() const
-{
-  return _max - _min;
-}
-
-qreal SimPlotRange::min() const
-{
-  return _min;
-}
-
-qreal SimPlotRange::max() const
-{
-  return _max;
-}
+} // namespace plot

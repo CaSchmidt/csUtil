@@ -31,8 +31,12 @@
 
 #include "internal/ISeriesControl.h"
 
-////// public ////////////////////////////////////////////////////////////////
+namespace plot {
 
-ISeriesControl::~ISeriesControl()
-{
-}
+  ////// public //////////////////////////////////////////////////////////////
+
+  ISeriesControl::~ISeriesControl()
+  {
+  }
+
+} // namespace plot

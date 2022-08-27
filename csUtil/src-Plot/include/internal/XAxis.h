@@ -29,36 +29,37 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __XAXIS_H__
-#define __XAXIS_H__
+#pragma once
 
 #include "internal/IAxisElement.h"
 
-class IPlotImplementation;
+namespace plot {
 
-class XAxis : public IAxisElement {
-public:
-  XAxis(IPlotImplementation *plot);
-  ~XAxis();
+  class IPlotImplementation;
 
-  QRectF boundingRect() const;
+  class XAxis : public IAxisElement {
+  public:
+    XAxis(IPlotImplementation *plot);
+    ~XAxis();
 
-  void resize(const QPointF& topLeft, const QSizeF& hint);
+    QRectF boundingRect() const;
 
-  void paint(QPainter *painter) const;
+    void resize(const QPointF& topLeft, const QSizeF& hint);
 
-  AxisLabels labels() const;
+    void paint(QPainter *painter) const;
 
-  void clearLabels();
+    AxisLabels labels() const;
 
-protected:
-  void updateLabels(const QSizeF& newSize);
+    void clearLabels();
 
-private:
-  AxisLabels _labels;
-  QSizeF _labelsSize;
-  QRectF _rect;
-  IPlotImplementation *_plot;
-};
+  protected:
+    void updateLabels(const QSizeF& newSize);
 
-#endif // __XAXIS_H__
+  private:
+    AxisLabels _labels;
+    QSizeF _labelsSize;
+    QRectF _rect;
+    IPlotImplementation *_plot;
+  };
+
+} // namespace plot

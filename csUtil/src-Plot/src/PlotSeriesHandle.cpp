@@ -29,108 +29,112 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <Plot/PlotSeriesHandle.h>
+#include "Plot/PlotSeriesHandle.h"
 
 #include "internal/IPlotImplementation.h"
 #include "internal/Series.h"
 
-////// public ////////////////////////////////////////////////////////////////
+namespace plot {
 
-SimPlotSeriesHandle::SimPlotSeriesHandle(const QString& name,
-                                         IPlotImplementation *impl)
-  : _impl(impl)
-  , _name(name)
-{
-}
+  ////// public //////////////////////////////////////////////////////////////
 
-SimPlotSeriesHandle::~SimPlotSeriesHandle()
-{
-}
-
-bool SimPlotSeriesHandle::isValid() const
-{
-  return
-      !_name.isEmpty()  &&
-      _impl != 0        &&
-      !_impl->series(_name).isEmpty();
-}
-
-bool SimPlotSeriesHandle::activate()
-{
-  if( !isValid() ) {
-    return false;
+  PlotSeriesHandle::PlotSeriesHandle(const QString& name,
+                                     IPlotImplementation *impl)
+    : _impl(impl)
+    , _name(name)
+  {
   }
-  return _impl->setActiveSeries(_name);
-}
 
-bool SimPlotSeriesHandle::remove()
-{
-  if( !isValid() ) {
-    return false;
+  PlotSeriesHandle::~PlotSeriesHandle()
+  {
   }
-  const bool result = _impl->remove(_name);
-  _name.clear();
-  _impl = 0;
-  return result;
-}
 
-QString SimPlotSeriesHandle::name() const
-{
-  if( !isValid() ) {
-    return QString();
+  bool PlotSeriesHandle::isValid() const
+  {
+    return
+        !_name.isEmpty()  &&
+        _impl != 0        &&
+        !_impl->series(_name).isEmpty();
   }
-  return _impl->series(_name).name();
-}
 
-QString SimPlotSeriesHandle::unit() const
-{
-  if( !isValid() ) {
-    return QString();
+  bool PlotSeriesHandle::activate()
+  {
+    if( !isValid() ) {
+      return false;
+    }
+    return _impl->setActiveSeries(_name);
   }
-  return _impl->series(_name).unit();
-}
 
-QColor SimPlotSeriesHandle::color() const
-{
-  if( !isValid() ) {
-    return QColor();
+  bool PlotSeriesHandle::remove()
+  {
+    if( !isValid() ) {
+      return false;
+    }
+    const bool result = _impl->remove(_name);
+    _name.clear();
+    _impl = 0;
+    return result;
   }
-  return _impl->series(_name).color();
-}
 
-void SimPlotSeriesHandle::setColor(const QColor& color, const bool replot)
-{
-  if( !isValid()  ||  !color.isValid() ) {
-    return;
+  QString PlotSeriesHandle::name() const
+  {
+    if( !isValid() ) {
+      return QString();
+    }
+    return _impl->series(_name).name();
   }
-  Series& series = _impl->series(_name);
-  const QColor oldColor = series.color();
-  series.setColor(color);
-  if( replot  &&  oldColor != series.color() ) {
+
+  QString PlotSeriesHandle::unit() const
+  {
+    if( !isValid() ) {
+      return QString();
+    }
+    return _impl->series(_name).unit();
+  }
+
+  QColor PlotSeriesHandle::color() const
+  {
+    if( !isValid() ) {
+      return QColor();
+    }
+    return _impl->series(_name).color();
+  }
+
+  void PlotSeriesHandle::setColor(const QColor& color, const bool replot)
+  {
+    if( !isValid()  ||  !color.isValid() ) {
+      return;
+    }
+    Series& series = _impl->series(_name);
+    const QColor oldColor = series.color();
+    series.setColor(color);
+    if( replot  &&  oldColor != series.color() ) {
+      _impl->replot();
+    }
+  }
+
+  void PlotSeriesHandle::replot()
+  {
+    if( !isValid() ) {
+      return;
+    }
     _impl->replot();
   }
-}
 
-void SimPlotSeriesHandle::replot()
-{
-  if( !isValid() ) {
-    return;
+  const IPlotSeriesData *PlotSeriesHandle::constData() const
+  {
+    if( !isValid() ) {
+      return 0;
+    }
+    return _impl->series(_name).constData();
   }
-  _impl->replot();
-}
 
-const ISimPlotSeriesData *SimPlotSeriesHandle::constData() const
-{
-  if( !isValid() ) {
-    return 0;
+  IPlotSeriesData *PlotSeriesHandle::data()
+  {
+    if( !isValid() ) {
+      return 0;
+    }
+    return _impl->series(_name).data();
   }
-  return _impl->series(_name).constData();
-}
 
-ISimPlotSeriesData *SimPlotSeriesHandle::data()
-{
-  if( !isValid() ) {
-    return 0;
-  }
-  return _impl->series(_name).data();
-}
+} // namespace plot

@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __IPLOTIMPLEMENTATION_H__
-#define __IPLOTIMPLEMENTATION_H__
+#pragma once
 
 #include <Plot/Plot.h>
 #include <Plot/PlotTheme.h>
@@ -40,32 +39,34 @@
 #include "internal/IViewportControl.h"
 #include "internal/IXAxisControl.h"
 
-class IAxisElement;
-class Series;
+namespace plot {
 
-class IPlotImplementation
-    : public IPlotElement
-    , public ISeriesControl
-    , public IViewportControl
-    , public IXAxisControl {
-public:
-  IPlotImplementation(const SimPlot::DrawFlags drawFlags, const SimPlotTheme& theme);
-  ~IPlotImplementation();
+  class IAxisElement;
+  class Series;
 
-  SimPlot::DrawFlags drawFlags() const;
-  void setDrawFlags(const SimPlot::DrawFlags flags);
-  void setDrawFlag(const SimPlot::DrawFlag flag, const bool on);
+  class IPlotImplementation
+      : public IPlotElement
+      , public ISeriesControl
+      , public IViewportControl
+      , public IXAxisControl {
+  public:
+    IPlotImplementation(const DrawFlags drawFlags, const PlotTheme& theme);
+    ~IPlotImplementation();
 
-  SimPlotTheme& theme();
-  const SimPlotTheme& theme() const;
+    DrawFlags drawFlags() const;
+    void setDrawFlags(const DrawFlags flags);
+    void setDrawFlag(const DrawFlag flag, const bool on);
 
-  virtual void replot() = 0;
-  virtual void reset() = 0;
-  virtual const Widget *widget() const = 0;
+    PlotTheme& theme();
+    const PlotTheme& theme() const;
 
-private:
-  SimPlot::DrawFlags _drawFlags;
-  SimPlotTheme _theme;
-};
+    virtual void replot() = 0;
+    virtual void reset() = 0;
+    virtual const QWidget *widget() const = 0;
 
-#endif // __IPLOTIMPLEMENTATION_H__
+  private:
+    DrawFlags _drawFlags;
+    PlotTheme _theme;
+  };
+
+} // namespace plot

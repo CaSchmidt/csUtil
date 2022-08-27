@@ -29,37 +29,39 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef __DRAW_H__
-#define __DRAW_H__
+#pragma once
 
 #include <Plot/Plot.h>
 
-class IAxisElement;
 class QPainter;
 class QPen;
 class QRectF;
 class QTransform;
-class Series;
-class SimPlotRange;
 
-namespace Draw {
+namespace plot {
 
-  void frame(QPainter *painter,
-             const QRectF& rect, const QPen& pen);
+  class IAxisElement;
+  class Series;
+  class PlotRange;
 
-  void gridX(QPainter *painter,
-             const IAxisElement *xAxis, const QTransform& mapping,
-             const QRectF& rect, const QPen& pen);
+  namespace Draw {
 
-  void gridY(QPainter *painter,
-             const IAxisElement *yAxis, const QTransform& mapping,
-             const QRectF& rect, const QPen& pen);
+    void frame(QPainter *painter,
+               const QRectF& rect, const QPen& pen);
 
-  void series(QPainter *painter,
-              const QRectF& screen, const Series& theSeries,
-              const SimPlotRange& viewX, const  SimPlotRange& viewY,
-              const SimPlot::DrawFlags flags = SimPlot::NoDrawFlags);
+    void gridX(QPainter *painter,
+               const IAxisElement *xAxis, const QTransform& mapping,
+               const QRectF& rect, const QPen& pen);
 
-} // namespace Draw
+    void gridY(QPainter *painter,
+               const IAxisElement *yAxis, const QTransform& mapping,
+               const QRectF& rect, const QPen& pen);
 
-#endif // __DRAW_H__
+    void series(QPainter *painter,
+                const QRectF& screen, const Series& theSeries,
+                const PlotRange& viewX, const  PlotRange& viewY,
+                const plot::DrawFlags flags = plot::NoDrawFlags);
+
+  } // namespace Draw
+
+} // namespace plot
