@@ -23,6 +23,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src-Core/include/config/csutil_config
 
 # Build Modules?
 option(ENABLE_CHARCONV "Build elementary string conversions module" OFF)
+option(ENABLE_PLOT "Build Plot module" OFF)
 option(ENABLE_QTCREATOR "Build QtCreator module (cf. LICENSE)" OFF)
 option(ENABLE_UNICODE "Build Unicode module" OFF)
 
@@ -99,6 +100,10 @@ endif()
 
 if(ENABLE_QT)
   add_subdirectory(src-Qt)
+endif()
+
+if(ENABLE_QT AND ENABLE_PLOT)
+  add_subdirectory(src-Plot)
 endif()
 
 if(ENABLE_QT AND ENABLE_QTCREATOR)
