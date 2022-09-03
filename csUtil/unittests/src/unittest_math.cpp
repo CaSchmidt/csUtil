@@ -2,7 +2,7 @@
 
 #include <catch.hpp>
 
-#include <cs/Math/Math.h>
+#include <cs/Math/Numeric.h>
 
 namespace test_decomposition {
 
@@ -32,6 +32,11 @@ namespace test_exponentiation {
 
     using value_type = TestType;
     using m = cs::math<value_type>;
+
+    constexpr value_type ONE = 1;
+    constexpr value_type TOL = m::konst::micro;
+
+    REQUIRE( cs::equals(m::log(m::konst::e), ONE, TOL) );
 
     REQUIRE( m::log10( 1.0) == 0.0 );
     REQUIRE( m::log10(10.0) == 1.0 );
