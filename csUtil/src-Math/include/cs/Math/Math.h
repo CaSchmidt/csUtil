@@ -107,6 +107,11 @@ namespace cs {
       return isnan(x) != 0;
     }
 
+    inline static value_type log(const value_type x)
+    {
+      return ::logf(x);
+    }
+
     inline static value_type log10(const value_type x)
     {
       return ::log10f(x);
@@ -185,6 +190,11 @@ namespace cs {
     inline static bool isNaN(const value_type x)
     {
       return isnan(x) != 0;
+    }
+
+    inline static value_type log(const value_type x)
+    {
+      return ::log(x);
     }
 
     inline static value_type log10(const value_type x)
