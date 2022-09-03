@@ -35,6 +35,12 @@
 
 #include <cs/Core/Concepts.h>
 
+/*
+ * NOTE:
+ * For the constants of e and pi cf. to "pi and e in Binary":
+ * https://www.exploringbinary.com/pi-and-e-in-binary/
+ */
+
 namespace cs {
 
   template<std::size_t SIZE>
@@ -47,6 +53,16 @@ namespace cs {
     using value_type = float;
 
     static constexpr auto INVALID_RESULT = std::numeric_limits<value_type>::quiet_NaN();
+
+    struct konst {
+      static constexpr value_type  e = 0x1.5bf0a8p+1;
+
+      static constexpr value_type pi = 0x1.921fb6p+1;
+
+      static constexpr value_type milli = 0x1.0p-10;
+
+      static constexpr value_type micro = 0x1.0p-20;
+    };
 
     inline static value_type abs(const value_type x)
     {
@@ -117,6 +133,16 @@ namespace cs {
     using value_type = double;
 
     static constexpr auto INVALID_RESULT = std::numeric_limits<value_type>::quiet_NaN();
+
+    struct konst {
+      static constexpr value_type  e = 0x1.5bf0a8b145769p+1;
+
+      static constexpr value_type pi = 0x1.921fb54442d18p+1;
+
+      static constexpr value_type milli = 0x1.0p-10;
+
+      static constexpr value_type micro = 0x1.0p-20;
+    };
 
     inline static value_type abs(const value_type x)
     {
