@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include <cs/Core/Concepts.h>
+#include <cs/Math/Math.h>
 
 namespace cs {
 
@@ -48,6 +48,12 @@ namespace cs {
       x /= BASE;
     } while( x != ZERO );
     return cnt;
+  }
+
+  template<typename T> requires IsReal<T>
+  constexpr bool equals(const T& a, const T& b, const T& tol = 0x1.0p-10)
+  {
+    return math<T>::abs(a - b) <= tol;
   }
 
   template<typename T> requires IsIntegral<T>
