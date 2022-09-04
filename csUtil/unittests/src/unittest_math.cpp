@@ -2,7 +2,7 @@
 
 #include <catch.hpp>
 
-#include <cs/Math/Numeric.h>
+#include <cs/Math/Compare.h>
 
 namespace test_decomposition {
 
@@ -31,12 +31,12 @@ namespace test_exponentiation {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
     using value_type = TestType;
-    using m = cs::math<value_type>;
+    using cmp = cs::cmp<value_type>;
+    using   m = cs::math<value_type>;
 
-    constexpr value_type ONE = 1;
     constexpr value_type TOL = m::konst::micro;
 
-    REQUIRE( cs::equals(m::log(m::konst::e), ONE, TOL) );
+    REQUIRE( cmp::eq(m::log(m::konst::e), 1.0, TOL) );
 
     REQUIRE( m::log10( 1.0) == 0.0 );
     REQUIRE( m::log10(10.0) == 1.0 );
