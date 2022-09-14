@@ -102,7 +102,7 @@ namespace cs {
       const int   pct = (pos*HUNDRED)/span;
       const int width = int(countDigits<int>(span));
 
-      fprintf(_file, "Progress: %d%% (%*d/%d)\n", pct, width, pos, span);
+      fprintf(_file, "Progress: %3d%% (%*d/%d)\n", pct, width, pos, span);
     }
   }
 
