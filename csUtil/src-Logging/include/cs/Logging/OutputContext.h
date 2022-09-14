@@ -48,6 +48,8 @@ namespace cs {
                   const IProgress *progress, const bool progress_flush) noexcept;
     ~OutputContext() noexcept;
 
+    const ILogger *logger() const;
+
     void logFlush() const;
 
     void logText(const char8_t *text) const;
@@ -62,6 +64,8 @@ namespace cs {
     void logError(const std::u8string& error) const;
     void logError(const int line, const char8_t *error) const;
     void logError(const int line, const std::u8string& error) const;
+
+    const IProgress *progress() const;
 
     void progressFlush() const;
 

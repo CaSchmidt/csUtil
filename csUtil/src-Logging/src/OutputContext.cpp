@@ -59,6 +59,11 @@ namespace cs {
   {
   }
 
+  const ILogger *OutputContext::logger() const
+  {
+    return _logger;
+  }
+
   void OutputContext::logFlush() const
   {
     if( _logger != nullptr ) {
@@ -164,6 +169,11 @@ namespace cs {
         _logger->logFlush();
       }
     }
+  }
+
+  const IProgress *OutputContext::progress() const
+  {
+    return _progress;
   }
 
   void OutputContext::progressFlush() const
