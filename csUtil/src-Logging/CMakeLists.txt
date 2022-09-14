@@ -4,6 +4,7 @@ list(APPEND csLogging_HEADERS
   include/cs/Logging/IProgress.h
   include/cs/Logging/Logger.h
   include/cs/Logging/OutputContext.h
+  include/cs/Logging/Progress.h
   )
 
 list(APPEND csLogging_SOURCES
@@ -13,6 +14,7 @@ list(APPEND csLogging_SOURCES
   src/Logger.cpp
   src/main_logging.cpp
   src/OutputContext.cpp
+  src/Progress.cpp
   )
 
 if(ENABLE_QT)
