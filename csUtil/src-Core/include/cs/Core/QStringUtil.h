@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include <filesystem>
 #include <string>
 
 #include <QtCore/QString>
@@ -81,6 +82,23 @@ namespace cs {
     return !s.isEmpty()
         ? s.toStdU16String()
         : std::u16string();
+  }
+
+  // Path Conversion /////////////////////////////////////////////////////////
+
+  inline std::filesystem::path toPath(const QString& s,
+                                      std::filesystem::path::format fmt = std::filesystem::path::auto_format)
+  {
+    return !s.isEmpty()
+        ? std::filesystem::path(s.toStdU16String(), fmt)
+        : std::filesystem::path();
+  }
+
+  inline QString toQString(const std::filesystem::path& p)
+  {
+    return !p.empty()
+        ? QString::fromStdU16String(p.generic_u16string())
+        : QString();
   }
 
 } // namespace cs
