@@ -78,9 +78,8 @@ namespace cs {
 
   inline std::u16string toUtf16String(const QString& s)
   {
-    using size_type = std::u16string::size_type;
     return !s.isEmpty()
-        ? std::u16string(reinterpret_cast<const char16_t*>(s.utf16()), size_type(s.size()))
+        ? s.toStdU16String()
         : std::u16string();
   }
 
