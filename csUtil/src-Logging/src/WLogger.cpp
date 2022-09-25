@@ -44,17 +44,20 @@ namespace cs {
 
     void invokeLogText(QObject *o, const QString& s)
     {
-      QMetaObject::invokeMethod(o, "impl_logText", Qt::AutoConnection, Q_ARG(QString, s));
+      QMetaObject::invokeMethod(o, "impl_logText", Qt::AutoConnection,
+                                Q_ARG(QString, s));
     }
 
     void invokeLogWarning(QObject *o, const QString& s)
     {
-      QMetaObject::invokeMethod(o, "impl_logWarning", Qt::AutoConnection, Q_ARG(QString, s));
+      QMetaObject::invokeMethod(o, "impl_logWarning", Qt::AutoConnection,
+                                Q_ARG(QString, s));
     }
 
     void invokeLogError(QObject *o, const QString& s)
     {
-      QMetaObject::invokeMethod(o, "impl_logError", Qt::AutoConnection, Q_ARG(QString, s));
+      QMetaObject::invokeMethod(o, "impl_logError", Qt::AutoConnection,
+                                Q_ARG(QString, s));
     }
 
   } // namespace impl_log
