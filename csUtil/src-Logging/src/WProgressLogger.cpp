@@ -30,6 +30,7 @@
 *****************************************************************************/
 
 #include <QtCore/QCoreApplication>
+#include <QtCore/QMetaObject>
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QPushButton>
 
@@ -63,24 +64,21 @@ namespace cs {
         QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
       }
 
-      void setProgressMaximum(const int max) const
+      void resetProgress() const
       {
-        _bar->setMaximum(max);
-      }
-
-      void setProgressMinimum(const int min) const
-      {
-        _bar->setMinimum(min);
+        QMetaObject::invokeMethod(_bar, "reset", Qt::AutoConnection);
       }
 
       void setProgressRange(const int min, const int max) const
       {
-        _bar->setRange(min, max);
+        QMetaObject::invokeMethod(_bar, "setRange", Qt::AutoConnection,
+                                  Q_ARG(int, min), Q_ARG(int, max));
       }
 
       void setProgressValue(const int val) const
       {
-        _bar->setValue(val);
+        QMetaObject::invokeMethod(_bar, "setValue", Qt::AutoConnection,
+                                  Q_ARG(int, val));
       }
 
     private:

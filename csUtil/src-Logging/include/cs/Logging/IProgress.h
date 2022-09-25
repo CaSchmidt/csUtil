@@ -41,8 +41,7 @@ namespace cs {
     virtual ~IProgress() noexcept;
 
     virtual void progressFlush() const;
-    virtual void setProgressMaximum(const int max) const = 0;
-    virtual void setProgressMinimum(const int min) const = 0;
+    virtual void resetProgress() const;
     virtual void setProgressRange(const int min, const int max) const = 0;
     virtual void setProgressValue(const int val) const = 0;
 

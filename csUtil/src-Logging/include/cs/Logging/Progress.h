@@ -46,8 +46,6 @@ namespace cs {
     ~Progress();
 
     void progressFlush() const;
-    void setProgressMaximum(const int max) const;
-    void setProgressMinimum(const int min) const;
     void setProgressRange(const int min, const int max) const;
     void setProgressValue(const int val) const;
 

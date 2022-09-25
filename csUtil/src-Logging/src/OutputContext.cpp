@@ -183,20 +183,10 @@ namespace cs {
     }
   }
 
-  void OutputContext::setProgressMaximum(const int max) const
+  void OutputContext::resetProgress() const
   {
     if( _progress != nullptr ) {
-      _progress->setProgressMaximum(max);
-      if( _progress_flush ) {
-        _progress->progressFlush();
-      }
-    }
-  }
-
-  void OutputContext::setProgressMinimum(const int min) const
-  {
-    if( _progress != nullptr ) {
-      _progress->setProgressMinimum(min);
+      _progress->resetProgress();
       if( _progress_flush ) {
         _progress->progressFlush();
       }

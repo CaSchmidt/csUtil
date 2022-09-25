@@ -66,20 +66,6 @@ namespace cs {
     fflush(_file);
   }
 
-  void Progress::setProgressMaximum(const int max) const
-  {
-    if( _min < max ) {
-      const_cast<Progress*>(this)->_max = max;
-    }
-  }
-
-  void Progress::setProgressMinimum(const int min) const
-  {
-    if( min < _max ) {
-      const_cast<Progress*>(this)->_min = min;
-    }
-  }
-
   void Progress::setProgressRange(const int min, const int max) const
   {
     if( min < max ) {

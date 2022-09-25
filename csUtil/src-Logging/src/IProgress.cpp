@@ -45,4 +45,8 @@ namespace cs {
   {
   }
 
+  void IProgress::resetProgress() const
+  {
+  }
+
 } // namespace cs
