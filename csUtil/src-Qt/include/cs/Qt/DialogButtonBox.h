@@ -38,7 +38,7 @@
 namespace cs {
 
   CS_UTIL_EXPORT QPushButton *addButton(QDialogButtonBox *box,
-                                        const QDialogButtonBox::StandardButton button,
+                                        const QDialogButtonBox::StandardButton which,
                                         const bool set_auto_default = false,
                                         const bool set_default = false);
 
@@ -46,6 +46,9 @@ namespace cs {
                                         const QDialogButtonBox::ButtonRole role,
                                         const bool set_auto_default = false,
                                         const bool set_default = false);
+
+  CS_UTIL_EXPORT bool isUnique(QDialogButtonBox *box,
+                               const QDialogButtonBox::StandardButton which);
 
   CS_UTIL_EXPORT bool removeAllButtons(QDialogButtonBox *box);
 

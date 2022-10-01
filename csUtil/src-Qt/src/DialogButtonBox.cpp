@@ -50,13 +50,13 @@ namespace cs {
   } // namespace impl_btnbx
 
   CS_UTIL_EXPORT QPushButton *addButton(QDialogButtonBox *box,
-                                        const QDialogButtonBox::StandardButton button,
+                                        const QDialogButtonBox::StandardButton which,
                                         const bool set_auto_default,
                                         const bool set_default)
   {
-    QPushButton *pb = box->addButton(button);
-    impl_btnbx::setDefaults(pb, set_auto_default, set_default);
-    return pb;
+    QPushButton *button = box->addButton(which);
+    impl_btnbx::setDefaults(button, set_auto_default, set_default);
+    return button;
   }
 
   CS_UTIL_EXPORT QPushButton *addButton(QDialogButtonBox *box, const QString& text,
@@ -67,6 +67,12 @@ namespace cs {
     QPushButton *pb = box->addButton(text, role);
     impl_btnbx::setDefaults(pb, set_auto_default, set_default);
     return pb;
+  }
+
+  CS_UTIL_EXPORT bool isUnique(QDialogButtonBox *box,
+                               const QDialogButtonBox::StandardButton which)
+  {
+    return box->buttons().size() == 1  &&  box->button(which) != nullptr;
   }
 
   CS_UTIL_EXPORT bool removeAllButtons(QDialogButtonBox *box)
