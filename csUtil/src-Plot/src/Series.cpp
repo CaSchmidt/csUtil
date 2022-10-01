@@ -72,7 +72,7 @@ namespace plot {
     return _dataPtr->unit();
   }
 
-  const IPlotSeriesData *Series::constData() const
+  const IPlotSeriesData *Series::data() const
   {
     return _dataPtr.data();
   }

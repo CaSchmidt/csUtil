@@ -121,12 +121,12 @@ namespace plot {
     _impl->replot();
   }
 
-  const IPlotSeriesData *PlotSeriesHandle::constData() const
+  const IPlotSeriesData *PlotSeriesHandle::data() const
   {
     if( !isValid() ) {
       return 0;
     }
-    return _impl->series(_name).constData();
+    return _impl->series(_name).data();
   }
 
   IPlotSeriesData *PlotSeriesHandle::data()

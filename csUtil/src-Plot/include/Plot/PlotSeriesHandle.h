@@ -59,7 +59,7 @@ namespace plot {
 
     void replot();
 
-    const IPlotSeriesData *constData() const;
+    const IPlotSeriesData *data() const;
     IPlotSeriesData *data();
 
   private:

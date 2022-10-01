@@ -55,7 +55,7 @@ namespace plot {
     QString name() const;
     QString unit() const;
 
-    const IPlotSeriesData *constData() const;
+    const IPlotSeriesData *data() const;
     IPlotSeriesData *data();
 
   private:

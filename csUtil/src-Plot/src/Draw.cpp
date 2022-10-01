@@ -89,7 +89,7 @@ namespace plot {
         return;
       }
 
-      const IPlotSeriesData *data = theSeries.constData();
+      const IPlotSeriesData *data = theSeries.data();
 
       if( !viewX.isValid()  ||  !viewY.isValid()  ||  screen.isEmpty()  ||
           viewX.min() >= data->rangeX().max()  ||
