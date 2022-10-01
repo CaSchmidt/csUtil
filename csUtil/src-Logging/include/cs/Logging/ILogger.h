@@ -65,6 +65,12 @@ namespace cs {
     virtual void logError(const int, const char8_t *) const = 0;
     virtual void logError(const int, const std::u8string&) const;
 
+  private:
+    ILogger(const ILogger&) noexcept = delete;
+    ILogger& operator=(const ILogger&) noexcept = delete;
+    ILogger(ILogger&&) noexcept = delete;
+    ILogger& operator=(ILogger&&) noexcept = delete;
+
 #ifdef HAVE_STD_FORMAT
   public:
     template<typename... Args>
@@ -109,12 +115,6 @@ namespace cs {
       return std::vformat(CSTR(fmt), std::make_format_args(std::forward<Args>(args)...));
     }
 #endif
-
-  private:
-    ILogger(const ILogger&) noexcept = delete;
-    ILogger& operator=(const ILogger&) noexcept = delete;
-    ILogger(ILogger&&) noexcept = delete;
-    ILogger& operator=(ILogger&&) noexcept = delete;
   };
 
 } // namespace cs
