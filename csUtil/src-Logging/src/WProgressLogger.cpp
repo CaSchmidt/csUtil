@@ -66,7 +66,8 @@ namespace cs {
 
       void resetProgress() const
       {
-        QMetaObject::invokeMethod(_bar, "reset", Qt::AutoConnection);
+        setProgressRange(0, 100);
+        setProgressValue(0);
       }
 
       void setProgressRange(const int min, const int max) const
