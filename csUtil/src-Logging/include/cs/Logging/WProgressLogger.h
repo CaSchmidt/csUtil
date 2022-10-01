@@ -69,8 +69,9 @@ namespace cs {
     void stepValue(int dir = 1);
 
   private slots:
-    void finish();
+    void finishUi();
     void monitorProgress(int value);
+    void startUi();
 
   private:
     void setupUi();
@@ -101,7 +102,7 @@ namespace cs {
             watcher, &QFutureWatcher<T>::cancel);
 
     connect(watcher, &QFutureWatcher<T>::finished,
-            this, &WProgressLogger::finish);
+            this, &WProgressLogger::finishUi);
     connect(watcher, &QFutureWatcher<T>::progressRangeChanged,
             _progressBar, &QProgressBar::setRange);
     connect(watcher, &QFutureWatcher<T>::progressValueChanged,

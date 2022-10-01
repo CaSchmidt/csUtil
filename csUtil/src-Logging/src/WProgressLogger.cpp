@@ -104,16 +104,7 @@ namespace cs {
     setWindowFlag(Qt::WindowContextHelpButtonHint, false);
 
     removeAllButtons(_buttonBox);
-
-    QPushButton *cancel = addButton(_buttonBox, QDialogButtonBox::Cancel);
-    if( cancel != nullptr ) {
-      cancel->disconnect();
-
-      connect(cancel, &QPushButton::clicked, this, &WProgressLogger::canceled);
-
-      connect(cancel, &QPushButton::clicked, this, &WProgressLogger::rejected);
-      connect(cancel, &QPushButton::clicked, this, &WProgressLogger::reject);
-    }
+    startUi();
 
     // Event Filter //////////////////////////////////////////////////////////
 
@@ -160,23 +151,52 @@ namespace cs {
 
   ////// private slots ///////////////////////////////////////////////////////
 
-  void WProgressLogger::finish()
+  void WProgressLogger::finishUi()
   {
+    const QDialogButtonBox::StandardButton which = QDialogButtonBox::Close;
+
+    if( isUnique(_buttonBox, which) ) {
+      return;
+    }
+
     removeAllButtons(_buttonBox);
 
-    QPushButton *close = addButton(_buttonBox, QDialogButtonBox::Close, true, true);
-    if( close != nullptr ) {
-      close->disconnect();
+    QPushButton *button = addButton(_buttonBox, which, true, true);
+    if( button != nullptr ) {
+      button->disconnect();
 
-      connect(close, &QPushButton::clicked, this, &WProgressLogger::accepted);
-      connect(close, &QPushButton::clicked, this, &WProgressLogger::accept);
+      connect(button, &QPushButton::clicked, this, &WProgressLogger::accepted);
+      connect(button, &QPushButton::clicked, this, &WProgressLogger::accept);
     }
   }
 
   void WProgressLogger::monitorProgress(int value)
   {
     if( value >= _progressBar->maximum() ) {
-      finish();
+      finishUi();
+    } else {
+      startUi();
+    }
+  }
+
+  void WProgressLogger::startUi()
+  {
+    const QDialogButtonBox::StandardButton which = QDialogButtonBox::Cancel;
+
+    if( isUnique(_buttonBox, which) ) {
+      return;
+    }
+
+    removeAllButtons(_buttonBox);
+
+    QPushButton *button = addButton(_buttonBox, which);
+    if( button != nullptr ) {
+      button->disconnect();
+
+      connect(button, &QPushButton::clicked, this, &WProgressLogger::canceled);
+
+      connect(button, &QPushButton::clicked, this, &WProgressLogger::rejected);
+      connect(button, &QPushButton::clicked, this, &WProgressLogger::reject);
     }
   }
 
