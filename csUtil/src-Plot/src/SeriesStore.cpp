@@ -98,7 +98,7 @@ namespace plot {
     if( isGroupedScale(seriesName, scaleName) ) {
       result = _scales[scaleName].rangeX();
     } else {
-      result = _series[seriesName].constData()->rangeX();
+      result = _series[seriesName].data()->rangeX();
     }
 
     return result;
@@ -116,7 +116,7 @@ namespace plot {
     if( isGroupedScale(seriesName, scaleName) ) {
       result = _scales[scaleName].rangeY();
     } else {
-      result = _series[seriesName].constData()->rangeY();
+      result = _series[seriesName].data()->rangeY();
     }
 
     return result;
@@ -127,7 +127,7 @@ namespace plot {
     PlotRange result;
 
     for(const Series& series : _series) {
-      result.update(series.constData()->rangeX());
+      result.update(series.data()->rangeX());
     }
 
     return result;

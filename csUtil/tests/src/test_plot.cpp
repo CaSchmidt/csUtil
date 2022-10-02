@@ -86,9 +86,9 @@ int main(int argc, char **argv)
   // test_findRight(sine);
   plot::PlotSeriesHandle h3 = plot->insert(sine);
 
-  info(h1.constData());
-  info(h2.constData());
-  info(h3.constData());
+  info(h1.data());
+  info(h2.data());
+  info(h3.data());
 
   QFont font = plot->font();
   font.setPointSize(10);
