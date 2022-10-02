@@ -52,9 +52,6 @@ namespace plot {
     // Returns i := x[i-1] <  x  &&  x <= x[i]
     int findRight(const qreal x) const;
 
-    void drawLines(QPainter *painter, const int L, const int R) const;
-    void drawSteps(QPainter *painter, const int L, const int R) const;
-
     virtual QString name() const = 0;
     virtual QString unit() const = 0;
 
