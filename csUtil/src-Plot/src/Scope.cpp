@@ -89,7 +89,9 @@ namespace plot {
 
     painter->resetTransform();
     painter->setClipRect(_rect);
-    for(const QString& seriesName : _row->store().names()) {
+
+    const QStringList seriesNames = _row->store().names();
+    for(const QString& seriesName : seriesNames) {
       const Series& series = _row->store().series(seriesName);
       if( series.isEmpty()  ||  series == activeSeries ) {
         continue;
