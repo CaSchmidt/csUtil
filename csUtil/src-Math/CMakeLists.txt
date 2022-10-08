@@ -1,6 +1,7 @@
 list(APPEND csMath_HEADERS
   include/cs/Math/Compare.h
   include/cs/Math/Constant.h
+  include/cs/Math/Interval.h
   include/cs/Math/Math.h
   include/cs/Math/Numeric.h
   include/cs/Math/RawConverter.h
