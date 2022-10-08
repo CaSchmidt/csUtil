@@ -50,7 +50,7 @@ namespace cs {
 
   template<>
   struct math_impl<4> {
-    using value_type = float;
+    using value_type = RealOfSize<4>::real_type;
 
     static constexpr auto INVALID_RESULT = std::numeric_limits<value_type>::quiet_NaN();
 
@@ -135,7 +135,7 @@ namespace cs {
 
   template<>
   struct math_impl<8> {
-    using value_type = double;
+    using value_type = RealOfSize<8>::real_type;
 
     static constexpr auto INVALID_RESULT = std::numeric_limits<value_type>::quiet_NaN();
 

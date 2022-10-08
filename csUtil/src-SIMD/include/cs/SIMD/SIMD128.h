@@ -45,7 +45,7 @@ namespace cs {
   struct simd128_impl<4> {
     using block_type = __m128;
     using  size_type = std::size_t;
-    using value_type = float;
+    using value_type = RealOfSize<4>::real_type;
 
     static constexpr size_type NUM_ELEMS = sizeof(block_type)/sizeof(value_type);
 
@@ -97,7 +97,7 @@ namespace cs {
   struct simd128_impl<8> {
     using block_type = __m128d;
     using  size_type = std::size_t;
-    using value_type = double;
+    using value_type = RealOfSize<8>::real_type;
 
     static constexpr size_type NUM_ELEMS = sizeof(block_type)/sizeof(value_type);
 

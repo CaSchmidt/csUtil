@@ -116,6 +116,23 @@ namespace cs {
     using unsigned_type = uint64_t;
   };
 
+  ////// Real Types //////////////////////////////////////////////////////////
+
+  template<std::size_t SIZE>
+  struct RealOfSize {
+    // SFINAE
+  };
+
+  template<>
+  struct RealOfSize<4> {
+    using real_type = float;
+  };
+
+  template<>
+  struct RealOfSize<8> {
+    using real_type = double;
+  };
+
   ////// Miscellaneous Transformations ///////////////////////////////////////
 
   template<typename T>
