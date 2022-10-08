@@ -38,7 +38,7 @@ namespace test_exponentiation {
 
     constexpr value_type TOL = k::micro;
 
-    REQUIRE( cmp::eq(m::log(k::e), 1.0, TOL) );
+    REQUIRE( cmp::equal_to(m::log(k::e), 1.0, TOL) );
 
     REQUIRE( m::log10( 1.0) == 0.0 );
     REQUIRE( m::log10(10.0) == 1.0 );

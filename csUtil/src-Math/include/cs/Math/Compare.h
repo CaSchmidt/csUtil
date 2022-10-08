@@ -41,40 +41,40 @@ namespace cs {
 
     static constexpr value_type DEFAULT_TOL = 0x1.0p-10;
 
-    inline static bool eq(const value_type& a, const value_type& b,
-                          const value_type& tol = DEFAULT_TOL)
+    inline static bool equal_to(const value_type& lhs, const value_type& rhs,
+                                const value_type& tol = DEFAULT_TOL)
     {
-      return math<value_type>::abs(a - b) <= tol;
+      return math<value_type>::abs(lhs - rhs) <= tol;
     }
 
-    inline static bool geq(const value_type& a, const value_type& b,
-                           const value_type& tol = DEFAULT_TOL)
+    inline static bool greater_equal(const value_type& lhs, const value_type& rhs,
+                                     const value_type& tol = DEFAULT_TOL)
     {
-      return a - b >= -tol;
+      return lhs - rhs >= -tol;
     }
 
-    inline static bool gt(const value_type& a, const value_type& b,
-                          const value_type& tol = DEFAULT_TOL)
+    inline static bool greater(const value_type& lhs, const value_type& rhs,
+                               const value_type& tol = DEFAULT_TOL)
     {
-      return a - b > tol;
+      return lhs - rhs > tol;
     }
 
-    inline static bool leq(const value_type& a, const value_type& b,
-                           const value_type& tol = DEFAULT_TOL)
+    inline static bool less_equal(const value_type& lhs, const value_type& rhs,
+                                  const value_type& tol = DEFAULT_TOL)
     {
-      return a - b <= tol;
+      return lhs - rhs <= tol;
     }
 
-    inline static bool lt(const value_type& a, const value_type& b,
-                          const value_type& tol = DEFAULT_TOL)
+    inline static bool less(const value_type& lhs, const value_type& rhs,
+                            const value_type& tol = DEFAULT_TOL)
     {
-      return a - b < -tol;
+      return lhs - rhs < -tol;
     }
 
-    inline static bool neq(const value_type& a, const value_type& b,
-                           const value_type& tol = DEFAULT_TOL)
+    inline static bool not_equal_to(const value_type& lhs, const value_type& rhs,
+                                    const value_type& tol = DEFAULT_TOL)
     {
-      return math<value_type>::abs(a - b) > tol;
+      return math<value_type>::abs(lhs - rhs) > tol;
     }
   };
 
