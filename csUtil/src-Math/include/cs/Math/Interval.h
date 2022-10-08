@@ -129,9 +129,10 @@ namespace cs {
 
     inline void update(const value_type& x)
     {
-      if(        x < begin ) {
+      if( x < begin ) {
         begin = x;
-      } else if( x > end ) {
+      }
+      if( x > end ) {
         end = x;
       }
     }
@@ -142,9 +143,10 @@ namespace cs {
       if( !other.isValid() ) {
         return false;
       }
-      if(        other.begin < begin ) {
+      if( other.begin < begin ) {
         begin = other.begin;
-      } else if( other.end > end ) {
+      }
+      if( other.end > end ) {
         end = other.end;
       }
       return true;
