@@ -53,6 +53,9 @@ namespace cs {
     static constexpr auto INVALID_RESULT = std::numeric_limits<value_type>::quiet_NaN();
     static constexpr auto            MAX = std::numeric_limits<value_type>::max();
     static constexpr auto            MIN = std::numeric_limits<value_type>::lowest();
+    static constexpr value_type      ONE = 1;
+    static constexpr value_type      TWO = 2;
+    static constexpr value_type     ZERO = 0;
 
     static constexpr value_type  e = 0x1.5bf0a8p+1f;
 
@@ -70,6 +73,9 @@ namespace cs {
     static constexpr auto INVALID_RESULT = std::numeric_limits<value_type>::quiet_NaN();
     static constexpr auto            MAX = std::numeric_limits<value_type>::max();
     static constexpr auto            MIN = std::numeric_limits<value_type>::lowest();
+    static constexpr value_type      ONE = 1;
+    static constexpr value_type      TWO = 2;
+    static constexpr value_type     ZERO = 0;
 
     static constexpr value_type  e = 0x1.5bf0a8b145769p+1;
 
