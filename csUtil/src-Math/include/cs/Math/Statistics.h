@@ -33,6 +33,7 @@
 
 #include <cstddef>
 
+#include <cs/Math/Constant.h>
 #include <cs/Math/Math.h>
 #include <cs/SIMD/SIMD.h>
 #include <cs/SIMD/SIMD128.h>
@@ -60,7 +61,7 @@ namespace cs {
   inline T mean(const T *x, const std::size_t count)
   {
     if( x == nullptr  ||  !impl_statistics::isCount<T>(count) ) {
-      return math<T>::INVALID_RESULT;
+      return konst<T>::INVALID_RESULT;
     }
 
     const T N = static_cast<T>(count);
@@ -72,13 +73,13 @@ namespace cs {
 
   template<typename T> requires IsReal<T>
   inline T cov(const T *x, const T *y, const std::size_t count,
-               const T _meanX = math<T>::INVALID_RESULT,
-               const T _meanY = math<T>::INVALID_RESULT)
+               const T _meanX = konst<T>::INVALID_RESULT,
+               const T _meanY = konst<T>::INVALID_RESULT)
   {
     constexpr T ONE = 1;
 
     if( x == nullptr  ||  y == nullptr  ||  !impl_statistics::isCount<T>(count) ) {
-      return math<T>::INVALID_RESULT;
+      return konst<T>::INVALID_RESULT;
     }
 
     const T     N = static_cast<T>(count);
@@ -96,12 +97,12 @@ namespace cs {
 
   template<typename T> requires IsReal<T>
   inline T var(const T *x, const std::size_t count,
-               const T _meanX = math<T>::INVALID_RESULT)
+               const T _meanX = konst<T>::INVALID_RESULT)
   {
     constexpr T ONE = 1;
 
     if( x == nullptr  ||  !impl_statistics::isCount<T>(count) ) {
-      return math<T>::INVALID_RESULT;
+      return konst<T>::INVALID_RESULT;
     }
 
     const T     N = static_cast<T>(count);
@@ -116,11 +117,11 @@ namespace cs {
 
   template<typename T> requires IsReal<T>
   inline T stddev(const T *x, const std::size_t count,
-                  const T _meanX = math<T>::INVALID_RESULT)
+                  const T _meanX = konst<T>::INVALID_RESULT)
   {
     const T ss = var(x, count, _meanX);
     if( math<T>::isNaN(ss) ) {
-      return math<T>::INVALID_RESULT;
+      return konst<T>::INVALID_RESULT;
     }
     return math<T>::sqrt(ss);
   }
