@@ -148,8 +148,8 @@ namespace plot {
       const IPlotSeriesData *data = theSeries.data();
 
       if( !viewX.isValid()  ||  !viewY.isValid()  ||  screen.isEmpty()  ||
-          viewX.min() >= data->rangeX().max()  ||
-          viewX.max() <= data->rangeX().min() ) {
+          viewX.begin >= data->rangeX().end  ||
+          viewX.end <= data->rangeX().begin ) {
         return;
       }
 
@@ -163,11 +163,11 @@ namespace plot {
           QTransform::fromTranslate(screen.topLeft().x(), screen.topLeft().y());
       painter->setTransform(xform);
 
-      const int L = data->findLeft(viewX.min()) >= 0
-          ? data->findLeft(viewX.min())
+      const int L = data->findLeft(viewX.begin) >= 0
+          ? data->findLeft(viewX.begin)
           : 0;
-      const int R = data->findRight(viewX.max()) >= 0
-          ? data->findRight(viewX.max())
+      const int R = data->findRight(viewX.end) >= 0
+          ? data->findRight(viewX.end)
           : data->size() - 1;
 
       if( L >= R ) {

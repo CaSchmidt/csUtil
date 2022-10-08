@@ -121,8 +121,8 @@ namespace plot {
 
   void IPlotSeriesData::updateRange()
   {
-    _rangeX.initialize();
-    _rangeY.initialize();
+    _rangeX.initializeUpdate();
+    _rangeY.initializeUpdate();
     for(int i = 0; i < size(); i++) {
       _rangeX.update(valueX(i));
       _rangeY.update(valueY(i));

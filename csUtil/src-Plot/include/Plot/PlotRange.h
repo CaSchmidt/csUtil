@@ -33,32 +33,10 @@
 
 #include <QtCore/QtGlobal>
 
-#include <cs/Core/csutil_config.h>
+#include <cs/Math/Interval.h>
 
 namespace plot {
 
-  class CS_UTIL_EXPORT PlotRange {
-  public:
-    PlotRange();
-    PlotRange(const qreal min, const qreal max);
-    ~PlotRange();
-
-    bool isValid() const;
-
-    void adjust();
-    void initialize();
-    void update(const qreal value);
-    void update(const PlotRange& other);
-
-    PlotRange clamped(const PlotRange& other, const qreal norm = 1.0) const;
-
-    qreal min() const;
-    qreal max() const;
-    qreal span() const;
-
-  private:
-    qreal _min;
-    qreal _max;
-  };
+  using PlotRange = cs::Interval<qreal>;
 
 } // namespace plot

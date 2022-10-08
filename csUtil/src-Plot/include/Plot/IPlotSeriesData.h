@@ -34,6 +34,8 @@
 #include <QtCore/QPointF>
 #include <QtCore/QString>
 
+#include <cs/Core/csutil_config.h>
+
 #include <Plot/PlotRange.h>
 
 class QPainter;

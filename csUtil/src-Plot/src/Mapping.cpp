@@ -46,11 +46,11 @@ namespace plot {
         return result;
       }
 
-      const qreal dx = -viewX.min();
-      const qreal dy = -viewY.min();
+      const qreal dx = -viewX.begin;
+      const qreal dy = -viewY.begin;
 
-      const qreal sx = (screen.width()  - 1)/viewX.span();
-      const qreal sy = (screen.height() - 1)/viewY.span();
+      const qreal sx = (screen.width()  - 1)/viewX.range();
+      const qreal sy = (screen.height() - 1)/viewY.range();
 
       result *= QTransform::fromTranslate(dx, dy);
       result *= QTransform::fromScale(sx, sy);
@@ -71,11 +71,11 @@ namespace plot {
         return result;
       }
 
-      const qreal sx = viewX.span()/(screen.width()  - 1);
-      const qreal sy = viewY.span()/(screen.height() - 1);
+      const qreal sx = viewX.range()/(screen.width()  - 1);
+      const qreal sy = viewY.range()/(screen.height() - 1);
 
-      const qreal dx = viewX.min();
-      const qreal dy = viewY.min();
+      const qreal dx = viewX.begin;
+      const qreal dy = viewY.begin;
 
       if( !isRelative ) {
         result *= QTransform(1,  0,

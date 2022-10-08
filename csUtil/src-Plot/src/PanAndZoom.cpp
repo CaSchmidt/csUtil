@@ -53,14 +53,14 @@ namespace plot {
 
       // Horizontal
 
-      qreal leftX = viewX.min() - deltaView.x();
-      if(        leftX < boundsX.min() ) {
-        leftX += boundsX.min() - leftX;
-      } else if( leftX + viewX.span() > boundsX.max() ) {
-        leftX -= leftX + viewX.span() - boundsX.max();
+      qreal leftX = viewX.begin - deltaView.x();
+      if(        leftX < boundsX.begin ) {
+        leftX += boundsX.begin - leftX;
+      } else if( leftX + viewX.range() > boundsX.end ) {
+        leftX -= leftX + viewX.range() - boundsX.end;
       }
 
-      return PlotRange(leftX, leftX + viewX.span());
+      return PlotRange(leftX, leftX + viewX.range());
     }
 
     PlotRange vertical(const QPointF& delta, const QSizeF& screen,
@@ -77,14 +77,14 @@ namespace plot {
 
       // Vertical
 
-      qreal bottomY = viewY.min() + deltaView.y();
-      if(        bottomY < boundsY.min() ) {
-        bottomY += boundsY.min() - bottomY;
-      } else if( bottomY + viewY.span() > boundsY.max() ) {
-        bottomY -= bottomY + viewY.span() - boundsY.max();
+      qreal bottomY = viewY.begin + deltaView.y();
+      if(        bottomY < boundsY.begin ) {
+        bottomY += boundsY.begin - bottomY;
+      } else if( bottomY + viewY.range() > boundsY.end ) {
+        bottomY -= bottomY + viewY.range() - boundsY.end;
       }
 
-      return PlotRange(bottomY, bottomY + viewY.span());
+      return PlotRange(bottomY, bottomY + viewY.range());
     }
 
   } // namespace Pan
@@ -108,8 +108,8 @@ namespace plot {
       const QRectF  zoomView =
           xform.map(inter.translated(-screen.topLeft())).boundingRect();
 
-      const QRectF view(QPointF(viewX.min(), viewY.min()),
-                        QPointF(viewX.max(), viewY.max()));
+      const QRectF view(QPointF(viewX.begin, viewY.begin),
+                        QPointF(viewX.end, viewY.end));
 
       return view & zoomView;
     }

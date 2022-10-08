@@ -122,7 +122,7 @@ namespace plot {
     const std::vector<double> factors = { 1, 2, 2.5, 5 };
     for(const double xN : factors) {
       const std::vector<double> values =
-          AxisLabel::computeValues(rangeY.min(), rangeY.max(), 10, xN);
+          AxisLabel::computeValues(rangeY.begin, rangeY.end, 10, xN);
       if( values.empty() ) {
         continue;
       }

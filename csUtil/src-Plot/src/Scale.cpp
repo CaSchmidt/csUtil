@@ -94,8 +94,8 @@ namespace plot {
     if( _seriesStore == 0 ) {
       return;
     }
-    _rangeX.initialize();
-    _rangeY.initialize();
+    _rangeX.initializeUpdate();
+    _rangeY.initializeUpdate();
     for(const QString& seriesName : qAsConst(_ranges)) {
       const IPlotSeriesData *data = _seriesStore->value(seriesName).data();
       _rangeX.update(data->rangeX());

@@ -126,6 +126,7 @@ namespace plot {
   {
     PlotRange result;
 
+    result.initializeUpdate();
     for(const Series& series : _series) {
       result.update(series.data()->rangeX());
     }

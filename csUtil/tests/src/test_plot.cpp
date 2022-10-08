@@ -61,13 +61,40 @@ void info(const plot::IPlotSeriesData *data)
 {
   printf("%s [%s]: rangeX = [%.3f,%.3f], rangeY = [%.3f,%.3f]\n",
          qPrintable(data->name()), qPrintable(data->unit()),
-         data->rangeX().min(), data->rangeX().max(),
-         data->rangeY().min(), data->rangeY().max());
+         data->rangeX().begin, data->rangeX().end,
+         data->rangeY().begin, data->rangeY().end);
   fflush(stdout);
+}
+
+void print(const plot::PlotRange& r)
+{
+  printf("range = [%.3f,%.3f]\n", r.begin, r.end);
+  fflush(stdout);
+}
+
+void test_range()
+{
+  using Range = plot::PlotRange;
+
+  Range r{2,2};
+  print(r);
+
+  r.initializeUpdate();
+  r.update(Range{0.25, 0.75});
+  print(r);
+  r.update(0);
+  r.update(1);
+  print(r);
+
+  Range v{25, 75};
+  Range r2 = r.subset(v, 100);
+  print(r2);
 }
 
 int main(int argc, char **argv)
 {
+  test_range();
+
   std::srand(std::time(0));
 
   QApplication app(argc, argv);

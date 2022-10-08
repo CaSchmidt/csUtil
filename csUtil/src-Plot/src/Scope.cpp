@@ -97,7 +97,7 @@ namespace plot {
         continue;
       }
       const PlotRange rangeY =
-          _row->store().rangeY(series.name()).clamped(_row->viewY(), 100);
+          _row->store().rangeY(series.name()).subset(_row->viewY(), 100);
       Draw::series(painter,
                    _rect, series, rangeX, rangeY, _row->plot()->drawFlags());
     }
@@ -108,7 +108,7 @@ namespace plot {
       painter->resetTransform();
       painter->setClipRect(_rect.adjusted(-1, -1, 1, 1));
       const PlotRange rangeY =
-          _row->store().rangeY(activeSeries.name()).clamped(_row->viewY(), 100);
+          _row->store().rangeY(activeSeries.name()).subset(_row->viewY(), 100);
       Draw::series(painter,
                    _rect, activeSeries, rangeX, rangeY, _row->plot()->drawFlags() | IsActive);
     }

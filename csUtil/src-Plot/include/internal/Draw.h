@@ -32,6 +32,7 @@
 #pragma once
 
 #include <Plot/Plot.h>
+#include <Plot/PlotRange.h>
 
 class QPainter;
 class QPen;
@@ -42,7 +43,6 @@ namespace plot {
 
   class IAxisElement;
   class Series;
-  class PlotRange;
 
   namespace Draw {
 
@@ -59,7 +59,7 @@ namespace plot {
 
     void series(QPainter *painter,
                 const QRectF& screen, const Series& theSeries,
-                const PlotRange& viewX, const  PlotRange& viewY,
+                const PlotRange& viewX, const PlotRange& viewY,
                 const DrawFlags flags = NoDrawFlags);
 
   } // namespace Draw

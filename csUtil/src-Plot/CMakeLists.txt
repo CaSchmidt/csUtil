@@ -43,7 +43,6 @@ list(APPEND Plot_SOURCES
   src/main_plot.cpp
   src/Mapping.cpp
   src/PanAndZoom.cpp
-  src/PlotRange.cpp
   src/PlotSeriesHandle.cpp
   src/PlotTheme.cpp
   src/PlotWidget.cpp

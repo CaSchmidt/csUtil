@@ -51,14 +51,11 @@ namespace plot {
     , _plot(plot)
     , _store()
     , _activeSeriesName()
-    , _viewY()
+    , _viewY{0, 100}
   {
     _yTitle = new YTitle(this);
     _yAxis  = new YAxis(this);
     _scope  = new Scope(this);
-
-    _viewY.update(0);
-    _viewY.update(100);
   }
 
   ScopeRow::~ScopeRow()
@@ -166,7 +163,7 @@ namespace plot {
 
   PlotRange ScopeRow::rangeY() const
   {
-    return _store.rangeY(_activeSeriesName).clamped(_viewY, 100);
+    return _store.rangeY(_activeSeriesName).subset(_viewY, 100);
   }
 
   PlotRange ScopeRow::viewY() const
@@ -191,9 +188,8 @@ namespace plot {
 
   void ScopeRow::resetView()
   {
-    _viewY.initialize();
-    _viewY.update(0);
-    _viewY.update(100);
+    _viewY.begin = 0;
+    _viewY.end = 100;
   }
 
 } // namespace plot
