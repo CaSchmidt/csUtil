@@ -53,7 +53,7 @@ namespace plot {
   {
     return
         !_name.isEmpty()  &&
-        _impl != 0        &&
+        _impl != nullptr  &&
         !_impl->series(_name).isEmpty();
   }
 
@@ -72,7 +72,7 @@ namespace plot {
     }
     const bool result = _impl->remove(_name);
     _name.clear();
-    _impl = 0;
+    _impl = nullptr;
     return result;
   }
 
@@ -124,7 +124,7 @@ namespace plot {
   const IPlotSeriesData *PlotSeriesHandle::data() const
   {
     if( !isValid() ) {
-      return 0;
+      return nullptr;
     }
     return _impl->series(_name).data();
   }
@@ -132,7 +132,7 @@ namespace plot {
   IPlotSeriesData *PlotSeriesHandle::data()
   {
     if( !isValid() ) {
-      return 0;
+      return nullptr;
     }
     return _impl->series(_name).data();
   }

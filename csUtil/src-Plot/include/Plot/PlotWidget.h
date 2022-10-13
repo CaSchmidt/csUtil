@@ -40,7 +40,6 @@ class QMenu;
 
 namespace plot {
 
-  class IPlotSeriesData;
   class IPlotImplementation;
 
   class CS_UTIL_EXPORT PlotWidget : public QWidget {

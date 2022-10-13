@@ -145,7 +145,7 @@ namespace plot {
   PlotSeriesHandle SinglePlotImpl::insert(IPlotSeriesData *data,
                                           const QColor& color)
   {
-    if( data == 0  ||  data->isEmpty() ) {
+    if( data == nullptr  ||  data->isEmpty() ) {
       return PlotSeriesHandle();
     }
 

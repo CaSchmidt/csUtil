@@ -31,6 +31,8 @@
 
 #pragma once
 
+#include <memory>
+
 #include <QtCore/QPointF>
 #include <QtCore/QString>
 
@@ -38,9 +40,9 @@
 
 #include <Plot/PlotRange.h>
 
-class QPainter;
-
 namespace plot {
+
+  using PlotSeriesDataPtr = std::unique_ptr<class IPlotSeriesData>;
 
   class CS_UTIL_EXPORT IPlotSeriesData {
   public:
