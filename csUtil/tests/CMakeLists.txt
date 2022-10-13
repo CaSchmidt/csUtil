@@ -49,7 +49,7 @@ if(ENABLE_QT)
 endif()
 
 if(ENABLE_QT AND ENABLE_PLOT)
-  cs_test(test_plot include/TestSignal.h src/TestSignal.cpp src/test_plot.cpp)
+  cs_test(test_plot src/test_plot.cpp)
 endif()
 
 if(ENABLE_QT AND ENABLE_QTCREATOR)

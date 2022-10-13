@@ -4,10 +4,70 @@
 
 #include <QtWidgets/QApplication>
 
+#include <cs/Math/Constant.h>
+
 #include <Plot/PlotTheme.h>
 #include <Plot/PlotWidget.h>
+#include <Plot/Data/VectorData.h>
 
-#include "TestSignal.h"
+namespace test_signal {
+
+  using  size_type = std::size_t;
+  using value_type = double;
+
+  using VectorData = plot::VectorData<value_type>;
+
+  size_type count = 0;
+
+  plot::PlotSeriesDataPtr generate(const QString& unit)
+  {
+    const value_type         t0 = 0.0;
+    const value_type          T = 5.0;
+    const value_type         dt = 0.01;
+    const  size_type numSamples = size_type(T/dt) + 1;
+
+    const value_type    amp = (value_type)(std::rand()%10 + 1); // rand()%10 == [0,9]
+    const value_type   freq = (value_type)(std::rand()%3 + 1);  // rand()%3  == [0,2]
+    const value_type tshift = (value_type)(std::rand()%11)*0.1; // rand()%11 == [0,10]
+
+    const value_type omega = 2.0*cs::konst<value_type>::pi*freq;
+
+    std::vector<value_type> x(numSamples), y(numSamples);
+    for(size_type i = 0; i < numSamples; i++) {
+      const value_type   t = t0 + value_type(i)*dt;
+      const value_type phi = omega*t;
+
+      x[i] = t + tshift;
+      y[i] = amp*std::sin(phi);
+    }
+
+    return VectorData::make(QStringLiteral("Signal ") + QString::number(++count),
+                            unit, x, y);
+  }
+
+  plot::PlotSeriesDataPtr sine(const QString& unit)
+  {
+    const value_type       freq = 1.0;
+    const value_type         t0 = 0.0;
+    const value_type         dt = 0.01;
+    const  size_type numSamples = 101;
+
+    const value_type omega = 2.0*cs::konst<value_type>::pi*freq;
+
+    std::vector<value_type> x(numSamples), y(numSamples);
+    for(size_type i = 0; i < numSamples; i++) {
+      const value_type   t = t0 + value_type(i)*dt;
+      const value_type phi = omega*t;
+
+      x[i] = t;
+      y[i] = std::sin(phi);
+    }
+
+    return VectorData::make(QStringLiteral("Signal ") + QString::number(++count),
+                            unit, x, y);
+  }
+
+} // namespace test_signal
 
 void test_findLeft(const plot::IPlotSeriesData *data)
 {
@@ -105,13 +165,12 @@ int main(int argc, char **argv)
   plot->show();
   plot->resize(640, 480);
 
-  plot::PlotSeriesHandle h1 = plot->insert(TestSignal::generate(QStringLiteral("V")));
-  plot::PlotSeriesHandle h2 = plot->insert(TestSignal::generate(QStringLiteral("V")));
-
-  plot::IPlotSeriesData *sine = TestSignal::sine(QString());
-  // test_findLeft(sine);
-  // test_findRight(sine);
-  plot::PlotSeriesHandle h3 = plot->insert(sine);
+  auto sig1 = test_signal::generate(QStringLiteral("V"));
+  plot::PlotSeriesHandle h1 = plot->insert(sig1.get());
+  auto sig2 = test_signal::generate(QStringLiteral("V"));
+  plot::PlotSeriesHandle h2 = plot->insert(sig2.get());
+  auto sig3 = test_signal::sine(QString());
+  plot::PlotSeriesHandle h3 = plot->insert(sig3.get());
 
   info(h1.data());
   info(h2.data());
