@@ -153,24 +153,26 @@ void test_range()
 
 int main(int argc, char **argv)
 {
+  using namespace plot;
+
   test_range();
 
   std::srand(std::time(0));
 
   QApplication app(argc, argv);
 
-  plot::PlotWidget *plot = new plot::PlotWidget();
-  plot->setTitleX(plot::PlotTheme::titleString(QStringLiteral("Time"),
-                                               QStringLiteral("s")));
+  PlotWidget *plot = new PlotWidget();
+  plot->setTitleX(PlotTheme::titleString(QStringLiteral("Time"),
+                                         QStringLiteral("s")));
   plot->show();
   plot->resize(640, 480);
 
-  auto sig1 = test_signal::generate(QStringLiteral("V"));
-  plot::PlotSeriesHandle h1 = plot->insert(sig1.get());
-  auto sig2 = test_signal::generate(QStringLiteral("V"));
-  plot::PlotSeriesHandle h2 = plot->insert(sig2.get());
-  auto sig3 = test_signal::sine(QString());
-  plot::PlotSeriesHandle h3 = plot->insert(sig3.get());
+  PlotSeriesDataPtr sig1 = test_signal::generate(QStringLiteral("V"));
+  PlotSeriesHandle h1 = plot->insert(sig1.get());
+  PlotSeriesDataPtr sig2 = test_signal::generate(QStringLiteral("V"));
+  PlotSeriesHandle h2 = plot->insert(sig2.get());
+  PlotSeriesDataPtr sig3 = test_signal::sine(QString());
+  PlotSeriesHandle h3 = plot->insert(sig3.get());
 
   info(h1.data());
   info(h2.data());
