@@ -37,13 +37,14 @@ namespace plot {
 
   ////// public //////////////////////////////////////////////////////////////
 
-  IPlotSeriesData::IPlotSeriesData()
-    : _rangeX()
-    , _rangeY()
+  IPlotSeriesData::IPlotSeriesData(const bool is_const_interval) noexcept
+    : _isConstantInterval{is_const_interval}
+    , _rangeX{}
+    , _rangeY{}
   {
   }
 
-  IPlotSeriesData::~IPlotSeriesData()
+  IPlotSeriesData::~IPlotSeriesData() noexcept
   {
   }
 
@@ -88,6 +89,11 @@ namespace plot {
     }
 
     return -1;
+  }
+
+  bool IPlotSeriesData::isConstantInterval() const
+  {
+    return _isConstantInterval;
   }
 
   qreal IPlotSeriesData::valueX(const int i) const

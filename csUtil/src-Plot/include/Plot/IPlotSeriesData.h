@@ -46,8 +46,8 @@ namespace plot {
 
   class CS_UTIL_EXPORT IPlotSeriesData {
   public:
-    IPlotSeriesData();
-    virtual ~IPlotSeriesData();
+    IPlotSeriesData(const bool is_const_interval) noexcept;
+    virtual ~IPlotSeriesData() noexcept;
 
     bool isEmpty() const;
 
@@ -55,6 +55,8 @@ namespace plot {
     int findLeft(const qreal x) const;
     // Returns i := x[i-1] <  x  &&  x <= x[i]
     int findRight(const qreal x) const;
+
+    bool isConstantInterval() const;
 
     virtual QString name() const = 0;
     virtual QString unit() const = 0;
@@ -75,8 +77,9 @@ namespace plot {
     virtual void updateRange();
 
   private:
-    PlotRange _rangeX;
-    PlotRange _rangeY;
+    bool _isConstantInterval{false};
+    PlotRange _rangeX{};
+    PlotRange _rangeY{};
   };
 
 } // namespace plot

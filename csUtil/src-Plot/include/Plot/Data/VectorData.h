@@ -49,9 +49,10 @@ namespace plot {
     };
 
   public:
-    VectorData(const QString& name, const QString& unit,
+    VectorData(const QString& name, const QString& unit, const bool is_const_interval,
                const ctor_tag& = ctor_tag{}) noexcept
-      : _name{name}
+      : IPlotSeriesData{is_const_interval}
+      , _name{name}
       , _unit{unit}
     {
     }
@@ -61,9 +62,10 @@ namespace plot {
     }
 
     static PlotSeriesDataPtr make(const QString& name, const QString& unit,
-                                  const std::vector<T>& x, const std::vector<T>& y)
+                                  const std::vector<T>& x, const std::vector<T>& y,
+                                  const bool is_const_interval = false)
     {
-      PlotSeriesDataPtr result = make_init(name, unit, x, y);
+      PlotSeriesDataPtr result = make_init(name, unit, x, y, is_const_interval);
 
       if( result ) {
         VectorData *thiz = dynamic_cast<VectorData*>(result.get());
@@ -130,7 +132,8 @@ namespace plot {
 
     static PlotSeriesDataPtr make_init(const QString& name, const QString& unit,
                                        const std::vector<T>& x,
-                                       const std::vector<T>& y)
+                                       const std::vector<T>& y,
+                                       const bool is_const_interval)
     {
       constexpr size_type TWO = 2;
 
@@ -138,7 +141,7 @@ namespace plot {
         return PlotSeriesDataPtr{};
       }
 
-      return std::make_unique<VectorData>(name, unit);
+      return std::make_unique<VectorData>(name, unit, is_const_interval);
     }
 
     QString _name{};
