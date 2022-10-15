@@ -8,14 +8,17 @@
 
 #include <Plot/PlotTheme.h>
 #include <Plot/PlotWidget.h>
+#include <Plot/Data/ConstantIntervalData.h>
 #include <Plot/Data/VectorData.h>
 
 namespace test_signal {
 
-  using  size_type = std::size_t;
-  using value_type = double;
+  using vector_type = std::vector<double>;
+  using   size_type = vector_type::size_type;
+  using  value_type = vector_type::value_type;
 
-  using VectorData = plot::VectorData<value_type>;
+  using ConstInterData = plot::ConstantIntervalData<value_type>;
+  using     VectorData = plot::VectorData<value_type>;
 
   size_type count = 0;
 
@@ -32,7 +35,7 @@ namespace test_signal {
 
     const value_type omega = 2.0*cs::konst<value_type>::pi*freq;
 
-    std::vector<value_type> x(numSamples), y(numSamples);
+    vector_type x(numSamples), y(numSamples);
     for(size_type i = 0; i < numSamples; i++) {
       const value_type   t = t0 + value_type(i)*dt;
       const value_type phi = omega*t;
@@ -54,7 +57,7 @@ namespace test_signal {
 
     const value_type omega = 2.0*cs::konst<value_type>::pi*freq;
 
-    std::vector<value_type> x(numSamples), y(numSamples);
+    vector_type x(numSamples), y(numSamples);
     for(size_type i = 0; i < numSamples; i++) {
       const value_type   t = t0 + value_type(i)*dt;
       const value_type phi = omega*t;
@@ -63,8 +66,13 @@ namespace test_signal {
       y[i] = std::sin(phi);
     }
 
+#if 1
+    return ConstInterData::make(QStringLiteral("Signal ") + QString::number(++count),
+                                unit, t0, dt, y);
+#else
     return VectorData::make(QStringLiteral("Signal ") + QString::number(++count),
                             unit, x, y);
+#endif
   }
 
 } // namespace test_signal

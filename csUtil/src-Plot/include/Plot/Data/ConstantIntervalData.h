@@ -34,13 +34,14 @@
 #include <vector>
 
 #include <cs/Core/Concepts.h>
+#include <cs/Math/Constant.h>
 
 #include <Plot/IPlotSeriesData.h>
 
 namespace plot {
 
   template<typename T> requires cs::IsReal<T>
-  class VectorData : public IPlotSeriesData {
+  class ConstantIntervalData : public IPlotSeriesData {
   private:
     struct ctor_tag {
       ctor_tag() noexcept
@@ -53,27 +54,29 @@ namespace plot {
     using   size_type = typename vector_type::size_type;
     using  value_type = typename vector_type::value_type;
 
-    VectorData(const QString& name, const QString& unit, const bool is_const_interval,
-               const ctor_tag& = ctor_tag{}) noexcept
-      : IPlotSeriesData{name, unit, is_const_interval}
+    ConstantIntervalData(const QString& name, const QString& unit,
+                         const value_type xStart, const value_type xInter,
+                         const ctor_tag& = ctor_tag{}) noexcept
+      : IPlotSeriesData{name, unit, true}
+      , _xStart{xStart}
+      , _xInter{xInter}
     {
     }
 
-    ~VectorData() noexcept
+    ~ConstantIntervalData() noexcept
     {
     }
 
     static PlotSeriesDataPtr make(const QString& name, const QString& unit,
-                                  const vector_type& x, const vector_type& y,
-                                  const bool is_const_interval = false)
+                                  const value_type xStart, const value_type xInter,
+                                  const vector_type& y)
     {
-      PlotSeriesDataPtr result = make_init(name, unit, x, y, is_const_interval);
+      PlotSeriesDataPtr result = make_init(name, unit, xStart, xInter, y);
 
       if( result ) {
-        VectorData *thiz = dynamic_cast<VectorData*>(result.get());
+        ConstantIntervalData *thiz = dynamic_cast<ConstantIntervalData*>(result.get());
 
         try {
-          thiz->_x = x;
           thiz->_y = y;
         } catch(...) {
           return PlotSeriesDataPtr{};
@@ -89,52 +92,59 @@ namespace plot {
 
     QPointF value(const int i) const
     {
-      return QPointF{get(_x, i), get(_y, i)};
+      return QPointF{getX(i), getY(i)};
     }
 
     int size() const
     {
-      return int(_x.size());
+      return int(_y.size());
     }
 
     qreal valueX(const int i) const
     {
-      return get(_x, i);
+      return getX(i);
     }
 
     qreal valueY(const int i) const
     {
-      return get(_y, i);
+      return getY(i);
     }
 
     void values(QPointF *points, const int L, const int R) const
     {
       for(int i = L; i <= R; i++) {
-        *points++ = QPointF{get(_x, i), get(_y, i)};
+        *points++ = QPointF{getX(i), getY(i)};
       }
     }
 
   private:
-    inline qreal get(const vector_type& v, const int i) const
+    using k = cs::konst<value_type>;
+
+    inline qreal getX(const int i) const
     {
-      return qreal(v[size_type(i)]);
+      return qreal(_xStart + value_type(i)*_xInter);
+    }
+
+    inline qreal getY(const int i) const
+    {
+      return qreal(_y[size_type(i)]);
     }
 
     static PlotSeriesDataPtr make_init(const QString& name, const QString& unit,
-                                       const vector_type& x,
-                                       const vector_type& y,
-                                       const bool is_const_interval)
+                                       const value_type xStart, const value_type xInter,
+                                       const vector_type& y)
     {
       constexpr size_type TWO = 2;
 
-      if( name.isEmpty()  ||  x.size() < TWO  ||  x.size() != y.size() ) {
+      if( name.isEmpty()  ||  xInter <= k::ZERO  ||  y.size() < TWO ) {
         return PlotSeriesDataPtr{};
       }
 
-      return std::make_unique<VectorData>(name, unit, is_const_interval);
+      return std::make_unique<ConstantIntervalData>(name, unit, xStart, xInter);
     }
 
-    vector_type _x{};
+    value_type  _xStart{};
+    value_type  _xInter{};
     vector_type _y{};
   };
 

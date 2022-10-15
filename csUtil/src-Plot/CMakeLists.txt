@@ -21,6 +21,7 @@ list(APPEND Plot_HEADERS
   include/internal/XTitle.h
   include/internal/YAxis.h
   include/internal/YTitle.h
+  include/Plot/Data/ConstantIntervalData.h
   include/Plot/Data/VectorData.h
   include/Plot/IPlotSeriesData.h
   include/Plot/Plot.h
