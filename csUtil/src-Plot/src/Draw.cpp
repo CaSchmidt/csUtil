@@ -48,16 +48,16 @@ namespace plot {
       void drawLines(QPainter *painter,
                      const IPlotSeriesData *data, const int L, const int R)
       {
-        const int Lines = 32;
-        QPointF points[Lines+1];
+        constexpr int LINES = 32;
+        QPointF points[LINES+1];
 
         int i = L;
         points[0] = data->value(i);
-        while( i + Lines <= R ) {
-          data->values(&points[1], i+1, i+Lines);
-          painter->drawPolyline(points, Lines+1);
-          points[0] = points[Lines];
-          i += Lines;
+        while( i + LINES <= R ) {
+          data->values(&points[1], i+1, i+LINES);
+          painter->drawPolyline(points, LINES+1);
+          points[0] = points[LINES];
+          i += LINES;
         }
 
         const int remain = R - i + 1; // Remaining Points!
@@ -70,20 +70,20 @@ namespace plot {
       void drawSteps(QPainter *painter,
                      const IPlotSeriesData *data, const int L, const int R)
       {
-        const int Steps = 32;
-        QPointF points[2*Steps+1];
+        constexpr int STEPS = 32;
+        QPointF points[2*STEPS+1];
 
         int i = L;
         points[0] = data->value(i);
-        while( i + Steps <= R ) {
-          data->values(&points[1], i+1, i+Steps);
-          for(int j = Steps; j > 0; j--) {
+        while( i + STEPS <= R ) {
+          data->values(&points[1], i+1, i+STEPS);
+          for(int j = STEPS; j > 0; j--) {
             points[2*j  ] = points[j];
             points[2*j-1] = QPointF(points[j].x(), points[j-1].y());
           }
-          painter->drawPolyline(points, 2*Steps+1);
-          points[0] = points[2*Steps];
-          i += Steps;
+          painter->drawPolyline(points, 2*STEPS+1);
+          points[0] = points[2*STEPS];
+          i += STEPS;
         }
 
         const int remain = R - i + 1; // Remaining Points!
