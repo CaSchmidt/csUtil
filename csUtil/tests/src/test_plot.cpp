@@ -26,7 +26,7 @@ namespace test_signal {
   {
     const value_type         t0 = 0.0;
     const value_type          T = 5.0;
-    const value_type         dt = 0.01;
+    const value_type         dt = 0.002;
     const  size_type numSamples = size_type(T/dt) + 1;
 
     const value_type    amp = (value_type)(std::rand()%10 + 1); // rand()%10 == [0,9]
@@ -189,6 +189,8 @@ int main(int argc, char **argv)
   QFont font = plot->font();
   font.setPointSize(10);
   plot->setFont(font);
+
+  plot->setDrawFlag(plot::Steps);
 
   // h1.remove();
   // h2.remove();

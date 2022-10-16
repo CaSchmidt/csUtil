@@ -174,7 +174,16 @@ namespace plot {
         return;
       }
 
-      impl_draw::drawLines(painter, data, L, R);
+      const int numData   = R - L + 1;
+      const int numScreen = int(screen.width());
+
+      const bool is_under = numScreen/numData >= 3;
+
+      if( is_under  &&  flags.testFlag(Steps) ) {
+        impl_draw::drawSteps(painter, data, L, R);
+      } else {
+        impl_draw::drawLines(painter, data, L, R);
+      }
     }
 
   } // namespace Draw
