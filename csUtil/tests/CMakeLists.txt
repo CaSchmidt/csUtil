@@ -35,6 +35,7 @@ cs_test(test_rawconverter src/test_rawconverter.cpp)
 cs_test(test_serial src/test_serial.cpp)
 cs_test(test_stringutil src/test_stringutil.cpp)
 cs_test(test_trie src/test_trie.cpp)
+cs_test(test_wipe src/test_wipe.cpp)
 
 if(ENABLE_CHARCONV)
   cs_test(test_charconv src/test_charconv.cpp)
