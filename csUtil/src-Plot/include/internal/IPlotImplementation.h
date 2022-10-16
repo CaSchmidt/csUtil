@@ -55,7 +55,7 @@ namespace plot {
 
     DrawFlags drawFlags() const;
     void setDrawFlags(const DrawFlags flags);
-    void setDrawFlag(const DrawFlag flag, const bool on);
+    void setDrawFlag(const DrawFlag flag, const bool on = true);
 
     PlotTheme& theme();
     const PlotTheme& theme() const;

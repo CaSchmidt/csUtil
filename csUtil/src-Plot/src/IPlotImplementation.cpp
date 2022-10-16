@@ -53,7 +53,8 @@ namespace plot {
   void IPlotImplementation::setDrawFlags(const DrawFlags flags)
   {
     const DrawFlags oldFlags = _drawFlags;
-    _drawFlags = flags & ~IsActive;
+    _drawFlags = flags;
+    _drawFlags.setFlag(IsActive, false);
     if( oldFlags != _drawFlags ) {
       replot();
     }
@@ -61,11 +62,9 @@ namespace plot {
 
   void IPlotImplementation::setDrawFlag(const DrawFlag flag, const bool on)
   {
-    if( flag == IsActive ) {
-      return;
-    }
     const DrawFlags oldFlags = _drawFlags;
     _drawFlags.setFlag(flag, on);
+    _drawFlags.setFlag(IsActive, false);
     if( oldFlags != _drawFlags ) {
       replot();
     }
