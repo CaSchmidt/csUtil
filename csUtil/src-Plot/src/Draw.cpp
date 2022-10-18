@@ -45,6 +45,8 @@ namespace plot {
 
     namespace impl_draw {
 
+      // Draw Lines //////////////////////////////////////////////////////////
+
       struct LinesHelper {
         static constexpr int LINES = 32;
 
@@ -79,18 +81,18 @@ namespace plot {
           i += LinesHelper::LINES;
         }
 
-        const int remain = R - i; // Count lines!
-        if( remain > 0 ) {
-          helper.draw(painter, data, i, remain);
+        const int numRemain = R - i; // Count lines!
+        if( numRemain > 0 ) {
+          helper.draw(painter, data, i, numRemain);
         }
       }
+
+      // Draw Points /////////////////////////////////////////////////////////
 
       struct PointsHelper {
         static constexpr int POINTS = 32;
 
-        PointsHelper() noexcept = default;
-
-        void init(QPainter *painter)
+        PointsHelper(QPainter *painter) noexcept
         {
           constexpr qreal TWO = 2;
 
@@ -114,6 +116,8 @@ namespace plot {
         }
 
       private:
+        PointsHelper() noexcept = delete;
+
         static QPointF _points[POINTS];
         qreal _rx{};
         qreal _ry{};
@@ -131,8 +135,7 @@ namespace plot {
 
         painter->save();
 
-        PointsHelper helper;
-        helper.init(painter);
+        PointsHelper helper{painter};
 
         const int numBlocks = numData/PointsHelper::POINTS;
         for(int i = 0; i < numBlocks; i++) {
@@ -149,37 +152,55 @@ namespace plot {
         painter->restore();
       }
 
+      // Draw Steps //////////////////////////////////////////////////////////
+
+      struct StepsHelper {
+        static constexpr int STEPS = 32;
+
+        StepsHelper() noexcept = default;
+
+        inline void draw(QPainter *painter, const IPlotSeriesData *data,
+                         const int L, const int numSteps) const
+        {
+          data->values(_points, L, L + numSteps);
+          for(int i = STEPS; i > 0; i--) {
+            _points[i*2  ] = _points[i];
+            _points[i*2-1] = {_points[i].x(), _points[i-1].y()};
+          }
+          painter->drawPolyline(_points, numSteps*2 + 1);
+        }
+
+      private:
+        static QPointF _points[STEPS*2 + 1];
+      };
+
+      QPointF StepsHelper::_points[STEPS*2 + 1];
+
       void drawSteps(QPainter *painter,
                      const IPlotSeriesData *data, const int L, const int R)
       {
-        constexpr int STEPS = 32;
-        QPointF points[2*STEPS+1];
-
-        int i = L;
-        points[0] = data->value(i);
-        while( i + STEPS <= R ) {
-          data->values(&points[1], i+1, i+STEPS);
-          for(int j = STEPS; j > 0; j--) {
-            points[2*j  ] = points[j];
-            points[2*j-1] = QPointF(points[j].x(), points[j-1].y());
-          }
-          painter->drawPolyline(points, 2*STEPS+1);
-          points[0] = points[2*STEPS];
-          i += STEPS;
+        const int numData = R - L + 1;
+        if( numData < 2 ) {
+          return;
         }
 
-        const int remain = R - i + 1; // Remaining Points!
-        if( remain > 1 ) {
-          data->values(&points[1], i+1, R);
-          for(int j = remain-1; j > 0; j--) {
-            points[2*j  ] = points[j];
-            points[2*j-1] = QPointF(points[j].x(), points[j-1].y());
-          }
-          painter->drawPolyline(points, 2*remain-1);
+        StepsHelper helper;
+
+        int i = L;
+        while( i + StepsHelper::STEPS <= R ) {
+          helper.draw(painter, data, i, StepsHelper::STEPS);
+          i += StepsHelper::STEPS;
+        }
+
+        const int numRemain = R - i; // Count steps!
+        if( numRemain > 0 ) {
+          helper.draw(painter, data, i, numRemain);
         }
       }
 
     } // namespace impl_draw
+
+    // Interface /////////////////////////////////////////////////////////////
 
     void frame(QPainter *painter,
                const QRectF& rect, const QPen& pen)
