@@ -38,7 +38,8 @@ namespace plot {
   enum DrawFlag {
     NoDrawFlags = 0,
     IsActive    = 0x01,
-    Steps       = 0x02
+    Marks       = 0x02,
+    Steps       = 0x04
   };
   Q_DECLARE_FLAGS(DrawFlags, DrawFlag)
 

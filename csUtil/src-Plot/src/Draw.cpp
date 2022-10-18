@@ -67,6 +67,70 @@ namespace plot {
         }
       }
 
+      struct PointsHelper {
+        static constexpr int POINTS = 32;
+
+        PointsHelper() noexcept = default;
+
+        void init(QPainter *painter)
+        {
+          constexpr qreal TWO = 2;
+
+          const qreal sx = painter->transform().m11();
+          const qreal sy = painter->transform().m22();
+          const qreal  r = (painter->pen().widthF() + TWO)/TWO;
+          _rx = r/sx;
+          _ry = r/sy;
+
+          painter->setBrush({painter->pen().color(), Qt::SolidPattern});
+          painter->setPen(Qt::NoPen);
+        }
+
+        inline void draw(QPainter *painter, const IPlotSeriesData *data,
+                         const int L, const int count) const
+        {
+          data->values(_points, L, L + count - 1);
+          for(int i = 0; i < count; i++) {
+            painter->drawEllipse(_points[i], _rx, _ry);
+          }
+        }
+
+      private:
+        static QPointF _points[POINTS];
+        qreal _rx{};
+        qreal _ry{};
+      };
+
+      QPointF PointsHelper::_points[PointsHelper::POINTS];
+
+      void drawPoints(QPainter *painter,
+                      const IPlotSeriesData *data, const int L, const int R)
+      {
+        const int numData = R - L + 1;
+        if( numData < 1 ) {
+          return;
+        }
+
+        painter->save();
+
+        PointsHelper helper;
+        helper.init(painter);
+
+        const int numBlocks = numData/PointsHelper::POINTS;
+        for(int i = 0; i < numBlocks; i++) {
+          helper.draw(painter, data,
+                      L + i*PointsHelper::POINTS, PointsHelper::POINTS);
+        }
+
+        const int numRemain = numData%PointsHelper::POINTS;
+        if( numRemain > 0 ) {
+          helper.draw(painter, data,
+                      L + numBlocks*PointsHelper::POINTS, numRemain);
+        }
+
+        painter->restore();
+      }
+
       void drawSteps(QPainter *painter,
                      const IPlotSeriesData *data, const int L, const int R)
       {
@@ -183,6 +247,10 @@ namespace plot {
         impl_draw::drawSteps(painter, data, L, R);
       } else {
         impl_draw::drawLines(painter, data, L, R);
+      }
+
+      if( is_under  &&  flags.testFlag(Marks) ) {
+        impl_draw::drawPoints(painter, data, L, R);
       }
     }
 
