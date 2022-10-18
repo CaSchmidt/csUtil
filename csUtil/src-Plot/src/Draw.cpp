@@ -45,25 +45,43 @@ namespace plot {
 
     namespace impl_draw {
 
+      struct LinesHelper {
+        static constexpr int LINES = 32;
+
+        LinesHelper() noexcept = default;
+
+        inline void draw(QPainter *painter, const IPlotSeriesData *data,
+                         const int L, const int numLines) const
+        {
+          data->values(_points, L, L + numLines);
+          painter->drawPolyline(_points, numLines + 1);
+        }
+
+      private:
+        static QPointF _points[LINES + 1];
+      };
+
+      QPointF LinesHelper::_points[LinesHelper::LINES + 1];
+
       void drawLines(QPainter *painter,
                      const IPlotSeriesData *data, const int L, const int R)
       {
-        constexpr int LINES = 32;
-        QPointF points[LINES+1];
-
-        int i = L;
-        points[0] = data->value(i);
-        while( i + LINES <= R ) {
-          data->values(&points[1], i+1, i+LINES);
-          painter->drawPolyline(points, LINES+1);
-          points[0] = points[LINES];
-          i += LINES;
+        const int numData = R - L + 1;
+        if( numData < 2 ) {
+          return;
         }
 
-        const int remain = R - i + 1; // Remaining Points!
-        if( remain > 1 ) {
-          data->values(&points[1], i+1, R);
-          painter->drawPolyline(points, remain);
+        LinesHelper helper;
+
+        int i = L;
+        while( i + LinesHelper::LINES <= R ) {
+          helper.draw(painter, data, i, LinesHelper::LINES);
+          i += LinesHelper::LINES;
+        }
+
+        const int remain = R - i; // Count lines!
+        if( remain > 0 ) {
+          helper.draw(painter, data, i, remain);
         }
       }
 
@@ -87,10 +105,10 @@ namespace plot {
         }
 
         inline void draw(QPainter *painter, const IPlotSeriesData *data,
-                         const int L, const int count) const
+                         const int L, const int numPoints) const
         {
-          data->values(_points, L, L + count - 1);
-          for(int i = 0; i < count; i++) {
+          data->values(_points, L, L + numPoints - 1);
+          for(int i = 0; i < numPoints; i++) {
             painter->drawEllipse(_points[i], _rx, _ry);
           }
         }
