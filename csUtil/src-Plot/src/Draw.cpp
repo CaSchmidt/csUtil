@@ -35,6 +35,7 @@
 
 #include "internal/Draw.h"
 
+#include "internal/DrawHelper.h"
 #include "internal/IAxisElement.h"
 #include "internal/Mapping.h"
 #include "internal/Series.h"
@@ -46,24 +47,6 @@ namespace plot {
     namespace impl_draw {
 
       // Draw Lines //////////////////////////////////////////////////////////
-
-      struct LinesHelper {
-        static constexpr int LINES = 32;
-
-        LinesHelper() noexcept = default;
-
-        inline void draw(QPainter *painter, const IPlotSeriesData *data,
-                         const int L, const int numLines) const
-        {
-          data->values(_points, L, L + numLines);
-          painter->drawPolyline(_points, numLines + 1);
-        }
-
-      private:
-        static QPointF _points[LINES + 1];
-      };
-
-      QPointF LinesHelper::_points[LinesHelper::LINES + 1];
 
       void drawLines(QPainter *painter,
                      const IPlotSeriesData *data, const int L, const int R)
@@ -88,42 +71,6 @@ namespace plot {
       }
 
       // Draw Points /////////////////////////////////////////////////////////
-
-      struct PointsHelper {
-        static constexpr int POINTS = 32;
-
-        PointsHelper(QPainter *painter) noexcept
-        {
-          constexpr qreal TWO = 2;
-
-          const qreal sx = painter->transform().m11();
-          const qreal sy = painter->transform().m22();
-          const qreal  r = (painter->pen().widthF() + TWO)/TWO;
-          _rx = r/sx;
-          _ry = r/sy;
-
-          painter->setBrush({painter->pen().color(), Qt::SolidPattern});
-          painter->setPen(Qt::NoPen);
-        }
-
-        inline void draw(QPainter *painter, const IPlotSeriesData *data,
-                         const int L, const int numPoints) const
-        {
-          data->values(_points, L, L + numPoints - 1);
-          for(int i = 0; i < numPoints; i++) {
-            painter->drawEllipse(_points[i], _rx, _ry);
-          }
-        }
-
-      private:
-        PointsHelper() noexcept = delete;
-
-        static QPointF _points[POINTS];
-        qreal _rx{};
-        qreal _ry{};
-      };
-
-      QPointF PointsHelper::_points[PointsHelper::POINTS];
 
       void drawPoints(QPainter *painter,
                       const IPlotSeriesData *data, const int L, const int R)
@@ -153,28 +100,6 @@ namespace plot {
       }
 
       // Draw Steps //////////////////////////////////////////////////////////
-
-      struct StepsHelper {
-        static constexpr int STEPS = 32;
-
-        StepsHelper() noexcept = default;
-
-        inline void draw(QPainter *painter, const IPlotSeriesData *data,
-                         const int L, const int numSteps) const
-        {
-          data->values(_points, L, L + numSteps);
-          for(int i = STEPS; i > 0; i--) {
-            _points[i*2  ] = _points[i];
-            _points[i*2-1] = {_points[i].x(), _points[i-1].y()};
-          }
-          painter->drawPolyline(_points, numSteps*2 + 1);
-        }
-
-      private:
-        static QPointF _points[STEPS*2 + 1];
-      };
-
-      QPointF StepsHelper::_points[STEPS*2 + 1];
 
       void drawSteps(QPainter *painter,
                      const IPlotSeriesData *data, const int L, const int R)

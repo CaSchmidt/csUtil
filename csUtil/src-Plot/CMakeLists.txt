@@ -1,6 +1,7 @@
 list(APPEND Plot_HEADERS
   include/internal/AxisLabel.h
   include/internal/Draw.h
+  include/internal/DrawHelper.h
   include/internal/IAxisElement.h
   include/internal/IPlotElement.h
   include/internal/IPlotImplementation.h
@@ -34,6 +35,7 @@ list(APPEND Plot_HEADERS
 list(APPEND Plot_SOURCES
   src/AxisLabel.cpp
   src/Draw.cpp
+  src/DrawHelper.cpp
   src/IAxisElement.cpp
   src/IPlotElement.cpp
   src/IPlotImplementation.cpp
