@@ -78,6 +78,10 @@ namespace plot {
     void paintEvent(QPaintEvent *event);
     void resizeEvent(QResizeEvent *event);
 
+  private slots:
+    void setDrawMarks(bool on);
+    void setDrawSteps(bool on);
+
   private:
     enum PanZoom {
       RectangularZoom = 0,
@@ -89,9 +93,12 @@ namespace plot {
     QAction *createAction(const QString& text, const QKeySequence& shortcut);
     void initializeContextMenu();
     void initializeCursor();
+    void updateMenuFlags();
 
     IPlotImplementation *_impl;
     QMenu *_contextMenu;
+    QAction *_marksAction;
+    QAction *_stepsAction;
     PanZoom _panZoom;
     QPoint _dragStart;
     QRect _zoomRect;

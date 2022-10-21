@@ -89,11 +89,13 @@ namespace plot {
   void PlotWidget::setDrawFlags(const DrawFlags flags)
   {
     _impl->setDrawFlags(flags);
+    updateMenuFlags();
   }
 
   void PlotWidget::setDrawFlag(const DrawFlag flag, const bool on)
   {
     _impl->setDrawFlag(flag, on);
+    updateMenuFlags();
   }
 
   void PlotWidget::setTitleX(const QString& title)
@@ -270,6 +272,18 @@ namespace plot {
     event->accept();
   }
 
+  ////// private slots ///////////////////////////////////////////////////////
+
+  void PlotWidget::setDrawMarks(bool on)
+  {
+    setDrawFlag(Marks, on);
+  }
+
+  void PlotWidget::setDrawSteps(bool on)
+  {
+    setDrawFlag(Steps, on);
+  }
+
   ////// private /////////////////////////////////////////////////////////////
 
   QAction *PlotWidget::createAction(const QString& text,
@@ -308,6 +322,20 @@ namespace plot {
 
     _contextMenu->addSeparator(); //////////////////////////////////////////////
 
+    QMenu *flagsMenu = _contextMenu->addMenu(tr("Flags"));
+
+    _marksAction = flagsMenu->addAction(tr("Marks"));
+    _marksAction->setCheckable(true);
+    connect(_marksAction, &QAction::triggered, this, &PlotWidget::setDrawMarks);
+
+    _stepsAction = flagsMenu->addAction(tr("Steps"));
+    _stepsAction->setCheckable(true);
+    connect(_stepsAction, &QAction::triggered, this, &PlotWidget::setDrawSteps);
+
+    updateMenuFlags();
+
+    _contextMenu->addSeparator(); //////////////////////////////////////////////
+
     QAction *resetAction = createAction(tr("Reset"), Qt::Key_Escape);
     connect(resetAction, &QAction::triggered, this, &PlotWidget::reset);
 
@@ -321,6 +349,14 @@ namespace plot {
     } else {
       setCursor(Qt::CrossCursor);
     }
+  }
+
+  void PlotWidget::updateMenuFlags()
+  {
+    const DrawFlags f = drawFlags();
+
+    _marksAction->setChecked(f.testFlag(Marks));
+    _stepsAction->setChecked(f.testFlag(Steps));
   }
 
 } // namespace plot

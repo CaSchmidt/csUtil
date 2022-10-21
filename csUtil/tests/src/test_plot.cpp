@@ -190,8 +190,8 @@ int main(int argc, char **argv)
   font.setPointSize(10);
   plot->setFont(font);
 
-  plot->setDrawFlag(Marks);
-  plot->setDrawFlag(Steps);
+  // plot->setDrawFlag(Marks);
+  // plot->setDrawFlag(Steps);
 
   // h1.remove();
   // h2.remove();
