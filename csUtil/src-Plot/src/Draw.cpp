@@ -48,8 +48,8 @@ namespace plot {
 
       // Draw Lines //////////////////////////////////////////////////////////
 
-      void drawLines(QPainter *painter,
-                     const IPlotSeriesData *data, const int L, const int R)
+      void drawLines(QPainter *painter, const IPlotSeriesData *data,
+                     const int L, const int R)
       {
         const int numData = R - L + 1;
         if( numData < 2 ) {
@@ -72,8 +72,8 @@ namespace plot {
 
       // Draw Points /////////////////////////////////////////////////////////
 
-      void drawPoints(QPainter *painter,
-                      const IPlotSeriesData *data, const int L, const int R)
+      void drawPoints(QPainter *painter, const IPlotSeriesData *data,
+                      const int L, const int R)
       {
         const int numData = R - L + 1;
         if( numData < 1 ) {
@@ -101,8 +101,8 @@ namespace plot {
 
       // Draw Steps //////////////////////////////////////////////////////////
 
-      void drawSteps(QPainter *painter,
-                     const IPlotSeriesData *data, const int L, const int R)
+      void drawSteps(QPainter *painter, const IPlotSeriesData *data,
+                     const int L, const int R)
       {
         const int numData = R - L + 1;
         if( numData < 2 ) {
@@ -202,10 +202,10 @@ namespace plot {
         return;
       }
 
-      const int numData   = R - L + 1;
-      const int numScreen = int(screen.width());
+      const qreal ratioData   = qreal(R - L + 1) / (data->valueX(R) - data->valueX(L));
+      const qreal ratioScreen = screen.width()   / viewX.range();
 
-      const bool is_under = numScreen/numData >= 3;
+      const bool is_under = ratioScreen/ratioData >= qreal(3);
 
       if( is_under  &&  flags.testFlag(Steps) ) {
         impl_draw::drawSteps(painter, data, L, R);
