@@ -49,12 +49,8 @@ namespace plot {
 
         LinesHelper() noexcept;
 
-        inline void draw(QPainter *painter, const IPlotSeriesData *data,
-                         const int L, const int numLines) const
-        {
-          data->values(_points, L, L + numLines);
-          painter->drawPolyline(_points, numLines + 1);
-        }
+        void draw(QPainter *painter, const IPlotSeriesData *data,
+                  const int L, const int numLines) const;
 
       private:
         static QPointF _points[LINES + 1];
@@ -67,14 +63,8 @@ namespace plot {
 
         PointsHelper(QPainter *painter) noexcept;
 
-        inline void draw(QPainter *painter, const IPlotSeriesData *data,
-                         const int L, const int numPoints) const
-        {
-          data->values(_points, L, L + numPoints - 1);
-          for(int i = 0; i < numPoints; i++) {
-            painter->drawEllipse(_points[i], _rx, _ry);
-          }
-        }
+        void draw(QPainter *painter, const IPlotSeriesData *data,
+                  const int L, const int numPoints) const;
 
       private:
         PointsHelper() noexcept = delete;
@@ -91,16 +81,8 @@ namespace plot {
 
         StepsHelper() noexcept;
 
-        inline void draw(QPainter *painter, const IPlotSeriesData *data,
-                         const int L, const int numSteps) const
-        {
-          data->values(_points, L, L + numSteps);
-          for(int i = STEPS; i > 0; i--) {
-            _points[i*2  ] = _points[i];
-            _points[i*2-1] = {_points[i].x(), _points[i-1].y()};
-          }
-          painter->drawPolyline(_points, numSteps*2 + 1);
-        }
+        void draw(QPainter *painter, const IPlotSeriesData *data,
+                  const int L, const int numSteps) const;
 
       private:
         static QPointF _points[STEPS*2 + 1];
