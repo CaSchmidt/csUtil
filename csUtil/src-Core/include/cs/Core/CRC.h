@@ -79,12 +79,15 @@ namespace cs {
 
   } // namespace impl_crc
 
-  template<typename T>
+  template<typename T,
+           T _XOR_VALUE = std::numeric_limits<T>::max()>
   class CRC {
   public:
     using  byte_type = uint8_t;
     using  size_type = std::size_t;
     using value_type = impl_crc::if_crc_t<T>;
+
+    static constexpr value_type XOR_VALUE = _XOR_VALUE;
 
     CRC(const value_type crcpoly, const bool is_reversed = false) noexcept
       : _crcpoly{crcpoly}
@@ -102,10 +105,7 @@ namespace cs {
     value_type operator()(const byte_type *buffer, const size_type count,
                           value_type sum = 0) const
     {
-      constexpr value_type XOR_FINAL = std::numeric_limits<value_type>::max();
-      constexpr value_type XOR_INIT  = std::numeric_limits<value_type>::max();
-
-      sum ^= XOR_INIT;
+      sum ^= XOR_VALUE;
 
       for(size_type i = 0; i < count; i++) {
         const size_type index =
@@ -114,7 +114,7 @@ namespace cs {
         sum ^= _crctable[index];
       }
 
-      return sum ^ XOR_FINAL;
+      return sum ^ XOR_VALUE;
     }
 
   private:
