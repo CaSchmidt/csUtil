@@ -124,8 +124,6 @@ namespace cs {
     static constexpr size_type M = sizeof(byte_type)*8;
     static constexpr size_type N = sizeof(value_type)*8;
 
-    static constexpr size_type Mcount = size_type(1) << M;
-
     CRC() noexcept = delete;
 
     template<size_type BITS = 1>
@@ -177,7 +175,7 @@ namespace cs {
     }
 
     value_type _crcpoly{};
-    std::array<value_type,Mcount> _crctable{};
+    std::array<value_type,size_type(1) << M> _crctable{};
   };
 
   using CRC8  = CRC<uint8_t>;
