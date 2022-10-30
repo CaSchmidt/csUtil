@@ -75,7 +75,7 @@ namespace cs {
 
     template<typename T, std::size_t BITS>
     using is_shift = std::bool_constant<
-    0 < BITS  &&  BITS < sizeof(T)*8
+    0 < BITS  &&  BITS < MAX_BITS<T>
     >;
 
     template<typename T, std::size_t BITS>
@@ -84,21 +84,21 @@ namespace cs {
   } // namespace impl_crc
 
   template<typename T,
-           T _XOR_VALUE = konst<T>::MAX> requires impl_crc::IsCrc<T>
+           T _POLY,
+           T _INIT = konst<T>::MAX,
+           T _XOR  = konst<T>::MAX> requires impl_crc::IsCrc<T>
   class CRC {
   public:
     using  byte_type = uint8_t;
     using  size_type = std::size_t;
     using value_type = T;
 
-    static constexpr value_type XOR_VALUE = _XOR_VALUE;
+    static constexpr value_type POLY = reverseBits(_POLY);
+    static constexpr value_type INIT = _INIT;
+    static constexpr value_type  XOR = _XOR;
 
-    CRC(const value_type crcpoly, const bool is_reversed = false) noexcept
-      : _crcpoly{crcpoly}
+    CRC() noexcept
     {
-      if( !is_reversed ) {
-        _crcpoly = reverseBits(crcpoly);
-      }
       initializeTable();
     }
 
@@ -107,9 +107,9 @@ namespace cs {
     }
 
     value_type operator()(const byte_type *buffer, const size_type count,
-                          value_type sum = 0) const
+                          value_type sum = INIT ^ XOR) const
     {
-      sum ^= XOR_VALUE;
+      sum ^= XOR;
 
       for(size_type i = 0; i < count; i++) {
         const size_type index =
@@ -118,21 +118,19 @@ namespace cs {
         sum ^= _crctable[index];
       }
 
-      return sum ^ XOR_VALUE;
+      return sum ^ XOR;
     }
 
   private:
     using k = konst<value_type>;
 
-    static constexpr size_type M = sizeof(byte_type)*8;
-    static constexpr size_type N = sizeof(value_type)*8;
-
-    CRC() noexcept = delete;
+    static constexpr size_type M = MAX_BITS<byte_type>;
+    static constexpr size_type N = MAX_BITS<value_type>;
 
     template<size_type BITS = 1>
     inline static value_type bitsShiftedOut(const value_type& in)
     {
-      constexpr value_type MASK = makeBitMask<value_type,BITS>();
+      constexpr value_type MASK = makeBitMask<value_type>(BITS);
 
       return in & MASK;
     }
@@ -145,26 +143,11 @@ namespace cs {
           const value_type bits_just_shifted_out = bitsShiftedOut(crcreg);
           crcreg = shiftLeft(crcreg);
           if( bits_just_shifted_out != k::ZERO ) {
-            crcreg ^= _crcpoly;
+            crcreg ^= POLY;
           }
         }
         _crctable[index] = crcreg;
       }
-    }
-
-    inline static value_type reverseBits(const value_type& in)
-    {
-      constexpr size_type MAX_BIT = sizeof(value_type)*8 - 1;
-
-      value_type out = 0;
-
-      for(size_type i = 0; i <= MAX_BIT; i++) {
-        if( (in & (k::ONE << i)) != k::ZERO ) {
-          out |= k::ONE << (MAX_BIT - i);
-        }
-      }
-
-      return out;
     }
 
     template<size_type BITS = 1>
@@ -175,13 +158,10 @@ namespace cs {
       return in >> BITS;
     }
 
-    value_type _crcpoly{};
     std::array<value_type,size_type(1) << M> _crctable{};
   };
 
-  using CRC8  = CRC<uint8_t>;
-  using CRC16 = CRC<uint16_t>;
-  using CRC32 = CRC<uint32_t>;
-  using CRC64 = CRC<uint64_t>;
+  // Ethernet, PKZIP
+  using CRC32 = cs::CRC<uint32_t,0x04C11DB7,0xFFFFFFFF,0xFFFFFFFF>;
 
 } // namespace cs
