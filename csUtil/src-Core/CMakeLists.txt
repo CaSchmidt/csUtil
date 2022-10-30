@@ -1,6 +1,7 @@
 list(APPEND csCore_HEADERS
   include/cs/Core/CharUtil.h
   include/cs/Core/Concepts.h
+  include/cs/Core/Constants.h
   include/cs/Core/CRC.h
   include/cs/Core/Endian.h
   include/cs/Core/Flags.h

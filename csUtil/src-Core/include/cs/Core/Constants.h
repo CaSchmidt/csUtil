@@ -33,29 +33,36 @@
 
 #include <cs/Core/Concepts.h>
 
-/*
- * NOTE:
- * For the constants of e and pi cf. to "pi and e in Binary":
- * https://www.exploringbinary.com/pi-and-e-in-binary/
- */
-
 namespace cs {
 
+  template<typename T> requires IsArithmetic<T>
+  struct konst {
+    using value_type = T;
+
+    static constexpr auto MAX = std::numeric_limits<value_type>::max();
+    static constexpr auto MIN = std::numeric_limits<value_type>::lowest();
+
+    static constexpr value_type  ONE = 1;
+    static constexpr value_type  TWO = 2;
+    static constexpr value_type ZERO = 0;
+  };
+
+  /*
+   * NOTE:
+   * For the constants of e and pi cf. to "pi and e in Binary":
+   * https://www.exploringbinary.com/pi-and-e-in-binary/
+   */
+
   template<std::size_t SIZE>
-  struct konst_impl {
+  struct real_konst_impl {
     // SFINAE
   };
 
   template<>
-  struct konst_impl<4> {
+  struct real_konst_impl<4> {
     using value_type = RealOfSize<4>::real_type;
 
     static constexpr auto INVALID_RESULT = std::numeric_limits<value_type>::quiet_NaN();
-    static constexpr auto            MAX = std::numeric_limits<value_type>::max();
-    static constexpr auto            MIN = std::numeric_limits<value_type>::lowest();
-    static constexpr value_type      ONE = 1;
-    static constexpr value_type      TWO = 2;
-    static constexpr value_type     ZERO = 0;
 
     static constexpr value_type  e = 0x1.5bf0a8p+1f;
 
@@ -67,15 +74,10 @@ namespace cs {
   };
 
   template<>
-  struct konst_impl<8> {
+  struct real_konst_impl<8> {
     using value_type = RealOfSize<8>::real_type;
 
     static constexpr auto INVALID_RESULT = std::numeric_limits<value_type>::quiet_NaN();
-    static constexpr auto            MAX = std::numeric_limits<value_type>::max();
-    static constexpr auto            MIN = std::numeric_limits<value_type>::lowest();
-    static constexpr value_type      ONE = 1;
-    static constexpr value_type      TWO = 2;
-    static constexpr value_type     ZERO = 0;
 
     static constexpr value_type  e = 0x1.5bf0a8b145769p+1;
 
@@ -87,6 +89,6 @@ namespace cs {
   };
 
   template<typename T> requires IsReal<T>
-  using konst = konst_impl<sizeof(T)>;
+  using real_konst = real_konst_impl<sizeof(T)>;
 
 } // namespace cs

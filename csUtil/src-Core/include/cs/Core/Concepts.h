@@ -36,6 +36,9 @@
 namespace cs {
 
   template<typename T>
+  concept IsArithmetic = is_integral_v<T>  ||  is_real_v<T>;
+
+  template<typename T>
   concept IsBoolean = is_boolean_v<T>;
 
   template<typename T>
