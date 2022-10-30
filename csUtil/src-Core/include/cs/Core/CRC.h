@@ -34,8 +34,8 @@
 #include <cstdint>
 
 #include <array>
-#include <limits>
-#include <type_traits>
+
+#include <cs/Core/Bit.h>
 
 /*
  * NOTE:
@@ -58,6 +58,8 @@ namespace cs {
 
   namespace impl_crc {
 
+    // CRC Type //////////////////////////////////////////////////////////////
+
     template<typename T>
     using is_crc_type = std::bool_constant<
     std::is_unsigned_v<T>
@@ -67,7 +69,9 @@ namespace cs {
     inline constexpr bool is_crc_type_v = is_crc_type<T>::value;
 
     template<typename T>
-    using if_crc_t = std::enable_if_t<is_crc_type_v<T>,T>;
+    concept IsCrc = is_crc_type_v<T>;
+
+    // Bit Shifts ////////////////////////////////////////////////////////////
 
     template<typename T, std::size_t BITS>
     using is_shift = std::bool_constant<
@@ -80,12 +84,12 @@ namespace cs {
   } // namespace impl_crc
 
   template<typename T,
-           T _XOR_VALUE = std::numeric_limits<T>::max()>
+           T _XOR_VALUE = konst<T>::MAX> requires impl_crc::IsCrc<T>
   class CRC {
   public:
     using  byte_type = uint8_t;
     using  size_type = std::size_t;
-    using value_type = impl_crc::if_crc_t<T>;
+    using value_type = T;
 
     static constexpr value_type XOR_VALUE = _XOR_VALUE;
 
@@ -118,8 +122,7 @@ namespace cs {
     }
 
   private:
-    static constexpr value_type  ONE = 1;
-    static constexpr value_type ZERO = 0;
+    using k = konst<value_type>;
 
     static constexpr size_type M = sizeof(byte_type)*8;
     static constexpr size_type N = sizeof(value_type)*8;
@@ -129,9 +132,7 @@ namespace cs {
     template<size_type BITS = 1>
     inline static value_type bitsShiftedOut(const value_type& in)
     {
-      static_assert( impl_crc::is_shift_v<value_type,BITS> );
-
-      constexpr value_type MASK = (ONE << BITS) - ONE;
+      constexpr value_type MASK = makeBitMask<value_type,BITS>();
 
       return in & MASK;
     }
@@ -143,7 +144,7 @@ namespace cs {
         for(size_type k = 0; k < M; k++) {
           const value_type bits_just_shifted_out = bitsShiftedOut(crcreg);
           crcreg = shiftLeft(crcreg);
-          if( bits_just_shifted_out != ZERO ) {
+          if( bits_just_shifted_out != k::ZERO ) {
             crcreg ^= _crcpoly;
           }
         }
@@ -158,8 +159,8 @@ namespace cs {
       value_type out = 0;
 
       for(size_type i = 0; i <= MAX_BIT; i++) {
-        if( (in & (ONE << i)) != ZERO ) {
-          out |= ONE << (MAX_BIT - i);
+        if( (in & (k::ONE << i)) != k::ZERO ) {
+          out |= k::ONE << (MAX_BIT - i);
         }
       }
 
