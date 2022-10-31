@@ -88,7 +88,9 @@ namespace cs {
   } // namespace impl_crc
 
   template<typename T,
-           T _POLY, T _INIT, T _XOR> requires impl_crc::IsCrc<T>
+           T _POLY, T _INIT, T _XOR,
+           bool REVERSE_IN = false,
+           bool REVERSE_OUT = false> requires impl_crc::IsCrc<T>
   class CRC {
   public:
     using  byte_type = uint8_t;
@@ -119,13 +121,18 @@ namespace cs {
       sum ^= XOR;
 
       for(size_type i = 0; i < count; i++) {
+        const byte_type input = REVERSE_IN
+            ? reverseBits(buffer[i])
+            : buffer[i];
         const size_type index =
-            size_type(bitsShiftedOut<M>(sum)) ^ size_type(buffer[i]);
+            size_type(bitsShiftedOut<M>(sum)) ^ size_type(input);
         sum = shiftLeft<M>(sum);
         sum ^= _crctable[index];
       }
 
-      return sum ^ XOR;
+      return REVERSE_OUT
+          ? reverseBits(sum) ^ XOR
+          : sum ^ XOR;
     }
 
   private:
