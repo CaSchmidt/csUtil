@@ -63,17 +63,17 @@ namespace cs {
     constexpr T makeBitMaskImpl(const std::size_t bit)
     {
       using k = konst<T>;
-      return bit > std::size_t(0)
-          ? (k::ONE << bit) | makeBitMaskImpl<T>(bit - 1)
-          : k::ONE;
+      return bit <= std::size_t(0)
+          ?  k::ONE
+          : (k::ONE << bit) | makeBitMaskImpl<T>(bit - 1);
     }
 
     template<typename T> requires IsIntegral<T>
     constexpr T reverseBitsImpl(const T in, const std::size_t bit)
     {
-      return bit > std::size_t(0)
-          ? reflectBit(in, bit) | reverseBitsImpl(in, bit - 1)
-          : reflectBit(in, bit);
+      return bit <= std::size_t(0)
+          ? reflectBit(in, 0)
+          : reflectBit(in, bit) | reverseBitsImpl(in, bit - 1);
     }
 
   } // namespace impl_bit
