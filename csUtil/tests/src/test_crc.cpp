@@ -7,7 +7,7 @@
 template<std::size_t SIZE>
 void print32(const std::array<uint8_t,SIZE>& buffer)
 {
-  cs::CRC32 crc32(0x04C11DB7);
+  cs::CRC32 crc32;
 
   const cs::CRC32::value_type result = crc32(buffer.data(), buffer.size());
   printf("result = 0x%08X\n", result);
@@ -25,7 +25,7 @@ int main(int argc, char **argv)
     return EXIT_FAILURE;
   }
 
-  cs::CRC32 crc32(0x04C11DB7);
+  cs::CRC32 crc32;
   cs::CRC32::value_type crcsum = 0;
 
   cs::File file;
