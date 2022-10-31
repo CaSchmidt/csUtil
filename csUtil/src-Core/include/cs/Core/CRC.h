@@ -49,8 +49,12 @@
  * This implementation closely follows:
  * Reversing CRC - Theory and Practice, M. Stigge & H. Plötz & W. Müller & J.-P. Redlich
  *
+ * Detailed explanation of CRC calculation, cf.:
+ * http://www.sunshine2k.de/articles/coding/crc/understanding_crc.html
+ *
  * For test cases, cf.:
  * https://reveng.sourceforge.io/
+ * AND
  * Specification of CRC Routines, Document ID 16, AUTOSAR CP R21-11
  */
 
@@ -84,9 +88,7 @@ namespace cs {
   } // namespace impl_crc
 
   template<typename T,
-           T _POLY,
-           T _INIT = konst<T>::MAX,
-           T _XOR  = konst<T>::MAX> requires impl_crc::IsCrc<T>
+           T _POLY, T _INIT, T _XOR> requires impl_crc::IsCrc<T>
   class CRC {
   public:
     using  byte_type = uint8_t;
@@ -106,8 +108,13 @@ namespace cs {
     {
     }
 
+    static constexpr value_type makeInit()
+    {
+      return INIT ^ XOR;
+    }
+
     value_type operator()(const byte_type *buffer, const size_type count,
-                          value_type sum = INIT ^ XOR) const
+                          value_type sum = makeInit()) const
     {
       sum ^= XOR;
 
