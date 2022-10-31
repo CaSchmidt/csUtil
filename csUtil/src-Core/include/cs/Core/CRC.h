@@ -75,16 +75,6 @@ namespace cs {
     template<typename T>
     concept IsCrc = is_crc_type_v<T>;
 
-    // Bit Shifts ////////////////////////////////////////////////////////////
-
-    template<typename T, std::size_t BITS>
-    using is_shift = std::bool_constant<
-    0 < BITS  &&  BITS < MAX_BITS<T>
-    >;
-
-    template<typename T, std::size_t BITS>
-    inline constexpr bool is_shift_v = is_shift<T,BITS>::value;
-
   } // namespace impl_crc
 
   template<typename T,
@@ -167,9 +157,10 @@ namespace cs {
     template<size_type BITS = 1>
     inline static value_type shiftLeft(const value_type& in)
     {
-      static_assert( impl_crc::is_shift_v<value_type,BITS> );
-
-      return in >> BITS;
+      if constexpr( 0 < BITS  &&  BITS < MAX_BITS<value_type> ) {
+        return in >> BITS;
+      }
+      return k::ZERO;
     }
 
     std::array<value_type,size_type(1) << M> _crctable{};
