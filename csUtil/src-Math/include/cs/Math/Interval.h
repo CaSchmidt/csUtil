@@ -34,7 +34,7 @@
 #include <algorithm>
 
 #include <cs/Math/Compare.h>
-#include <cs/Math/Constant.h>
+#include <cs/Core/Constants.h>
 
 namespace cs {
 

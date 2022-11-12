@@ -4,7 +4,7 @@
 
 #include <QtWidgets/QApplication>
 
-#include <cs/Math/Constant.h>
+#include <cs/Core/Constants.h>
 
 #include <Plot/PlotTheme.h>
 #include <Plot/PlotWidget.h>
@@ -33,7 +33,7 @@ namespace test_signal {
     const value_type   freq = (value_type)(std::rand()%3 + 1);  // rand()%3  == [0,2]
     const value_type tshift = (value_type)(std::rand()%11)*0.1; // rand()%11 == [0,10]
 
-    const value_type omega = 2.0*cs::konst<value_type>::pi*freq;
+    const value_type omega = 2.0*cs::real_konst<value_type>::pi*freq;
 
     vector_type x(numSamples), y(numSamples);
     for(size_type i = 0; i < numSamples; i++) {
@@ -55,7 +55,7 @@ namespace test_signal {
     const value_type         dt = 0.01;
     const  size_type numSamples = 101;
 
-    const value_type omega = 2.0*cs::konst<value_type>::pi*freq;
+    const value_type omega = 2.0*cs::real_konst<value_type>::pi*freq;
 
     vector_type x(numSamples), y(numSamples);
     for(size_type i = 0; i < numSamples; i++) {

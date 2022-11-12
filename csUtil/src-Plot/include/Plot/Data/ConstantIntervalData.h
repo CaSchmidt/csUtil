@@ -34,7 +34,7 @@
 #include <vector>
 
 #include <cs/Core/Concepts.h>
-#include <cs/Math/Constant.h>
+#include <cs/Core/Constants.h>
 
 #include <Plot/IPlotSeriesData.h>
 
