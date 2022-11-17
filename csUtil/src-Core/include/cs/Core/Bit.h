@@ -36,10 +36,10 @@
 namespace cs {
 
   template<typename T> requires IsIntegral<T>
-  inline constexpr std::size_t MAX_BITS = sizeof(T)*8;
+  inline constexpr std::size_t NUM_BITS = sizeof(T)*8;
 
   template<typename T> requires IsIntegral<T>
-  inline constexpr std::size_t MAX_BIT = MAX_BITS<T> - 1;
+  inline constexpr std::size_t MAX_BIT = NUM_BITS<T> - 1;
 
   namespace impl_bit {
 
@@ -81,7 +81,7 @@ namespace cs {
   template<typename T> requires IsIntegral<T>
   constexpr T makeBitMask(const std::size_t bits)
   {
-    return std::size_t(0) < bits  &&  bits <= MAX_BITS<T>
+    return std::size_t(0) < bits  &&  bits <= NUM_BITS<T>
         ? impl_bit::makeBitMaskImpl<T>(bits - 1)
         : konst<T>::ZERO;
   }

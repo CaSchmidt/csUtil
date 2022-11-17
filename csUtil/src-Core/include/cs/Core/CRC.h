@@ -128,8 +128,8 @@ namespace cs {
   private:
     using k = konst<value_type>;
 
-    static constexpr size_type M = MAX_BITS<byte_type>;
-    static constexpr size_type N = MAX_BITS<value_type>;
+    static constexpr size_type M = NUM_BITS<byte_type>;
+    static constexpr size_type N = NUM_BITS<value_type>;
 
     template<size_type BITS = 1>
     inline static value_type bitsShiftedOut(const value_type& in)
@@ -157,7 +157,7 @@ namespace cs {
     template<size_type BITS = 1>
     inline static value_type shiftLeft(const value_type& in)
     {
-      if constexpr( 0 < BITS  &&  BITS < MAX_BITS<value_type> ) {
+      if constexpr( 0 < BITS  &&  BITS < NUM_BITS<value_type> ) {
         return in >> BITS;
       }
       return k::ZERO;
