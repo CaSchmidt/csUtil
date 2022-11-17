@@ -159,6 +159,8 @@ namespace cs {
     {
       if constexpr( 0 < BITS  &&  BITS < NUM_BITS<value_type> ) {
         return in >> BITS;
+      } else if constexpr( BITS == 0 ) {
+        return in;
       }
       return k::ZERO;
     }
