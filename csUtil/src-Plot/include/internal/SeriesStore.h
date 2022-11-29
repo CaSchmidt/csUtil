@@ -43,7 +43,7 @@ namespace plot {
 
     bool contains(const QString& seriesName) const;
 
-    QStringList names() const;
+    QStringList names(const bool sorted = false) const;
 
     bool insert(const Series& series);
     bool remove(const QString& seriesName);

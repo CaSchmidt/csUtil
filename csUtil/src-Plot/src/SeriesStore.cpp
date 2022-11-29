@@ -56,8 +56,13 @@ namespace plot {
     return _series.contains(seriesName);
   }
 
-  QStringList SeriesStore::names() const
+  QStringList SeriesStore::names(const bool sorted) const
   {
+    if( sorted ) {
+      QStringList list = _series.keys();
+      qSort(list);
+      return list;
+    }
     return _series.keys();
   }
 
