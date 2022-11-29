@@ -68,6 +68,7 @@ namespace plot {
     QString activeSeriesName() const;
     const Series& activeSeries() const;
     void clearActiveSeries();
+    QString nextActiveSeries() const;
     bool setActiveSeries(const QString& seriesName);
 
     PlotRange rangeY() const;

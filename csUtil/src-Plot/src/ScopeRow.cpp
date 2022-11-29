@@ -29,6 +29,9 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <algorithm>
+#include <iterator>
+
 #include <QtWidgets/QWidget>
 
 #include "internal/ScopeRow.h"
@@ -147,6 +150,28 @@ namespace plot {
   {
     _activeSeriesName.clear();
     _yTitle->setTitle(QString());
+  }
+
+  QString ScopeRow::nextActiveSeries() const
+  {
+    using ConstIter = QStringList::const_iterator;
+
+    const QStringList names = _store.names(true);
+    if( _activeSeriesName.isEmpty()  ||  names.isEmpty() ) {
+      return QString();
+    }
+
+    const ConstIter hit = std::find(names.begin(), names.end(), _activeSeriesName);
+    if( hit == names.end() ) {
+      return QString();
+    }
+
+    const ConstIter next = std::next(hit);
+    if( next == names.end() ) {
+      return names.front();
+    }
+
+    return *next;
   }
 
   bool ScopeRow::setActiveSeries(const QString& seriesName)
