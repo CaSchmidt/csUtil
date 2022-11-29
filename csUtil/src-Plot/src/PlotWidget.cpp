@@ -63,6 +63,9 @@ namespace plot {
 
     initializeContextMenu();
     initializeCursor();
+
+    QAction *action = createAction(tr("Next series"), Qt::Key_Tab, false);
+    connect(action, &QAction::triggered, this, &PlotWidget::nextActiveSeries);
   }
 
   PlotWidget::~PlotWidget()
@@ -104,6 +107,11 @@ namespace plot {
   }
 
   ////// public slots ////////////////////////////////////////////////////////
+
+  void PlotWidget::nextActiveSeries()
+  {
+    _impl->setNextActiveSeries();
+  }
 
   void PlotWidget::setActiveSeries(const QString& seriesName)
   {
@@ -287,11 +295,14 @@ namespace plot {
   ////// private /////////////////////////////////////////////////////////////
 
   QAction *PlotWidget::createAction(const QString& text,
-                                    const QKeySequence& shortcut)
+                                    const QKeySequence& shortcut,
+                                    const bool add_menu)
   {
     QAction *action = new QAction(text, this);
     addAction(action);
-    _contextMenu->addAction(action);
+    if( add_menu ) {
+      _contextMenu->addAction(action);
+    }
     action->setShortcut(shortcut);
     action->setShortcutContext(Qt::WidgetShortcut);
     return action;

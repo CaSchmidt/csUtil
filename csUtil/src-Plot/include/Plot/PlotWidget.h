@@ -58,6 +58,7 @@ namespace plot {
     void setTitleX(const QString& title);
 
   public slots:
+    void nextActiveSeries();
     void setActiveSeries(const QString& seriesName);
     void exportToClipboard();
     void panning();
@@ -90,7 +91,8 @@ namespace plot {
       Panning
     };
 
-    QAction *createAction(const QString& text, const QKeySequence& shortcut);
+    QAction *createAction(const QString& text, const QKeySequence& shortcut,
+                          const bool add_menu = true);
     void initializeContextMenu();
     void initializeCursor();
     void updateMenuFlags();
