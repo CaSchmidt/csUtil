@@ -47,6 +47,7 @@ namespace plot {
     virtual const Series& series(const QString& name) const = 0;
     virtual Series& series(const QString& name) = 0;
     virtual bool setActiveSeries(const QString& name) = 0;
+    virtual bool setNextActiveSeries() = 0;
   };
 
 } // namespace plot

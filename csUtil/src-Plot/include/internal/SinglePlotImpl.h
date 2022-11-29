@@ -62,6 +62,7 @@ namespace plot {
     const Series& series(const QString& name) const;
     Series& series(const QString& name);
     bool setActiveSeries(const QString& name);
+    bool setNextActiveSeries();
 
     // IViewportControl
 

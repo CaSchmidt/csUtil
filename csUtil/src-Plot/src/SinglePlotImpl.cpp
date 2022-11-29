@@ -210,6 +210,11 @@ namespace plot {
     return true;
   }
 
+  bool SinglePlotImpl::setNextActiveSeries()
+  {
+    return setActiveSeries(_row->nextActiveSeries());
+  }
+
   // IViewportControl ////////////////////////////////////////////////////////
 
   void SinglePlotImpl::pan(const QPointF& delta)
