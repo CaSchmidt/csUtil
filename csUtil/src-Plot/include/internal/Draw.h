@@ -42,6 +42,7 @@ class QTransform;
 namespace plot {
 
   class IAxisElement;
+  class PlotTheme;
   class Series;
 
   namespace Draw {
@@ -60,7 +61,7 @@ namespace plot {
     void series(QPainter *painter,
                 const QRectF& screen, const Series& theSeries,
                 const PlotRange& viewX, const PlotRange& viewY,
-                const DrawFlags flags = NoDrawFlags);
+                const PlotTheme& theme, const DrawFlags flags = NoDrawFlags);
 
   } // namespace Draw
 

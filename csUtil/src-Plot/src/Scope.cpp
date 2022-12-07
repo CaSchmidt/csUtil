@@ -64,6 +64,8 @@ namespace plot {
 
   void Scope::paint(QPainter *painter) const
   {
+    const IPlotImplementation *plot = _row->plot();
+
     painter->save();
 
     painter->setBrush(Qt::NoBrush);
@@ -73,19 +75,19 @@ namespace plot {
     const QTransform mapping = _row->mapScaleToScreen();
 
     Draw::gridX(painter,
-                _row->plot()->xAxis(), mapping, _rect, _row->plot()->theme().gridPen());
+                plot->xAxis(), mapping, _rect, plot->theme().pen(PlotTheme::Grid));
     Draw::gridY(painter,
-                _row->yAxis(), mapping, _rect, _row->plot()->theme().gridPen());
+                _row->yAxis(), mapping, _rect, plot->theme().pen(PlotTheme::Grid));
 
     // (2) Frame /////////////////////////////////////////////////////////////
 
     Draw::frame(painter,
-                _rect, _row->plot()->theme().framePen());
+                _rect, plot->theme().pen(PlotTheme::Frame));
 
     // (3) Series (Excluding Active Series) //////////////////////////////////
 
     const Series& activeSeries = _row->activeSeries();
-    const PlotRange  rangeX = _row->plot()->rangeX();
+    const PlotRange  rangeX = plot->rangeX();
 
     painter->resetTransform();
     painter->setClipRect(_rect);
@@ -99,7 +101,8 @@ namespace plot {
       const PlotRange rangeY =
           _row->store().rangeY(series.name()).subset(_row->viewY(), 100);
       Draw::series(painter,
-                   _rect, series, rangeX, rangeY, _row->plot()->drawFlags());
+                   _rect, series, rangeX, rangeY,
+                   plot->theme(), plot->drawFlags());
     }
 
     // (4) Active Series /////////////////////////////////////////////////////
@@ -110,7 +113,8 @@ namespace plot {
       const PlotRange rangeY =
           _row->store().rangeY(activeSeries.name()).subset(_row->viewY(), 100);
       Draw::series(painter,
-                   _rect, activeSeries, rangeX, rangeY, _row->plot()->drawFlags() | IsActive);
+                   _rect, activeSeries, rangeX, rangeY,
+                   plot->theme(), plot->drawFlags() | IsActive);
     }
 
     painter->restore();

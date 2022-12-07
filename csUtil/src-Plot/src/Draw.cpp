@@ -167,7 +167,7 @@ namespace plot {
     void series(QPainter *painter,
                 const QRectF& screen, const Series& theSeries,
                 const PlotRange& viewX, const PlotRange& viewY,
-                const DrawFlags flags)
+                const PlotTheme& theme, const DrawFlags flags)
     {
       if( theSeries.isEmpty() ) {
         return;
@@ -181,8 +181,8 @@ namespace plot {
         return;
       }
 
-      QPen pen = PlotTheme::seriesPen(theSeries.color(),
-                                      flags.testFlag(IsActive) ? 2.0 : 1.0);
+      QPen pen = theme.seriesPen(theSeries.color(),
+                                 flags.testFlag(IsActive) ? 2.0 : 1.0);
       pen.setCosmetic(true);
       painter->setPen(pen);
 

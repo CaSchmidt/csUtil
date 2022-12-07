@@ -64,17 +64,19 @@ namespace plot {
 
   void YTitle::paint(QPainter *painter) const
   {
+    const IPlotImplementation *plot = _row->plot();
+
     if( _title.isEmpty() ) {
       return;
     }
 
-    const QFontMetricsF metrics(_row->plot()->widget()->font());
+    const QFontMetricsF metrics(plot->widget()->font());
     const Series& series = _row->activeSeries();
 
     painter->save();
 
-    painter->setFont(_row->plot()->widget()->font());
-    painter->setPen(PlotTheme::yAxisPen(series.color()));
+    painter->setFont(plot->widget()->font());
+    painter->setPen(plot->theme().yAxisPen(series.color()));
 
     const QTransform xform =
         QTransform(0, -1,

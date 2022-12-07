@@ -56,7 +56,7 @@ namespace plot {
     , _dragStart()
     , _zoomRect()
   {
-    _impl = new SinglePlotImpl(NoDrawFlags, PlotTheme::themeTextbook(), this);
+    _impl = new SinglePlotImpl(NoDrawFlags, makeTextbookTheme(), this);
 
     setFocusPolicy(Qt::StrongFocus);
     setMouseTracking(true);
@@ -246,7 +246,7 @@ namespace plot {
     if( !_zoomRect.isNull() ) {
       const QRectF r(_zoomRect);
 
-      painter.setPen(_impl->theme().rubberPen());
+      painter.setPen(_impl->theme().pen(PlotTheme::RubberBand));
       if(        _panZoom == RectangularZoom ) {
         painter.drawRect(r.adjusted(0.5, 0.5, -0.5, -0.5));
       } else if( _panZoom == HorizontalZoom ) {

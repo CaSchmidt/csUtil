@@ -74,7 +74,7 @@ namespace plot {
     painter->save();
 
     painter->setFont(_plot->widget()->font());
-    painter->setPen(_plot->theme().textPen());
+    painter->setPen(_plot->theme().pen(PlotTheme::Text));
 
     const QFontMetricsF metrics(_plot->widget()->font());
     const QTransform xform = _plot->mapViewToScreenX();

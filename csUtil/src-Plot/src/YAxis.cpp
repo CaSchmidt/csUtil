@@ -75,12 +75,14 @@ namespace plot {
 
   void YAxis::paint(QPainter *painter) const
   {
+    const IPlotImplementation *plot = _row->plot();
+
     painter->save();
 
-    painter->setFont(_row->plot()->widget()->font());
-    painter->setPen(PlotTheme::yAxisPen(_row->activeSeries().color()));
+    painter->setFont(plot->widget()->font());
+    painter->setPen(plot->theme().yAxisPen(_row->activeSeries().color()));
 
-    const QFontMetricsF metrics(_row->plot()->widget()->font());
+    const QFontMetricsF metrics(plot->widget()->font());
     const QTransform xform = _row->mapScaleToScreen();
     const qreal     yshift = metrics.ascent() - metrics.height()/2.0;
 

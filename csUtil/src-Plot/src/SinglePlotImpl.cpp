@@ -122,7 +122,7 @@ namespace plot {
 
     painter->setBrush(Qt::NoBrush);
 
-    painter->fillRect(_rect, theme().backgroundBrush());
+    painter->fillRect(_rect, theme().brush(PlotTheme::Background));
 
     painter->restore();
 
@@ -151,7 +151,7 @@ namespace plot {
 
     if( !_row->store().insert(Series(data, color.isValid()
                                      ? color
-                                     : theme().nextColor())) ) {
+                                     : theme().color(PlotTheme::Series))) ) {
       return PlotSeriesHandle();
     }
 

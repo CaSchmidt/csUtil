@@ -36,62 +36,109 @@ namespace plot {
   ////// public //////////////////////////////////////////////////////////////
 
   PlotTheme::PlotTheme()
-    : backgroundColor()
-    , frameColor()
-    , gridColor()
-    , rubberColor()
-    , textColor()
-    , seriesColors()
-    , _colorIndex(0)
+  {
+    clear();
+  }
+
+  PlotTheme::~PlotTheme()
   {
   }
 
-  QColor PlotTheme::nextColor()
+  void PlotTheme::clear()
   {
-    QColor result = seriesColors[_colorIndex];
-    _colorIndex += 1;
-    _colorIndex %= seriesColors.size();
-    return result;
+    _colors.fill(Qt::black);
+    _colors[Background] = Qt::white;
+
+    _seriesColorIndex = 0;
+    _seriesColors.clear();
   }
 
-  QBrush PlotTheme::backgroundBrush() const
+  QColor PlotTheme::color(const DrawElement e) const
   {
-    return QBrush(backgroundColor, Qt::SolidPattern);
+    const size_type index = size_type(e);
+    if( index < 0  ||  index >= Num_DrawElements ) {
+      return Qt::black;
+    }
+
+    if( e == Series  &&  !_seriesColors.empty() ) {
+      PlotTheme *thiz = const_cast<PlotTheme*>(this);
+
+      const QColor result = _seriesColors[_seriesColorIndex];
+      thiz->_seriesColorIndex += 1;
+      thiz->_seriesColorIndex %= _seriesColors.size();
+      return result;
+    }
+
+    return _colors[index];
   }
 
-  QPen PlotTheme::framePen() const
+  bool PlotTheme::setColor(const DrawElement e, const QColor& c)
   {
-    return QPen(QBrush(frameColor, Qt::SolidPattern), 1.0,
-                Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin);
+    const size_type index = size_type(e);
+    if( index < 0  ||  index >= Num_DrawElements ) {
+      return false;
+    }
+
+    if( e == Series ) {
+      try {
+        _seriesColors.push_back(c);
+      } catch(...) {
+        _seriesColors.clear();
+        return false;
+      }
+    } else {
+      _colors[index] = c;
+    }
+
+    return true;
   }
 
-  QPen PlotTheme::gridPen() const
+  QBrush PlotTheme::brush(const DrawElement e) const
   {
-    return QPen(QBrush(gridColor, Qt::SolidPattern), 1.0,
-                Qt::DotLine, Qt::RoundCap, Qt::RoundJoin);
+    return e != Series
+        ? QBrush{color(e), Qt::SolidPattern}
+        : QBrush{_colors[Series], Qt::SolidPattern};
   }
 
-  QPen PlotTheme::rubberPen() const
+  QPen PlotTheme::pen(const DrawElement e) const
   {
-    return QPen(QBrush(rubberColor, Qt::SolidPattern), 1.0,
-                Qt::DotLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen{brush(e), 0};
+
+    if(        e == Frame ) {
+      pen.setWidthF(1);
+      pen.setStyle(Qt::SolidLine);
+      pen.setCapStyle(Qt::SquareCap);
+      pen.setJoinStyle(Qt::MiterJoin);
+    } else if( e == Grid ) {
+      pen.setWidthF(1);
+      pen.setStyle(Qt::DotLine);
+      pen.setCapStyle(Qt::RoundCap);
+      pen.setJoinStyle(Qt::RoundJoin);
+    } else if( e == RubberBand ) {
+      pen.setWidthF(1);
+      pen.setStyle(Qt::DotLine);
+      pen.setCapStyle(Qt::RoundCap);
+      pen.setJoinStyle(Qt::RoundJoin);
+    }
+
+    return pen;
   }
 
-  QPen PlotTheme::textPen() const
+  QPen PlotTheme::seriesPen(const QColor& c, const qreal w) const
   {
-    return QPen(QBrush(textColor, Qt::SolidPattern), 0.0);
+    return QPen{
+      QBrush{c, Qt::SolidPattern}, w, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin
+    };
   }
 
-  QPen PlotTheme::seriesPen(const QColor& color, const qreal width)
+  QPen PlotTheme::yAxisPen(const QColor& c) const
   {
-    return QPen(QBrush(color, Qt::SolidPattern), width,
-                Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen p = pen(Text);
+    p.setColor(c);
+    return p;
   }
 
-  QPen PlotTheme::yAxisPen(const QColor& color)
-  {
-    return QPen(QBrush(color, Qt::SolidPattern), 0.0);
-  }
+  ////// public static ///////////////////////////////////////////////////////
 
   bool PlotTheme::isEmptyUnit(const QString& unit)
   {
@@ -105,48 +152,57 @@ namespace plot {
 
   QString PlotTheme::cleanUnit(const QString& unit)
   {
-    QString result(unit);
     if( isEmptyUnit(unit) ) {
-      result = QStringLiteral("-");
+      return QStringLiteral("-");
     }
-    return result;
+    return unit.trimmed();
   }
 
   QString PlotTheme::titleString(const QString& name, const QString& unit)
   {
-    QString result;
-    result = QStringLiteral("%1 [%2]").arg(name).arg(cleanUnit(unit));
-    return result;
+    return QStringLiteral("%1 [%2]").arg(name, cleanUnit(unit));
   }
 
-  PlotTheme PlotTheme::themeTextbook()
+  ////// Public //////////////////////////////////////////////////////////////
+
+  PlotTheme makeTextbookTheme()
   {
     PlotTheme result;
 
-    result.backgroundColor = Qt::white;
-    result.frameColor      = Qt::black;
-    result.gridColor       = Qt::black;
-    result.rubberColor     = Qt::black;
-    result.textColor       = Qt::black;
-    result.seriesColors    = {
-      Qt::blue, Qt::green, Qt::red, Qt::cyan, Qt::magenta, Qt::yellow, Qt::black
-    };
+    result.setColor(PlotTheme::Background, Qt::white);
+    result.setColor(PlotTheme::Frame,      Qt::black);
+    result.setColor(PlotTheme::Grid,       Qt::black);
+    result.setColor(PlotTheme::RubberBand, Qt::black);
+    result.setColor(PlotTheme::Text,       Qt::black);
+
+    result.setColor(PlotTheme::Series, Qt::blue);
+    result.setColor(PlotTheme::Series, Qt::green);
+    result.setColor(PlotTheme::Series, Qt::red);
+    result.setColor(PlotTheme::Series, Qt::cyan);
+    result.setColor(PlotTheme::Series, Qt::magenta);
+    result.setColor(PlotTheme::Series, Qt::yellow);
+    result.setColor(PlotTheme::Series, Qt::black);
 
     return result;
   }
 
-  PlotTheme PlotTheme::themeOscilloscope()
+  PlotTheme makeOscilloscopeTheme()
   {
     PlotTheme result;
 
-    result.backgroundColor = Qt::black;
-    result.frameColor      = Qt::white;
-    result.gridColor       = Qt::white;
-    result.rubberColor     = Qt::white;
-    result.textColor       = Qt::white;
-    result.seriesColors    = {
-      Qt::blue, Qt::green, Qt::red, Qt::cyan, Qt::magenta, Qt::yellow, Qt::white
-    };
+    result.setColor(PlotTheme::Background, Qt::black);
+    result.setColor(PlotTheme::Frame,      Qt::white);
+    result.setColor(PlotTheme::Grid,       Qt::white);
+    result.setColor(PlotTheme::RubberBand, Qt::white);
+    result.setColor(PlotTheme::Text,       Qt::white);
+
+    result.setColor(PlotTheme::Series, Qt::blue);
+    result.setColor(PlotTheme::Series, Qt::green);
+    result.setColor(PlotTheme::Series, Qt::red);
+    result.setColor(PlotTheme::Series, Qt::cyan);
+    result.setColor(PlotTheme::Series, Qt::magenta);
+    result.setColor(PlotTheme::Series, Qt::yellow);
+    result.setColor(PlotTheme::Series, Qt::white);
 
     return result;
   }

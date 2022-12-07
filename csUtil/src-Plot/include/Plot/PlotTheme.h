@@ -31,7 +31,9 @@
 
 #pragma once
 
-#include <QtCore/QVector>
+#include <array>
+#include <vector>
+
 #include <QtGui/QBrush>
 #include <QtGui/QColor>
 #include <QtGui/QPen>
@@ -40,37 +42,46 @@
 
 namespace plot {
 
-  struct CS_UTIL_EXPORT PlotTheme {
+  class CS_UTIL_EXPORT PlotTheme {
+  public:
+    using size_type = std::size_t;
+
+    enum DrawElement : size_type {
+      Background = 0,
+      Frame,
+      Grid,
+      RubberBand,
+      Series,
+      Text,
+      Num_DrawElements
+    };
+
     PlotTheme();
+    ~PlotTheme();
 
-    QColor backgroundColor;
-    QColor frameColor;
-    QColor gridColor;
-    QColor rubberColor;
-    QColor textColor;
-    QVector<QColor> seriesColors;
+    void clear();
 
-    QColor nextColor();
+    QColor color(const DrawElement e) const;
+    bool setColor(const DrawElement e, const QColor& c);
 
-    QBrush backgroundBrush() const;
-    QPen framePen() const;
-    QPen gridPen() const;
-    QPen rubberPen() const;
-    QPen textPen() const;
+    QBrush brush(const DrawElement e) const;
+    QPen pen(const DrawElement e) const;
 
-    static QPen seriesPen(const QColor& color, const qreal width = 1.0);
-    static QPen yAxisPen(const QColor& color);
+    QPen seriesPen(const QColor& c, const qreal w) const;
+    QPen yAxisPen(const QColor& c) const;
 
     static bool isEmptyUnit(const QString& unit);
     static QString cleanUnit(const QString& unit);
 
     static QString titleString(const QString& name, const QString& unit);
 
-    static PlotTheme themeTextbook();
-    static PlotTheme themeOscilloscope();
-
   private:
-    int _colorIndex;
+    std::array<QColor,Num_DrawElements> _colors{};
+    size_type _seriesColorIndex{0};
+    std::vector<QColor> _seriesColors{};
   };
+
+  PlotTheme makeTextbookTheme();
+  PlotTheme makeOscilloscopeTheme();
 
 } // namespace plot
