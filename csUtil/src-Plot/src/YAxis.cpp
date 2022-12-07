@@ -136,10 +136,10 @@ namespace plot {
 
       _labels = AxisLabel::fromValues(values);
       break;
-    }
+    } // For Each Factor 'xN'
 
     qreal minWidth = 0;
-    for(const AxisLabel& label : _labels) {
+    for(const AxisLabel& label : qAsConst(_labels)) {
       const qreal width = metrics.width(label.text());
       if( width > minWidth ) {
         minWidth = width;

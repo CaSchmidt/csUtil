@@ -129,7 +129,7 @@ namespace plot {
       qreal width = metrics.averageCharWidth()*(numValues - 1);
 
       _labels = AxisLabel::fromValues(values);
-      for(const AxisLabel& label : _labels) {
+      for(const AxisLabel& label : qAsConst(_labels)) {
         width += metrics.width(label.text());
       }
 
@@ -139,7 +139,7 @@ namespace plot {
       }
 
       break;
-    }
+    } // For Each Factor 'xN'
 
     _labelsSize.setWidth(newSize.width());
     _labelsSize.setHeight(metrics.height());

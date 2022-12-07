@@ -98,10 +98,11 @@ namespace plot {
   {
     QString text = QString::number(value, fmt, prec);
 
-    const int hit = text.lastIndexOf(QLatin1Char('.'));
-    if( fmt == 'f'  &&  hit > 0 ) {
+    const int     hit = text.lastIndexOf(QLatin1Char('.'));
+    const bool is_fmt = fmt == 'f'  ||  fmt == 'F';
+    if( is_fmt  &&  hit > 0 ) {
       // for each trailing zero
-      for(int i = text.size()-1; i > hit; i--) {
+      for(int i = text.size() - 1; i > hit; i--) {
         if( text.endsWith(QLatin1Char('0')) ) {
           text.chop(1);
         } else {
@@ -109,7 +110,7 @@ namespace plot {
         }
       }
       // remove possible trailing dot
-      if( hit == text.size()-1 ) {
+      if( hit == text.size() - 1 ) {
         text.chop(1);
       }
     }
