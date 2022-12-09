@@ -31,6 +31,7 @@
 
 #include <limits>
 
+#include "cs/Core/Container.h"
 #include "cs/IO/File.h"
 
 namespace cs {
@@ -50,10 +51,8 @@ namespace cs {
     }
 
     Buffer buffer;
-    try {
-      buffer.resize(static_cast<Buffer::size_type>(numToRead), 0);
-    } catch(...) {
-      return Buffer();
+    if( !resize(buffer, numToRead, 0) ) {
+      return Buffer{};
     }
 
     if( read(buffer.data(), numToRead) != numToRead ) {
