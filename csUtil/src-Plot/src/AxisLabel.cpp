@@ -29,107 +29,136 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <array>
+#include <charconv>
+#include <string_view>
+
 #include "internal/AxisLabel.h"
 
+#include "cs/Core/Container.h"
 #include "cs/Math/Math.h"
 
 namespace plot {
 
-  ////// public //////////////////////////////////////////////////////////////
+  namespace impl_axislabel {
 
-  AxisLabel::AxisLabel(const qreal value,
-                       const int prec, const char fmt)
-    : _value(value)
-    , _text()
-  {
-    _text = format(value, prec, fmt);
-  }
-
-  AxisLabel::~AxisLabel()
-  {
-  }
-
-  qreal AxisLabel::value() const
-  {
-    return _value;
-  }
-
-  QString AxisLabel::text() const
-  {
-    return _text;
-  }
-
-  std::vector<double> AxisLabel::computeValues(const double min, const double max,
-                                               const double N, const double xN)
-  {
-    using m = cs::math<double>;
-
-    std::vector<double> result;
-
-    if( max <= min ) {
-      return result;
+    inline std::chars_format makeFormat(const AxisLabelFormat& alf)
+    {
+      const char fmt = std::get<0>(alf);
+      if(        fmt == 'f'  ||  fmt == 'F' ) {
+        return std::chars_format::fixed;
+      } else if( fmt == 'e'  ||  fmt == 'E' ) {
+        return std::chars_format::scientific;
+      }
+      return std::chars_format::general;
     }
 
-    const double rawSpan = max - min;
+    inline int makePrecision(const AxisLabelFormat& alf)
+    {
+      const int prec = std::get<1>(alf);
+      return std::max<int>(1, prec);
+    }
 
-    const double x10 = m::pow(10.0, m::floor(m::log10(rawSpan)));
+  } // namespace impl_axislabel
 
-    const double startStep = m::round(min/x10)*x10;
-    const double   endStep = m::round(max/x10)*x10;
-    const double  stepSpan = endStep - startStep;
+  AxisLabelValues computeLabelValues(const double min, const double max,
+                                     const std::size_t numIntervals)
+  {
+    using  size_type = typename AxisLabelValues::size_type;
+    using value_type = typename AxisLabelValues::value_type;
+    using          m = cs::math<value_type>;
 
-    const double step = stepSpan/N*xN;
+    // (0) Sanity Check //////////////////////////////////////////////////////
 
-    const double startLabel = m::ceil( min/step)*step;
-    const double   endLabel = m::floor(max/step)*step;
-    const double  labelSpan = endLabel - startLabel;
+    if( max <= min  ||  numIntervals < 1 ) {
+      return AxisLabelValues{};
+    }
 
-    const int num = (int)m::intgr(labelSpan/step) + 1;
-    result.resize(num, 0);
-    for(int i = 0; i < num; i++) {
-      result[i] = startLabel + (double)i*step;
+    // (1) Align Step Size to be Multiple of 10^x ////////////////////////////
+
+    const value_type rawSpan = max - min;
+
+    /*
+     * floor(log10(  0.009)) = -3
+     * floor(log10(  0.09 )) = -2
+     * floor(log10(  0.9  )) = -1
+     * floor(log10(  9    )) =  0
+     * floor(log10( 99    )) =  1
+     * floor(log10(999    )) =  2
+     */
+    const value_type x10 = m::pow(10.0, m::floor(m::log10(rawSpan)));
+
+    const value_type startStep = m::round(min/x10)*x10;
+    const value_type   endStep = m::round(max/x10)*x10;
+    const value_type  stepSpan = endStep - startStep;
+
+    // (2) Compute Step Size /////////////////////////////////////////////////
+
+    const value_type step = stepSpan/value_type(numIntervals);
+
+    // (3) Align Label Values with Step Size /////////////////////////////////
+
+    const value_type startLabel = m::ceil( min/step)*step;
+    const value_type   endLabel = m::floor(max/step)*step;
+    const value_type  labelSpan = endLabel - startLabel;
+
+    // (4) Generate Labels ///////////////////////////////////////////////////
+
+    AxisLabelValues result;
+    if( !cs::resize(result, size_type(m::intgr(labelSpan/step)) + 1) ) {
+      return AxisLabelValues{};
+    }
+    for(size_type i = 0; i < result.size(); i++) {
+      result[i] = startLabel + value_type(i)*step;
     }
 
     return result;
   }
 
-  QString AxisLabel::format(const qreal value,
-                            const int prec, const char fmt)
+  QString formatLabelValue(const double value, const AxisLabelFormat& alf)
   {
-    QString text = QString::number(value, fmt, prec);
+    const std::chars_format fmt = impl_axislabel::makeFormat(alf);
+    const int              prec = impl_axislabel::makePrecision(alf);
 
-    const int     hit = text.lastIndexOf(QLatin1Char('.'));
-    const bool is_fmt = fmt == 'f'  ||  fmt == 'F';
-    if( is_fmt  &&  hit > 0 ) {
-      // for each trailing zero
-      for(int i = text.size() - 1; i > hit; i--) {
-        if( text.endsWith(QLatin1Char('0')) ) {
-          text.chop(1);
+    std::array<char,128> buffer;
+    buffer.fill('\0');
+
+    if( const auto [ptr, ec] = std::to_chars(buffer.data(), buffer.data() + buffer.size(),
+                                             value, fmt, prec);
+        ec != std::errc{} ) {
+      return QString{};
+    }
+
+    const std::string_view view{buffer.data()};
+    const bool        hit_exp = view.find('e') != std::string_view::npos;
+    const std::size_t pos_dot = view.find('.');
+    if( !hit_exp  &&  pos_dot != std::string_view::npos ) {
+      std::size_t i;
+      for(i = view.size() - 1; i > pos_dot; i--) {
+        if( buffer[i] == '0' ) {
+          buffer[i] = '\0';
         } else {
           break;
         }
       }
-      // remove possible trailing dot
-      if( hit == text.size() - 1 ) {
-        text.chop(1);
+      if( i == pos_dot ) {
+        buffer[i] = '\0';
       }
     }
 
-    return text;
+    return QString::fromLatin1(buffer.data());
   }
 
-  QList<AxisLabel> AxisLabel::fromValues(const std::vector<double>& values,
-                                         const int prec, const char fmt)
+  AxisLabels formatLabelValues(const AxisLabelValues& values,
+                               const AxisLabelFormat& alf)
   {
-    AxisLabels result;
-
     if( values.empty() ) {
-      return result;
+      return AxisLabels{};
     }
 
-    result.reserve((int)values.size());
+    AxisLabels result;
     for(const double value : values) {
-      result.push_back(AxisLabel(value, prec, fmt));
+      result.emplace_back(formatLabelValue(value, alf), value);
     }
 
     return result;

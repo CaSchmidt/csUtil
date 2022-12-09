@@ -142,7 +142,8 @@ namespace plot {
 
       const AxisLabels xAxisLabels = xAxis->labels();
       for(const AxisLabel& label : xAxisLabels) {
-        const qreal x = std::floor(mapping.map(QPointF(label.value(), 0)).x());
+        const qreal value = std::get<1>(label);
+        const qreal     x = std::floor(mapping.map(QPointF(value, 0)).x());
         const QPointF begin(rect.left() + x + 0.5, rect.top() + 0.5);
         const QPointF end(begin + QPointF(0, rect.height() - 1));
         painter->drawLine(begin, end);
@@ -157,7 +158,8 @@ namespace plot {
 
       const AxisLabels yAxisLabels = yAxis->labels();
       for(const AxisLabel& label : yAxisLabels) {
-        const qreal y = std::floor(mapping.map(QPointF(0, label.value())).y());
+        const qreal value = std::get<1>(label);
+        const qreal     y = std::floor(mapping.map(QPointF(0, value)).y());
         const QPointF begin(rect.left() + 0.5, rect.top() + y + 0.5);
         const QPointF end(begin + QPointF(rect.width() - 1, 0));
         painter->drawLine(begin, end);

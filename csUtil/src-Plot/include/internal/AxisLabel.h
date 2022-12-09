@@ -31,41 +31,29 @@
 
 #pragma once
 
+#include <list>
+#include <tuple>
 #include <vector>
 
-#include <QtCore/QList>
 #include <QtCore/QString>
 
 namespace plot {
 
-  inline constexpr int AXISLABEL_PREC = 3;
-  inline constexpr char AXISLABEL_FMT = 'f';
+  using AxisLabel  = std::tuple<QString,double>;
+  using AxisLabels = std::list<AxisLabel>;
 
-  class AxisLabel {
-  public:
-    AxisLabel(const qreal value,
-              const int prec = AXISLABEL_PREC, const char fmt = AXISLABEL_FMT);
-    ~AxisLabel();
+  using AxisLabelFormat = std::tuple<char,int>;
 
-    qreal value() const;
-    QString text() const;
+  using AxisLabelValues = std::vector<double>;
 
-    // N == 10  ->  xN = { 1, 2, 2.5, 5 }
-    static std::vector<double> computeValues(const double min, const double max,
-                                             const double N, const double xN);
-    static QString format(const qreal value,
-                          const int prec = AXISLABEL_PREC, const char fmt = AXISLABEL_FMT);
+  inline constexpr AxisLabelFormat DEFAULT_LABELFORMAT{'f', 3};
 
-    static QList<AxisLabel> fromValues(const std::vector<double>& values,
-                                       const int prec = AXISLABEL_PREC, const char fmt = AXISLABEL_FMT);
+  AxisLabelValues computeLabelValues(const double min, const double max,
+                                     const std::size_t numIntervals);
 
-  private:
-    AxisLabel();
+  QString formatLabelValue(const double value, const AxisLabelFormat& alf);
 
-    qreal _value;
-    QString _text;
-  };
-
-  typedef QList<AxisLabel> AxisLabels;
+  AxisLabels formatLabelValues(const AxisLabelValues& values,
+                               const AxisLabelFormat& alf);
 
 } // namespace plot

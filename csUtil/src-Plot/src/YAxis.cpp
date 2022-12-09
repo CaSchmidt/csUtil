@@ -87,10 +87,12 @@ namespace plot {
     const qreal     yshift = metrics.ascent() - metrics.height()/2.0;
 
     for(const AxisLabel& label : _labels) {
+      const QString text = std::get<0>(label);
+      const qreal  value = std::get<1>(label);
       const QPointF p = _rect.topLeft() +
-          QPointF(_labelsSize.width() - metrics.width(label.text()), yshift) +
-          QPointF(0, xform.map(QPointF(0, label.value())).y());
-      painter->drawText(p, label.text());
+          QPointF(_labelsSize.width() - metrics.width(text), yshift) +
+          QPointF(0, xform.map(QPointF(0, value)).y());
+      painter->drawText(p, text);
     }
 
     painter->restore();
@@ -110,7 +112,7 @@ namespace plot {
 
   void YAxis::updateLabels(const QSizeF& newSize)
   {
-    if( newSize.height() == _labelsSize.height()  &&  !_labels.isEmpty() ) {
+    if( newSize.height() == _labelsSize.height()  &&  !_labels.empty() ) {
       return;
     }
 
@@ -121,10 +123,10 @@ namespace plot {
     _labelsSize.setWidth(0);
     _labelsSize.setHeight(0);
 
-    const std::vector<double> factors = { 1, 2, 2.5, 5 };
-    for(const double xN : factors) {
-      const std::vector<double> values =
-          AxisLabel::computeValues(rangeY.begin, rangeY.end, 10, xN);
+    const std::array<std::size_t,4> intervals{10, 5, 4, 2};
+    for(const std::size_t interval : intervals) {
+      const AxisLabelValues values =
+          computeLabelValues(rangeY.begin, rangeY.end, interval);
       if( values.empty() ) {
         continue;
       }
@@ -134,13 +136,14 @@ namespace plot {
         continue;
       }
 
-      _labels = AxisLabel::fromValues(values);
+      _labels = formatLabelValues(values, DEFAULT_LABELFORMAT);
       break;
     } // For Each Factor 'xN'
 
     qreal minWidth = 0;
     for(const AxisLabel& label : qAsConst(_labels)) {
-      const qreal width = metrics.width(label.text());
+      const QString text = std::get<0>(label);
+      const qreal width = metrics.width(text);
       if( width > minWidth ) {
         minWidth = width;
       }

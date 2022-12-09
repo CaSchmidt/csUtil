@@ -81,11 +81,13 @@ namespace plot {
     const qreal     yshift = metrics.ascent();
 
     for(const AxisLabel& label : _labels) {
-      const qreal xshift = -metrics.width(label.text())/2.0;
+      const QString text = std::get<0>(label);
+      const qreal  value = std::get<1>(label);
+      const qreal xshift = -metrics.width(text)/2.0;
       const QPointF p = _rect.topLeft() +
-          QPointF(xform.map(QPointF(label.value(), 0)).x() + xshift,
+          QPointF(xform.map(QPointF(value, 0)).x() + xshift,
                   yshift);
-      painter->drawText(p, label.text());
+      painter->drawText(p, text);
     }
 
     painter->restore();
@@ -105,7 +107,7 @@ namespace plot {
 
   void XAxis::updateLabels(const QSizeF& newSize)
   {
-    if( newSize.width() == _labelsSize.width()  &&  !_labels.isEmpty() ) {
+    if( newSize.width() == _labelsSize.width()  &&  !_labels.empty() ) {
       return;
     }
 
@@ -116,10 +118,10 @@ namespace plot {
     _labelsSize.setWidth(0);
     _labelsSize.setHeight(0);
 
-    const std::vector<double> factors = { 1, 2, 2.5, 5 };
-    for(const double xN : factors) {
-      const std::vector<double> values =
-          AxisLabel::computeValues(rangeX.begin, rangeX.end, 10, xN);
+    const std::array<std::size_t,4> intervals{10, 5, 4, 2};
+    for(const std::size_t interval : intervals) {
+      const AxisLabelValues values =
+          computeLabelValues(rangeX.begin, rangeX.end, interval);
       if( values.empty() ) {
         continue;
       }
@@ -128,9 +130,10 @@ namespace plot {
 
       qreal width = metrics.averageCharWidth()*(numValues - 1);
 
-      _labels = AxisLabel::fromValues(values);
-      for(const AxisLabel& label : qAsConst(_labels)) {
-        width += metrics.width(label.text());
+      _labels = formatLabelValues(values, DEFAULT_LABELFORMAT);
+      for(const AxisLabel& label : _labels) {
+        const QString text = std::get<0>(label);
+        width += metrics.width(text);
       }
 
       if( width > newSize.width() ) {
