@@ -207,4 +207,62 @@ namespace stringutil {
     REQUIRE( !cs::startsWith(STR_abc, STR_abcd) );
   }
 
+  TEST_CASE("Remove trailing zeros.", "[remove]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    String s;
+
+    s = "90";
+    cs::removeTrailingZeros(s);
+    REQUIRE( s == "90" );
+
+    s = "90.0e0";
+    cs::removeTrailingZeros(s);
+    REQUIRE( s == "90.0e0" );
+
+    s = "90.0E0";
+    cs::removeTrailingZeros(s);
+    REQUIRE( s == "90.0E0" );
+
+    s = "90.999";
+    cs::removeTrailingZeros(s);
+    REQUIRE( s == "90.999" );
+
+    s = "90.";
+    cs::removeTrailingZeros(s);
+    REQUIRE( s == "90" );
+
+    s = "90.0";
+    cs::removeTrailingZeros(s);
+    REQUIRE( s == "90" );
+
+    s = "90.000";
+    cs::removeTrailingZeros(s);
+    REQUIRE( s == "90" );
+
+    s = "90.009";
+    cs::removeTrailingZeros(s);
+    REQUIRE( s == "90.009" );
+
+    s = "90.90";
+    cs::removeTrailingZeros(s);
+    REQUIRE( s == "90.9" );
+
+    s = "90.900";
+    cs::removeTrailingZeros(s);
+    REQUIRE( s == "90.9" );
+
+    s = "90.";
+    cs::removeTrailingZeros(s, false);
+    REQUIRE( s == "90." );
+
+    s = "90.0";
+    cs::removeTrailingZeros(s, false);
+    REQUIRE( s == "90." );
+
+    s = "90.000";
+    cs::removeTrailingZeros(s, false);
+    REQUIRE( s == "90." );
+  }
+
 } // namespace stringutil
