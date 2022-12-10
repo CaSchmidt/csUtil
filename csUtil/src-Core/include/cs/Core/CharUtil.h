@@ -145,6 +145,14 @@ namespace cs {
   }
 
   template<typename T> requires IsCharacter<T>
+  constexpr auto lambda_is_ident()
+  {
+    return [](const T& c) -> bool {
+      return isIdent(c);
+    };
+  }
+
+  template<typename T> requires IsCharacter<T>
   constexpr auto lambda_is_space()
   {
     return [](const T& c) -> bool {
@@ -173,6 +181,22 @@ namespace cs {
   {
     return [](T& c) -> void {
       c = glyph<T>::null;
+    };
+  }
+
+  template<typename T> requires IsCharacter<T>
+  constexpr auto lambda_to_lower()
+  {
+    return [](T& c) -> void {
+      c = toLower(c);
+    };
+  }
+
+  template<typename T> requires IsCharacter<T>
+  constexpr auto lambda_to_upper()
+  {
+    return [](T& c) -> void {
+      c = toUpper(c);
     };
   }
 

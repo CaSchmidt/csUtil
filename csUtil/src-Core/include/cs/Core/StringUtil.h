@@ -247,13 +247,8 @@ namespace cs {
     if( !isIdentFirst(*first) ) {
       return false;
     }
-    for(++first; first != last; ++first) {
-      if( !isIdent(*first) ) {
-        return false;
-      }
-    }
 
-    return true;
+    return std::all_of(++first, last, lambda_is_ident<T>());
   }
 
   template<typename T> requires IsCharacter<T>
@@ -322,9 +317,7 @@ namespace cs {
   inline void removeAll(T *first, T *last, PredFunc func)
   {
     T *end = std::remove_if(first, last, func);
-    for(; end != last; ++end) {
-      *end = glyph<T>::null;
-    }
+    std::for_each(end, last, lambda_set_null<T>());
   }
 
   template<typename T, typename PredFunc> requires IsCharacter<T>
@@ -621,7 +614,7 @@ namespace cs {
       return;
     }
 
-    std::for_each(str, str + max, [](T& c) -> void { c = toLower(c); });
+    std::for_each(str, str + max, lambda_to_lower<T>());
   }
 
   template<typename T> requires IsCharacter<T>
@@ -642,7 +635,7 @@ namespace cs {
       return;
     }
 
-    std::for_each(str, str + max, [](T& c) -> void { c = toUpper(c); });
+    std::for_each(str, str + max, lambda_to_upper<T>());
   }
 
   template<typename T> requires IsCharacter<T>
