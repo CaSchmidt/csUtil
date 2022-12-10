@@ -32,6 +32,7 @@
 #pragma once
 
 #include <algorithm>
+#include <iterator>
 #include <list>
 #include <string>
 
@@ -325,6 +326,57 @@ namespace cs {
   {
     StringIter<T> end = std::remove_if(str->begin(), str->end(), func);
     str->erase(end, str->end());
+  }
+
+  ////// Remove Trailing Zeros from Fixed-Notation Floating-Point String /////
+
+  template<typename T> requires IsCharacter<T>
+  inline void removeTrailingZeros(T *first, T *last,
+                                  const bool removeDot = true)
+  {
+    using RevIter = std::reverse_iterator<T*>;
+
+    using g = glyph<T>;
+
+    // (0) Sanity Check //////////////////////////////////////////////////////
+
+    if( first == nullptr  ||  last <= first ) {
+      return;
+    }
+
+    // (1) Find '.' //////////////////////////////////////////////////////////
+
+    T *it_dot = std::find(first, last, g::dot);
+    if( it_dot == last ) { // Nothing to do!
+      return;
+    }
+
+    // (2) Do not touch exponent notation! ///////////////////////////////////
+
+    if( std::find(it_dot + 1, last, g::e) != last ) {
+      return;
+    }
+
+    if( std::find(it_dot + 1, last, g::E) != last ) {
+      return;
+    }
+
+    // (3) Remove Trailing Zeros /////////////////////////////////////////////
+
+    T *it_trailing = std::find_if_not(RevIter(last), RevIter(it_dot),
+                                      lambda_is_zero<T>()).base();
+    std::for_each(it_trailing, last, lambda_set_null<T>());
+
+    if( removeDot  &&  it_trailing == it_dot + 1 ) {
+      *it_dot = g::null;
+    }
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline void removeTrailingZeros(String<T>& str, const bool removeDot = true)
+  {
+    removeTrailingZeros(str.data(), str.data() + str.size(), removeDot);
+    str.resize(length(str.data()));
   }
 
   ////// Replace pattern in string... ////////////////////////////////////////
