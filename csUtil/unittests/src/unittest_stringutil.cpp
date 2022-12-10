@@ -56,6 +56,7 @@ namespace stringutil {
     REQUIRE(  cs::isIdent("AZ09_az") );
     REQUIRE( !cs::isIdent("09_azAZ") );
     REQUIRE( !cs::isIdent("_azAZ09-") );
+    REQUIRE( !cs::isIdent("_-azAZ09") );
 
     REQUIRE(  cs::isSpace(" \f\n\r\t\v") ); // C99
     REQUIRE( !cs::isSpace(" \f\n\r\t\v-") );
@@ -213,55 +214,55 @@ namespace stringutil {
     String s;
 
     s = "90";
-    cs::removeTrailingZeros(s);
+    cs::removeTrailingZeros(&s);
     REQUIRE( s == "90" );
 
     s = "90.0e0";
-    cs::removeTrailingZeros(s);
+    cs::removeTrailingZeros(&s);
     REQUIRE( s == "90.0e0" );
 
     s = "90.0E0";
-    cs::removeTrailingZeros(s);
+    cs::removeTrailingZeros(&s);
     REQUIRE( s == "90.0E0" );
 
     s = "90.999";
-    cs::removeTrailingZeros(s);
+    cs::removeTrailingZeros(&s);
     REQUIRE( s == "90.999" );
 
     s = "90.";
-    cs::removeTrailingZeros(s);
+    cs::removeTrailingZeros(&s);
     REQUIRE( s == "90" );
 
     s = "90.0";
-    cs::removeTrailingZeros(s);
+    cs::removeTrailingZeros(&s);
     REQUIRE( s == "90" );
 
     s = "90.000";
-    cs::removeTrailingZeros(s);
+    cs::removeTrailingZeros(&s);
     REQUIRE( s == "90" );
 
     s = "90.009";
-    cs::removeTrailingZeros(s);
+    cs::removeTrailingZeros(&s);
     REQUIRE( s == "90.009" );
 
     s = "90.90";
-    cs::removeTrailingZeros(s);
+    cs::removeTrailingZeros(&s);
     REQUIRE( s == "90.9" );
 
     s = "90.900";
-    cs::removeTrailingZeros(s);
+    cs::removeTrailingZeros(&s);
     REQUIRE( s == "90.9" );
 
     s = "90.";
-    cs::removeTrailingZeros(s, false);
+    cs::removeTrailingZeros(&s, false);
     REQUIRE( s == "90." );
 
     s = "90.0";
-    cs::removeTrailingZeros(s, false);
+    cs::removeTrailingZeros(&s, false);
     REQUIRE( s == "90." );
 
     s = "90.000";
-    cs::removeTrailingZeros(s, false);
+    cs::removeTrailingZeros(&s, false);
     REQUIRE( s == "90." );
   }
 
