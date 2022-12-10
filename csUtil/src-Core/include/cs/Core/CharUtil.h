@@ -52,13 +52,16 @@ namespace cs {
     static constexpr auto nine = static_cast<T>('9');
 
     static constexpr auto a = static_cast<T>('a');
+    static constexpr auto e = static_cast<T>('e');
     static constexpr auto f = static_cast<T>('f');
     static constexpr auto z = static_cast<T>('z');
 
     static constexpr auto A = static_cast<T>('A');
+    static constexpr auto E = static_cast<T>('E');
     static constexpr auto F = static_cast<T>('F');
     static constexpr auto Z = static_cast<T>('Z');
 
+    static constexpr auto   dot = static_cast<T>('.');
     static constexpr auto under = static_cast<T>('_');
   };
 
@@ -154,6 +157,22 @@ namespace cs {
   {
     return [](const T& c) -> bool {
       return !isSpace(c);
+    };
+  }
+
+  template<typename T> requires IsCharacter<T>
+  constexpr auto lambda_is_zero()
+  {
+    return [](const T& c) -> bool {
+      return c == glyph<T>::zero;
+    };
+  }
+
+  template<typename T> requires IsCharacter<T>
+  constexpr auto lambda_set_null()
+  {
+    return [](T& c) -> void {
+      c = glyph<T>::null;
     };
   }
 
