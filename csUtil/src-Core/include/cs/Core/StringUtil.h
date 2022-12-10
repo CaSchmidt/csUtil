@@ -96,6 +96,12 @@ namespace cs {
   }
 
   template<typename T> requires IsCharacter<T>
+  inline std::size_t lengthDiff(const String<T>& str)
+  {
+    return lengthDiff(str.data(), str.data() + str.size());
+  }
+
+  template<typename T> requires IsCharacter<T>
   inline std::size_t lengthN(const T *str, const std::size_t max) noexcept
   {
     return lengthDiff(str, str + max);
@@ -373,10 +379,10 @@ namespace cs {
   }
 
   template<typename T> requires IsCharacter<T>
-  inline void removeTrailingZeros(String<T>& str, const bool removeDot = true)
+  inline void removeTrailingZeros(String<T> *str, const bool removeDot = true)
   {
-    removeTrailingZeros(str.data(), str.data() + str.size(), removeDot);
-    str.resize(length(str.data()));
+    removeTrailingZeros(str->data(), str->data() + str->size(), removeDot);
+    str->resize(lengthDiff(*str));
   }
 
   ////// Replace pattern in string... ////////////////////////////////////////
@@ -444,7 +450,7 @@ namespace cs {
   template<typename T> requires IsCharacter<T>
   inline void shrink(String<T> *str)
   {
-    str->resize(lengthDiff(str->data(), str->data() + str->size()));
+    str->resize(lengthDiff(*str));
     str->shrink_to_fit();
   }
 
