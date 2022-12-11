@@ -34,6 +34,7 @@
 
 #include "internal/AxisLabel.h"
 
+#include "cs/Core/Constants.h"
 #include "cs/Core/Container.h"
 #include "cs/Core/StringUtil.h"
 #include "cs/Math/Math.h"
@@ -66,31 +67,28 @@ namespace plot {
   {
     using  size_type = typename AxisLabelValues::size_type;
     using value_type = typename AxisLabelValues::value_type;
+    using          k = cs::real_konst<value_type>;
     using          m = cs::math<value_type>;
 
     // (0) Sanity Check //////////////////////////////////////////////////////
 
-    if( max <= min  ||  numIntervals < 1 ) {
+    const value_type rawSpan = max - min;
+    if( rawSpan <= k::ZERO  ||  numIntervals < 1 ) {
       return AxisLabelValues{};
     }
 
-    // (1) Align Step Size to be Multiple of 10^x ////////////////////////////
-
-    const value_type rawSpan = max - min;
+    // (1) Compute span to be a multiple of 10^x /////////////////////////////
 
     /*
-     * floor(log10(  0.009)) = -3
-     * floor(log10(  0.09 )) = -2
-     * floor(log10(  0.9  )) = -1
-     * floor(log10(  9    )) =  0
-     * floor(log10( 99    )) =  1
-     * floor(log10(999    )) =  2
+     * floor(log10(  0.009)) = -3  ->  x10 =   0.001
+     * floor(log10(  0.09 )) = -2  ->  x10 =   0.01
+     * floor(log10(  0.9  )) = -1  ->  x10 =   0.1
+     * floor(log10(  9    )) =  0  ->  x10 =   1
+     * floor(log10( 99    )) =  1  ->  x10 =  10
+     * floor(log10(999    )) =  2  ->  x10 = 100
      */
-    const value_type x10 = m::pow(10.0, m::floor(m::log10(rawSpan)));
-
-    const value_type startStep = m::round(min/x10)*x10;
-    const value_type   endStep = m::round(max/x10)*x10;
-    const value_type  stepSpan = endStep - startStep;
+    const value_type      x10 = m::pow(10, m::floor(m::log10(rawSpan)));
+    const value_type stepSpan = m::round(rawSpan/x10)*x10;
 
     // (2) Compute Step Size /////////////////////////////////////////////////
 
@@ -101,6 +99,9 @@ namespace plot {
     const value_type startLabel = m::ceil( min/step)*step;
     const value_type   endLabel = m::floor(max/step)*step;
     const value_type  labelSpan = endLabel - startLabel;
+    if( labelSpan <= k::ZERO ) {
+      return AxisLabelValues{};
+    }
 
     // (4) Generate Labels ///////////////////////////////////////////////////
 
