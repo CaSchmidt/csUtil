@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include <array>
 #include <list>
 #include <vector>
 
@@ -44,6 +45,8 @@ namespace plot {
   using AxisLabels = std::list<AxisLabel>;
 
   using AxisLabelValues = std::vector<double>;
+
+  inline constexpr std::array<std::size_t,4> DEFAULT_LABELINTERVALS{10, 5, 4, 2};
 
   AxisLabelValues computeLabelValues(const double min, const double max,
                                      const std::size_t numIntervals);

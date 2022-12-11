@@ -118,8 +118,7 @@ namespace plot {
     _labelsSize.setWidth(0);
     _labelsSize.setHeight(0);
 
-    const std::array<std::size_t,4> intervals{10, 5, 4, 2};
-    for(const std::size_t interval : intervals) {
+    for(const std::size_t interval : DEFAULT_LABELINTERVALS) {
       const AxisLabelValues values =
           computeLabelValues(rangeX.begin, rangeX.end, interval);
       if( values.empty() ) {
