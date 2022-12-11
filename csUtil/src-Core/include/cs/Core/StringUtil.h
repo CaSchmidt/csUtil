@@ -91,20 +91,20 @@ namespace cs {
   inline std::size_t lengthDiff(const T *first, const T *last) noexcept
   {
     return first != nullptr  &&  first < last
-        ? static_cast<std::size_t>(std::find(first, last, glyph<T>::null) - first)
+        ? std::distance(first, std::find(first, last, glyph<T>::null))
         : 0;
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline std::size_t lengthDiff(const T *str, const std::size_t len) noexcept
+  {
+    return lengthDiff(str, str + len);
   }
 
   template<typename T> requires IsCharacter<T>
   inline std::size_t lengthDiff(const String<T>& str)
   {
-    return lengthDiff(str.data(), str.data() + str.size());
-  }
-
-  template<typename T> requires IsCharacter<T>
-  inline std::size_t lengthN(const T *str, const std::size_t max) noexcept
-  {
-    return lengthDiff(str, str + max);
+    return lengthDiff(str.data(), str.size());
   }
 
   ////// String ends with pattern... /////////////////////////////////////////
