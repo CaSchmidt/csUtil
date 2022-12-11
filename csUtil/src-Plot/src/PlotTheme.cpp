@@ -46,11 +46,35 @@ namespace plot {
 
   void PlotTheme::clear()
   {
+    _axisLabelFormat.fill(DEFAULT_AXISLABELFORMAT);
+
     _colors.fill(Qt::black);
     _colors[Background] = Qt::white;
 
     _seriesColorIndex = 0;
     _seriesColors.clear();
+  }
+
+  bool PlotTheme::setAxisLabelFormat(const AxisElement e, const PlotAxisLabelFormat& alf)
+  {
+    const size_type index = size_type(e);
+    if( index < 0  ||  index >= Num_AxisElements ) {
+      return false;
+    }
+
+    _axisLabelFormat[index] = alf;
+
+    return true;
+  }
+
+  PlotAxisLabelFormat PlotTheme::axisLabelFormat(const AxisElement e) const
+  {
+    const size_type index = size_type(e);
+    if( index < 0  ||  index >= Num_AxisElements ) {
+      return DEFAULT_AXISLABELFORMAT;
+    }
+
+    return _axisLabelFormat[index];
   }
 
   QColor PlotTheme::color(const DrawElement e) const

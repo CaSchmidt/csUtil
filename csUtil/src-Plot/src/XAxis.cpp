@@ -129,7 +129,7 @@ namespace plot {
 
       qreal width = metrics.averageCharWidth()*(numValues - 1);
 
-      _labels = formatLabelValues(values, DEFAULT_AXISLABELFORMAT);
+      _labels = formatLabelValues(values, labelFormat());
       for(const AxisLabel& label : _labels) {
         const QString text = std::get<0>(label);
         width += metrics.width(text);
@@ -145,6 +145,13 @@ namespace plot {
 
     _labelsSize.setWidth(newSize.width());
     _labelsSize.setHeight(metrics.height());
+  }
+
+  ////// private /////////////////////////////////////////////////////////////
+
+  PlotAxisLabelFormat XAxis::labelFormat() const
+  {
+    return _plot->theme().axisLabelFormat(PlotTheme::XAxis);
   }
 
 } // namespace plot

@@ -135,7 +135,7 @@ namespace plot {
         continue;
       }
 
-      _labels = formatLabelValues(values, DEFAULT_AXISLABELFORMAT);
+      _labels = formatLabelValues(values, labelFormat());
       break;
     } // For Each Factor 'xN'
 
@@ -150,6 +150,13 @@ namespace plot {
 
     _labelsSize.setWidth(minWidth);
     _labelsSize.setHeight(newSize.height());
+  }
+
+  ////// private /////////////////////////////////////////////////////////////
+
+  PlotAxisLabelFormat YAxis::labelFormat() const
+  {
+    return _row->plot()->theme().axisLabelFormat(PlotTheme::YAxis);
   }
 
 } // namespace plot

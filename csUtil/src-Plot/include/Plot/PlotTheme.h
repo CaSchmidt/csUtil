@@ -40,11 +40,19 @@
 
 #include <cs/Core/csutil_config.h>
 
+#include <Plot/PlotAxisLabelFormat.h>
+
 namespace plot {
 
   class CS_UTIL_EXPORT PlotTheme {
   public:
     using size_type = std::size_t;
+
+    enum AxisElement : size_type {
+      XAxis = 0,
+      YAxis,
+      Num_AxisElements
+    };
 
     enum DrawElement : size_type {
       Background = 0,
@@ -61,6 +69,9 @@ namespace plot {
 
     void clear();
 
+    bool setAxisLabelFormat(const AxisElement e, const PlotAxisLabelFormat& alf);
+    PlotAxisLabelFormat axisLabelFormat(const AxisElement e) const;
+
     QColor color(const DrawElement e) const;
     bool setColor(const DrawElement e, const QColor& c);
 
@@ -76,6 +87,7 @@ namespace plot {
     static QString titleString(const QString& name, const QString& unit);
 
   private:
+    std::array<PlotAxisLabelFormat,Num_AxisElements> _axisLabelFormat{};
     std::array<QColor,Num_DrawElements> _colors{};
     size_type _seriesColorIndex{0};
     std::vector<QColor> _seriesColors{};

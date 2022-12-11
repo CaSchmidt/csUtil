@@ -60,6 +60,8 @@ namespace plot {
     QSizeF _labelsSize;
     QRectF _rect;
     IPlotImplementation *_plot;
+
+    PlotAxisLabelFormat labelFormat() const;
   };
 
 } // namespace plot
