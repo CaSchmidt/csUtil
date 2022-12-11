@@ -76,7 +76,7 @@ namespace plot {
     painter->save();
 
     painter->setFont(plot->widget()->font());
-    painter->setPen(plot->theme().yAxisPen(series.color()));
+    painter->setPen(plot->theme()->yAxisPen(series.color()));
 
     const QTransform xform =
         QTransform(0, -1,

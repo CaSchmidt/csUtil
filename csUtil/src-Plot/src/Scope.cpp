@@ -75,14 +75,14 @@ namespace plot {
     const QTransform mapping = _row->mapScaleToScreen();
 
     Draw::gridX(painter,
-                plot->xAxis(), mapping, _rect, plot->theme().pen(PlotTheme::Grid));
+                plot->xAxis(), mapping, _rect, plot->theme()->pen(PlotTheme::Grid));
     Draw::gridY(painter,
-                _row->yAxis(), mapping, _rect, plot->theme().pen(PlotTheme::Grid));
+                _row->yAxis(), mapping, _rect, plot->theme()->pen(PlotTheme::Grid));
 
     // (2) Frame /////////////////////////////////////////////////////////////
 
     Draw::frame(painter,
-                _rect, plot->theme().pen(PlotTheme::Frame));
+                _rect, plot->theme()->pen(PlotTheme::Frame));
 
     // (3) Series (Excluding Active Series) //////////////////////////////////
 

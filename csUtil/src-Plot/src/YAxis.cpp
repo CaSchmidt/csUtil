@@ -80,7 +80,7 @@ namespace plot {
     painter->save();
 
     painter->setFont(plot->widget()->font());
-    painter->setPen(plot->theme().yAxisPen(_row->activeSeries().color()));
+    painter->setPen(plot->theme()->yAxisPen(_row->activeSeries().color()));
 
     const QFontMetricsF metrics(plot->widget()->font());
     const QTransform xform = _row->mapScaleToScreen();
@@ -156,7 +156,7 @@ namespace plot {
 
   PlotAxisLabelFormat YAxis::labelFormat() const
   {
-    return _row->plot()->theme().axisLabelFormat(PlotTheme::YAxis);
+    return _row->plot()->theme()->axisLabelFormat(PlotTheme::YAxis);
   }
 
 } // namespace plot

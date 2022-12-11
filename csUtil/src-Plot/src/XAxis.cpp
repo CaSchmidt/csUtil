@@ -74,7 +74,7 @@ namespace plot {
     painter->save();
 
     painter->setFont(_plot->widget()->font());
-    painter->setPen(_plot->theme().pen(PlotTheme::Text));
+    painter->setPen(_plot->theme()->pen(PlotTheme::Text));
 
     const QFontMetricsF metrics(_plot->widget()->font());
     const QTransform xform = _plot->mapViewToScreenX();
@@ -151,7 +151,7 @@ namespace plot {
 
   PlotAxisLabelFormat XAxis::labelFormat() const
   {
-    return _plot->theme().axisLabelFormat(PlotTheme::XAxis);
+    return _plot->theme()->axisLabelFormat(PlotTheme::XAxis);
   }
 
 } // namespace plot

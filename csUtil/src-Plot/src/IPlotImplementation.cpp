@@ -70,14 +70,9 @@ namespace plot {
     }
   }
 
-  PlotTheme& IPlotImplementation::theme()
+  const PlotTheme *IPlotImplementation::theme() const
   {
-    return _theme;
-  }
-
-  const PlotTheme& IPlotImplementation::theme() const
-  {
-    return _theme;
+    return &_theme;
   }
 
 } // namespace plot

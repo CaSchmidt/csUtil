@@ -246,7 +246,7 @@ namespace plot {
     if( !_zoomRect.isNull() ) {
       const QRectF r(_zoomRect);
 
-      painter.setPen(_impl->theme().pen(PlotTheme::RubberBand));
+      painter.setPen(_impl->theme()->pen(PlotTheme::RubberBand));
       if(        _panZoom == RectangularZoom ) {
         painter.drawRect(r.adjusted(0.5, 0.5, -0.5, -0.5));
       } else if( _panZoom == HorizontalZoom ) {
