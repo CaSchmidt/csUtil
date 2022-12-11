@@ -372,9 +372,19 @@ namespace cs {
   }
 
   template<typename T> requires IsCharacter<T>
+  inline void removeTrailingZeros(T *str, const std::size_t len = MAX_SIZE_T,
+                                  const bool removeDot = true)
+  {
+    const std::size_t max = len == MAX_SIZE_T
+        ? length(str)
+        : lengthDiff(str, len);
+    removeTrailingZeros(str, str + max, removeDot);
+  }
+
+  template<typename T> requires IsCharacter<T>
   inline void removeTrailingZeros(String<T> *str, const bool removeDot = true)
   {
-    removeTrailingZeros(str->data(), str->data() + str->size(), removeDot);
+    removeTrailingZeros(str->data(), str->size(), removeDot);
     str->resize(lengthDiff(*str));
   }
 
