@@ -31,11 +31,11 @@
 
 #include <array>
 #include <charconv>
-#include <string_view>
 
 #include "internal/AxisLabel.h"
 
 #include "cs/Core/Container.h"
+#include "cs/Core/StringUtil.h"
 #include "cs/Math/Math.h"
 
 namespace plot {
@@ -129,22 +129,7 @@ namespace plot {
       return QString{};
     }
 
-    const std::string_view view{buffer.data()};
-    const bool        hit_exp = view.find('e') != std::string_view::npos;
-    const std::size_t pos_dot = view.find('.');
-    if( !hit_exp  &&  pos_dot != std::string_view::npos ) {
-      std::size_t i;
-      for(i = view.size() - 1; i > pos_dot; i--) {
-        if( buffer[i] == '0' ) {
-          buffer[i] = '\0';
-        } else {
-          break;
-        }
-      }
-      if( i == pos_dot ) {
-        buffer[i] = '\0';
-      }
-    }
+    cs::removeTrailingZeros(buffer.data(), buffer.size());
 
     return QString::fromLatin1(buffer.data());
   }
