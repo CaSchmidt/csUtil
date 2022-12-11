@@ -43,7 +43,7 @@ namespace plot {
 
   namespace impl_axislabel {
 
-    inline std::chars_format makeFormat(const AxisLabelFormat& alf)
+    inline std::chars_format makeFormat(const PlotAxisLabelFormat& alf)
     {
       const char fmt = std::get<0>(alf);
       if(        fmt == 'f'  ||  fmt == 'F' ) {
@@ -54,7 +54,7 @@ namespace plot {
       return std::chars_format::general;
     }
 
-    inline int makePrecision(const AxisLabelFormat& alf)
+    inline int makePrecision(const PlotAxisLabelFormat& alf)
     {
       const int prec = std::get<1>(alf);
       return std::max<int>(1, prec);
@@ -116,7 +116,7 @@ namespace plot {
     return result;
   }
 
-  QString formatLabelValue(const double value, const AxisLabelFormat& alf)
+  QString formatLabelValue(const double value, const PlotAxisLabelFormat& alf)
   {
     const std::chars_format fmt = impl_axislabel::makeFormat(alf);
     const int              prec = impl_axislabel::makePrecision(alf);
@@ -138,7 +138,7 @@ namespace plot {
   }
 
   AxisLabels formatLabelValues(const AxisLabelValues& values,
-                               const AxisLabelFormat& alf)
+                               const PlotAxisLabelFormat& alf)
   {
     if( values.empty() ) {
       return AxisLabels{};

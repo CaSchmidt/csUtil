@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2017, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2022, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -31,26 +31,12 @@
 
 #pragma once
 
-#include <list>
-#include <vector>
-
-#include <QtCore/QString>
-
-#include <Plot/PlotAxisLabelFormat.h>
+#include <tuple>
 
 namespace plot {
 
-  using AxisLabel  = std::tuple<QString,double>;
-  using AxisLabels = std::list<AxisLabel>;
+  using PlotAxisLabelFormat = std::tuple<char,int>;
 
-  using AxisLabelValues = std::vector<double>;
-
-  AxisLabelValues computeLabelValues(const double min, const double max,
-                                     const std::size_t numIntervals);
-
-  QString formatLabelValue(const double value, const PlotAxisLabelFormat& alf);
-
-  AxisLabels formatLabelValues(const AxisLabelValues& values,
-                               const PlotAxisLabelFormat& alf);
+  inline constexpr PlotAxisLabelFormat DEFAULT_AXISLABELFORMAT{'f', 3};
 
 } // namespace plot

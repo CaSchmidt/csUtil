@@ -26,6 +26,7 @@ list(APPEND Plot_HEADERS
   include/Plot/Data/VectorData.h
   include/Plot/IPlotSeriesData.h
   include/Plot/Plot.h
+  include/Plot/PlotAxisLabelFormat.h
   include/Plot/PlotRange.h
   include/Plot/PlotSeriesHandle.h
   include/Plot/PlotTheme.h

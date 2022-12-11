@@ -130,7 +130,7 @@ namespace plot {
 
       qreal width = metrics.averageCharWidth()*(numValues - 1);
 
-      _labels = formatLabelValues(values, DEFAULT_LABELFORMAT);
+      _labels = formatLabelValues(values, DEFAULT_AXISLABELFORMAT);
       for(const AxisLabel& label : _labels) {
         const QString text = std::get<0>(label);
         width += metrics.width(text);

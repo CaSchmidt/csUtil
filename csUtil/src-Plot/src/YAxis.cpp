@@ -136,7 +136,7 @@ namespace plot {
         continue;
       }
 
-      _labels = formatLabelValues(values, DEFAULT_LABELFORMAT);
+      _labels = formatLabelValues(values, DEFAULT_AXISLABELFORMAT);
       break;
     } // For Each Factor 'xN'
 
