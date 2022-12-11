@@ -123,15 +123,17 @@ namespace plot {
     std::array<char,128> buffer;
     buffer.fill('\0');
 
-    if( const auto [ptr, ec] = std::to_chars(buffer.data(), buffer.data() + buffer.size(),
-                                             value, fmt, prec);
-        ec != std::errc{} ) {
+    const auto [last, ec] =
+        std::to_chars(buffer.data(), buffer.data() + buffer.size(), value, fmt, prec);
+    {}
+
+    if( ec != std::errc{} ) {
       return QString{};
     }
 
-    cs::removeTrailingZeros(buffer.data(), buffer.size());
+    cs::removeTrailingZeros(buffer.data(), const_cast<char*>(last));
 
-    return QString::fromLatin1(buffer.data());
+    return QString::fromLatin1(buffer.data(), std::distance(buffer.data(), last));
   }
 
   AxisLabels formatLabelValues(const AxisLabelValues& values,
