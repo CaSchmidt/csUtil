@@ -75,4 +75,10 @@ namespace plot {
     return &_theme;
   }
 
+  void IPlotImplementation::setTheme(const PlotTheme& t)
+  {
+    _theme = t;
+    replot();
+  }
+
 } // namespace plot

@@ -58,6 +58,7 @@ namespace plot {
     void setDrawFlag(const DrawFlag flag, const bool on);
 
     const PlotTheme *theme() const;
+    void setTheme(const PlotTheme& t);
 
     virtual void replot() = 0;
     virtual void reset() = 0;

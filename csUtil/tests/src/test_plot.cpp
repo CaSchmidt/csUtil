@@ -190,6 +190,15 @@ int main(int argc, char **argv)
   font.setPointSize(10);
   plot->setFont(font);
 
+  /*
+  {
+    PlotTheme t = plot->theme();
+    t.setAxisLabelFormat(PlotTheme::XAxis, {'e', 1});
+    t.setAxisLabelFormat(PlotTheme::YAxis, {'e', 1});
+    plot->setTheme(t);
+  }
+  */
+
   // plot->setDrawFlag(Marks);
   // plot->setDrawFlag(Steps);
 

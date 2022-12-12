@@ -101,6 +101,16 @@ namespace plot {
     updateMenuFlags();
   }
 
+  PlotTheme PlotWidget::theme() const
+  {
+    return *(_impl->theme());
+  }
+
+  void PlotWidget::setTheme(const PlotTheme& t)
+  {
+    _impl->setTheme(t);
+  }
+
   void PlotWidget::setTitleX(const QString& title)
   {
     _impl->setTitleX(title);

@@ -35,6 +35,7 @@
 
 #include <Plot/Plot.h>
 #include <Plot/PlotSeriesHandle.h>
+#include <Plot/PlotTheme.h>
 
 class QMenu;
 
@@ -54,6 +55,9 @@ namespace plot {
     DrawFlags drawFlags() const;
     void setDrawFlags(const DrawFlags flags);
     void setDrawFlag(const DrawFlag flag, const bool on = true);
+
+    PlotTheme theme() const;
+    void setTheme(const PlotTheme& t);
 
     void setTitleX(const QString& title);
 
