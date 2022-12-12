@@ -72,7 +72,7 @@ namespace plot {
     painter->save();
 
     painter->setFont(_plot->widget()->font());
-    painter->setPen(_plot->theme()->color(PlotTheme::Text));
+    painter->setPen(_plot->theme()->pen(PlotTheme::Text));
 
     painter->drawText(QPointF(_rect.center()) +
                       QPointF(-metrics.width(_title)/2.0,
