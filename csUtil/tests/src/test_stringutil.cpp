@@ -19,7 +19,7 @@ void trim(const std::string& s)
 
 void test_length(const std::array<char,4>& s, const char *name)
 {
-  printf("length %s = %llu\n", name, cs::lengthDiff(s.data(), s.size()));
+  printf("length %s = %llu\n", name, cs::lengthRange(s.data(), s.size()));
 }
 
 void test_length()

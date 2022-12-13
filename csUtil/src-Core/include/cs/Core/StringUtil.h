@@ -88,7 +88,7 @@ namespace cs {
   }
 
   template<typename T> requires IsCharacter<T>
-  inline std::size_t lengthDiff(const T *first, const T *last) noexcept
+  inline std::size_t lengthRange(const T *first, const T *last) noexcept
   {
     return first != nullptr  &&  first < last
         ? std::distance(first, std::find(first, last, glyph<T>::null))
@@ -96,15 +96,15 @@ namespace cs {
   }
 
   template<typename T> requires IsCharacter<T>
-  inline std::size_t lengthDiff(const T *str, const std::size_t len) noexcept
+  inline std::size_t lengthRange(const T *str, const std::size_t len) noexcept
   {
-    return lengthDiff(str, str + len);
+    return lengthRange(str, str + len);
   }
 
   template<typename T> requires IsCharacter<T>
-  inline std::size_t lengthDiff(const String<T>& str)
+  inline std::size_t lengthRange(const String<T>& str)
   {
-    return lengthDiff(str.data(), str.size());
+    return lengthRange(str.data(), str.size());
   }
 
   ////// String ends with pattern... /////////////////////////////////////////
@@ -375,7 +375,7 @@ namespace cs {
   {
     const std::size_t max = len == MAX_SIZE_T
         ? length(str)
-        : lengthDiff(str, len);
+        : lengthRange(str, len);
     removeTrailingZeros(str, str + max, removeDot);
   }
 
@@ -383,7 +383,7 @@ namespace cs {
   inline void removeTrailingZeros(String<T> *str, const bool removeDot = true)
   {
     removeTrailingZeros(str->data(), str->size(), removeDot);
-    str->resize(lengthDiff(*str));
+    str->resize(lengthRange(*str));
   }
 
   ////// Replace pattern in string... ////////////////////////////////////////
@@ -451,7 +451,7 @@ namespace cs {
   template<typename T> requires IsCharacter<T>
   inline void shrink(String<T> *str)
   {
-    str->resize(lengthDiff(*str));
+    str->resize(lengthRange(*str));
     str->shrink_to_fit();
   }
 
