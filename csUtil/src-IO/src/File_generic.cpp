@@ -51,7 +51,7 @@ namespace cs {
     }
 
     Buffer buffer;
-    if( !resize(buffer, numToRead, 0) ) {
+    if( !resize(&buffer, numToRead, 0) ) {
       return Buffer{};
     }
 

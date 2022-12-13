@@ -106,7 +106,7 @@ namespace plot {
     // (4) Generate Labels ///////////////////////////////////////////////////
 
     AxisLabelValues result;
-    if( !cs::resize(result, size_type(m::intgr(labelSpan/step)) + 1) ) {
+    if( !cs::resize(&result, size_type(m::intgr(labelSpan/step)) + 1) ) {
       return AxisLabelValues{};
     }
     for(size_type i = 0; i < result.size(); i++) {
