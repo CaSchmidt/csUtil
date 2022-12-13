@@ -293,17 +293,17 @@ namespace cs {
   template<typename T> requires IsCharacter<T>
   inline void removeAll(String<T> *str, const T *pat, const std::size_t lenpat = MAX_SIZE_T)
   {
-    const std::size_t sizpat = lenpat == MAX_SIZE_T
+    const std::size_t maxpat = lenpat == MAX_SIZE_T
         ? length(pat)
         : lenpat;
 
     if( str->size() < 1  ||  pat == nullptr  ||
-        sizpat < 1  ||  str->size() < sizpat ) {
+        maxpat < 1  ||  str->size() < maxpat ) {
       return;
     }
 
-    for(std::size_t pos = 0; (pos = str->find(pat, pos, sizpat)) != NPOS<T>; ) {
-      str->erase(pos, sizpat);
+    for(std::size_t pos = 0; (pos = str->find(pat, pos, maxpat)) != NPOS<T>; ) {
+      str->erase(pos, maxpat);
     }
   }
 
@@ -401,20 +401,20 @@ namespace cs {
                          const T *pat, const std::size_t lenpat,
                          const T *txt, const std::size_t lentxt = MAX_SIZE_T)
   {
-    const std::size_t sizpat = lenpat == MAX_SIZE_T
+    const std::size_t maxpat = lenpat == MAX_SIZE_T
         ? length(pat)
         : lenpat;
-    const std::size_t siztxt = lentxt == MAX_SIZE_T
+    const std::size_t maxtxt = lentxt == MAX_SIZE_T
         ? length(txt)
         : lentxt;
 
     if( str->size() < 1  ||  pat == nullptr  ||  txt == nullptr  ||
-        sizpat < 1  ||  siztxt < 1  ||  str->size() < sizpat ) {
+        maxpat < 1  ||  maxtxt < 1  ||  str->size() < maxpat ) {
       return;
     }
 
-    for(std::size_t pos = 0; (pos = str->find(pat, pos, sizpat)) != NPOS<T>; pos += siztxt) {
-      str->replace(pos, sizpat, txt, siztxt);
+    for(std::size_t pos = 0; (pos = str->find(pat, pos, maxpat)) != NPOS<T>; pos += maxtxt) {
+      str->replace(pos, maxpat, txt, maxtxt);
     }
   }
 
