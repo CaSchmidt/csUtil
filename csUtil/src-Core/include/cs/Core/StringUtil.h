@@ -492,7 +492,7 @@ namespace cs {
   namespace impl_str {
 
     template<typename T> requires IsCharacter<T>
-    inline void extract(StringList<T>& result, const String<T>& txt,
+    inline void extract(StringList<T> *result, const String<T>& txt,
                         const std::size_t first, const std::size_t last,
                         const bool skipEmpty, const bool doTrim)
     {
@@ -509,7 +509,7 @@ namespace cs {
         part = trimmed(part);
       }
 
-      result.push_back(std::move(part));
+      result->push_back(std::move(part));
     }
 
   } // namespace impl_str
@@ -532,9 +532,9 @@ namespace cs {
 
     std::size_t pos = 0;
     for(std::size_t hit; (hit = txt.find(del, pos, maxdel)) != NPOS<T>; pos = hit + maxdel) {
-      impl_str::extract(result, txt, pos, hit, skipEmpty, doTrim);
+      impl_str::extract(&result, txt, pos, hit, skipEmpty, doTrim);
     }
-    impl_str::extract(result, txt, pos, txt.size(), skipEmpty, doTrim);
+    impl_str::extract(&result, txt, pos, txt.size(), skipEmpty, doTrim);
 
     return result;
   }
