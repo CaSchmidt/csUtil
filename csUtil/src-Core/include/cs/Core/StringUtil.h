@@ -80,7 +80,7 @@ namespace cs {
   } // namespace impl_str
 
   template<typename T> requires IsCharacter<T>
-  constexpr std::size_t length(const T *str) noexcept
+  constexpr std::size_t length(const T *str)
   {
     return str == nullptr
         ? 0
@@ -88,7 +88,7 @@ namespace cs {
   }
 
   template<typename T> requires IsCharacter<T>
-  inline std::size_t lengthRange(const T *first, const T *last) noexcept
+  inline std::size_t lengthRange(const T *first, const T *last)
   {
     return first != nullptr  &&  first < last
         ? std::distance(first, std::find(first, last, glyph<T>::null))
@@ -96,7 +96,7 @@ namespace cs {
   }
 
   template<typename T> requires IsCharacter<T>
-  inline std::size_t lengthRange(const T *str, const std::size_t len) noexcept
+  inline std::size_t lengthRange(const T *str, const std::size_t len)
   {
     return lengthRange(str, str + len);
   }
@@ -120,7 +120,7 @@ namespace cs {
   template<typename T> requires IsCharacter<T>
   inline bool endsWith(const T *str, const std::size_t lenstr,
                        const T *pat, const std::size_t lenpat,
-                       const bool ignoreCase = false) noexcept
+                       const bool ignoreCase = false)
   {
     const std::size_t maxstr = lenstr == MAX_SIZE_T
         ? length(str)
@@ -167,7 +167,7 @@ namespace cs {
 
   template<typename T> requires IsCharacter<T>
   inline bool equalsN(const T *a, const T *b, const std::size_t len,
-                      const bool ignoreCase = false) noexcept
+                      const bool ignoreCase = false)
   {
     const std::size_t max = len == MAX_SIZE_T
         ? std::min(length(a), length(b))
@@ -494,7 +494,7 @@ namespace cs {
   }
 
   template<typename T> requires IsCharacter<T>
-  inline String<T> trimmed(String<T> str) noexcept
+  inline String<T> trimmed(String<T> str)
   {
     trim(str.data(), str.size());
     str.resize(lengthRange(str));
@@ -504,7 +504,7 @@ namespace cs {
   ////// Replace consecutive whitespace with single space... /////////////////
 
   template<typename T> requires IsCharacter<T>
-  inline String<T> simplified(String<T> str) noexcept
+  inline String<T> simplified(String<T> str)
   {
     constexpr auto lambda_adjacent_space = [](const T& a, const T& b) -> bool {
       return isSpace(a)  &&  isSpace(b);
@@ -597,7 +597,7 @@ namespace cs {
   template<typename T> requires IsCharacter<T>
   inline bool startsWith(const T *str, const std::size_t lenstr, // haystack
                          const T *pat, const std::size_t lenpat, // needle
-                         const bool ignoreCase = false) noexcept
+                         const bool ignoreCase = false)
   {
     const std::size_t maxstr = lenstr == MAX_SIZE_T
         ? length(str)
