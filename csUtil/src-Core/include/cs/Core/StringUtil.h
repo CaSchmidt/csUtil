@@ -107,6 +107,14 @@ namespace cs {
     return lengthRange(str.data(), str.size());
   }
 
+  template<typename T> requires IsCharacter<T>
+  inline std::size_t lengthMax(const T *str, const std::size_t len)
+  {
+    return len == MAX_SIZE_T
+        ? length(str)
+        : lengthRange(str, len);
+  }
+
   ////// String ends with pattern... /////////////////////////////////////////
 
   template<typename T> requires IsCharacter<T>
@@ -458,14 +466,38 @@ namespace cs {
   ////// Remove whitespace from begin & end... ///////////////////////////////
 
   template<typename T> requires IsCharacter<T>
+  inline void trim(T *first, T *last)
+  {
+    using RevIter = std::reverse_iterator<T*>;
+
+    if( first == nullptr  ||  last <= first ) {
+      return;
+    }
+
+    // trim left
+    T *leftlast = std::copy(std::find_if_not(first, last,
+                                             lambda_is_space<T>()),
+                            last,
+                            first);
+    // trim right
+    T *rightlast = std::find_if_not(RevIter{leftlast}, RevIter{first},
+                                    lambda_is_space<T>()).base();
+    // fill with NULL
+    std::for_each(rightlast, last, lambda_set_null<T>());
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline void trim(T *str, const std::size_t len = MAX_SIZE_T)
+  {
+    const std::size_t max = lengthMax(str, len);
+    trim(str, str + max);
+  }
+
+  template<typename T> requires IsCharacter<T>
   inline String<T> trimmed(String<T> str) noexcept
   {
-    // trim left
-    str.erase(str.begin(),
-              std::find_if(str.begin(), str.end(), lambda_is_not_space<T>()));
-    // trim right
-    str.erase(std::find_if(str.rbegin(), str.rend(), lambda_is_not_space<T>()).base(),
-              str.end());
+    trim(str.data(), str.size());
+    str.resize(lengthRange(str));
     return str;
   }
 

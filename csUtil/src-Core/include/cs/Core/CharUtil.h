@@ -161,14 +161,6 @@ namespace cs {
   }
 
   template<typename T> requires IsCharacter<T>
-  constexpr auto lambda_is_not_space()
-  {
-    return [](const T& c) -> bool {
-      return !isSpace(c);
-    };
-  }
-
-  template<typename T> requires IsCharacter<T>
   constexpr auto lambda_is_zero()
   {
     return [](const T& c) -> bool {
