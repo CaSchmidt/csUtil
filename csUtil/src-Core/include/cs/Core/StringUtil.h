@@ -271,9 +271,7 @@ namespace cs {
       return false;
     }
 
-    const auto numSpace = std::count_if(str, str + max, lambda_is_space<T>());
-
-    return static_cast<std::size_t>(numSpace) == max;
+    return std::all_of(str, str + max, lambda_is_space<T>());
   }
 
   template<typename T> requires IsCharacter<T>
@@ -481,7 +479,7 @@ namespace cs {
     };
 
     // (1) remove duplicate whitespace
-    auto last = std::unique(str.begin(), str.end(), lambda_adjacent_space);
+    ConstStringIter<T> last = std::unique(str.begin(), str.end(), lambda_adjacent_space);
     str.erase(last, str.end());
     // (2) replace single whitespace characters with space
     std::replace_if(str.begin(), str.end(), lambda_is_space<T>(), glyph<T>::space);
