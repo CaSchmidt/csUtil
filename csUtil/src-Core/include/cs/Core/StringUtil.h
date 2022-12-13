@@ -504,19 +504,39 @@ namespace cs {
   ////// Replace consecutive whitespace with single space... /////////////////
 
   template<typename T> requires IsCharacter<T>
-  inline String<T> simplified(String<T> str)
+  inline void simplify(T *first, T *last)
   {
     constexpr auto lambda_adjacent_space = [](const T& a, const T& b) -> bool {
       return isSpace(a)  &&  isSpace(b);
     };
 
+    if( first == nullptr  ||  last <= first ) {
+      return;
+    }
+
     // (1) remove duplicate whitespace
-    ConstStringIter<T> last = std::unique(str.begin(), str.end(), lambda_adjacent_space);
-    str.erase(last, str.end());
+    T *uend = std::unique(first, last, lambda_adjacent_space);
+    // (1.5) fill with NULL
+    std::for_each(uend, last, lambda_set_null<T>());
     // (2) replace single whitespace characters with space
-    std::replace_if(str.begin(), str.end(), lambda_is_space<T>(), glyph<T>::space);
-    // (3) return trimmed result
-    return trimmed(str);
+    std::replace_if(first, uend, lambda_is_space<T>(), glyph<T>::space);
+    // (3) trim result
+    trim(first, uend);
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline void simplify(T *str, const std::size_t len = MAX_SIZE_T)
+  {
+    const std::size_t max = lengthMax(str, len);
+    simplify(str, str + max);
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline String<T> simplified(String<T> str)
+  {
+    simplify(str.data(), str.size());
+    str.resize(lengthRange(str));
+    return str;
   }
 
   ////// Split string at delimiter... ////////////////////////////////////////
