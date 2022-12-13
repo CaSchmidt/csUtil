@@ -368,7 +368,7 @@ namespace cs {
 
     // (3) Remove Trailing Zeros /////////////////////////////////////////////
 
-    T *it_trailing = std::find_if_not(RevIter(last), RevIter(it_dot),
+    T *it_trailing = std::find_if_not(RevIter{last}, RevIter{it_dot},
                                       lambda_is_zero<T>()).base();
     std::for_each(it_trailing, last, lambda_set_null<T>());
 
