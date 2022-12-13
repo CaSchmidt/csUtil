@@ -475,15 +475,15 @@ namespace cs {
     }
 
     // trim left
-    T *leftlast = std::copy(std::find_if_not(first, last,
-                                             lambda_is_space<T>()),
-                            last,
-                            first);
+    T *lend = std::copy(std::find_if_not(first, last,
+                                         lambda_is_space<T>()),
+                        last,
+                        first);
     // trim right
-    T *rightlast = std::find_if_not(RevIter{leftlast}, RevIter{first},
-                                    lambda_is_space<T>()).base();
+    T *rend = std::find_if_not(RevIter{lend}, RevIter{first},
+                               lambda_is_space<T>()).base();
     // fill with NULL
-    std::for_each(rightlast, last, lambda_set_null<T>());
+    std::for_each(rend, last, lambda_set_null<T>());
   }
 
   template<typename T> requires IsCharacter<T>
