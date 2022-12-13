@@ -322,15 +322,24 @@ namespace cs {
   template<typename T, typename PredFunc> requires IsCharacter<T>
   inline void removeAll(T *first, T *last, PredFunc func)
   {
-    T *end = std::remove_if(first, last, func);
-    std::for_each(end, last, lambda_set_null<T>());
+    T *rend = std::remove_if(first, last, func);
+    std::for_each(rend, last, lambda_set_null<T>());
+  }
+
+  template<typename T, typename PredFunc> requires IsCharacter<T>
+  inline void removeAll(T *str, const std::size_t len, PredFunc func)
+  {
+    const std::size_t max = len == MAX_SIZE_T
+        ? length(str)
+        : len;
+    removeAll<T,PredFunc>(str, str + max, func);
   }
 
   template<typename T, typename PredFunc> requires IsCharacter<T>
   inline void removeAll(String<T> *str, PredFunc func)
   {
-    StringIter<T> end = std::remove_if(str->begin(), str->end(), func);
-    str->erase(end, str->end());
+    removeAll<T,PredFunc>(str->data(), str->size(), func);
+    str->resize(lengthRange(*str));
   }
 
   ////// Remove Trailing Zeros from Fixed-Notation Floating-Point String /////
