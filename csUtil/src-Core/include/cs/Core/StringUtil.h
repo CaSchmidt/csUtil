@@ -661,19 +661,19 @@ namespace cs {
     return str;
   }
 
-  ////// Split string at delimiter... ////////////////////////////////////////
+  ////// Split string at pattern... //////////////////////////////////////////
 
   namespace impl_str {
 
     template<typename T> requires IsCharacter<T>
-    inline void extract(StringList<T> *result, const String<T>& txt,
-                        const std::size_t first, const std::size_t last,
+    inline void extract(StringList<T> *result,
+                        const T *first, const T *last,
                         const bool skipEmpty, const bool doTrim)
     {
-      const std::size_t len = last - first;
+      const std::size_t len = distance(first, last);
       String<T> part = len > 0
-          ? txt.substr(first, len)
-          : String<T>();
+          ? String<T>{first, len}
+          : String<T>{};
 
       if( skipEmpty  &&  part.empty() ) {
         return;
@@ -689,49 +689,73 @@ namespace cs {
   } // namespace impl_str
 
   template<typename T> requires IsCharacter<T>
-  inline StringList<T> split(const String<T>& txt,
-                             const T *del, const std::size_t lendel,
+  inline StringList<T> split(const T *first, const T *last,
+                             const T *pat, const std::size_t lenpat = MAX_SIZE_T,
                              const bool skipEmpty = false, const bool doTrim = false)
   {
-    const std::size_t maxdel = lendel == MAX_SIZE_T
-        ? length(del)
-        : lendel;
+    const std::size_t maxpat = lenpat == MAX_SIZE_T
+        ? length(pat)
+        : lenpat;
 
-    if( txt.size() < 1  ||  del == nullptr  ||
-        maxdel < 1  ||  txt.size() < maxdel ) {
-      return StringList<T>();
+    if( first == nullptr  ||  last <= first  ||  pat == nullptr  ||
+        maxpat < 1  ||  distance(first, last) < maxpat ) {
+      return StringList<T>{};
     }
 
     StringList<T> result;
 
-    std::size_t pos = 0;
-    for(std::size_t hit; (hit = txt.find(del, pos, maxdel)) != NPOS<T>; pos = hit + maxdel) {
-      impl_str::extract(&result, txt, pos, hit, skipEmpty, doTrim);
+    const T *from = first;
+    for(const T *hit;
+        (hit = std::search(from, last, pat, pat + maxpat)) != last;
+        from = hit + maxpat) {
+      impl_str::extract(&result, from, hit, skipEmpty, doTrim);
     }
-    impl_str::extract(&result, txt, pos, txt.size(), skipEmpty, doTrim);
+    impl_str::extract(&result, from, last, skipEmpty, doTrim);
 
     return result;
   }
 
   template<typename T> requires IsCharacter<T>
-  inline StringList<T> split(const String<T>& txt, const T *del,
+  inline StringList<T> split(const T *str, const std::size_t lenstr,
+                             const T *pat, const std::size_t lenpat,
                              const bool skipEmpty = false, const bool doTrim = false)
   {
-    return split(txt, del, MAX_SIZE_T, skipEmpty, doTrim);
+    const std::size_t maxstr = lenstr == MAX_SIZE_T
+        ? length(str)
+        : lenstr;
+    return split(str, str + maxstr, pat, lenpat, skipEmpty, doTrim);
   }
 
   template<typename T> requires IsCharacter<T>
-  inline StringList<T> split(const String<T>& txt, const String<T>& del,
+  inline StringList<T> split(const T *str,
+                             const T *pat,
                              const bool skipEmpty = false, const bool doTrim = false)
   {
-    return split(txt, del.data(), del.size(), skipEmpty, doTrim);
+    return split(str, MAX_SIZE_T, pat, MAX_SIZE_T, skipEmpty, doTrim);
   }
 
   template<typename T> requires IsCharacter<T>
-  inline StringList<T> split(const String<T>& txt, const T& del,
+  inline StringList<T> split(const String<T>& str,
+                             const T *pat,
                              const bool skipEmpty = false, const bool doTrim = false)
   {
-    return split(txt, &del, 1, skipEmpty, doTrim);
+    return split(str.data(), str.size(), pat, MAX_SIZE_T, skipEmpty, doTrim);
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline StringList<T> split(const T *str,
+                             const T& pat,
+                             const bool skipEmpty = false, const bool doTrim = false)
+  {
+    return split(str, MAX_SIZE_T, &pat, 1, skipEmpty, doTrim);
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline StringList<T> split(const String<T>& str,
+                             const T& pat,
+                             const bool skipEmpty = false, const bool doTrim = false)
+  {
+    return split(str.data(), str.size(), &pat, 1, skipEmpty, doTrim);
   }
 
   ////// String starts with pattern... ///////////////////////////////////////
