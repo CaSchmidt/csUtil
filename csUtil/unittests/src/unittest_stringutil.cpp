@@ -51,6 +51,9 @@ namespace stringutil {
   TEST_CASE("Classify string's contents.", "[classify]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
+    REQUIRE(  cs::isIdent("_") );
+    REQUIRE( !cs::isIdent("0") );
+
     REQUIRE(  cs::isIdent("_azAZ09") );
     REQUIRE(  cs::isIdent("azAZ09_") );
     REQUIRE(  cs::isIdent("AZ09_az") );
