@@ -310,7 +310,7 @@ namespace cs {
         ? length(pat)
         : lenpat;
 
-    if( first == nullptr  ||  last <= first  ||
+    if( first == nullptr  ||  last <= first  ||  pat == nullptr  ||
         maxpat < 1  ||  distance(first, last) < maxpat ) {
       return;
     }
