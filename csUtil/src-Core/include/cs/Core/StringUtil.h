@@ -115,6 +115,14 @@ namespace cs {
         : lengthRange(str, len);
   }
 
+  template<typename T> requires IsCharacter<T>
+  constexpr std::size_t distance(const T *first, const T *last)
+  {
+    return first != nullptr  &&  first < last
+        ? std::distance(first, last)
+        : 0;
+  }
+
   ////// String ends with pattern... /////////////////////////////////////////
 
   template<typename T> requires IsCharacter<T>
@@ -291,20 +299,30 @@ namespace cs {
   ////// Remove pattern from string... ///////////////////////////////////////
 
   template<typename T> requires IsCharacter<T>
-  inline void removeAll(String<T> *str, const T *pat, const std::size_t lenpat = MAX_SIZE_T)
+  inline void removeAll(T *first, T* last,
+                        const T *pat, const std::size_t lenpat = MAX_SIZE_T)
   {
     const std::size_t maxpat = lenpat == MAX_SIZE_T
         ? length(pat)
         : lenpat;
 
-    if( str->size() < 1  ||  pat == nullptr  ||
-        maxpat < 1  ||  str->size() < maxpat ) {
+    if( first == nullptr  ||  last <= first  ||
+        maxpat < 1  ||  distance(first, last) < maxpat ) {
       return;
     }
 
-    for(std::size_t pos = 0; (pos = str->find(pat, pos, maxpat)) != NPOS<T>; ) {
-      str->erase(pos, maxpat);
+    T *end = last;
+    for(T *hit = first; (hit = std::search(hit, end, pat, pat + maxpat)) != end; ) {
+      end = std::copy(hit + maxpat, end, hit);
     }
+    std::for_each(end, last, lambda_set_null<T>());
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline void removeAll(String<T> *str, const T *pat, const std::size_t lenpat = MAX_SIZE_T)
+  {
+    removeAll<T>(str->data(), str->data() + str->size(), pat, lenpat);
+    str->resize(lengthRange(*str));
   }
 
   template<typename T> requires IsCharacter<T>
@@ -313,17 +331,21 @@ namespace cs {
     removeAll<T>(str, pat.data(), pat.size());
   }
 
+  ////// Remove character from string... /////////////////////////////////////
+
   template<typename T> requires IsCharacter<T>
   inline void removeAll(String<T> *str, const T& pat)
   {
     removeAll<T>(str, &pat, 1);
   }
 
+  ////// Remove character matching predicate from string... //////////////////
+
   template<typename T, typename PredFunc> requires IsCharacter<T>
   inline void removeAll(T *first, T *last, PredFunc func)
   {
-    T *rend = std::remove_if(first, last, func);
-    std::for_each(rend, last, lambda_set_null<T>());
+    T *end = std::remove_if(first, last, func);
+    std::for_each(end, last, lambda_set_null<T>());
   }
 
   template<typename T, typename PredFunc> requires IsCharacter<T>
