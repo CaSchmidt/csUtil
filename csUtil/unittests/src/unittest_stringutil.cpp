@@ -10,9 +10,8 @@
 
 namespace stringutil {
 
-  using      String         = cs::String<char>;
-  using      StringList     = cs::StringList<char>;
-  using ConstStringListIter = cs::ConstStringListIter<char>;
+  using String     = cs::String<char>;
+  using StringList = cs::StringList<char>;
 
   const char *STR_abcd = "abcd";
   const char *STR_abc  = "abc";
@@ -157,22 +156,29 @@ namespace stringutil {
     const char *STR_split = "/abc//ABC/";
 
     {
+      const StringList result = cs::split(STR_split, 'x');
+
+      REQUIRE(  result.size() == 1 );
+      REQUIRE( *std::next(result.begin(), 0) == STR_split );
+    }
+
+    {
       const StringList result = cs::split(String(STR_split), '/');
 
       REQUIRE(  result.size() == 5 );
-      REQUIRE(  std::next(result.cbegin(), 0)->empty() );
-      REQUIRE( *std::next(result.cbegin(), 1) == STR_abc );
-      REQUIRE(  std::next(result.cbegin(), 2)->empty() );
-      REQUIRE( *std::next(result.cbegin(), 3) == STR_ABC );
-      REQUIRE(  std::next(result.cbegin(), 4)->empty() );
+      REQUIRE(  std::next(result.begin(), 0)->empty() );
+      REQUIRE( *std::next(result.begin(), 1) == STR_abc );
+      REQUIRE(  std::next(result.begin(), 2)->empty() );
+      REQUIRE( *std::next(result.begin(), 3) == STR_ABC );
+      REQUIRE(  std::next(result.begin(), 4)->empty() );
     }
 
     {
       const StringList result = cs::split(String(STR_split), '/', true);
 
       REQUIRE(  result.size() == 2 );
-      REQUIRE( *std::next(result.cbegin(), 0) == STR_abc );
-      REQUIRE( *std::next(result.cbegin(), 1) == STR_ABC );
+      REQUIRE( *std::next(result.begin(), 0) == STR_abc );
+      REQUIRE( *std::next(result.begin(), 1) == STR_ABC );
     }
 
     const char *STR_split2 = "..abc....ABC..";
@@ -181,19 +187,19 @@ namespace stringutil {
       const StringList result = cs::split(String(STR_split2), "..");
 
       REQUIRE(  result.size() == 5 );
-      REQUIRE(  std::next(result.cbegin(), 0)->empty() );
-      REQUIRE( *std::next(result.cbegin(), 1) == STR_abc );
-      REQUIRE(  std::next(result.cbegin(), 2)->empty() );
-      REQUIRE( *std::next(result.cbegin(), 3) == STR_ABC );
-      REQUIRE(  std::next(result.cbegin(), 4)->empty() );
+      REQUIRE(  std::next(result.begin(), 0)->empty() );
+      REQUIRE( *std::next(result.begin(), 1) == STR_abc );
+      REQUIRE(  std::next(result.begin(), 2)->empty() );
+      REQUIRE( *std::next(result.begin(), 3) == STR_ABC );
+      REQUIRE(  std::next(result.begin(), 4)->empty() );
     }
 
     {
       const StringList result = cs::split(String(STR_split2), "..", true);
 
       REQUIRE(  result.size() == 2 );
-      REQUIRE( *std::next(result.cbegin(), 0) == STR_abc );
-      REQUIRE( *std::next(result.cbegin(), 1) == STR_ABC );
+      REQUIRE( *std::next(result.begin(), 0) == STR_abc );
+      REQUIRE( *std::next(result.begin(), 1) == STR_ABC );
     }
   }
 
