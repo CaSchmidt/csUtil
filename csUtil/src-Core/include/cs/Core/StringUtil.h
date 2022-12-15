@@ -742,12 +742,47 @@ namespace cs {
     return split(str.data(), str.size(), pat, MAX_SIZE_T, skipEmpty, doTrim);
   }
 
+  ////// Split string at character... ////////////////////////////////////////
+
+  template<typename T> requires IsCharacter<T>
+  inline StringList<T> split(const T *first, const T *last,
+                             const T& pat,
+                             const bool skipEmpty = false, const bool doTrim = false)
+  {
+    if( first == nullptr  ||  last <= first ) {
+      return StringList<T>{};
+    }
+
+    StringList<T> result;
+
+    const T *from = first;
+    for(const T *hit;
+        (hit = std::find(from, last, pat)) != last;
+        from = hit + 1) {
+      impl_str::extract(&result, from, hit, skipEmpty, doTrim);
+    }
+    impl_str::extract(&result, from, last, skipEmpty, doTrim);
+
+    return result;
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline StringList<T> split(const T *str, const std::size_t len,
+                             const T& pat,
+                             const bool skipEmpty = false, const bool doTrim = false)
+  {
+    const std::size_t max = len == MAX_SIZE_T
+        ? length(str)
+        : len;
+    return split(str, str + max, pat, skipEmpty, doTrim);
+  }
+
   template<typename T> requires IsCharacter<T>
   inline StringList<T> split(const T *str,
                              const T& pat,
                              const bool skipEmpty = false, const bool doTrim = false)
   {
-    return split(str, MAX_SIZE_T, &pat, 1, skipEmpty, doTrim);
+    return split(str, MAX_SIZE_T, pat, skipEmpty, doTrim);
   }
 
   template<typename T> requires IsCharacter<T>
@@ -755,7 +790,7 @@ namespace cs {
                              const T& pat,
                              const bool skipEmpty = false, const bool doTrim = false)
   {
-    return split(str.data(), str.size(), &pat, 1, skipEmpty, doTrim);
+    return split(str.data(), str.size(), pat, skipEmpty, doTrim);
   }
 
   ////// String starts with pattern... ///////////////////////////////////////
