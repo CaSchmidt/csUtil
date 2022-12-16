@@ -7,6 +7,7 @@ list(APPEND csCore_HEADERS
   include/cs/Core/CRC.h
   include/cs/Core/Endian.h
   include/cs/Core/Flags.h
+  include/cs/Core/Meta.h
   include/cs/Core/Pointer.h
   include/cs/Core/StringUtil.h
   include/cs/Core/TypeTraits.h
