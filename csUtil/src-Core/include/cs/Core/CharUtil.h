@@ -62,6 +62,7 @@ namespace cs {
     static constexpr auto Z = static_cast<T>('Z');
 
     static constexpr auto   dot = static_cast<T>('.');
+    static constexpr auto   pct = static_cast<T>('%');
     static constexpr auto under = static_cast<T>('_');
   };
 
