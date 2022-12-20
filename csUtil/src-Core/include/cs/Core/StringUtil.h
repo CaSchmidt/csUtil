@@ -65,7 +65,8 @@ namespace cs {
 
   ////// Length Functions ////////////////////////////////////////////////////
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T>
+  requires IsCharacter<T>
   inline std::size_t lengthRange(const String<T>& str)
   {
     return lengthRange(str.data(), str.size());
@@ -73,20 +74,17 @@ namespace cs {
 
   ////// String ends with pattern... /////////////////////////////////////////
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T>
+  requires IsCharacter<T>
   inline bool endsWith(const T *str, const std::size_t lenstr,
                        const T *pat, const std::size_t lenpat,
                        const bool ignoreCase = false)
   {
-    const std::size_t maxstr = lenstr == MAX_SIZE_T
-        ? length(str)
-        : lenstr;
-    const std::size_t maxpat = lenpat == MAX_SIZE_T
-        ? length(pat)
-        : lenpat;
+    const std::size_t maxstr = length(str, lenstr);
+    const std::size_t maxpat = length(pat, lenpat);
 
-    if( str == nullptr  ||  pat == nullptr  ||
-        maxstr < 1  ||  maxpat < 1  ||  maxstr < maxpat ) {
+    if( !isValid(str, maxstr)  ||  !isValid(pat, maxpat)  ||
+        maxstr < maxpat ) {
       return false;
     }
 
@@ -121,7 +119,8 @@ namespace cs {
 
   ////// Strings are equal in the first N characters... //////////////////////
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T>
+  requires IsCharacter<T>
   inline bool equalsN(const T *a, const T *b, const std::size_t len,
                       const bool ignoreCase = false)
   {
@@ -147,20 +146,17 @@ namespace cs {
 
   ////// Strings are equal... ////////////////////////////////////////////////
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T>
+  requires IsCharacter<T>
   inline bool equals(const T *a, const std::size_t lena,
                      const T *b, const std::size_t lenb,
                      const bool ignoreCase = false)
   {
-    const std::size_t maxa = lena == MAX_SIZE_T
-        ? length(a)
-        : lena;
-    const std::size_t maxb = lenb == MAX_SIZE_T
-        ? length(b)
-        : lenb;
+    const std::size_t maxa = length(a, lena);
+    const std::size_t maxb = length(b, lenb);
 
-    if( a == nullptr  ||  b == nullptr  ||
-        maxa < 1  ||  maxb < 1  ||  maxa != maxb ) {
+    if( !isValid(a, maxa)  ||  !isValid(b, maxb)  ||
+        maxa != maxb ) {
       return false;
     }
 
@@ -195,10 +191,11 @@ namespace cs {
 
   ////// String is C-style identifier... /////////////////////////////////////
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T>
+  requires IsCharacter<T>
   inline bool isIdent(const T *first, const T *last)
   {
-    if( first == nullptr  ||  last <= first ) {
+    if( !isValid(first, last) ) {
       return false;
     }
 
@@ -209,9 +206,7 @@ namespace cs {
   template<typename T> requires IsCharacter<T>
   inline bool isIdent(const T *str, const std::size_t len = MAX_SIZE_T)
   {
-    const std::size_t max = len == MAX_SIZE_T
-        ? length(str)
-        : len;
+    const std::size_t max = length(str, len);
     return isIdent(str, str + max);
   }
 
@@ -223,10 +218,11 @@ namespace cs {
 
   ////// String contains only whitespace... //////////////////////////////////
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T>
+  requires IsCharacter<T>
   inline bool isSpace(const T *first, const T *last)
   {
-    if( first == nullptr  ||  last <= first ) {
+    if( !isValid(first, last) ) {
       return false;
     }
 
@@ -236,9 +232,7 @@ namespace cs {
   template<typename T> requires IsCharacter<T>
   inline bool isSpace(const T *str, const std::size_t len = MAX_SIZE_T)
   {
-    const std::size_t max = len == MAX_SIZE_T
-        ? length(str)
-        : len;
+    const std::size_t max = length(str, len);
     return isSpace(str, str + max);
   }
 
@@ -250,16 +244,15 @@ namespace cs {
 
   ////// Remove pattern from string... ///////////////////////////////////////
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T>
+  requires IsCharacter<T>
   inline void removeAll(T *first, T* last,
                         const T *pat, const std::size_t lenpat = MAX_SIZE_T)
   {
-    const std::size_t maxpat = lenpat == MAX_SIZE_T
-        ? length(pat)
-        : lenpat;
+    const std::size_t maxpat = length(pat, lenpat);
 
-    if( first == nullptr  ||  last <= first  ||  pat == nullptr  ||
-        maxpat < 1  ||  distance(first, last) < maxpat ) {
+    if( !isValid(first, last)  ||  !isValid(pat, maxpat)  ||
+        distance(first, last) < maxpat ) {
       return;
     }
 
@@ -274,9 +267,7 @@ namespace cs {
   inline void removeAll(T *str, const std::size_t lenstr,
                         const T *pat, const std::size_t lenpat = MAX_SIZE_T)
   {
-    const std::size_t maxstr = lenstr == MAX_SIZE_T
-        ? length(str)
-        : lenstr;
+    const std::size_t maxstr = length(str, lenstr);
     removeAll(str, str + maxstr, pat, lenpat);
   }
 
@@ -318,10 +309,11 @@ namespace cs {
 
   ////// Remove character from string... /////////////////////////////////////
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T>
+  requires IsCharacter<T>
   inline void removeAll(T *first, T *last, const T& pat)
   {
-    if( first == nullptr  ||  last <= first ) {
+    if( !isValid(first, last) ) {
       return;
     }
 
@@ -332,9 +324,7 @@ namespace cs {
   template<typename T> requires IsCharacter<T>
   inline void removeAll(T *str, const std::size_t len, const T& pat)
   {
-    const std::size_t max = len == MAX_SIZE_T
-        ? length(str)
-        : len;
+    const std::size_t max = length(str, len);
     removeAll(str, str + max, pat);
   }
 
@@ -353,10 +343,11 @@ namespace cs {
 
   ////// Remove character matching predicate from string... //////////////////
 
-  template<typename T, typename PredFunc> requires IsCharacter<T>
+  template<typename T, typename PredFunc>
+  requires IsCharacter<T>
   inline void removeAll(T *first, T *last, PredFunc func)
   {
-    if( first == nullptr  ||  last <= first ) {
+    if( !isValid(first, last) ) {
       return;
     }
 
@@ -367,9 +358,7 @@ namespace cs {
   template<typename T, typename PredFunc> requires IsCharacter<T>
   inline void removeAll(T *str, const std::size_t len, PredFunc func)
   {
-    const std::size_t max = len == MAX_SIZE_T
-        ? length(str)
-        : len;
+    const std::size_t max = length(str, len);
     removeAll<T,PredFunc>(str, str + max, func);
   }
 
@@ -388,7 +377,8 @@ namespace cs {
 
   ////// Remove Trailing Zeros from Fixed-Notation Floating-Point String /////
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T>
+  requires IsCharacter<T>
   inline void removeTrailingZeros(T *first, T *last,
                                   const bool removeDot = true)
   {
@@ -398,7 +388,7 @@ namespace cs {
 
     // (0) Sanity Check //////////////////////////////////////////////////////
 
-    if( first == nullptr  ||  last <= first ) {
+    if( !isValid(first, last) ) {
       return;
     }
 
@@ -454,20 +444,17 @@ namespace cs {
 
   ////// Replace pattern in string... ////////////////////////////////////////
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T>
+  requires IsCharacter<T>
   inline void replaceAll(String<T> *str,
                          const T *pat, const std::size_t lenpat,
                          const T *txt, const std::size_t lentxt = MAX_SIZE_T)
   {
-    const std::size_t maxpat = lenpat == MAX_SIZE_T
-        ? length(pat)
-        : lenpat;
-    const std::size_t maxtxt = lentxt == MAX_SIZE_T
-        ? length(txt)
-        : lentxt;
+    const std::size_t maxpat = length(pat, lenpat);
+    const std::size_t maxtxt = length(txt, lentxt);
 
-    if( str->size() < 1  ||  pat == nullptr  ||  txt == nullptr  ||
-        maxpat < 1  ||  maxtxt < 1  ||  str->size() < maxpat ) {
+    if( str->size() < 1  ||  !isValid(pat, maxpat)  ||  !isValid(txt, maxtxt)  ||
+        str->size() < maxpat ) {
       return;
     }
 
@@ -514,7 +501,8 @@ namespace cs {
 
   ////// Reclaim memory... ///////////////////////////////////////////////////
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T>
+  requires IsCharacter<T>
   inline void shrink(String<T> *str)
   {
     str->resize(lengthRange(*str));
@@ -523,12 +511,13 @@ namespace cs {
 
   ////// Remove whitespace from begin & end... ///////////////////////////////
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T>
+  requires IsCharacter<T>
   inline void trim(T *first, T *last)
   {
     using RevIter = std::reverse_iterator<T*>;
 
-    if( first == nullptr  ||  last <= first ) {
+    if( !isValid(first, last) ) {
       return;
     }
 
@@ -574,7 +563,7 @@ namespace cs {
       return isSpace(a)  &&  isSpace(b);
     };
 
-    if( first == nullptr  ||  last <= first ) {
+    if( !isValid(first, last) ) {
       return;
     }
 
@@ -613,7 +602,8 @@ namespace cs {
 
   namespace impl_string {
 
-    template<typename T> requires IsCharacter<T>
+    template<typename T>
+    requires IsCharacter<T>
     inline void extract(StringList<T> *result,
                         const T *first, const T *last,
                         const bool skipEmpty, const bool doTrim)
@@ -636,17 +626,16 @@ namespace cs {
 
   } // namespace impl_string
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T>
+  requires IsCharacter<T>
   inline StringList<T> split(const T *first, const T *last,
                              const T *pat, const std::size_t lenpat = MAX_SIZE_T,
                              const bool skipEmpty = false, const bool doTrim = false)
   {
-    const std::size_t maxpat = lenpat == MAX_SIZE_T
-        ? length(pat)
-        : lenpat;
+    const std::size_t maxpat = length(pat, lenpat);
 
-    if( first == nullptr  ||  last <= first  ||  pat == nullptr  ||
-        maxpat < 1  ||  distance(first, last) < maxpat ) {
+    if( !isValid(first, last)  ||  !isValid(pat, maxpat)  ||
+        distance(first, last) < maxpat ) {
       return StringList<T>{};
     }
 
@@ -668,9 +657,7 @@ namespace cs {
                              const T *pat, const std::size_t lenpat,
                              const bool skipEmpty = false, const bool doTrim = false)
   {
-    const std::size_t maxstr = lenstr == MAX_SIZE_T
-        ? length(str)
-        : lenstr;
+    const std::size_t maxstr = length(str, lenstr);
     return split(str, str + maxstr, pat, lenpat, skipEmpty, doTrim);
   }
 
@@ -692,12 +679,13 @@ namespace cs {
 
   ////// Split string at character... ////////////////////////////////////////
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T>
+  requires IsCharacter<T>
   inline StringList<T> split(const T *first, const T *last,
                              const T& pat,
                              const bool skipEmpty = false, const bool doTrim = false)
   {
-    if( first == nullptr  ||  last <= first ) {
+    if( !isValid(first, last) ) {
       return StringList<T>{};
     }
 
@@ -743,20 +731,17 @@ namespace cs {
 
   ////// String starts with pattern... ///////////////////////////////////////
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T>
+  requires IsCharacter<T>
   inline bool startsWith(const T *str, const std::size_t lenstr, // haystack
                          const T *pat, const std::size_t lenpat, // needle
                          const bool ignoreCase = false)
   {
-    const std::size_t maxstr = lenstr == MAX_SIZE_T
-        ? length(str)
-        : lenstr;
-    const std::size_t maxpat = lenpat == MAX_SIZE_T
-        ? length(pat)
-        : lenpat;
+    const std::size_t maxstr = length(str, lenstr);
+    const std::size_t maxpat = length(pat, lenpat);
 
-    if( str == nullptr  ||  pat == nullptr  ||
-        maxstr < 1  ||  maxpat < 1  ||  maxstr < maxpat ) {
+    if( !isValid(str, maxstr)  ||  !isValid(pat, maxpat)  ||
+        maxstr < maxpat ) {
       return false;
     }
 
@@ -791,10 +776,11 @@ namespace cs {
 
   ////// Case conversion... //////////////////////////////////////////////////
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T>
+  requires IsCharacter<T>
   inline void toLower(T *first, T *last)
   {
-    if( first == nullptr  ||  last <= first ) {
+    if( !isValid(first, last) ) {
       return;
     }
 
@@ -804,9 +790,7 @@ namespace cs {
   template<typename T> requires IsCharacter<T>
   inline void toLower(T *str, const std::size_t len = MAX_SIZE_T)
   {
-    const std::size_t max = len == MAX_SIZE_T
-        ? length(str)
-        : len;
+    const std::size_t max = length(str, len);
     toLower(str, str + max);
   }
 
@@ -816,10 +800,11 @@ namespace cs {
     toLower(str->data(), str->size());
   }
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T>
+  requires IsCharacter<T>
   inline void toUpper(T *first, T *last)
   {
-    if( first == nullptr  ||  last <= first ) {
+    if( !isValid(first, last) ) {
       return;
     }
 
@@ -829,9 +814,7 @@ namespace cs {
   template<typename T> requires IsCharacter<T>
   inline void toUpper(T *str, const std::size_t len = MAX_SIZE_T)
   {
-    const std::size_t max = len == MAX_SIZE_T
-        ? length(str)
-        : len;
+    const std::size_t max = length(str, len);
     toUpper(str, str + max);
   }
 
