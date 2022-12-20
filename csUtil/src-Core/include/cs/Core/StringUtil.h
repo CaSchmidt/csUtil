@@ -67,7 +67,7 @@ namespace cs {
 
   ////// Length Functions ////////////////////////////////////////////////////
 
-  namespace impl_str {
+  namespace impl_string {
 
     template<typename T> requires IsCharacter<T>
     constexpr std::size_t length2(const T *str)
@@ -77,14 +77,14 @@ namespace cs {
           : 1 + length2(str + 1);
     }
 
-  } // namespace impl_str
+  } // namespace impl_string
 
   template<typename T> requires IsCharacter<T>
   constexpr std::size_t length(const T *str)
   {
     return str == nullptr
         ? 0
-        : impl_str::length2(str);
+        : impl_string::length2(str);
   }
 
   template<typename T> requires IsCharacter<T>
@@ -663,7 +663,7 @@ namespace cs {
 
   ////// Split string at pattern... //////////////////////////////////////////
 
-  namespace impl_str {
+  namespace impl_string {
 
     template<typename T> requires IsCharacter<T>
     inline void extract(StringList<T> *result,
@@ -686,7 +686,7 @@ namespace cs {
       result->push_back(std::move(part));
     }
 
-  } // namespace impl_str
+  } // namespace impl_string
 
   template<typename T> requires IsCharacter<T>
   inline StringList<T> split(const T *first, const T *last,
@@ -708,9 +708,9 @@ namespace cs {
     for(const T *hit;
         (hit = std::search(from, last, pat, pat + maxpat)) != last;
         from = hit + maxpat) {
-      impl_str::extract(&result, from, hit, skipEmpty, doTrim);
+      impl_string::extract(&result, from, hit, skipEmpty, doTrim);
     }
-    impl_str::extract(&result, from, last, skipEmpty, doTrim);
+    impl_string::extract(&result, from, last, skipEmpty, doTrim);
 
     return result;
   }
@@ -759,9 +759,9 @@ namespace cs {
     for(const T *hit;
         (hit = std::find(from, last, pat)) != last;
         from = hit + 1) {
-      impl_str::extract(&result, from, hit, skipEmpty, doTrim);
+      impl_string::extract(&result, from, hit, skipEmpty, doTrim);
     }
-    impl_str::extract(&result, from, last, skipEmpty, doTrim);
+    impl_string::extract(&result, from, last, skipEmpty, doTrim);
 
     return result;
   }
