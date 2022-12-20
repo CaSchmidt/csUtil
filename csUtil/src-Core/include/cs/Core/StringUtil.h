@@ -31,12 +31,10 @@
 
 #pragma once
 
-#include <algorithm>
-#include <iterator>
 #include <list>
 #include <string>
 
-#include <cs/Core/CharUtil.h>
+#include <cs/Core/StringRange.h>
 
 namespace cs {
 
@@ -67,60 +65,10 @@ namespace cs {
 
   ////// Length Functions ////////////////////////////////////////////////////
 
-  namespace impl_string {
-
-    template<typename T> requires IsCharacter<T>
-    constexpr std::size_t length2(const T *str)
-    {
-      return *str == glyph<T>::null
-          ? 0
-          : 1 + length2(str + 1);
-    }
-
-  } // namespace impl_string
-
-  template<typename T> requires IsCharacter<T>
-  constexpr std::size_t length(const T *str)
-  {
-    return str == nullptr
-        ? 0
-        : impl_string::length2(str);
-  }
-
-  template<typename T> requires IsCharacter<T>
-  inline std::size_t lengthRange(const T *first, const T *last)
-  {
-    return first != nullptr  &&  first < last
-        ? std::distance(first, std::find(first, last, glyph<T>::null))
-        : 0;
-  }
-
-  template<typename T> requires IsCharacter<T>
-  inline std::size_t lengthRange(const T *str, const std::size_t len)
-  {
-    return lengthRange(str, str + len);
-  }
-
   template<typename T> requires IsCharacter<T>
   inline std::size_t lengthRange(const String<T>& str)
   {
     return lengthRange(str.data(), str.size());
-  }
-
-  template<typename T> requires IsCharacter<T>
-  inline std::size_t lengthMax(const T *str, const std::size_t len)
-  {
-    return len == MAX_SIZE_T
-        ? length(str)
-        : lengthRange(str, len);
-  }
-
-  template<typename T> requires IsCharacter<T>
-  constexpr std::size_t distance(const T *first, const T *last)
-  {
-    return first != nullptr  &&  first < last
-        ? std::distance(first, last)
-        : 0;
   }
 
   ////// String ends with pattern... /////////////////////////////////////////
