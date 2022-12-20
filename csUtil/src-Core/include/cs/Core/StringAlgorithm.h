@@ -320,6 +320,66 @@ namespace cs {
     removeTrailingZeros(str, MAX_SIZE_T, removeDot);
   }
 
+  ////// Replace character in string... //////////////////////////////////////
+
+  template<typename T>
+  requires IsCharacter<T>
+  inline void replaceAll(T *first, T *last, const T& pat, const T& txt)
+  {
+    if( !isValid(first, last) ) {
+      return;
+    }
+
+    std::replace(first, last, pat, txt);
+  }
+
+  template<typename T>
+  requires IsCharacter<T>
+  inline void replaceAll(T *str, const std::size_t len,
+                         const T& pat, const T& txt)
+  {
+    const std::size_t max = length(str, len);
+    replaceAll(str, str + max, pat, txt);
+  }
+
+  template<typename T>
+  requires IsCharacter<T>
+  inline void replaceAll(T *str,
+                         const T& pat, const T& txt)
+  {
+    replaceAll(str, MAX_SIZE_T, pat, txt);
+  }
+
+  ////// Replace character matching predicate in string... ///////////////////
+
+  template<typename T, typename PredFunc>
+  requires IsCharacter<T>
+  void replaceAll(T *first, T *last, PredFunc func, const T& txt)
+  {
+    if( !isValid(first, last) ) {
+      return;
+    }
+
+    std::replace_if(first, last, func, txt);
+  }
+
+  template<typename T, typename PredFunc>
+  requires IsCharacter<T>
+  void replaceAll(T *str, const std::size_t len,
+                  PredFunc func, const T& txt)
+  {
+    const std::size_t max = length(str, len);
+    replaceAll<T,PredFunc>(str, str + max, func, txt);
+  }
+
+  template<typename T, typename PredFunc>
+  requires IsCharacter<T>
+  void replaceAll(T *str,
+                  PredFunc func, const T& txt)
+  {
+    replaceAll<T,PredFunc>(str, MAX_SIZE_T, func, txt);
+  }
+
   ////// Remove whitespace from begin & end of string... /////////////////////
 
   template<typename T>

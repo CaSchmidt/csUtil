@@ -148,6 +148,18 @@ namespace stringutil {
       cs::replaceAll(&str, "abc", "xyz");
       REQUIRE( str == "xyzxyz" );
     }
+
+    {
+      String str{STR_input2};
+      cs::replaceAll(&str, 'c', 'x');
+      REQUIRE( str == "abxabx" );
+    }
+
+    {
+      String str{STR_input1};
+      cs::replaceAll(&str, cs::lambda_is_space<char>(), '.');
+      REQUIRE( str == ".abc.abc." );
+    }
   }
 
   TEST_CASE("Split string at delimiter.", "[split]") {

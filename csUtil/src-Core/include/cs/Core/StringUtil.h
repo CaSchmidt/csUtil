@@ -265,6 +265,24 @@ namespace cs {
     replaceAll(str, &pat, 1, txt.data(), txt.size());
   }
 
+  ////// Replace character in string... //////////////////////////////////////
+
+  template<typename T>
+  requires IsCharacter<T>
+  void replaceAll(String<T> *str, const T& pat, const T& txt)
+  {
+    replaceAll(str->data(), str->size(), pat, txt);
+  }
+
+  ////// Replace character matching predicate in string... ///////////////////
+
+  template<typename T, typename PredFunc>
+  requires IsCharacter<T>
+  void replaceAll(String<T> *str, PredFunc func, const T& txt)
+  {
+    replaceAll<T,PredFunc>(str->data(), str->size(), func, txt);
+  }
+
   ////// Reclaim memory... ///////////////////////////////////////////////////
 
   template<typename T>
