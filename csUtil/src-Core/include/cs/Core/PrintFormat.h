@@ -48,8 +48,13 @@ namespace cs {
     template<typename CharT>
     requires IsCharacter<CharT>
     inline void output(std::basic_ostream<CharT> *stream,
-                       const char *str, const std::size_t lenstr)
+                       const char *str, const std::size_t lenstr,
+                       const std::size_t width, const CharT fill)
     {
+      for(std::size_t i = lenstr; i < width; i++) {
+        stream->put(fill);
+      }
+
       if constexpr( is_widechar_v<CharT> ) {
         std::array<CharT,BUF_SIZE> wdata;
         widen(wdata.data(), str, lenstr);
@@ -111,15 +116,9 @@ namespace cs {
           : ndata.data();
       const size_type lenstr = distance(str, result.ptr);
 
-      // (4) Fill field to width /////////////////////////////////////////////
+      // (4) Output string ///////////////////////////////////////////////////
 
-      for(size_type i = lenstr; i < _width; i++) {
-        stream->put(_fill);
-      }
-
-      // (5) Output string ///////////////////////////////////////////////////
-
-      impl_stream::output(stream, str, lenstr);
+      impl_stream::output(stream, str, lenstr, _width, _fill);
 
       return *stream;
     }
@@ -152,11 +151,101 @@ namespace cs {
 
   ////// Real Types //////////////////////////////////////////////////////////
 
+  template<typename T, typename CharT>
+  requires IsReal<T>  &&  IsCharacter<CharT>
+  class FormatReal {
+  public:
+    using stream_type = std::basic_ostream<CharT>;
+    using   char_type = typename stream_type::char_type;
+    using   size_type = std::size_t;
+    using  value_type = T;
+
+    FormatReal(const value_type value,
+               const char format, const size_type precision,
+               const size_type width, const char_type fill) noexcept
+      : _value{value}
+      , _format{format}
+      , _precision{precision}
+      , _width{width}
+      , _fill{fill}
+    {
+    }
+
+    ~FormatReal() noexcept = default;
+
+    stream_type& operator()(stream_type *stream) const
+    {
+      // (1) Convert number to string ////////////////////////////////////////
+
+      std::array<char,impl_stream::BUF_SIZE> ndata;
+      const std::to_chars_result result =
+          std::to_chars(ndata.data(), ndata.data() + ndata.size(),
+                        _value, format(), int(_precision));
+      if( result.ec != std::errc{} ) {
+        return *stream << "ERROR";
+      }
+
+      // (2) (Optionally) Convert string to upper case ///////////////////////
+
+      if( isUpper() ) {
+        toUpper(ndata.data(), result.ptr);
+      }
+
+      // (3) Get string's bounds /////////////////////////////////////////////
+
+      const char *str = ndata.data();
+      const std::size_t lenstr = distance(str, result.ptr);
+
+      // (4) Output string ///////////////////////////////////////////////////
+
+      impl_stream::output(stream, str, lenstr, _width, _fill);
+
+      return *stream;
+    }
+
+  private:
+    FormatReal() noexcept = delete;
+
+    std::chars_format format() const
+    {
+      if(        _format == 'a'  ||  _format == 'A' ) {
+        return std::chars_format::hex;
+      } else if( _format == 'e'  ||  _format == 'E' ) {
+        return std::chars_format::scientific;
+      } else if( _format == 'f'  ||  _format == 'F' ) {
+        return std::chars_format::fixed;
+      }
+      return std::chars_format::general;
+    }
+
+    bool isUpper() const
+    {
+      return
+          _format == 'A'  ||
+          _format == 'E'  ||
+          _format == 'F'  ||
+          _format == 'G';
+    }
+
+    const value_type    _value{};
+    const char         _format{};
+    const size_type _precision{};
+    const size_type     _width{};
+    const char_type      _fill{};
+  };
+
   ////// STD Stream Interface ////////////////////////////////////////////////
 
   template<typename CharT, typename T>
   inline std::basic_ostream<CharT>& operator<<(std::basic_ostream<CharT>& stream,
                                                const cs::FormatIntegral<T,CharT>& formatter)
+  {
+    return formatter(&stream);
+  }
+
+  template<typename CharT, typename T>
+  inline std::basic_ostream<CharT>& operator<<(std::basic_ostream<CharT>& stream,
+                                               const cs::FormatReal<T,CharT>& formatter)
   {
     return formatter(&stream);
   }
@@ -186,6 +275,34 @@ namespace cs {
                                            const wchar_t fill = DEFINT_FILL<wchar_t>)
   {
     return FormatIntegral<T,wchar_t>{value, format, width, fill};
+  }
+
+  inline constexpr std::size_t DEFREAL_PRECISION = 6;
+  inline constexpr std::size_t DEFREAL_WIDTH = 0;
+  template<typename CharT>
+  requires IsCharacter<CharT>
+  inline constexpr CharT DEFREAL_FILL = glyph<CharT>::space;
+
+  template<typename T>
+  requires IsReal<T>
+  inline FormatReal<T,char> format(const T value,
+                                   const char format,
+                                   const std::size_t precision = DEFREAL_PRECISION,
+                                   const std::size_t width = DEFREAL_WIDTH,
+                                   const char fill = DEFREAL_FILL<char>)
+  {
+    return FormatReal<T,char>{value, format, precision, width, fill};
+  }
+
+  template<typename T>
+  requires IsReal<T>
+  inline FormatReal<T,wchar_t> wformat(const T value,
+                                       const char format,
+                                       const std::size_t precision = DEFREAL_PRECISION,
+                                       const std::size_t width = DEFREAL_WIDTH,
+                                       const wchar_t fill = DEFREAL_FILL<wchar_t>)
+  {
+    return FormatReal<T,wchar_t>{value, format, precision, width, fill};
   }
 
 } // namespace cs
