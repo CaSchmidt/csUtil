@@ -62,6 +62,18 @@ namespace cs {
   inline constexpr bool is_char_v = is_char<T>::value;
 
   template<typename T>
+  using is_narrowchar = std::bool_constant<is_char_v<T>  &&  sizeof(T) == 1>;
+
+  template<typename T>
+  inline constexpr bool is_narrowchar_v = is_narrowchar<T>::value;
+
+  template<typename T>
+  using is_widechar = std::bool_constant<is_char_v<T>  &&  (sizeof(T) > 1)>;
+
+  template<typename T>
+  inline constexpr bool is_widechar_v = is_widechar<T>::value;
+
+  template<typename T>
   using is_integral = std::bool_constant<
   std::is_same_v<T,int8_t>    ||
   std::is_same_v<T,uint8_t>   ||

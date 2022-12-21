@@ -45,6 +45,12 @@ namespace cs {
   concept IsCharacter = is_char_v<T>;
 
   template<typename T>
+  concept IsNarrowCharacter = is_narrowchar_v<T>;
+
+  template<typename T>
+  concept IsWideCharacter = is_widechar_v<T>;
+
+  template<typename T>
   concept IsIntegral = is_integral_v<T>;
 
   template<typename T>

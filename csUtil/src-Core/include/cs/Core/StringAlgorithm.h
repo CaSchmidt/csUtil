@@ -514,4 +514,29 @@ namespace cs {
     toUpper(str, str + max);
   }
 
+  ////// Widen string... /////////////////////////////////////////////////////
+
+  template<typename WCharT, typename NCharT>
+  requires IsWideCharacter<WCharT>  &&  IsNarrowCharacter<NCharT>
+  inline void widen(WCharT *dest, const NCharT *first, const NCharT *last)
+  {
+    constexpr auto lambda_widen = [](const NCharT& c) -> WCharT {
+      return static_cast<WCharT>(c);
+    };
+
+    if( dest == nullptr  ||  !isValid(first, last) ) {
+      return;
+    }
+
+    std::transform(first, last, dest, lambda_widen);
+  }
+
+  template<typename WCharT, typename NCharT>
+  requires IsWideCharacter<WCharT>  &&  IsNarrowCharacter<NCharT>
+  inline void widen(WCharT *dest, const NCharT *str, const std::size_t len = MAX_SIZE_T)
+  {
+    const std::size_t max = length(str, len);
+    widen(dest, str, str + max);
+  }
+
 } // namespace cs
