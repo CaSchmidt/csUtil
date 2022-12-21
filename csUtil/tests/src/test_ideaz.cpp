@@ -8,7 +8,7 @@
 #include <limits>
 
 #include <cs/Core/Print.h>
-#include <cs/Core/StringUtil.h>
+#include <cs/Core/PrintFormat.h>
 
 #define USE_TO_CHARS
 
@@ -61,119 +61,6 @@ namespace cs {
     }
 
   } // namespace impl_stream
-
-  ////// Formatting of Integral Values ///////////////////////////////////////
-
-  inline constexpr char            DEFINT_BASE = 'd';
-  template<typename CharT>
-  requires IsCharacter<CharT>
-  inline constexpr CharT           DEFINT_FILL = glyph<CharT>::space;
-  inline constexpr std::streamsize DEFINT_WIDTH = 0;
-
-  template<typename T, typename CharT>
-  requires IsIntegral<T>  &&  IsCharacter<CharT>
-  class FormatIntegral {
-  public:
-    using stream_type = std::basic_ostream<CharT>;
-    using   char_type = typename stream_type::char_type;
-    using  value_type = T;
-
-    FormatIntegral(const value_type value,
-                   const char format = DEFINT_BASE, // base := [bdoxX]
-                   const std::streamsize width = DEFINT_WIDTH,
-                   const char_type fill = DEFINT_FILL<char_type>) noexcept
-      : _format{format}
-      , _fill{fill}
-      , _value{value}
-      , _width{width}
-    {
-    }
-
-    ~FormatIntegral() noexcept = default;
-
-    inline stream_type& operator()(stream_type *stream) const
-    {
-#ifdef USE_TO_CHARS
-      const int base = FormatIntegral::base();
-
-      std::array<char,128> strdata;
-      const std::to_chars_result result =
-          std::to_chars(strdata.data(), strdata.data() + strdata.size(), _value, base);
-      if( result.ec != std::errc{} ) {
-        return *stream << "ERROR";
-      }
-
-      if( isUpper() ) {
-        toUpper(strdata.data(), result.ptr);
-      }
-
-      const char *str = base != 10  &&  strdata[0] == '-'
-          ? strdata.data() + 1
-          : strdata.data();
-      const std::streamsize strlen = impl_stream::distance(str, result.ptr);
-
-      for(std::streamsize i = strlen; i < _width; i++) {
-        stream->put(_fill);
-      }
-      stream->write(str, strlen);
-
-      return *stream;
-#else
-      const impl_stream::Context<char_type> ctx{*stream};
-
-      if(        _format == 'o' ) {
-        stream->flags(std::ios_base::oct);
-      } else if( _format == 'x'  ||  _format == 'X' ) {
-        stream->flags(std::ios_base::hex);
-      } else { // 'd'
-        stream->flags(std::ios_base::dec);
-      }
-      // NOTE: Use setf() from hereon to ADD flags!
-      if( _format == 'X' ) {
-        stream->setf(std::ios_base::uppercase);
-      }
-      stream->width(_width);
-      stream->fill(_fill);
-
-      if( _format == 'b' ) {
-        *stream << std::bitset<sizeof(value_type)*8>(_value);
-      } else if( sizeof(value_type) == 1 ) {
-        *stream << +_value; // perform integral promotion
-      } else {
-        *stream << _value;
-      }
-
-      ctx.restore(stream);
-
-      return *stream;
-#endif
-    }
-
-  private:
-    FormatIntegral() noexcept = delete;
-
-    inline int base() const
-    {
-      if(        _format == 'b' ) {
-        return 2;
-      } else if( _format == 'o' ) {
-        return 8;
-      } else if( _format == 'x'  ||  _format == 'X' ) {
-        return 16;
-      }
-      return 10; // 'd'
-    }
-
-    inline bool isUpper() const
-    {
-      return _format == 'X';
-    }
-
-    const char           _format{};
-    const char_type        _fill{};
-    const value_type      _value{};
-    const std::streamsize _width{};
-  };
 
   ////// Formatting of Real Values ///////////////////////////////////////////
 
@@ -293,16 +180,6 @@ namespace cs {
   ////// User Interface //////////////////////////////////////////////////////
 
   template<typename T>
-  requires IsIntegral<T>
-  inline FormatIntegral<T,char> format(const T value,
-                                       const char base = DEFINT_BASE,
-                                       const std::streamsize width = DEFINT_WIDTH,
-                                       const char fill = DEFINT_FILL<char>)
-  {
-    return FormatIntegral<T,char>{value, base, width, fill};
-  }
-
-  template<typename T>
   requires IsReal<T>
   inline FormatReal<T,char> format(const T value,
                                    const char format = DEFREAL_FORMAT,
@@ -314,13 +191,6 @@ namespace cs {
   }
 
 } // namespace cs
-
-template<typename CharT, typename T>
-inline std::basic_ostream<CharT>& operator<<(std::basic_ostream<CharT>& stream,
-                                             const cs::FormatIntegral<T,CharT>& formatter)
-{
-  return formatter(&stream);
-}
 
 template<typename CharT, typename T>
 inline std::basic_ostream<CharT>& operator<<(std::basic_ostream<CharT>& stream,
@@ -375,6 +245,7 @@ int main(int, char **)
 
   cs::println("We are at %% efficiency!", 100, '%');
   cs::println("value = 0x%", cs::format(123, 'X', 8, '0'));
+  cs::println(std::wcout, L"value = 0x%", cs::wformat(123, 'X', 8, '0'));
 
   return EXIT_SUCCESS;
 }
