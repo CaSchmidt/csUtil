@@ -37,98 +37,102 @@
 
 namespace cs {
 
-  ////// Implementation //////////////////////////////////////////////////////
+  namespace meta {
 
-  namespace impl_meta {
+    ////// Implementation ////////////////////////////////////////////////////
 
-    // accumulate() //////////////////////////////////////////////////////////
+    namespace impl_meta {
 
-    template<typename Ret, typename Call, typename ...Args>
-    concept IsAccumulate = std::is_invocable_r_v<Ret,Call,Ret,std::size_t,Args...>;
+      // accumulate() ////////////////////////////////////////////////////////
 
-    template<typename T, std::size_t I, typename Call, typename ...Args>
-    requires IsAccumulate<T,Call,Args...>
-    inline T InvokeAccumulate(T init, Call call, Args&&... args)
+      template<typename Ret, typename Call, typename ...Args>
+      concept IsAccumulate = std::is_invocable_r_v<Ret,Call,Ret,std::size_t,Args...>;
+
+      template<typename T, std::size_t I, typename Call, typename ...Args>
+      requires IsAccumulate<T,Call,Args...>
+      inline T InvokeAccumulate(T init, Call call, Args&&... args)
+      {
+        return std::invoke(call, std::move(init), I, std::forward<Args>(args)...);
+      }
+
+      template<typename T, std::size_t N, std::size_t CNT>
+      struct Accumulate {
+        static_assert(N > 0  &&  0 < CNT  &&  CNT < N);
+
+        template<typename Call, typename ...Args>
+        inline static T run(T init, Call call, Args&&... args)
+        {
+          constexpr std::size_t I = N - 1 - CNT;
+          init = InvokeAccumulate<T,I>(std::move(init), call, std::forward<Args>(args)...);
+          return Accumulate<T,N,CNT-1>::run(std::move(init), call, std::forward<Args>(args)...);
+        }
+      };
+
+      template<typename T, std::size_t N>
+      struct Accumulate<T,N,0> {
+        static_assert(N > 0);
+
+        template<typename Call, typename ...Args>
+        inline static T run(T init, Call call, Args&&... args)
+        {
+          constexpr std::size_t I = N - 1;
+          return InvokeAccumulate<T,I>(std::move(init), call, std::forward<Args>(args)...);
+        }
+      };
+
+      // for_each() //////////////////////////////////////////////////////////
+
+      template<typename Call, typename ...Args>
+      concept IsForEach = std::is_invocable_v<Call,std::size_t,Args...>;
+
+      template<std::size_t I, typename Call, typename ...Args>
+      requires IsForEach<Call,Args...>
+      inline void InvokeForEach(Call call, Args&&... args)
+      {
+        std::invoke(call, I, std::forward<Args>(args)...);
+      }
+
+      template<std::size_t N, std::size_t CNT>
+      struct ForEach {
+        static_assert(N > 0  &&  0 < CNT  &&  CNT < N);
+
+        template<typename Call, typename ...Args>
+        inline static void run(Call call, Args&&... args)
+        {
+          constexpr std::size_t I = N - 1 - CNT;
+          InvokeForEach<I>(call, std::forward<Args>(args)...);
+          ForEach<N,CNT-1>::run(call, std::forward<Args>(args)...);
+        }
+      };
+
+      template<std::size_t N>
+      struct ForEach<N,0> {
+        static_assert(N > 0);
+
+        template<typename Call, typename ...Args>
+        inline static void run(Call call, Args&&... args)
+        {
+          constexpr std::size_t I = N - 1;
+          InvokeForEach<I>(call, std::forward<Args>(args)...);
+        }
+      };
+
+    } // namespace impl_meta
+
+    ////// User Interface ////////////////////////////////////////////////////
+
+    template<typename T, std::size_t N, typename Call, typename ...Args>
+    inline T accumulate(T init, Call call, Args&&... args)
     {
-      return std::invoke(call, std::move(init), I, std::forward<Args>(args)...);
+      return impl_meta::Accumulate<T,N,N-1>::run(std::move(init), call, std::forward<Args>(args)...);
     }
 
-    template<typename T, std::size_t N, std::size_t CNT>
-    struct Accumulate {
-      static_assert(N > 0  &&  0 < CNT  &&  CNT < N);
-
-      template<typename Call, typename ...Args>
-      inline static T run(T init, Call call, Args&&... args)
-      {
-        constexpr std::size_t I = N - 1 - CNT;
-        init = InvokeAccumulate<T,I>(std::move(init), call, std::forward<Args>(args)...);
-        return Accumulate<T,N,CNT-1>::run(std::move(init), call, std::forward<Args>(args)...);
-      }
-    };
-
-    template<typename T, std::size_t N>
-    struct Accumulate<T,N,0> {
-      static_assert(N > 0);
-
-      template<typename Call, typename ...Args>
-      inline static T run(T init, Call call, Args&&... args)
-      {
-        constexpr std::size_t I = N - 1;
-        return InvokeAccumulate<T,I>(std::move(init), call, std::forward<Args>(args)...);
-      }
-    };
-
-    // for_each() ////////////////////////////////////////////////////////////
-
-    template<typename Call, typename ...Args>
-    concept IsForEach = std::is_invocable_v<Call,std::size_t,Args...>;
-
-    template<std::size_t I, typename Call, typename ...Args>
-    requires IsForEach<Call,Args...>
-    inline void InvokeForEach(Call call, Args&&... args)
+    template<std::size_t N, typename Call, typename ...Args>
+    inline void for_each(Call call, Args&&... args)
     {
-      std::invoke(call, I, std::forward<Args>(args)...);
+      impl_meta::ForEach<N,N-1>::run(call, std::forward<Args>(args)...);
     }
 
-    template<std::size_t N, std::size_t CNT>
-    struct ForEach {
-      static_assert(N > 0  &&  0 < CNT  &&  CNT < N);
-
-      template<typename Call, typename ...Args>
-      inline static void run(Call call, Args&&... args)
-      {
-        constexpr std::size_t I = N - 1 - CNT;
-        InvokeForEach<I>(call, std::forward<Args>(args)...);
-        ForEach<N,CNT-1>::run(call, std::forward<Args>(args)...);
-      }
-    };
-
-    template<std::size_t N>
-    struct ForEach<N,0> {
-      static_assert(N > 0);
-
-      template<typename Call, typename ...Args>
-      inline static void run(Call call, Args&&... args)
-      {
-        constexpr std::size_t I = N - 1;
-        InvokeForEach<I>(call, std::forward<Args>(args)...);
-      }
-    };
-
-  } // namespace impl_meta
-
-  ////// User Interface //////////////////////////////////////////////////////
-
-  template<typename T, std::size_t N, typename Call, typename ...Args>
-  inline T accumulate(T init, Call call, Args&&... args)
-  {
-    return impl_meta::Accumulate<T,N,N-1>::run(std::move(init), call, std::forward<Args>(args)...);
-  }
-
-  template<std::size_t N, typename Call, typename ...Args>
-  inline void for_each(Call call, Args&&... args)
-  {
-    impl_meta::ForEach<N,N-1>::run(call, std::forward<Args>(args)...);
-  }
+  } // namespace meta
 
 } // namespace cs

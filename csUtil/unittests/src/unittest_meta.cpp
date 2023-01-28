@@ -42,9 +42,9 @@ namespace test_accumulate {
     const value_type a[N] = {1, 2, 3};
     const value_type b[N] = {2, 3, 4};
 
-    REQUIRE( cs::accumulate<value_type,N>(0, fun_dot<value_type>, a, b) == 20 );
-    REQUIRE( cs::accumulate<value_type,N>(0, lam_dot, a, b) == 20 );
-    REQUIRE( cs::accumulate<value_type,N>(0, obj_dot, a, b) == 20 );
+    REQUIRE( cs::meta::accumulate<value_type,N>(0, fun_dot<value_type>, a, b) == 20 );
+    REQUIRE( cs::meta::accumulate<value_type,N>(0, lam_dot, a, b) == 20 );
+    REQUIRE( cs::meta::accumulate<value_type,N>(0, obj_dot, a, b) == 20 );
   }
 
   TEST_CASE("Concatenate strings.", "[accumulate]") {
@@ -60,7 +60,7 @@ namespace test_accumulate {
 
     const StringList list{ String{"123"}, String{"abc"}, String{"XYZ"} };
 
-    REQUIRE( cs::accumulate<String,3>(String{}, lam_append, list) == "123abcXYZ" );
+    REQUIRE( cs::meta::accumulate<String,3>(String{}, lam_append, list) == "123abcXYZ" );
   }
 
 } // namespace test_accumulate
@@ -114,13 +114,13 @@ namespace test_foreach {
 
     const value_type res[N] = {3, 5, 7, 9};
 
-    cs::for_each<N>(fun_add<value_type>, x, a, b);
+    cs::meta::for_each<N>(fun_add<value_type>, x, a, b);
     REQUIRE( cmp(x, res, N) );
 
-    cs::for_each<N>(lam_add, x, a, b);
+    cs::meta::for_each<N>(lam_add, x, a, b);
     REQUIRE( cmp(x, res, N) );
 
-    cs::for_each<N>(obj_add, x, a, b);
+    cs::meta::for_each<N>(obj_add, x, a, b);
     REQUIRE( cmp(x, res, N) );
   }
 
