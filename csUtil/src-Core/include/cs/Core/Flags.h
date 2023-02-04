@@ -187,14 +187,14 @@ namespace cs {
       return static_cast<value_type>(_flags);
     }
 
-    inline bool testFlag(const enum_type f) const
-    {
-      return static_cast<value_type>(_flags & f) != ZERO;
-    }
-
-    inline bool testMask(const enum_type m) const
+    inline bool testAll(const enum_type m) const
     {
       return (_flags & m) == m;
+    }
+
+    inline bool testAny(const enum_type f) const
+    {
+      return static_cast<value_type>(_flags & f) != ZERO;
     }
 
     inline void set(const enum_type f, const bool on = true)

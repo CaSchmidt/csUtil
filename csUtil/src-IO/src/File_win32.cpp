@@ -101,7 +101,7 @@ namespace cs {
 
     // (2) Sanity check //////////////////////////////////////////////////////
 
-    if( !flags.testFlag(FileOpenFlag::ReadWrite) ) {
+    if( !flags.testAny(FileOpenFlag::ReadWrite) ) {
       return false;
     }
 
@@ -116,16 +116,16 @@ namespace cs {
     // (4) Open file /////////////////////////////////////////////////////////
 
     DWORD dwDesiredAccess = 0;
-    if( flags.testFlag(FileOpenFlag::Read) ) {
+    if( flags.testAny(FileOpenFlag::Read) ) {
       dwDesiredAccess |= GENERIC_READ;
     }
-    if( flags.testFlag(FileOpenFlag::Write) ) {
+    if( flags.testAny(FileOpenFlag::Write) ) {
       dwDesiredAccess |= GENERIC_WRITE;
     }
 
     DWORD dwCreationDisposition = 0;
-    if( flags.testFlag(FileOpenFlag::Write) ) {
-      dwCreationDisposition = flags.testFlag(FileOpenFlag::Append)
+    if( flags.testAny(FileOpenFlag::Write) ) {
+      dwCreationDisposition = flags.testAny(FileOpenFlag::Append)
           ? OPEN_ALWAYS
           : CREATE_ALWAYS;
     } else {
@@ -146,10 +146,10 @@ namespace cs {
     if( isOpen() ) {
       _impl->path = path;
 
-      if( flags.testMask(FileOpenFlag::Write | FileOpenFlag::Append) ) {
+      if( flags.testAll(FileOpenFlag::Write | FileOpenFlag::Append) ) {
         _impl->seekToEnd();
       }
-      if( flags.testMask(FileOpenFlag::Write | FileOpenFlag::Truncate) ) {
+      if( flags.testAll(FileOpenFlag::Write | FileOpenFlag::Truncate) ) {
         _impl->truncate();
       }
     } else {
