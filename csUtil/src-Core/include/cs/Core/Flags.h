@@ -42,91 +42,91 @@
 
 namespace cs {
 
-  template<typename T>
+  template<typename EnumT>
   struct is_flags_enabled : std::false_type {};
 
-  template<typename T>
-  inline constexpr bool is_flags_enabled_v = is_flags_enabled<T>::value;
+  template<typename EnumT>
+  inline constexpr bool is_flags_enabled_v = is_flags_enabled<EnumT>::value;
 
-  template<typename T>
+  template<typename EnumT>
   using is_flags = std::bool_constant<
-  std::is_enum_v<T>                              &&
-  std::is_unsigned_v<safe_underlying_type_t<T>>  &&
-  is_flags_enabled_v<T>
+  std::is_enum_v<EnumT>                              &&
+  std::is_unsigned_v<safe_underlying_type_t<EnumT>>  &&
+  is_flags_enabled_v<EnumT>
   >;
 
-  template<typename T>
-  inline constexpr bool is_flags_v = is_flags<T>::value;
+  template<typename EnumT>
+  inline constexpr bool is_flags_v = is_flags<EnumT>::value;
 
-  template<typename T>
-  concept IsFlags = is_flags_v<T>;
+  template<typename EnumT>
+  concept IsFlags = is_flags_v<EnumT>;
 
 } // namespace cs
 
 // AND ///////////////////////////////////////////////////////////////////////
 
-template<typename T>
-requires cs::IsFlags<T>
-constexpr T operator&(const T& a, const T& b)
+template<typename EnumT>
+requires cs::IsFlags<EnumT>
+constexpr EnumT operator&(const EnumT& a, const EnumT& b)
 {
-  using value_type = cs::safe_underlying_type_t<T>;
-  return static_cast<T>(static_cast<value_type>(a) & static_cast<value_type>(b));
+  using value_type = cs::safe_underlying_type_t<EnumT>;
+  return static_cast<EnumT>(static_cast<value_type>(a) & static_cast<value_type>(b));
 }
 
-template<typename T>
-requires cs::IsFlags<T>
-constexpr T& operator&=(T& result, const T& a)
+template<typename EnumT>
+requires cs::IsFlags<EnumT>
+constexpr EnumT& operator&=(EnumT& result, const EnumT& a)
 {
-  using value_type = cs::safe_underlying_type_t<T>;
-  result = static_cast<T>(static_cast<value_type>(result) & static_cast<value_type>(a));
+  using value_type = cs::safe_underlying_type_t<EnumT>;
+  result = static_cast<EnumT>(static_cast<value_type>(result) & static_cast<value_type>(a));
   return result;
 }
 
 // NOT ///////////////////////////////////////////////////////////////////////
 
-template<typename T>
-requires cs::IsFlags<T>
-constexpr T operator~(const T& a)
+template<typename EnumT>
+requires cs::IsFlags<EnumT>
+constexpr EnumT operator~(const EnumT& a)
 {
-  using value_type = cs::safe_underlying_type_t<T>;
-  return static_cast<T>(~static_cast<value_type>(a));
+  using value_type = cs::safe_underlying_type_t<EnumT>;
+  return static_cast<EnumT>(~static_cast<value_type>(a));
 }
 
 // OR ////////////////////////////////////////////////////////////////////////
 
-template<typename T>
-requires cs::IsFlags<T>
-constexpr T operator|(const T& a, const T& b)
+template<typename EnumT>
+requires cs::IsFlags<EnumT>
+constexpr EnumT operator|(const EnumT& a, const EnumT& b)
 {
-  using value_type = cs::safe_underlying_type_t<T>;
-  return static_cast<T>(static_cast<value_type>(a) | static_cast<value_type>(b));
+  using value_type = cs::safe_underlying_type_t<EnumT>;
+  return static_cast<EnumT>(static_cast<value_type>(a) | static_cast<value_type>(b));
 }
 
-template<typename T>
-requires cs::IsFlags<T>
-constexpr T& operator|=(T& result, const T& a)
+template<typename EnumT>
+requires cs::IsFlags<EnumT>
+constexpr EnumT& operator|=(EnumT& result, const EnumT& a)
 {
-  using value_type = cs::safe_underlying_type_t<T>;
-  result = static_cast<T>(static_cast<value_type>(result) | static_cast<value_type>(a));
+  using value_type = cs::safe_underlying_type_t<EnumT>;
+  result = static_cast<EnumT>(static_cast<value_type>(result) | static_cast<value_type>(a));
   return result;
 }
 
 // XOR ///////////////////////////////////////////////////////////////////////
 
-template<typename T>
-requires cs::IsFlags<T>
-constexpr T operator^(const T& a, const T& b)
+template<typename EnumT>
+requires cs::IsFlags<EnumT>
+constexpr EnumT operator^(const EnumT& a, const EnumT& b)
 {
-  using value_type = cs::safe_underlying_type_t<T>;
-  return static_cast<T>(static_cast<value_type>(a) ^ static_cast<value_type>(b));
+  using value_type = cs::safe_underlying_type_t<EnumT>;
+  return static_cast<EnumT>(static_cast<value_type>(a) ^ static_cast<value_type>(b));
 }
 
-template<typename T>
-requires cs::IsFlags<T>
-constexpr T& operator^=(T& result, const T& a)
+template<typename EnumT>
+requires cs::IsFlags<EnumT>
+constexpr EnumT& operator^=(EnumT& result, const EnumT& a)
 {
-  using value_type = cs::safe_underlying_type_t<T>;
-  result = static_cast<T>(static_cast<value_type>(result) ^ static_cast<value_type>(a));
+  using value_type = cs::safe_underlying_type_t<EnumT>;
+  result = static_cast<EnumT>(static_cast<value_type>(result) ^ static_cast<value_type>(a));
   return result;
 }
 
@@ -221,8 +221,8 @@ namespace cs {
 
 // Macros ////////////////////////////////////////////////////////////////////
 
-#define CS_ENABLE_FLAGS(T)                           \
-  namespace cs {                                     \
-    template<>                                       \
-    struct is_flags_enabled<T> : std::true_type {};  \
+#define CS_ENABLE_FLAGS(EnumT)                           \
+  namespace cs {                                         \
+    template<>                                           \
+    struct is_flags_enabled<EnumT> : std::true_type {};  \
   }
