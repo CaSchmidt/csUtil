@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2022, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2023, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -31,56 +31,38 @@
 
 #pragma once
 
-#include <ostream>
-#include <utility>
+#include <iostream>
 
-#include <cs/Core/StringRange.h>
+#include <cs/Core/Print.h>
 
 namespace cs {
 
-  namespace impl_print {
-
-    template<typename CharT>
-    requires IsCharacter<CharT>
-    void print(std::basic_ostream<CharT> *stream, const CharT *first, const CharT *last)
-    {
-      if( !isValid(first, last) ) {
-        return;
-      }
-      stream->write(first, distance(first, last));
-    }
-
-    template<typename CharT, typename T, typename ...Args>
-    requires IsCharacter<CharT>
-    void print(std::basic_ostream<CharT> *stream, const CharT *first, const CharT *last,
-               T value, Args&&... args)
-    {
-      const CharT *hit = std::find(first, last, glyph<CharT>::pct);
-      if( hit == last ) {
-        print(stream, first, last);
-        return;
-      }
-
-      print(stream, first, hit);
-      *stream << value;
-      print(stream, hit + 1, last, std::forward<Args>(args)...);
-    }
-
-  } // namespace impl_print
-
-  template<typename CharT, typename ...Args>
-  requires IsCharacter<CharT>
-  void print(std::basic_ostream<CharT> *stream, const CharT *fmt, Args&&... args)
+  template<typename ...Args>
+  void print(const char *fmt, Args&&... args)
   {
-    impl_print::print(stream, fmt, fmt + length(fmt), std::forward<Args>(args)...);
+    print(&std::cout, fmt, std::forward<Args>(args)...);
+  }
+
+  template<typename ...Args>
+  void println(const char *fmt, Args&&... args)
+  {
+    println(&std::cout, fmt, std::forward<Args>(args)...);
   }
 
   template<typename CharT, typename ...Args>
-  requires IsCharacter<CharT>
-  void println(std::basic_ostream<CharT> *stream, const CharT *fmt, Args&&... args)
+  std::basic_string<CharT> sprint(const CharT *fmt, Args&&... args)
   {
-    print(stream, fmt, std::forward<Args>(args)...);
-    *stream << std::endl;
+    std::basic_ostringstream<CharT> s;
+    print(&s, fmt, std::forward<Args>(args)...);
+    return s.str();
+  }
+
+  template<typename CharT, typename ...Args>
+  std::basic_string<CharT> sprintln(const CharT *fmt, Args&&... args)
+  {
+    std::basic_ostringstream<CharT> s;
+    println(&s, fmt, std::forward<Args>(args)...);
+    return s.str();
   }
 
 } // namespace cs
