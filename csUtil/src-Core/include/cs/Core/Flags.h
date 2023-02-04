@@ -59,24 +59,23 @@ namespace cs {
   inline constexpr bool is_flags_v = is_flags<T>::value;
 
   template<typename T>
-  using if_flags_t = std::enable_if_t<is_flags_v<T>,T>;
-
-  template<typename T>
-  using if_flags_bool = std::enable_if_t<is_flags_v<T>,bool>;
+  concept IsFlags = is_flags_v<T>;
 
 } // namespace cs
 
 // AND ///////////////////////////////////////////////////////////////////////
 
 template<typename T>
-inline cs::if_flags_t<T> operator&(const T& a, const T& b)
+requires cs::IsFlags<T>
+constexpr T operator&(const T& a, const T& b)
 {
   using value_type = cs::safe_underlying_type_t<T>;
   return static_cast<T>(static_cast<value_type>(a) & static_cast<value_type>(b));
 }
 
 template<typename T>
-inline cs::if_flags_t<T>& operator&=(T& result, const T& a)
+requires cs::IsFlags<T>
+constexpr T& operator&=(T& result, const T& a)
 {
   using value_type = cs::safe_underlying_type_t<T>;
   result = static_cast<T>(static_cast<value_type>(result) & static_cast<value_type>(a));
@@ -86,7 +85,8 @@ inline cs::if_flags_t<T>& operator&=(T& result, const T& a)
 // NOT ///////////////////////////////////////////////////////////////////////
 
 template<typename T>
-inline cs::if_flags_t<T> operator~(const T& a)
+requires cs::IsFlags<T>
+constexpr T operator~(const T& a)
 {
   using value_type = cs::safe_underlying_type_t<T>;
   return static_cast<T>(~static_cast<value_type>(a));
@@ -95,14 +95,16 @@ inline cs::if_flags_t<T> operator~(const T& a)
 // OR ////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-inline cs::if_flags_t<T> operator|(const T& a, const T& b)
+requires cs::IsFlags<T>
+constexpr T operator|(const T& a, const T& b)
 {
   using value_type = cs::safe_underlying_type_t<T>;
   return static_cast<T>(static_cast<value_type>(a) | static_cast<value_type>(b));
 }
 
 template<typename T>
-inline cs::if_flags_t<T>& operator|=(T& result, const T& a)
+requires cs::IsFlags<T>
+constexpr T& operator|=(T& result, const T& a)
 {
   using value_type = cs::safe_underlying_type_t<T>;
   result = static_cast<T>(static_cast<value_type>(result) | static_cast<value_type>(a));
@@ -112,14 +114,16 @@ inline cs::if_flags_t<T>& operator|=(T& result, const T& a)
 // XOR ///////////////////////////////////////////////////////////////////////
 
 template<typename T>
-inline cs::if_flags_t<T> operator^(const T& a, const T& b)
+requires cs::IsFlags<T>
+constexpr T operator^(const T& a, const T& b)
 {
   using value_type = cs::safe_underlying_type_t<T>;
   return static_cast<T>(static_cast<value_type>(a) ^ static_cast<value_type>(b));
 }
 
 template<typename T>
-inline cs::if_flags_t<T>& operator^=(T& result, const T& a)
+requires cs::IsFlags<T>
+constexpr T& operator^=(T& result, const T& a)
 {
   using value_type = cs::safe_underlying_type_t<T>;
   result = static_cast<T>(static_cast<value_type>(result) ^ static_cast<value_type>(a));
@@ -131,9 +135,10 @@ inline cs::if_flags_t<T>& operator^=(T& result, const T& a)
 namespace cs {
 
   template<typename EnumT>
+  requires IsFlags<EnumT>
   class Flags {
   public:
-    using  enum_type = if_flags_t<EnumT>;
+    using  enum_type = EnumT;
     using value_type = safe_underlying_type_t<enum_type>;
 
     Flags() noexcept = default;
