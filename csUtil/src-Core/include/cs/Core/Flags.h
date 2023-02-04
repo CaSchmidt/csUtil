@@ -169,7 +169,7 @@ namespace cs {
 
     inline operator bool() const
     {
-      return static_cast<value_type>(_flags) != 0;
+      return static_cast<value_type>(_flags) != ZERO;
     }
 
     inline operator enum_type() const
@@ -184,7 +184,7 @@ namespace cs {
 
     inline bool testFlag(const enum_type f) const
     {
-      return static_cast<value_type>(_flags & f) != 0;
+      return static_cast<value_type>(_flags & f) != ZERO;
     }
 
     inline bool testMask(const enum_type m) const
@@ -207,6 +207,8 @@ namespace cs {
     }
 
   private:
+    static constexpr value_type ZERO = 0;
+
     enum_type _flags{};
   };
 
