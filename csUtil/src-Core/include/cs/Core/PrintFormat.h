@@ -35,9 +35,24 @@
 #include <charconv>
 #include <ostream>
 
+#include <cs/Core/Flags.h>
 #include <cs/Core/StringAlgorithm.h>
 
 namespace cs {
+
+  enum class FormatFlag : unsigned int {
+    None  = 0,
+    Left  = 0x01, // default: Right
+    Upper = 0x02
+  };
+
+} // namespace cs
+
+CS_ENABLE_FLAGS(cs::FormatFlag);
+
+namespace cs {
+
+  using FormatFlags = Flags<FormatFlag>;
 
   ////// Implementation //////////////////////////////////////////////////////
 
@@ -49,10 +64,13 @@ namespace cs {
     requires IsCharacter<CharT>
     inline void output(std::basic_ostream<CharT> *stream,
                        const char *str, const std::size_t lenstr,
-                       const std::size_t width, const CharT fill)
+                       const std::size_t width, const CharT fill,
+                       const FormatFlags& flags)
     {
-      for(std::size_t i = lenstr; i < width; i++) {
-        stream->put(fill);
+      if( !flags.testAny(FormatFlag::Left) ) { // right adjust -> fill left
+        for(std::size_t i = lenstr; i < width; i++) {
+          stream->put(fill);
+        }
       }
 
       if constexpr( is_widechar_v<CharT> ) {
@@ -61,6 +79,12 @@ namespace cs {
         stream->write(wdata.data(), lenstr);
       } else {
         stream->write(str, lenstr);
+      }
+
+      if( flags.testAny(FormatFlag::Left) ) { // left adjust -> fill right
+        for(std::size_t i = lenstr; i < width; i++) {
+          stream->put(fill);
+        }
       }
     }
 
@@ -78,12 +102,14 @@ namespace cs {
     using  value_type = T;
 
     FormatIntegral(const value_type value,
-                   const char format,
-                   const size_type width, const char_type fill) noexcept
+                   const int base,
+                   const size_type width, const char_type fill,
+                   const FormatFlags& flags) noexcept
       : _value{value}
-      , _format{format}
+      , _base{base}
       , _width{width}
       , _fill{fill}
+      , _flags{flags}
     {
     }
 
@@ -91,34 +117,32 @@ namespace cs {
 
     stream_type& operator()(stream_type *stream) const
     {
-      const int base = FormatIntegral::base();
-
       // (1) Convert number to string ////////////////////////////////////////
 
       std::array<char,impl_stream::BUF_SIZE> ndata;
       const std::to_chars_result result =
           std::to_chars(ndata.data(), ndata.data() + ndata.size(),
-                        _value, base);
+                        _value, _base);
       if( result.ec != std::errc{} ) {
         return *stream << "ERROR";
       }
 
       // (2) (Optionally) Convert string to upper case ///////////////////////
 
-      if( isUpper() ) {
+      if( _flags.testAny(FormatFlag::Upper) ) {
         toUpper(ndata.data(), result.ptr);
       }
 
       // (3) Get string's bounds /////////////////////////////////////////////
 
-      const char *str = base != 10  &&  ndata[0] == '-'
+      const char *str = _base != 10  &&  ndata[0] == '-'
           ? ndata.data() + 1
           : ndata.data();
       const size_type lenstr = distance(str, result.ptr);
 
       // (4) Output string ///////////////////////////////////////////////////
 
-      impl_stream::output(stream, str, lenstr, _width, _fill);
+      impl_stream::output(stream, str, lenstr, _width, _fill, _flags);
 
       return *stream;
     }
@@ -126,27 +150,11 @@ namespace cs {
   private:
     FormatIntegral() noexcept = delete;
 
-    int base() const
-    {
-      if(        _format == 'b' ) {
-        return 2;
-      } else if( _format == 'o' ) {
-        return 8;
-      } else if( _format == 'x'  ||  _format == 'X' ) {
-        return 16;
-      }
-      return 10; // 'd'
-    }
-
-    bool isUpper() const
-    {
-      return _format == 'X';
-    }
-
-    const value_type _value{};
-    const char      _format{};
-    const size_type  _width{};
-    const char_type   _fill{};
+    const value_type  _value{};
+    const int          _base{};
+    const size_type   _width{};
+    const char_type    _fill{};
+    const FormatFlags _flags{};
   };
 
   ////// Real Types //////////////////////////////////////////////////////////
@@ -250,32 +258,26 @@ namespace cs {
     return formatter(&stream);
   }
 
-  ////// User Interface //////////////////////////////////////////////////////
+  ////// User Interface - Integral ///////////////////////////////////////////
 
   inline constexpr std::size_t DEFINT_WIDTH = 0;
   template<typename CharT>
   requires IsCharacter<CharT>
-  inline constexpr CharT DEFINT_FILL = glyph<CharT>::space;
+  inline constexpr CharT       DEFINT_FILL  = glyph<CharT>::space;
+  inline constexpr FormatFlag  DEFINT_FLAGS = FormatFlag::None;
 
-  template<typename T>
-  requires IsIntegral<T>
-  inline FormatIntegral<T,char> format(const T value,
-                                       const char format,
-                                       const std::size_t width = DEFINT_WIDTH,
-                                       const char fill = DEFINT_FILL<char>)
+  template<typename T, typename CharT = char>
+  requires IsIntegral<T>  &&  IsCharacter<CharT>
+  inline FormatIntegral<T,CharT> format(const T value,
+                                        const int base,
+                                        const std::size_t width = DEFINT_WIDTH,
+                                        const CharT fill = DEFINT_FILL<CharT>,
+                                        const FormatFlags& flags = DEFINT_FLAGS)
   {
-    return FormatIntegral<T,char>{value, format, width, fill};
+    return FormatIntegral<T,CharT>{value, base, width, fill, flags};
   }
 
-  template<typename T>
-  requires IsIntegral<T>
-  inline FormatIntegral<T,wchar_t> wformat(const T value,
-                                           const char format,
-                                           const std::size_t width = DEFINT_WIDTH,
-                                           const wchar_t fill = DEFINT_FILL<wchar_t>)
-  {
-    return FormatIntegral<T,wchar_t>{value, format, width, fill};
-  }
+  ////// User Interface - Real ///////////////////////////////////////////////
 
   inline constexpr std::size_t DEFREAL_PRECISION = 6;
   inline constexpr std::size_t DEFREAL_WIDTH = 0;
@@ -292,17 +294,6 @@ namespace cs {
                                    const char fill = DEFREAL_FILL<char>)
   {
     return FormatReal<T,char>{value, format, precision, width, fill};
-  }
-
-  template<typename T>
-  requires IsReal<T>
-  inline FormatReal<T,wchar_t> wformat(const T value,
-                                       const char format,
-                                       const std::size_t precision = DEFREAL_PRECISION,
-                                       const std::size_t width = DEFREAL_WIDTH,
-                                       const wchar_t fill = DEFREAL_FILL<wchar_t>)
-  {
-    return FormatReal<T,wchar_t>{value, format, precision, width, fill};
   }
 
 } // namespace cs
