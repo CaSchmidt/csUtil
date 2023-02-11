@@ -277,6 +277,26 @@ namespace cs {
     return FormatIntegral<T,CharT>{value, base, width, fill, flags};
   }
 
+  template<typename T, typename CharT = char>
+  requires IsIntegral<T>  &&  IsCharacter<CharT>
+  inline auto binf(const T value, const bool fill_digits = false)
+  {
+    const std::size_t width = fill_digits
+        ? sizeof(T)*8
+        : 0;
+    return format<T,CharT>(value, 2, width, glyph<CharT>::zero, cs::FormatFlag::None);
+  }
+
+  template<typename T, typename CharT = char>
+  requires IsIntegral<T>  &&  IsCharacter<CharT>
+  inline auto hexf(const T value, const bool fill_digits = false)
+  {
+    const std::size_t width = fill_digits
+        ? sizeof(T)*2
+        : 0;
+    return format<T,CharT>(value, 16, width, glyph<CharT>::zero, cs::FormatFlag::Upper);
+  }
+
   ////// User Interface - Real ///////////////////////////////////////////////
 
   inline constexpr std::size_t DEFREAL_PRECISION = 6;
