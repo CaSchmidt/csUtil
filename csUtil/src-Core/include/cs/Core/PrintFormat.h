@@ -67,7 +67,9 @@ namespace cs {
                        const std::size_t width, const CharT fill,
                        const FormatFlags& flags)
     {
-      if( !flags.testAny(FormatFlag::Left) ) { // right adjust -> fill left
+      const bool is_left = flags.testAny(cs::FormatFlag::Left);
+
+      if( !is_left ) { // right adjust -> fill left
         for(std::size_t i = lenstr; i < width; i++) {
           stream->put(fill);
         }
@@ -81,7 +83,7 @@ namespace cs {
         stream->write(str, lenstr);
       }
 
-      if( flags.testAny(FormatFlag::Left) ) { // left adjust -> fill right
+      if( is_left ) { // left adjust -> fill right
         for(std::size_t i = lenstr; i < width; i++) {
           stream->put(fill);
         }
@@ -261,18 +263,16 @@ namespace cs {
   ////// User Interface - Integral ///////////////////////////////////////////
 
   inline constexpr std::size_t DEFINT_WIDTH = 0;
-  template<typename CharT>
-  requires IsCharacter<CharT>
+  template<typename CharT> requires IsCharacter<CharT>
   inline constexpr CharT       DEFINT_FILL  = glyph<CharT>::space;
   inline constexpr FormatFlag  DEFINT_FLAGS = FormatFlag::None;
 
   template<typename T, typename CharT = char>
   requires IsIntegral<T>  &&  IsCharacter<CharT>
-  inline FormatIntegral<T,CharT> format(const T value,
-                                        const int base,
-                                        const std::size_t width = DEFINT_WIDTH,
-                                        const CharT fill = DEFINT_FILL<CharT>,
-                                        const FormatFlags& flags = DEFINT_FLAGS)
+  inline auto format(const T value, const int base,
+                     const std::size_t width = DEFINT_WIDTH,
+                     const CharT fill = DEFINT_FILL<CharT>,
+                     const FormatFlags& flags = DEFINT_FLAGS)
   {
     return FormatIntegral<T,CharT>{value, base, width, fill, flags};
   }
@@ -280,20 +280,18 @@ namespace cs {
   ////// User Interface - Real ///////////////////////////////////////////////
 
   inline constexpr std::size_t DEFREAL_PRECISION = 6;
-  inline constexpr std::size_t DEFREAL_WIDTH = 0;
-  template<typename CharT>
-  requires IsCharacter<CharT>
-  inline constexpr CharT DEFREAL_FILL = glyph<CharT>::space;
+  inline constexpr std::size_t DEFREAL_WIDTH     = 0;
+  template<typename CharT> requires IsCharacter<CharT>
+  inline constexpr CharT       DEFREAL_FILL      = glyph<CharT>::space;
 
-  template<typename T>
-  requires IsReal<T>
-  inline FormatReal<T,char> format(const T value,
-                                   const char format,
-                                   const std::size_t precision = DEFREAL_PRECISION,
-                                   const std::size_t width = DEFREAL_WIDTH,
-                                   const char fill = DEFREAL_FILL<char>)
+  template<typename T, typename CharT = char>
+  requires IsReal<T>  &&  IsCharacter<CharT>
+  inline auto format(const T value, const char format,
+                     const std::size_t precision = DEFREAL_PRECISION,
+                     const std::size_t width = DEFREAL_WIDTH,
+                     const CharT fill = DEFREAL_FILL<CharT>)
   {
-    return FormatReal<T,char>{value, format, precision, width, fill};
+    return FormatReal<T,CharT>{value, format, precision, width, fill};
   }
 
 } // namespace cs
