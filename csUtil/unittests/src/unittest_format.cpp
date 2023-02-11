@@ -169,7 +169,7 @@ namespace util {
 
   using TwoStrings = std::pair<std::string,std::string>;
 
-  template<bool OUTPUT = true>
+  template<bool OUTPUT = false>
   void print(const TwoStrings& p)
   {
     if constexpr( !OUTPUT ) {
