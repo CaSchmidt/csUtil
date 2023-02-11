@@ -8,6 +8,8 @@
 
 using size_type = std::size_t;
 
+constexpr size_type STRING_LEN = 128;
+
 namespace util {
 
   /*
@@ -26,8 +28,6 @@ namespace util {
   {
     constexpr T MIN = std::numeric_limits<T>::lowest();
     constexpr T MAX = std::numeric_limits<T>::max();
-
-    constexpr size_type STRING_LEN = 32;
 
     if( value != MIN  &&  value != MAX ) {
       return std::string{};
@@ -94,7 +94,7 @@ namespace util {
 
   using TwoStrings = std::pair<std::string,std::string>;
 
-  template<bool OUTPUT = false>
+  template<bool OUTPUT = true>
   void print(const TwoStrings& p)
   {
     if constexpr( !OUTPUT ) {
@@ -194,3 +194,60 @@ namespace test_integral {
   } // TEST_CASE
 
 } // namespace test_integral
+
+namespace test_hex {
+
+  template<typename T>
+  requires cs::IsIntegral<T>
+  util::TwoStrings make_hex(const T value, const bool fill_digits)
+  {
+    const size_type width = fill_digits
+        ? sizeof(T)*2
+        : 0;
+
+    const std::string val_str = cs::sprint("%", cs::hexf(value, fill_digits));
+    const std::string ref_str = util::make_hexstring(value, width, '0', cs::FormatFlag::Upper);
+
+    return util::TwoStrings{val_str, ref_str};
+  }
+
+  TEMPLATE_TEST_CASE("Hexadecimal formatting of integral types.", "[hexf]",
+                     int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t) {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    using value_type = TestType;
+
+    { // Minimum /////////////////////////////////////////////////////////////
+      const value_type MIN = std::numeric_limits<value_type>::lowest();
+
+      {
+        const util::TwoStrings p = make_hex(MIN, false);
+        util::print(p);
+        REQUIRE( p.first == p.second );
+      }
+
+      {
+        const util::TwoStrings p = make_hex(MIN, true);
+        util::print(p);
+        REQUIRE( p.first == p.second );
+      }
+    } // Minimum
+
+    { // Maximum /////////////////////////////////////////////////////////////
+      const value_type MAX = std::numeric_limits<value_type>::max();
+
+      {
+        const util::TwoStrings p = make_hex(MAX, false);
+        util::print(p);
+        REQUIRE( p.first == p.second );
+      }
+
+      {
+        const util::TwoStrings p = make_hex(MAX, true);
+        util::print(p);
+        REQUIRE( p.first == p.second );
+      }
+    } // Maximum
+  } // TEST_CASE
+
+} // namespace test_hex
