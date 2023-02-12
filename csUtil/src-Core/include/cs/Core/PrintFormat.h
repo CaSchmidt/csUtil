@@ -54,9 +54,9 @@ namespace cs {
 
   using FormatFlags = Flags<FormatFlag>;
 
-  ////// Implementation //////////////////////////////////////////////////////
+  namespace impl_format {
 
-  namespace impl_stream {
+    ////// Implementation ////////////////////////////////////////////////////
 
     inline constexpr std::size_t BUF_SIZE = 128;
 
@@ -90,172 +90,154 @@ namespace cs {
       }
     }
 
-  } // namespace impl_stream
+    ////// Integral Types ////////////////////////////////////////////////////
 
-  ////// Integral Types //////////////////////////////////////////////////////
+    template<typename T, typename CharT>
+    requires IsIntegral<T>  &&  IsCharacter<CharT>
+    class FormatIntegral {
+    public:
+      using stream_type = std::basic_ostream<CharT>;
+      using   char_type = typename stream_type::char_type;
+      using   size_type = std::size_t;
+      using  value_type = T;
 
-  template<typename T, typename CharT>
-  requires IsIntegral<T>  &&  IsCharacter<CharT>
-  class FormatIntegral {
-  public:
-    using stream_type = std::basic_ostream<CharT>;
-    using   char_type = typename stream_type::char_type;
-    using   size_type = std::size_t;
-    using  value_type = T;
-
-    FormatIntegral(const value_type value,
-                   const int base,
-                   const size_type width, const char_type fill,
-                   const FormatFlags& flags) noexcept
-      : _value{value}
-      , _base{base}
-      , _width{width}
-      , _fill{fill}
-      , _flags{flags}
-    {
-    }
-
-    ~FormatIntegral() noexcept = default;
-
-    stream_type& operator()(stream_type *stream) const
-    {
-      // (1) Convert number to string ////////////////////////////////////////
-
-      std::array<char,impl_stream::BUF_SIZE> ndata;
-      const std::to_chars_result result =
-          std::to_chars(ndata.data(), ndata.data() + ndata.size(),
-                        _value, _base);
-      if( result.ec != std::errc{} ) {
-        return *stream << "ERROR";
+      FormatIntegral(const value_type value,
+                     const int base,
+                     const size_type width, const char_type fill,
+                     const FormatFlags& flags) noexcept
+        : _value{value}
+        , _base{base}
+        , _width{width}
+        , _fill{fill}
+        , _flags{flags}
+      {
       }
 
-      // (2) (Optionally) Convert string to upper case ///////////////////////
+      ~FormatIntegral() noexcept = default;
 
-      if( _flags.testAny(FormatFlag::Upper) ) {
-        toUpper(ndata.data(), result.ptr);
+      stream_type& operator()(stream_type *stream) const
+      {
+        // (1) Convert number to string //////////////////////////////////////
+
+        std::array<char,BUF_SIZE> ndata;
+        const std::to_chars_result result =
+            std::to_chars(ndata.data(), ndata.data() + ndata.size(),
+                          _value, _base);
+        if( result.ec != std::errc{} ) {
+          return *stream << "ERROR";
+        }
+
+        // (2) (Optionally) Convert string to upper case /////////////////////
+
+        if( _flags.testAny(FormatFlag::Upper) ) {
+          toUpper(ndata.data(), result.ptr);
+        }
+
+        // (3) Get string's bounds ///////////////////////////////////////////
+
+        const char *str = _base != 10  &&  ndata[0] == '-'
+            ? ndata.data() + 1
+            : ndata.data();
+        const size_type lenstr = distance(str, result.ptr);
+
+        // (4) Output string /////////////////////////////////////////////////
+
+        output(stream, str, lenstr, _width, _fill, _flags);
+
+        return *stream;
       }
 
-      // (3) Get string's bounds /////////////////////////////////////////////
+    private:
+      FormatIntegral() noexcept = delete;
 
-      const char *str = _base != 10  &&  ndata[0] == '-'
-          ? ndata.data() + 1
-          : ndata.data();
-      const size_type lenstr = distance(str, result.ptr);
+      const value_type  _value{};
+      const int          _base{};
+      const size_type   _width{};
+      const char_type    _fill{};
+      const FormatFlags _flags{};
+    };
 
-      // (4) Output string ///////////////////////////////////////////////////
+    ////// Real Types ////////////////////////////////////////////////////////
 
-      impl_stream::output(stream, str, lenstr, _width, _fill, _flags);
+    template<typename T, typename CharT>
+    requires IsReal<T>  &&  IsCharacter<CharT>
+    class FormatReal {
+    public:
+      using stream_type = std::basic_ostream<CharT>;
+      using   char_type = typename stream_type::char_type;
+      using   size_type = std::size_t;
+      using  value_type = T;
 
-      return *stream;
-    }
-
-  private:
-    FormatIntegral() noexcept = delete;
-
-    const value_type  _value{};
-    const int          _base{};
-    const size_type   _width{};
-    const char_type    _fill{};
-    const FormatFlags _flags{};
-  };
-
-  ////// Real Types //////////////////////////////////////////////////////////
-
-  template<typename T, typename CharT>
-  requires IsReal<T>  &&  IsCharacter<CharT>
-  class FormatReal {
-  public:
-    using stream_type = std::basic_ostream<CharT>;
-    using   char_type = typename stream_type::char_type;
-    using   size_type = std::size_t;
-    using  value_type = T;
-
-    FormatReal(const value_type value,
-               const char format, const size_type precision,
-               const size_type width, const char_type fill) noexcept
-      : _value{value}
-      , _format{format}
-      , _precision{precision}
-      , _width{width}
-      , _fill{fill}
-    {
-    }
-
-    ~FormatReal() noexcept = default;
-
-    stream_type& operator()(stream_type *stream) const
-    {
-      // (1) Convert number to string ////////////////////////////////////////
-
-      std::array<char,impl_stream::BUF_SIZE> ndata;
-      const std::to_chars_result result =
-          std::to_chars(ndata.data(), ndata.data() + ndata.size(),
-                        _value, format(), int(_precision));
-      if( result.ec != std::errc{} ) {
-        return *stream << "ERROR";
+      FormatReal(const value_type value,
+                 const std::chars_format format, const int precision,
+                 const size_type width, const char_type fill,
+                 const FormatFlags& flags) noexcept
+        : _value{value}
+        , _format{format}
+        , _precision{precision}
+        , _width{width}
+        , _fill{fill}
+        , _flags{flags}
+      {
       }
 
-      // (2) (Optionally) Convert string to upper case ///////////////////////
+      ~FormatReal() noexcept = default;
 
-      if( isUpper() ) {
-        toUpper(ndata.data(), result.ptr);
+      stream_type& operator()(stream_type *stream) const
+      {
+        // (1) Convert number to string //////////////////////////////////////
+
+        std::array<char,BUF_SIZE> ndata;
+        const std::to_chars_result result =
+            std::to_chars(ndata.data(), ndata.data() + ndata.size(),
+                          _value, _format, _precision);
+        if( result.ec != std::errc{} ) {
+          return *stream << "ERROR";
+        }
+
+        // (2) (Optionally) Convert string to upper case /////////////////////
+
+        if( _flags.testAny(cs::FormatFlag::Upper) ) {
+          toUpper(ndata.data(), result.ptr);
+        }
+
+        // (3) Get string's bounds ///////////////////////////////////////////
+
+        const char *str = ndata.data();
+        const std::size_t lenstr = distance(str, result.ptr);
+
+        // (4) Output string /////////////////////////////////////////////////
+
+        output(stream, str, lenstr, _width, _fill, _flags);
+
+        return *stream;
       }
 
-      // (3) Get string's bounds /////////////////////////////////////////////
+    private:
+      FormatReal() noexcept = delete;
 
-      const char *str = ndata.data();
-      const std::size_t lenstr = distance(str, result.ptr);
+      const value_type         _value{};
+      const std::chars_format _format{};
+      const int            _precision{};
+      const size_type          _width{};
+      const char_type           _fill{};
+      const FormatFlags        _flags{};
+    };
 
-      // (4) Output string ///////////////////////////////////////////////////
-
-      impl_stream::output(stream, str, lenstr, _width, _fill);
-
-      return *stream;
-    }
-
-  private:
-    FormatReal() noexcept = delete;
-
-    std::chars_format format() const
-    {
-      if(        _format == 'a'  ||  _format == 'A' ) {
-        return std::chars_format::hex;
-      } else if( _format == 'e'  ||  _format == 'E' ) {
-        return std::chars_format::scientific;
-      } else if( _format == 'f'  ||  _format == 'F' ) {
-        return std::chars_format::fixed;
-      }
-      return std::chars_format::general;
-    }
-
-    bool isUpper() const
-    {
-      return
-          _format == 'A'  ||
-          _format == 'E'  ||
-          _format == 'F'  ||
-          _format == 'G';
-    }
-
-    const value_type    _value{};
-    const char         _format{};
-    const size_type _precision{};
-    const size_type     _width{};
-    const char_type      _fill{};
-  };
+  } // namespace impl_format
 
   ////// STD Stream Interface ////////////////////////////////////////////////
 
   template<typename CharT, typename T>
   inline std::basic_ostream<CharT>& operator<<(std::basic_ostream<CharT>& stream,
-                                               const cs::FormatIntegral<T,CharT>& formatter)
+                                               const cs::impl_format::FormatIntegral<T,CharT>& formatter)
   {
     return formatter(&stream);
   }
 
   template<typename CharT, typename T>
   inline std::basic_ostream<CharT>& operator<<(std::basic_ostream<CharT>& stream,
-                                               const cs::FormatReal<T,CharT>& formatter)
+                                               const cs::impl_format::FormatReal<T,CharT>& formatter)
   {
     return formatter(&stream);
   }
@@ -274,7 +256,7 @@ namespace cs {
                      const CharT fill = DEFINT_FILL<CharT>,
                      const FormatFlags& flags = DEFINT_FLAGS)
   {
-    return FormatIntegral<T,CharT>{value, base, width, fill, flags};
+    return impl_format::FormatIntegral<T,CharT>{value, base, width, fill, flags};
   }
 
   template<typename T, typename CharT = char>
@@ -299,19 +281,49 @@ namespace cs {
 
   ////// User Interface - Real ///////////////////////////////////////////////
 
-  inline constexpr std::size_t DEFREAL_PRECISION = 6;
+  inline constexpr int         DEFREAL_PRECISION = 6;
   inline constexpr std::size_t DEFREAL_WIDTH     = 0;
   template<typename CharT> requires IsCharacter<CharT>
   inline constexpr CharT       DEFREAL_FILL      = glyph<CharT>::space;
+  inline constexpr FormatFlag  DEFREAL_FLAGS     = FormatFlag::None;
 
   template<typename T, typename CharT = char>
   requires IsReal<T>  &&  IsCharacter<CharT>
-  inline auto format(const T value, const char format,
-                     const std::size_t precision = DEFREAL_PRECISION,
+  inline auto format(const T value, const std::chars_format format,
+                     const int precision = DEFREAL_PRECISION,
                      const std::size_t width = DEFREAL_WIDTH,
-                     const CharT fill = DEFREAL_FILL<CharT>)
+                     const CharT fill = DEFREAL_FILL<CharT>,
+                     const FormatFlags& flags = DEFREAL_FLAGS)
   {
-    return FormatReal<T,CharT>{value, format, precision, width, fill};
+    return impl_format::FormatReal<T,CharT>{value, format, precision, width, fill, flags};
+  }
+
+  template<typename T, typename CharT = char>
+  requires IsReal<T>  &&  IsCharacter<CharT>
+  inline auto fixedf(const T value, const int precision = DEFREAL_PRECISION)
+  {
+    return format<T,CharT>(value, std::chars_format::fixed, precision);
+  }
+
+  template<typename T, typename CharT = char>
+  requires IsReal<T>  &&  IsCharacter<CharT>
+  inline auto generalf(const T value, const int precision = DEFREAL_PRECISION)
+  {
+    return format<T,CharT>(value, std::chars_format::general, precision);
+  }
+
+  template<typename T, typename CharT = char>
+  requires IsReal<T>  &&  IsCharacter<CharT>
+  inline auto hexf(const T value, const int precision = DEFREAL_PRECISION)
+  {
+    return format<T,CharT>(value, std::chars_format::hex, precision);
+  }
+
+  template<typename T, typename CharT = char>
+  requires IsReal<T>  &&  IsCharacter<CharT>
+  inline auto scientificf(const T value, const int precision = DEFREAL_PRECISION)
+  {
+    return format<T,CharT>(value, std::chars_format::scientific, precision);
   }
 
 } // namespace cs
