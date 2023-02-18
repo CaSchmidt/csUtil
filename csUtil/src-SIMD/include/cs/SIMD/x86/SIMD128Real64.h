@@ -48,7 +48,7 @@ namespace cs {
 
     static_assert( NUM_ELEMS == 2 );
 
-    ////// Functions ///////////////////////////////////////////////////////
+    ////// Functions /////////////////////////////////////////////////////////
 
     inline static block_type add(const block_type& a, const block_type& b)
     {

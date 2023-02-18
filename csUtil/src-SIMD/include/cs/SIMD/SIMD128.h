@@ -33,6 +33,7 @@
 
 #include <cs/Core/Concepts.h>
 
+#include <cs/SIMD/x86/SIMD128Integral32.h>
 #include <cs/SIMD/x86/SIMD128Real32.h>
 #include <cs/SIMD/x86/SIMD128Real64.h>
 

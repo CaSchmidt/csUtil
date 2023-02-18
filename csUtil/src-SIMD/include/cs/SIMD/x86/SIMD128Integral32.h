@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2022, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2023, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -33,49 +33,56 @@
 
 #include <emmintrin.h>
 
+#include <cs/SIMD/SIMD128Impl.h>
+#include <cs/SIMD/x86/SIMD128Util.h>
+
 namespace cs {
 
-  template<int E0, int E1, int E2, int E3>
-  constexpr int simd128_shuffle_mask()
-  {
-    static_assert( 0 <= E0  &&  E0 <= 3 );
-    static_assert( 0 <= E1  &&  E1 <= 3 );
-    static_assert( 0 <= E2  &&  E2 <= 3 );
-    static_assert( 0 <= E3  &&  E3 <= 3 );
+  template<>
+  struct simd128_impl<4,false> {
+    using block_type = __m128i;
+    using  size_type = std::size_t;
+    using value_type = IntegralOfSize<4>::signed_type;
 
-    return (E3 << 6) | (E2 << 4) | (E1 << 2) | E0;
-  }
+    static constexpr size_type NUM_ELEMS = sizeof(block_type)/sizeof(value_type);
 
-  template<int E0, int E1, int E2, int E3>
-  inline __m128i simd128_swizzle_epi32(const __m128i& x)
-  {
-    constexpr int MASK = simd128_shuffle_mask<E0,E1,E2,E3>();
+    static_assert( NUM_ELEMS == 4 );
 
-    return _mm_shuffle_epi32(x, MASK);
-  }
+    ////// Functions /////////////////////////////////////////////////////////
 
-  template<int E0, int E1>
-  inline __m128d simd128_swizzle_pd(const __m128d& x)
-  {
-    static_assert( 0 <= E0  &&  E0 <= 1 );
-    static_assert( 0 <= E1  &&  E1 <= 1 );
+    inline static block_type add(const block_type& a, const block_type& b)
+    {
+      return _mm_add_epi32(a, b);
+    }
 
-    constexpr int M0 = E0*2;
-    constexpr int M1 = E0*2 + 1;
-    constexpr int M2 = E1*2;
-    constexpr int M3 = E1*2 + 1;
+    inline static block_type hadd(const block_type& x)
+    {
+      const block_type y = _mm_add_epi32(x, simd128_swizzle_epi32<1,0,3,2>(x));
+      return               _mm_add_epi32(y, simd128_swizzle_epi32<3,2,1,0>(y));
+    }
 
-    constexpr int MASK = simd128_shuffle_mask<M0,M1,M2,M3>();
+    template<bool ALIGNED = true>
+    inline static block_type load(const value_type *ptr)
+    {
+      return ALIGNED
+          ? _mm_load_si128(reinterpret_cast<const __m128i*>(ptr))
+          : _mm_loadu_si128(reinterpret_cast<const __m128i*>(ptr));
+    }
 
-    return _mm_castsi128_pd(_mm_shuffle_epi32(_mm_castpd_si128(x), MASK));
-  }
+    inline static void prefetch(const value_type *ptr)
+    {
+      _mm_prefetch(reinterpret_cast<const char*>(ptr), _MM_HINT_NTA);
+    }
 
-  template<int E0, int E1, int E2, int E3>
-  inline __m128 simd128_swizzle_ps(const __m128& x)
-  {
-    constexpr int MASK = simd128_shuffle_mask<E0,E1,E2,E3>();
+    inline static value_type to_value(const block_type& x)
+    {
+      return _mm_cvtsi128_si32(x);
+    }
 
-    return _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(x), MASK));
-  }
+    inline static block_type zero()
+    {
+      return _mm_setzero_si128();
+    }
+  };
 
 } // namespace cs
