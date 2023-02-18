@@ -39,7 +39,7 @@
 namespace cs {
 
   template<>
-  struct simd128_impl<8> {
+  struct simd128_impl<8,true> {
     using block_type = __m128d;
     using  size_type = std::size_t;
     using value_type = RealOfSize<8>::real_type;

@@ -35,7 +35,7 @@
 
 namespace cs {
 
-  template<std::size_t SIZE>
+  template<std::size_t SIZE, bool IS_REAL>
   struct simd128_impl {
     // SFINAE
   };

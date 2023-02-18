@@ -38,7 +38,7 @@
 
 namespace cs {
 
-  template<typename T> requires IsReal<T>
-  using simd128 = simd128_impl<sizeof(T)>;
+  template<typename T> requires IsArithmetic<T>
+  using simd128 = simd128_impl<sizeof(T),is_real_v<T>>;
 
 } // namespace cs
