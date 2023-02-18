@@ -1,7 +1,10 @@
 list(APPEND csSIMD_HEADERS
   include/cs/SIMD/SIMD.h
   include/cs/SIMD/SIMD128.h
-  include/cs/SIMD/SIMD128Util.h
+  include/cs/SIMD/SIMD128Impl.h
+  include/cs/SIMD/x86/SIMD128Real32.h
+  include/cs/SIMD/x86/SIMD128Real64.h
+  include/cs/SIMD/x86/SIMD128Util.h
   )
 
 list(APPEND csSIMD_SOURCES

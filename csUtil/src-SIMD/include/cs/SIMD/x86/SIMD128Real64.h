@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2022, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2023, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -31,14 +31,62 @@
 
 #pragma once
 
-#include <cs/Core/Concepts.h>
+#include <emmintrin.h>
 
-#include <cs/SIMD/x86/SIMD128Real32.h>
-#include <cs/SIMD/x86/SIMD128Real64.h>
+#include <cs/SIMD/SIMD128Impl.h>
+#include <cs/SIMD/x86/SIMD128Util.h>
 
 namespace cs {
 
-  template<typename T> requires IsReal<T>
-  using simd128 = simd128_impl<sizeof(T)>;
+  template<>
+  struct simd128_impl<8> {
+    using block_type = __m128d;
+    using  size_type = std::size_t;
+    using value_type = RealOfSize<8>::real_type;
+
+    static constexpr size_type NUM_ELEMS = sizeof(block_type)/sizeof(value_type);
+
+    static_assert( NUM_ELEMS == 2 );
+
+    ////// Functions ///////////////////////////////////////////////////////
+
+    inline static block_type add(const block_type& a, const block_type& b)
+    {
+      return _mm_add_pd(a, b);
+    }
+
+    inline static block_type hadd(const block_type& x)
+    {
+      return _mm_add_pd(x, simd128_swizzle_pd<1,0>(x));
+    }
+
+    template<bool ALIGNED = true>
+    inline static block_type load(const value_type *ptr)
+    {
+      return ALIGNED
+          ? _mm_load_pd(ptr)
+          : _mm_loadu_pd(ptr);
+    }
+
+    inline static block_type mul(const block_type& a, const block_type& b)
+    {
+      return _mm_mul_pd(a, b);
+    }
+
+    inline static void prefetch(const value_type *ptr)
+    {
+      _mm_prefetch(reinterpret_cast<const char*>(ptr), _MM_HINT_NTA);
+    }
+
+    inline static value_type to_value(const block_type& x)
+    {
+      return _mm_cvtsd_f64(x);
+    }
+
+    inline static block_type zero()
+    {
+      return _mm_setzero_pd();
+    }
+  };
 
 } // namespace cs
