@@ -266,7 +266,14 @@ namespace cs {
     const std::size_t width = fill_digits
         ? sizeof(T)*8
         : 0;
-    return format<T,CharT>(value, 2, width, glyph<CharT>::zero, cs::FormatFlag::None);
+    return format<T,CharT>(value, 2, width, glyph<CharT>::zero);
+  }
+
+  template<typename T, typename CharT = char>
+  requires IsIntegral<T>  &&  IsCharacter<CharT>
+  inline auto decf(const T value, const std::size_t width, const CharT fill = DEFINT_FILL<CharT>)
+  {
+    return format<T,CharT>(value, 10, width, fill);
   }
 
   template<typename T, typename CharT = char>
