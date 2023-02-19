@@ -34,6 +34,7 @@
 #include <limits>
 
 #include <cs/Core/Pointer.h>
+#include <cs/SIMD/impl/Reduce.h>
 
 namespace cs {
 
@@ -43,7 +44,7 @@ namespace cs {
 
     namespace impl_simd {
 
-      // Generic Operations //////////////////////////////////////////////////
+      // Generic Reduce Operations ///////////////////////////////////////////
 
       template<typename SIMD>
       struct OP_identity {
@@ -86,62 +87,26 @@ namespace cs {
         }
       };
 
-      // Generic Accumulator //////////////////////////////////////////////////
+      // Generic Reduce //////////////////////////////////////////////////////
 
-#ifdef HAVE_SIMD128_PREFETCH
-      inline constexpr std::size_t SIZE_CACHE_LINE = 64; // Assumed size of one cache line in bytes.
-#endif
-
-      template<typename SIMD, typename OP, bool ALIGNED>
-      inline typename SIMD::value_type accumulate(const typename SIMD::value_type *x,
-                                                  const typename SIMD::size_type count)
+      template<typename SIMD, typename OP, bool ALIGNED,
+               typename  block_type = typename SIMD::block_type,
+               typename result_type = ReduceResult<SIMD>,
+               typename   size_type = typename SIMD::size_type,
+               typename  value_type = typename SIMD::value_type>
+      inline value_type reduce(const value_type *x, const size_type count)
       {
-        using block_type = typename SIMD::block_type;
-        using  size_type = typename SIMD::size_type;
-        using value_type = typename SIMD::value_type;
-
         if( x == nullptr  ||  count < 1 ) {
           return std::numeric_limits<value_type>::quiet_NaN();
         }
 
-        value_type sum = 0;
+        const result_type result = reduce4Blocks<SIMD,OP,ALIGNED>(x, count);
 
-#ifdef HAVE_SIMD128_PREFETCH // Move to if constexpr( ... )?
-        static_assert( SIZE_CACHE_LINE/sizeof(block_type) == 4 );
+        value_type sum = getSum<SIMD>(result);
+        x += getReduced<SIMD>(result);
 
-        constexpr size_type NUM_ELEMS_LINE = SIMD::NUM_ELEMS*4;
-
-        const size_type numLines       = count/NUM_ELEMS_LINE;
-        const size_type numLinesRemain = count%NUM_ELEMS_LINE;
-
-        if( numLines > 0 ) {
-          block_type acc = SIMD::zero();
-          for(size_type i = 0; i < numLines; i++, x += NUM_ELEMS_LINE) {
-            SIMD::prefetch(x + NUM_ELEMS_LINE);
-
-            const block_type block1 = SIMD::load<ALIGNED>(x + SIMD::NUM_ELEMS*0);
-            const block_type block2 = SIMD::load<ALIGNED>(x + SIMD::NUM_ELEMS*1);
-
-            acc = SIMD::add(acc, OP::eval(block1));
-
-            const block_type block3 = SIMD::load<ALIGNED>(x + SIMD::NUM_ELEMS*2);
-
-            acc = SIMD::add(acc, OP::eval(block2));
-
-            const block_type block4 = SIMD::load<ALIGNED>(x + SIMD::NUM_ELEMS*3);
-
-            acc = SIMD::add(acc, OP::eval(block3));
-            acc = SIMD::add(acc, OP::eval(block4));
-          }
-          sum += SIMD::to_value(SIMD::hadd(acc));
-        }
-
-        const size_type numBlocks = numLinesRemain/SIMD::NUM_ELEMS;
-        const size_type numRemain = numLinesRemain%SIMD::NUM_ELEMS;
-#else
-        const size_type numBlocks = count/SIMD::NUM_ELEMS;
-        const size_type numRemain = count%SIMD::NUM_ELEMS;
-#endif
+        const size_type numBlocks = getRemain<SIMD>(result)/SIMD::NUM_ELEMS;
+        const size_type numRemain = getRemain<SIMD>(result)%SIMD::NUM_ELEMS;
 
         if( numBlocks > 0 ) {
           block_type acc = SIMD::zero();
@@ -160,63 +125,26 @@ namespace cs {
         return sum;
       }
 
-      template<typename SIMD, typename OP, bool ALIGNED_a, bool ALIGNED_b>
-      inline typename SIMD::value_type accumulate(const typename SIMD::value_type *a,
-                                                  const typename SIMD::value_type *b,
-                                                  const typename SIMD::size_type count)
+      template<typename SIMD, typename OP, bool ALIGNED_a, bool ALIGNED_b,
+               typename  block_type = typename SIMD::block_type,
+               typename result_type = ReduceResult<SIMD>,
+               typename   size_type = typename SIMD::size_type,
+               typename  value_type = typename SIMD::value_type>
+      inline value_type reduce(const value_type *a, const value_type *b,
+                               const size_type count)
       {
-        using block_type = typename SIMD::block_type;
-        using  size_type = typename SIMD::size_type;
-        using value_type = typename SIMD::value_type;
-
         if( a == nullptr  ||  b == nullptr  ||  count < 1 ) {
           return std::numeric_limits<value_type>::quiet_NaN();
         }
 
-        value_type sum = 0;
+        const result_type result = reduce4Blocks<SIMD,OP,ALIGNED_a,ALIGNED_b>(a, b, count);
 
-#ifdef HAVE_SIMD128_PREFETCH // Move to if constexpr( ... )?
-        static_assert( SIZE_CACHE_LINE/sizeof(block_type) == 4 );
+        value_type sum = getSum<SIMD>(result);
+        a += getReduced<SIMD>(result);
+        b += getReduced<SIMD>(result);
 
-        constexpr size_type NUM_ELEMS_LINE = SIMD::NUM_ELEMS*4;
-
-        const size_type numLines       = count/NUM_ELEMS_LINE;
-        const size_type numLinesRemain = count%NUM_ELEMS_LINE;
-
-        if( numLines > 0 ) {
-          block_type acc = SIMD::zero();
-          for(size_type i = 0; i < numLines; i++, a += NUM_ELEMS_LINE, b += NUM_ELEMS_LINE) {
-            SIMD::prefetch(a + NUM_ELEMS_LINE);
-            SIMD::prefetch(b + NUM_ELEMS_LINE);
-
-            const block_type block_a1 = SIMD::load<ALIGNED_a>(a + SIMD::NUM_ELEMS*0);
-            const block_type block_b1 = SIMD::load<ALIGNED_b>(b + SIMD::NUM_ELEMS*0);
-
-            const block_type block_a2 = SIMD::load<ALIGNED_a>(a + SIMD::NUM_ELEMS*1);
-            const block_type block_b2 = SIMD::load<ALIGNED_b>(b + SIMD::NUM_ELEMS*1);
-
-            acc = SIMD::add(acc, OP::eval(block_a1, block_b1));
-
-            const block_type block_a3 = SIMD::load<ALIGNED_a>(a + SIMD::NUM_ELEMS*2);
-            const block_type block_b3 = SIMD::load<ALIGNED_b>(b + SIMD::NUM_ELEMS*2);
-
-            acc = SIMD::add(acc, OP::eval(block_a2, block_b2));
-
-            const block_type block_a4 = SIMD::load<ALIGNED_a>(a + SIMD::NUM_ELEMS*3);
-            const block_type block_b4 = SIMD::load<ALIGNED_b>(b + SIMD::NUM_ELEMS*3);
-
-            acc = SIMD::add(acc, OP::eval(block_a3, block_b3));
-            acc = SIMD::add(acc, OP::eval(block_a4, block_b4));
-          }
-          sum += SIMD::to_value(SIMD::hadd(acc));
-        }
-
-        const size_type numBlocks = numLinesRemain/SIMD::NUM_ELEMS;
-        const size_type numRemain = numLinesRemain%SIMD::NUM_ELEMS;
-#else
-        const size_type numBlocks = count/SIMD::NUM_ELEMS;
-        const size_type numRemain = count%SIMD::NUM_ELEMS;
-#endif
+        const size_type numBlocks = getRemain<SIMD>(result)/SIMD::NUM_ELEMS;
+        const size_type numRemain = getRemain<SIMD>(result)%SIMD::NUM_ELEMS;
 
         if( numBlocks > 0 ) {
           block_type acc = SIMD::zero();
@@ -251,13 +179,13 @@ namespace cs {
       const bool is_aligned_a = Pointer::isAlignedTo<typename SIMD::block_type>(a);
       const bool is_aligned_b = Pointer::isAlignedTo<typename SIMD::block_type>(b);
       if( is_aligned_a  &&  is_aligned_b ) {
-        return impl_simd::accumulate<SIMD,OP,true,true>(a, b, count);
+        return impl_simd::reduce<SIMD,OP,true,true>(a, b, count);
       } else if( is_aligned_a ) {
-        return impl_simd::accumulate<SIMD,OP,true,false>(a, b, count);
+        return impl_simd::reduce<SIMD,OP,true,false>(a, b, count);
       } else if( is_aligned_b ) {
-        return impl_simd::accumulate<SIMD,OP,false,true>(a, b, count);
+        return impl_simd::reduce<SIMD,OP,false,true>(a, b, count);
       }
-      return impl_simd::accumulate<SIMD,OP,false,false>(a, b, count);
+      return impl_simd::reduce<SIMD,OP,false,false>(a, b, count);
     }
 
     template<typename SIMD>
@@ -267,9 +195,9 @@ namespace cs {
       using OP = impl_simd::OP_identity<SIMD>;
       const bool is_aligned = Pointer::isAlignedTo<typename SIMD::block_type>(x);
       if( is_aligned ) {
-        return impl_simd::accumulate<SIMD,OP,true>(x, count);
+        return impl_simd::reduce<SIMD,OP,true>(x, count);
       }
-      return impl_simd::accumulate<SIMD,OP,false>(x, count);
+      return impl_simd::reduce<SIMD,OP,false>(x, count);
     }
 
     template<typename SIMD>
@@ -279,9 +207,9 @@ namespace cs {
       using OP = impl_simd::OP_square<SIMD>;
       const bool is_aligned = Pointer::isAlignedTo<typename SIMD::block_type>(x);
       if( is_aligned ) {
-        return impl_simd::accumulate<SIMD,OP,true>(x, count);
+        return impl_simd::reduce<SIMD,OP,true>(x, count);
       }
-      return impl_simd::accumulate<SIMD,OP,false>(x, count);
+      return impl_simd::reduce<SIMD,OP,false>(x, count);
     }
 
   } // namespace simd
