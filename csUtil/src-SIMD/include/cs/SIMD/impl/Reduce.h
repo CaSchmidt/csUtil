@@ -39,6 +39,8 @@ namespace cs {
 
     namespace impl_simd {
 
+      // Result of Reduction /////////////////////////////////////////////////
+
       template<typename SIMD,
                typename  size_type = typename SIMD::size_type,
                typename value_type = typename SIMD::value_type>
@@ -64,6 +66,8 @@ namespace cs {
       {
         return std::get<2>(result);
       }
+
+      // Reduction of Single Vector //////////////////////////////////////////
 
       template<typename SIMD, typename OP, bool ALIGNED,
                typename  block_type = typename SIMD::block_type,
@@ -99,6 +103,8 @@ namespace cs {
 
         return result_type{sum, numReduce*REDUCE_STRIDE, numElemsRemain};
       }
+
+      // Reduction of Two Vectors ////////////////////////////////////////////
 
       template<typename SIMD, typename OP, bool ALIGNED_a, bool ALIGNED_b,
                typename  block_type = typename SIMD::block_type,
