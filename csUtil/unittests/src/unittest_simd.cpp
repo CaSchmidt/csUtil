@@ -7,7 +7,6 @@
 
 #include <catch.hpp>
 
-#define HAVE_SIMD128_PREFETCH
 #include <cs/SIMD/SIMD.h>
 #include <cs/SIMD/SIMD128.h>
 

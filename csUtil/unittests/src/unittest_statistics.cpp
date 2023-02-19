@@ -6,7 +6,6 @@
 
 #include <catch.hpp>
 
-#define HAVE_SIMD128_PREFETCH
 #include <cs/Math/Statistics.h>
 
 namespace test_mean {

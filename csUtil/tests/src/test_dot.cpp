@@ -5,7 +5,6 @@
 #include <numeric>
 #include <vector>
 
-#define HAVE_SIMD128_PREFETCH
 #include <cs/SIMD/SIMD.h>
 #include <cs/SIMD/SIMD128.h>
 
@@ -40,7 +39,7 @@ extern "C" real_T dot(const real_T *a, const real_T *b, const std::size_t count)
 #else
   using SIMD = cs::simd128<real_T>;
   using OP = cs::simd::impl_simd::OP_mul<SIMD>;
-  return cs::simd::impl_simd::accumulate<SIMD,OP,true,true>(a, b, count);
+  return cs::simd::impl_simd::reduce<SIMD,OP,true,true>(a, b, count);
 #endif
 }
 
