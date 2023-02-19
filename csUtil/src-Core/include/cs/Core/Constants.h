@@ -39,6 +39,8 @@ namespace cs {
   struct konst {
     using value_type = T;
 
+    static constexpr auto INVALID_RESULT = std::numeric_limits<value_type>::quiet_NaN();
+
     static constexpr auto MAX = std::numeric_limits<value_type>::max();
     static constexpr auto MIN = std::numeric_limits<value_type>::lowest();
 
@@ -62,8 +64,6 @@ namespace cs {
   struct real_konst_impl<4> : public konst<RealOfSize<4>::real_type> {
     using value_type = RealOfSize<4>::real_type;
 
-    static constexpr auto INVALID_RESULT = std::numeric_limits<value_type>::quiet_NaN();
-
     static constexpr value_type  e = 0x1.5bf0a8p+1f;
 
     static constexpr value_type pi = 0x1.921fb6p+1f;
@@ -76,8 +76,6 @@ namespace cs {
   template<>
   struct real_konst_impl<8> : public konst<RealOfSize<8>::real_type> {
     using value_type = RealOfSize<8>::real_type;
-
-    static constexpr auto INVALID_RESULT = std::numeric_limits<value_type>::quiet_NaN();
 
     static constexpr value_type  e = 0x1.5bf0a8b145769p+1;
 

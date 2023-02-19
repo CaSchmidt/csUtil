@@ -29,8 +29,6 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <limits>
-
 #include "cs/IO/File.h"
 
 #include "internal/Win32Handle.h"

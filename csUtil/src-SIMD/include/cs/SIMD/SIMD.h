@@ -31,8 +31,7 @@
 
 #pragma once
 
-#include <limits>
-
+#include <cs/Core/Constants.h>
 #include <cs/Core/Pointer.h>
 #include <cs/SIMD/impl/Reduce.h>
 
@@ -97,7 +96,7 @@ namespace cs {
       inline value_type reduce(const value_type *x, const size_type count)
       {
         if( x == nullptr  ||  count < 1 ) {
-          return std::numeric_limits<value_type>::quiet_NaN();
+          return konst<value_type>::INVALID_RESULT;
         }
 
         const result_type result = reduce4Blocks<SIMD,OP,ALIGNED>(x, count);
@@ -134,7 +133,7 @@ namespace cs {
                                const size_type count)
       {
         if( a == nullptr  ||  b == nullptr  ||  count < 1 ) {
-          return std::numeric_limits<value_type>::quiet_NaN();
+          return konst<value_type>::INVALID_RESULT;
         }
 
         const result_type result = reduce4Blocks<SIMD,OP,ALIGNED_a,ALIGNED_b>(a, b, count);

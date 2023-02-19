@@ -32,11 +32,12 @@
 #pragma once
 
 #include <filesystem>
-#include <limits>
 #include <type_traits>
 
 #define NOMINMAX
 #include <Windows.h>
+
+#include "cs/Core/Constants.h"
 
 namespace cs {
 
@@ -52,7 +53,7 @@ namespace cs {
     {
       static_assert(std::is_integral_v<CS_SIZE_T>  &&  sizeof(CS_SIZE_T) > sizeof(DWORD));
 
-      constexpr CS_SIZE_T MAX_DWORD = std::numeric_limits<DWORD>::max();
+      constexpr CS_SIZE_T MAX_DWORD = konst<DWORD>::MAX;
       constexpr CS_SIZE_T       ONE = 1;
 
       return ONE <= length  &&  length <= MAX_DWORD;

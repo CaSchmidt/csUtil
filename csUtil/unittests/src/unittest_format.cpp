@@ -1,8 +1,8 @@
 #include <iostream>
-#include <limits>
 
 #include <catch.hpp>
 
+#include <cs/Core/Constants.h>
 #include <cs/Core/PrintFormat.h>
 #include <cs/Core/PrintUtil.h>
 
@@ -26,8 +26,8 @@ namespace util {
                              const size_type width, const char fill,
                              const cs::FormatFlags& flags)
   {
-    constexpr T MIN = std::numeric_limits<T>::lowest();
-    constexpr T MAX = std::numeric_limits<T>::max();
+    constexpr T MIN = cs::konst<T>::MIN;
+    constexpr T MAX = cs::konst<T>::MAX;
 
     if( value != MIN  &&  value != MAX ) {
       return std::string{};
@@ -101,8 +101,8 @@ namespace util {
                              const size_type width, const char fill,
                              const cs::FormatFlags& flags)
   {
-    constexpr T MIN = std::numeric_limits<T>::lowest();
-    constexpr T MAX = std::numeric_limits<T>::max();
+    constexpr T MIN = cs::konst<T>::MIN;
+    constexpr T MAX = cs::konst<T>::MAX;
 
     if( value != MIN  &&  value != MAX ) {
       return std::string{};
@@ -219,7 +219,7 @@ namespace test_integral {
     using value_type = TestType;
 
     { // Minimum /////////////////////////////////////////////////////////////
-      constexpr value_type MIN = std::numeric_limits<value_type>::lowest();
+      constexpr value_type MIN = cs::konst<value_type>::MIN;
 
       {
         const cs::FormatFlags flags{cs::FormatFlag::None};
@@ -265,7 +265,7 @@ namespace test_integral {
     } // Minimum
 
     { // Maximum /////////////////////////////////////////////////////////////
-      constexpr value_type MAX = std::numeric_limits<value_type>::max();
+      constexpr value_type MAX = cs::konst<value_type>::MAX;
 
       {
         const cs::FormatFlags flags{cs::FormatFlag::None};
@@ -336,7 +336,7 @@ namespace test_hex {
     using value_type = TestType;
 
     { // Minimum /////////////////////////////////////////////////////////////
-      constexpr value_type MIN = std::numeric_limits<value_type>::lowest();
+      constexpr value_type MIN = cs::konst<value_type>::MIN;
 
       {
         const util::TwoStrings p = make_hex(MIN, false);
@@ -352,7 +352,7 @@ namespace test_hex {
     } // Minimum
 
     { // Maximum /////////////////////////////////////////////////////////////
-      constexpr value_type MAX = std::numeric_limits<value_type>::max();
+      constexpr value_type MAX = cs::konst<value_type>::MAX;
 
       {
         const util::TwoStrings p = make_hex(MAX, false);
@@ -393,7 +393,7 @@ namespace test_bin {
     using value_type = TestType;
 
     { // Minimum /////////////////////////////////////////////////////////////
-      constexpr value_type MIN = std::numeric_limits<value_type>::lowest();
+      constexpr value_type MIN = cs::konst<value_type>::MIN;
 
       {
         const util::TwoStrings p = make_bin(MIN, false);
@@ -409,7 +409,7 @@ namespace test_bin {
     } // Minimum
 
     { // Maximum /////////////////////////////////////////////////////////////
-      constexpr value_type MAX = std::numeric_limits<value_type>::max();
+      constexpr value_type MAX = cs::konst<value_type>::MAX;
 
       {
         const util::TwoStrings p = make_bin(MAX, false);

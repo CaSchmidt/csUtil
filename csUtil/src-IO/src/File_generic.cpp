@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <limits>
-
+#include "cs/Core/Constants.h"
 #include "cs/Core/Container.h"
 #include "cs/IO/File.h"
 
@@ -40,7 +39,7 @@ namespace cs {
   {
     using Buffer = std::vector<uint8_t>;
 
-    constexpr size_type MAX_SIZE = std::numeric_limits<Buffer::size_type>::max();
+    constexpr size_type MAX_SIZE = konst<Buffer::size_type>::MAX;
     constexpr size_type      ONE = 1;
 
     const size_type numToRead = size();
