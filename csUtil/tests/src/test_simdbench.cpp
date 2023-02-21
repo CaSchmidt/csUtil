@@ -60,6 +60,63 @@ namespace util {
     return result;
   }
 
+  template<typename Func, typename vector_type>
+  uint64_t do_bench(const char *name, Func func,
+                    const vector_type& v,
+                    const typename vector_type::size_type beg,
+                    const typename vector_type::size_type end,
+                    const uint64_t ref = 0)
+  {
+    if( v.empty() ) {
+      return 0;
+    }
+
+    util::flush_data(v);
+
+    const uint64_t start = cs::tickCountUs();
+    const auto       sum = func(v, beg, end);
+    const uint64_t  stop = cs::tickCountUs();
+
+    const uint64_t dur = stop - start;
+    const double   rat = (ref == 0
+                          ? 1
+                          : double(dur)/double(ref))*100.0;
+
+    cs::println("%(%,%) = %, %us, ratio = %%",
+                name, beg, end, sum, dur, cs::fixedf(rat, 2), '%');
+
+    return dur;
+  }
+
+  template<typename Func, typename vector_type>
+  uint64_t do_bench(const char *name, Func func,
+                    const vector_type& v1, const vector_type& v2,
+                    const typename vector_type::size_type beg,
+                    const typename vector_type::size_type end,
+                    const uint64_t ref = 0)
+  {
+    if( v1.empty()  ||  v2.empty() ) {
+      return 0;
+    }
+
+    util::flush_data(v1);
+    util::flush_data(v2);
+
+    const uint64_t start = cs::tickCountUs();
+    const auto       sum = func(v1, v2, beg, end);
+    const uint64_t  stop = cs::tickCountUs();
+
+    const uint64_t dur = stop - start;
+    const double   rat = (ref == 0
+                          ? 1
+                          : double(dur)/double(ref))*100.0;
+
+    cs::println("%(%,%) = %, %us, ratio = %%",
+                name, beg, end, sum, dur, cs::fixedf(rat, 2), '%');
+
+    return dur;
+  }
+
 } // namespace util
 
 namespace bench_int {
@@ -95,29 +152,6 @@ namespace bench_int {
     return cs::simd::sum<SIMD>(data.data() + beg, end - beg);
   }
 
-  template<typename Func>
-  uint64_t do_bench(const char *name, Func func,
-                    const vector_type& data,
-                    const size_type beg, const size_type end,
-                    const uint64_t ref = 0)
-  {
-    util::flush_data(data);
-
-    const uint64_t start = cs::tickCountUs();
-    const sum_type   sum = func(data, beg, end);
-    const uint64_t  stop = cs::tickCountUs();
-
-    const uint64_t dur = stop - start;
-    const double   rat = (ref == 0
-                          ? 1
-                          : double(dur)/double(ref))*100.0;
-
-    cs::println("%(%,%) = %, %us, ratio = %%",
-                name, beg, end, sum, dur, cs::fixedf(rat, 2), '%');
-
-    return dur;
-  }
-
   void benchmark()
   {
     constexpr size_type COUNT = 100'000'000;
@@ -127,9 +161,9 @@ namespace bench_int {
       return;
     }
 
-    const uint64_t ref = do_bench("sum_for", sum_for, data, 0, COUNT);
-    do_bench("sum_accumulate", sum_accumulate, data, 0, COUNT, ref);
-    do_bench("sum_simd", sum_simd, data, 0, COUNT, ref);
+    const uint64_t ref = util::do_bench("sum_for", sum_for, data, 0, COUNT);
+    util::do_bench("sum_accumulate", sum_accumulate, data, 0, COUNT, ref);
+    util::do_bench("sum_simd", sum_simd, data, 0, COUNT, ref);
   }
 
 } // namespace bench_int
@@ -158,30 +192,6 @@ namespace bench_real {
     return cs::simd::dot<SIMD>(v1.data() + beg, v2.data() + beg, end - beg);
   }
 
-  template<typename Func>
-  uint64_t do_bench(const char *name, Func func,
-                    const vector_type& v1, const vector_type& v2,
-                    const size_type beg, const size_type end,
-                    const uint64_t ref = 0)
-  {
-    util::flush_data(v1);
-    util::flush_data(v2);
-
-    const uint64_t start = cs::tickCountUs();
-    const value_type sum = func(v1, v2, beg, end);
-    const uint64_t  stop = cs::tickCountUs();
-
-    const uint64_t dur = stop - start;
-    const double   rat = (ref == 0
-                          ? 1
-                          : double(dur)/double(ref))*100.0;
-
-    cs::println("%(%,%) = %, %us, ratio = %%",
-                name, beg, end, sum, dur, cs::fixedf(rat, 2), '%');
-
-    return dur;
-  }
-
   void benchmark()
   {
     constexpr size_type COUNT = 16'000'000;
@@ -195,8 +205,8 @@ namespace bench_real {
       return;
     }
 
-    const uint64_t ref = do_bench("dot_for", dot_for, v1, v2, 0, COUNT);
-    do_bench("dot_simd", dot_simd, v1, v2, 0, COUNT, ref);
+    const uint64_t ref = util::do_bench("dot_for", dot_for, v1, v2, 0, COUNT);
+    util::do_bench("dot_simd", dot_simd, v1, v2, 0, COUNT, ref);
   }
 
 } // namespace bench_real
