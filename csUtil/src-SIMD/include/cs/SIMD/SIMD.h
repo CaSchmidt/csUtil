@@ -88,13 +88,15 @@ namespace cs {
 
       // Generic Reduce //////////////////////////////////////////////////////
 
-      template<typename SIMD, typename OP, bool ALIGNED,
-               typename  block_type = typename SIMD::block_type,
-               typename result_type = ReduceResult<SIMD>,
-               typename   size_type = typename SIMD::size_type,
-               typename  value_type = typename SIMD::value_type>
-      inline value_type reduce(const value_type *x, const size_type count)
+      template<typename SIMD, typename OP, bool ALIGNED>
+      inline typename SIMD::value_type reduce(const typename SIMD::value_type *x,
+                                              const typename SIMD::size_type count)
       {
+        using  block_type = typename SIMD::block_type;
+        using result_type = ReduceResult<SIMD>;
+        using   size_type = typename SIMD::size_type;
+        using  value_type = typename SIMD::value_type;
+
         if( x == nullptr  ||  count < 1 ) {
           return konst<value_type>::INVALID_RESULT;
         }
@@ -124,14 +126,16 @@ namespace cs {
         return sum;
       }
 
-      template<typename SIMD, typename OP, bool ALIGNED_a, bool ALIGNED_b,
-               typename  block_type = typename SIMD::block_type,
-               typename result_type = ReduceResult<SIMD>,
-               typename   size_type = typename SIMD::size_type,
-               typename  value_type = typename SIMD::value_type>
-      inline value_type reduce(const value_type *a, const value_type *b,
-                               const size_type count)
+      template<typename SIMD, typename OP, bool ALIGNED_a, bool ALIGNED_b>
+      inline typename SIMD::value_type reduce(const typename SIMD::value_type *a,
+                                              const typename SIMD::value_type *b,
+                                              const typename SIMD::size_type count)
       {
+        using  block_type = typename SIMD::block_type;
+        using result_type = ReduceResult<SIMD>;
+        using   size_type = typename SIMD::size_type;
+        using  value_type = typename SIMD::value_type;
+
         if( a == nullptr  ||  b == nullptr  ||  count < 1 ) {
           return konst<value_type>::INVALID_RESULT;
         }

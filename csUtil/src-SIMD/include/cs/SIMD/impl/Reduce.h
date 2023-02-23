@@ -41,41 +41,42 @@ namespace cs {
 
       // Result of Reduction /////////////////////////////////////////////////
 
-      template<typename SIMD,
-               typename  size_type = typename SIMD::size_type,
-               typename value_type = typename SIMD::value_type>
-      using ReduceResult = std::tuple<value_type,size_type,size_type>;
+      template<typename SIMD>
+      using ReduceResult = std::tuple<
+      typename SIMD::value_type, // result: sum of reduced elements
+      typename SIMD::size_type,  // number of reduced elements
+      typename SIMD::size_type   // number of remaining (AKA not reduced) elements
+      >;
 
-      template<typename SIMD,
-               typename value_type = typename SIMD::value_type>
-      constexpr value_type getSum(const ReduceResult<SIMD>& result)
+      template<typename SIMD>
+      constexpr typename SIMD::value_type getSum(const ReduceResult<SIMD>& result)
       {
         return std::get<0>(result);
       }
 
-      template<typename SIMD,
-               typename size_type = typename SIMD::size_type>
-      constexpr size_type getReduced(const ReduceResult<SIMD>& result)
+      template<typename SIMD>
+      constexpr typename SIMD::size_type getReduced(const ReduceResult<SIMD>& result)
       {
         return std::get<1>(result);
       }
 
-      template<typename SIMD,
-               typename size_type = typename SIMD::size_type>
-      constexpr size_type getRemain(const ReduceResult<SIMD>& result)
+      template<typename SIMD>
+      constexpr typename SIMD::size_type getRemain(const ReduceResult<SIMD>& result)
       {
         return std::get<2>(result);
       }
 
       // Reduction of Single Vector //////////////////////////////////////////
 
-      template<typename SIMD, typename OP, bool ALIGNED,
-               typename  block_type = typename SIMD::block_type,
-               typename result_type = ReduceResult<SIMD>,
-               typename   size_type = typename SIMD::size_type,
-               typename  value_type = typename SIMD::value_type>
-      inline result_type reduce4Blocks(const value_type *x, const size_type count)
+      template<typename SIMD, typename OP, bool ALIGNED>
+      inline ReduceResult<SIMD> reduce4Blocks(const typename SIMD::value_type *x,
+                                              const typename SIMD::size_type count)
       {
+        using  block_type = typename SIMD::block_type;
+        using result_type = ReduceResult<SIMD>;
+        using   size_type = typename SIMD::size_type;
+        using  value_type = typename SIMD::value_type;
+
         constexpr size_type REDUCE_STRIDE = SIMD::NUM_ELEMS*4;
 
         const size_type numReduce      = count/REDUCE_STRIDE;
@@ -101,14 +102,16 @@ namespace cs {
 
       // Reduction of Two Vectors ////////////////////////////////////////////
 
-      template<typename SIMD, typename OP, bool ALIGNED_a, bool ALIGNED_b,
-               typename  block_type = typename SIMD::block_type,
-               typename result_type = ReduceResult<SIMD>,
-               typename   size_type = typename SIMD::size_type,
-               typename  value_type = typename SIMD::value_type>
-      inline result_type reduce4Blocks(const value_type *a, const value_type *b,
-                                       const size_type count)
+      template<typename SIMD, typename OP, bool ALIGNED_a, bool ALIGNED_b>
+      inline ReduceResult<SIMD> reduce4Blocks(const typename SIMD::value_type *a,
+                                              const typename SIMD::value_type *b,
+                                              const typename SIMD::size_type count)
       {
+        using  block_type = typename SIMD::block_type;
+        using result_type = ReduceResult<SIMD>;
+        using   size_type = typename SIMD::size_type;
+        using  value_type = typename SIMD::value_type;
+
         constexpr size_type REDUCE_STRIDE = SIMD::NUM_ELEMS*4;
 
         const size_type numReduce      = count/REDUCE_STRIDE;

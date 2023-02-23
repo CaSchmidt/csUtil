@@ -33,11 +33,10 @@
 
 namespace cs {
 
-  template<typename container_type,
-           typename      size_type = typename container_type::size_type,
-           typename     value_type = typename container_type::value_type>
+  template<typename container_type>
   bool resize(container_type *container,
-              const size_type count, const value_type& value = value_type{})
+              const typename container_type::size_type count,
+              const typename container_type::value_type& value = typename container_type::value_type{})
   {
     try {
       container->resize(count, value);
