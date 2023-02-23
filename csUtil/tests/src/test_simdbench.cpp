@@ -14,11 +14,20 @@
 
 namespace util {
 
-  template<typename vector_type,
-           typename  size_type = typename vector_type::size_type,
-           typename value_type = typename vector_type::value_type>
+  template<typename T>
+  using is_real32 = std::bool_constant<
+  cs::is_real_v<T>  &&  sizeof(T) == 4
+  >;
+
+  template<typename T>
+  inline constexpr bool is_real32_v = is_real32<T>::value;
+
+  template<typename vector_type>
   void flush_data(const vector_type& data)
   {
+    using  size_type = typename vector_type::size_type;
+    using value_type = typename vector_type::value_type;
+
     constexpr size_type CACHE_LINE_SIZE = 64;
     constexpr size_type STEP = CACHE_LINE_SIZE/sizeof(value_type);
 
@@ -29,12 +38,13 @@ namespace util {
     _mm_mfence();
   }
 
-  template<typename vector_type,
-           typename  size_type = typename vector_type::size_type,
-           typename value_type = typename vector_type::value_type>
-  vector_type make_data(const size_type size, const bool is_random = false,
-                        const value_type init = value_type{0})
+  template<typename vector_type>
+  vector_type make_data(const typename vector_type::size_type size, const bool is_random = false,
+                        const typename vector_type::value_type init = typename vector_type::value_type{0})
   {
+    using  size_type = typename vector_type::size_type;
+    using value_type = typename vector_type::value_type;
+
     using dist_type = std::uniform_int_distribution<>;
 
     vector_type result;
@@ -51,6 +61,7 @@ namespace util {
       for(size_type i = 0; i < size; i++) {
         result[i] = value_type(dist(gen));
       }
+
     } else {
       for(size_type i = 0; i < size; i++) {
         result[i] = init;
@@ -119,101 +130,84 @@ namespace util {
 
 } // namespace util
 
-namespace bench_int {
+namespace simd_bench {
 
-  using   size_type = std::size_t;
-  using    sum_type = int64_t;
-  using  value_type = int32_t;
+  using  value_type = float;
   using vector_type = std::vector<value_type>;
+  using   size_type = typename vector_type::size_type;
 
-  sum_type sum_for(const vector_type& data,
-                   const size_type beg, const size_type end)
+  value_type sum_for(const vector_type& v,
+                     const size_type beg, const size_type end)
   {
-    sum_type sum{0};
+    value_type sum{0};
     for(size_type i = beg; i < end; i++) {
-      sum += data[i];
+      sum += v[i];
     }
     return sum;
   }
 
-  sum_type sum_accumulate(const vector_type& data,
-                          const size_type beg, const size_type end)
-  {
-    const value_type *begIt = data.data() + beg;
-    const value_type *endIt = data.data() + end;
-    return std::accumulate(begIt, endIt, sum_type{0});
-  }
-
-  value_type sum_simd(const vector_type& data,
+  value_type sum_simd(const vector_type& v,
                       const size_type beg, const size_type end)
   {
     using SIMD = cs::simd128<value_type>;
-
-    return cs::simd::sum<SIMD>(data.data() + beg, end - beg);
+    return cs::simd::sum<SIMD>(v.data() + beg, end - beg);
   }
-
-  void benchmark()
-  {
-    constexpr size_type COUNT = 100'000'000;
-
-    const vector_type data = util::make_data<vector_type>(COUNT, true);
-    if( data.empty() ) {
-      return;
-    }
-
-    const uint64_t ref = util::do_bench("sum_for", sum_for, data, 0, COUNT);
-    util::do_bench("sum_accumulate", sum_accumulate, data, 0, COUNT, ref);
-    util::do_bench("sum_simd", sum_simd, data, 0, COUNT, ref);
-  }
-
-} // namespace bench_int
-
-namespace bench_real {
-
-  using   size_type = std::size_t;
-  using  value_type = float;
-  using vector_type = std::vector<value_type>;
 
   value_type dot_for(const vector_type& v1, const vector_type& v2,
                      const size_type beg, const size_type end)
   {
-    value_type result{0};
+    value_type sum{0};
     for(size_type i = beg; i < end; i++) {
-      result += v1[i]*v2[i];
+      sum += v1[i]*v2[i];
     }
-    return result;
+    return sum;
   }
 
   value_type dot_simd(const vector_type& v1, const vector_type& v2,
                       const size_type beg, const size_type end)
   {
     using SIMD = cs::simd128<value_type>;
-
-    return cs::simd::dot<SIMD>(v1.data() + beg, v2.data() + beg, end - beg);
+    if constexpr( cs::is_real_v<value_type> ) {
+      return cs::simd::dot<SIMD>(v1.data() + beg, v2.data() + beg, end - beg);
+    }
+    return 0;
   }
 
-  void benchmark()
+  void benchmark(const int sel = 0)
   {
-    constexpr size_type COUNT = 16'000'000;
+    constexpr size_type COUNT = util::is_real32_v<value_type>
+        ? 16'000'000
+        : 100'000'000;
 
-    constexpr value_type a = 4.0;
-    constexpr value_type b = 0.25;
+    if( sel <= 0  ||  sel == 1 ) {
+      constexpr bool  IS_RANDOM = !cs::is_real_v<value_type>;
+      constexpr value_type INIT = 1;
 
-    const vector_type v1 = util::make_data<vector_type>(COUNT, false, a);
-    const vector_type v2 = util::make_data<vector_type>(COUNT, false, b);
-    if( v1.empty()  ||  v2.empty() ) {
-      return;
+      const vector_type v = util::make_data<vector_type>(COUNT, IS_RANDOM, INIT);
+
+      const uint64_t ref = util::do_bench("sum_for", sum_for, v, 0, COUNT);
+      util::do_bench("sum_simd", sum_simd, v, 0, COUNT, ref);
     }
 
-    const uint64_t ref = util::do_bench("dot_for", dot_for, v1, v2, 0, COUNT);
-    util::do_bench("dot_simd", dot_simd, v1, v2, 0, COUNT, ref);
+    if constexpr( cs::is_real_v<value_type> ) {
+      if( sel <= 0  ||  sel == 2 ) {
+        constexpr value_type init1 = 4.0;
+        constexpr value_type init2 = 0.25;
+
+        const vector_type v1 = util::make_data<vector_type>(COUNT, false, init1);
+        const vector_type v2 = util::make_data<vector_type>(COUNT, false, init2);
+
+        const uint64_t ref = util::do_bench("dot_for", dot_for, v1, v2, 0, COUNT);
+        util::do_bench("dot_simd", dot_simd, v1, v2, 0, COUNT, ref);
+      }
+    }
   }
 
-} // namespace bench_real
+} // namespace simd_bench
 
 int main(int /*argc*/, char ** /*argv*/)
 {
-  bench_real::benchmark();
+  simd_bench::benchmark();
 
   return EXIT_SUCCESS;
 }
