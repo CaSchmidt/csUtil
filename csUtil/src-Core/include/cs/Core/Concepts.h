@@ -35,11 +35,23 @@
 
 namespace cs {
 
+  // Boolean Types ///////////////////////////////////////////////////////////
+
+  template<typename T>
+  concept IsBoolean = is_boolean_v<T>;
+
+  // Arithmetic Types ////////////////////////////////////////////////////////
+
   template<typename T>
   concept IsArithmetic = is_integral_v<T>  ||  is_real_v<T>;
 
   template<typename T>
-  concept IsBoolean = is_boolean_v<T>;
+  concept IsIntegral = is_integral_v<T>;
+
+  template<typename T>
+  concept IsReal = is_real_v<T>;
+
+  // Character Types /////////////////////////////////////////////////////////
 
   template<typename T>
   concept IsCharacter = is_char_v<T>;
@@ -49,11 +61,5 @@ namespace cs {
 
   template<typename T>
   concept IsWideCharacter = is_widechar_v<T>;
-
-  template<typename T>
-  concept IsIntegral = is_integral_v<T>;
-
-  template<typename T>
-  concept IsReal = is_real_v<T>;
 
 } // namespace cs

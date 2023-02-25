@@ -39,7 +39,14 @@
 
 namespace cs {
 
+  ////// Portable Types //////////////////////////////////////////////////////
+
+  using real32_t = float;
+  using real64_t = double;
+
   ////// Type Categories /////////////////////////////////////////////////////
+
+  // Boolean Category ////////////////////////////////////////////////////////
 
   template<typename T>
   using is_boolean = std::bool_constant<
@@ -48,6 +55,52 @@ namespace cs {
 
   template<typename T>
   inline constexpr bool is_boolean_v = is_boolean<T>::value;
+
+  // Arithmetic Category /////////////////////////////////////////////////////
+
+  template<typename T>
+  using is_integral = std::bool_constant<
+  std::is_same_v<T,int8_t>         ||
+  std::is_same_v<T,uint8_t>        ||
+  std::is_same_v<T,int16_t>        ||
+  std::is_same_v<T,uint16_t>       ||
+  std::is_same_v<T,int32_t>        ||
+  std::is_same_v<T,uint32_t>       ||
+  std::is_same_v<T,int64_t>        ||
+  std::is_same_v<T,uint64_t>       ||
+  std::is_same_v<T,long>           ||
+  std::is_same_v<T,unsigned long>
+  >;
+
+  template<typename T>
+  inline constexpr bool is_integral_v = is_integral<T>::value;
+
+  template<typename T>
+  using is_real = std::bool_constant<
+  std::is_same_v<T,real32_t>  ||
+  std::is_same_v<T,real64_t>
+  >;
+
+  template<typename T>
+  inline constexpr bool is_real_v = is_real<T>::value;
+
+  template<typename T>
+  using is_real32 = std::bool_constant<
+  is_real_v<T>  &&  sizeof(T) == 4
+  >;
+
+  template<typename T>
+  inline constexpr bool is_real32_v = is_real32<T>::value;
+
+  template<typename T>
+  using is_real64 = std::bool_constant<
+  is_real_v<T>  &&  sizeof(T) == 8
+  >;
+
+  template<typename T>
+  inline constexpr bool is_real64_v = is_real64<T>::value;
+
+  // Character Category //////////////////////////////////////////////////////
 
   template<typename T>
   using is_char = std::bool_constant<
@@ -72,48 +125,6 @@ namespace cs {
 
   template<typename T>
   inline constexpr bool is_widechar_v = is_widechar<T>::value;
-
-  template<typename T>
-  using is_integral = std::bool_constant<
-  std::is_same_v<T,int8_t>         ||
-  std::is_same_v<T,uint8_t>        ||
-  std::is_same_v<T,int16_t>        ||
-  std::is_same_v<T,uint16_t>       ||
-  std::is_same_v<T,int32_t>        ||
-  std::is_same_v<T,uint32_t>       ||
-  std::is_same_v<T,int64_t>        ||
-  std::is_same_v<T,uint64_t>       ||
-  std::is_same_v<T,long>           ||
-  std::is_same_v<T,unsigned long>
-  >;
-
-  template<typename T>
-  inline constexpr bool is_integral_v = is_integral<T>::value;
-
-  template<typename T>
-  using is_real = std::bool_constant<
-  std::is_same_v<T,float>   ||
-  std::is_same_v<T,double>
-  >;
-
-  template<typename T>
-  inline constexpr bool is_real_v = is_real<T>::value;
-
-  template<typename T>
-  using is_real32 = std::bool_constant<
-  is_real_v<T>  &&  sizeof(T) == 4
-  >;
-
-  template<typename T>
-  inline constexpr bool is_real32_v = is_real32<T>::value;
-
-  template<typename T>
-  using is_real64 = std::bool_constant<
-  is_real_v<T>  &&  sizeof(T) == 8
-  >;
-
-  template<typename T>
-  inline constexpr bool is_real64_v = is_real64<T>::value;
 
   ////// Integral Types //////////////////////////////////////////////////////
 
@@ -155,12 +166,12 @@ namespace cs {
 
   template<>
   struct RealOfSize<4> {
-    using real_type = float;
+    using real_type = real32_t;
   };
 
   template<>
   struct RealOfSize<8> {
-    using real_type = double;
+    using real_type = real64_t;
   };
 
   ////// Miscellaneous Transformations ///////////////////////////////////////
