@@ -39,13 +39,13 @@ namespace cs {
     using pointer_type = typename IntegralOfSize<sizeof(void*)>::unsigned_type;
 
     template<typename DataT>
-    inline static bool isAlignedTo(const void *p)
+    constexpr static bool isAlignedTo(const void *p)
     {
       return ( reinterpret_cast<pointer_type>(p) & static_cast<pointer_type>(sizeof(DataT)-1) ) == 0;
     }
 
     template<typename DataT>
-    inline static void *alignTo(const void *p)
+    constexpr static void *alignTo(const void *p)
     {
       return static_cast<void*>( reinterpret_cast<pointer_type>(p) & ~static_cast<pointer_type>(sizeof(DataT)-1) );
     }
