@@ -99,6 +99,22 @@ namespace cs {
   template<typename T>
   inline constexpr bool is_real_v = is_real<T>::value;
 
+  template<typename T>
+  using is_real32 = std::bool_constant<
+  is_real_v<T>  &&  sizeof(T) == 4
+  >;
+
+  template<typename T>
+  inline constexpr bool is_real32_v = is_real32<T>::value;
+
+  template<typename T>
+  using is_real64 = std::bool_constant<
+  is_real_v<T>  &&  sizeof(T) == 8
+  >;
+
+  template<typename T>
+  inline constexpr bool is_real64_v = is_real64<T>::value;
+
   ////// Integral Types //////////////////////////////////////////////////////
 
   template<std::size_t SIZE>

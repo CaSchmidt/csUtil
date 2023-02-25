@@ -14,14 +14,6 @@
 
 namespace util {
 
-  template<typename T>
-  using is_real32 = std::bool_constant<
-  cs::is_real_v<T>  &&  sizeof(T) == 4
-  >;
-
-  template<typename T>
-  inline constexpr bool is_real32_v = is_real32<T>::value;
-
   template<typename vector_type>
   void flush_data(const vector_type& data)
   {
@@ -175,7 +167,11 @@ namespace simd_bench {
 
   void benchmark(const int sel = 0)
   {
-    constexpr size_type COUNT = util::is_real32_v<value_type>
+    cs::println("value_type = %%_t",
+                cs::is_real_v<value_type> ? "real" : "int",
+                sizeof(value_type)*8);
+
+    constexpr size_type COUNT = cs::is_real32_v<value_type>
         ? 16'000'000
         : 100'000'000;
 
