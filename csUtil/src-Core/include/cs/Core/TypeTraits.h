@@ -126,6 +126,22 @@ namespace cs {
   template<typename T>
   inline constexpr bool is_widechar_v = is_widechar<T>::value;
 
+  // Generic Category ////////////////////////////////////////////////////////
+
+  /*
+   * NOTE:
+   *
+   * "How to check if a number is a power of 2 in C++", Approach 2, cf.
+   * https://www.educative.io/answers/how-to-check-if-a-number-is-a-power-of-2-in-cpp
+   */
+  template<typename T>
+  using is_pow2size = std::bool_constant<
+  sizeof(T) != 0  &&  (sizeof(T) & (sizeof(T) - 1)) == 0
+  >;
+
+  template<typename T>
+  inline constexpr bool is_pow2size_v = is_pow2size<T>::value;
+
   ////// Integral Types //////////////////////////////////////////////////////
 
   template<std::size_t SIZE>

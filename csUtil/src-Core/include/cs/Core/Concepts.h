@@ -62,4 +62,9 @@ namespace cs {
   template<typename T>
   concept IsWideCharacter = is_widechar_v<T>;
 
+  // Generic Types ///////////////////////////////////////////////////////////
+
+  template<typename T>
+  concept IsPow2Size = is_pow2size_v<T>;
+
 } // namespace cs
