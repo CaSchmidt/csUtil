@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2022, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2023, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -31,69 +31,44 @@
 
 #pragma once
 
-#include <algorithm>
+#include <iterator>
 
-#include <cs/Core/CharUtil.h>
-#include <cs/Core/Range.h>
+#include <cs/Core/Concepts.h>
 
 namespace cs {
 
-  ////// Range Length ////////////////////////////////////////////////////////
-
-  namespace impl_string {
-
-    template<typename T>
-    requires IsCharacter<T>
-    constexpr std::size_t length2(const T *str)
-    {
-      return *str == glyph<T>::null
-          ? 0
-          : 1 + length2(str + 1);
-    }
-
-  } // namespace impl_string
+  ////// Range Validation ////////////////////////////////////////////////////
 
   template<typename T>
-  requires IsCharacter<T>
-  constexpr std::size_t length(const T *str)
+  requires IsCharacter<T>  ||  IsArithmetic<T>
+  constexpr bool isValid(const T *first, const T *last)
   {
-    return str == nullptr
-        ? 0
-        : impl_string::length2(str);
+    return first != nullptr  &&  first < last;
   }
 
   template<typename T>
-  requires IsCharacter<T>
-  constexpr std::size_t length(const T *str, const std::size_t len)
+  requires IsCharacter<T>  ||  IsArithmetic<T>
+  constexpr bool isValid(const T *str, const std::size_t len)
   {
-    return len == MAX_SIZE_T
-        ? length(str)
-        : len;
+    return str != nullptr  &&  len > 0;
   }
 
+  ////// Range's Distance ////////////////////////////////////////////////////
+
   template<typename T>
-  requires IsCharacter<T>
-  inline std::size_t lengthRange(const T *first, const T *last)
+  requires IsCharacter<T>  ||  IsArithmetic<T>
+  constexpr std::size_t distance(const T *first, const T *last)
   {
     return isValid(first, last)
-        ? std::distance(first, std::find(first, last, glyph<T>::null))
+        ? std::distance(first, last)
         : 0;
   }
 
   template<typename T>
-  requires IsCharacter<T>
-  inline std::size_t lengthRange(const T *str, const std::size_t len)
+  requires IsCharacter<T>  ||  IsArithmetic<T>
+  constexpr std::size_t distance(const T *ptr, const std::size_t len)
   {
-    return lengthRange(str, str + len);
-  }
-
-  template<typename T>
-  requires IsCharacter<T>
-  inline std::size_t lengthMax(const T *str, const std::size_t len)
-  {
-    return len == MAX_SIZE_T
-        ? length(str)
-        : lengthRange(str, len);
+    return distance(ptr, ptr + len);
   }
 
 } // namespace cs

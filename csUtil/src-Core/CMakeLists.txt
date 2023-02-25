@@ -12,6 +12,7 @@ list(APPEND csCore_HEADERS
   include/cs/Core/Print.h
   include/cs/Core/PrintFormat.h
   include/cs/Core/PrintUtil.h
+  include/cs/Core/Range.h
   include/cs/Core/StringAlgorithm.h
   include/cs/Core/StringRange.h
   include/cs/Core/StringUtil.h
