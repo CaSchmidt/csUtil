@@ -33,6 +33,8 @@
 
 #include <tuple>
 
+#include <cs/Core/Constants.h>
+
 namespace cs {
 
   namespace simd {
@@ -100,6 +102,44 @@ namespace cs {
         return result_type{sum, numReduce*REDUCE_STRIDE, numElemsRemain};
       }
 
+      template<typename SIMD, typename OP, bool ALIGNED>
+      inline typename SIMD::value_type reduce(const typename SIMD::value_type *x,
+                                              const typename SIMD::size_type count)
+      {
+        using  block_type = typename SIMD::block_type;
+        using result_type = ReduceResult<SIMD>;
+        using   size_type = typename SIMD::size_type;
+        using  value_type = typename SIMD::value_type;
+
+        if( x == nullptr  ||  count < 1 ) {
+          return konst<value_type>::INVALID_RESULT;
+        }
+
+        const result_type result = reduce4Blocks<SIMD,OP,ALIGNED>(x, count);
+
+        value_type sum = getSum<SIMD>(result);
+        x += getReduced<SIMD>(result);
+
+        const size_type numBlocks = getRemain<SIMD>(result)/SIMD::NUM_ELEMS;
+        const size_type numRemain = getRemain<SIMD>(result)%SIMD::NUM_ELEMS;
+
+        if( numBlocks > 0 ) {
+          block_type acc = SIMD::zero();
+          for(size_type i = 0; i < numBlocks; i++, x += SIMD::NUM_ELEMS) {
+            const block_type block = SIMD::load<ALIGNED>(x);
+
+            acc = SIMD::add(acc, OP::eval(block));
+          }
+          sum += SIMD::to_value(SIMD::hadd(acc));
+        }
+
+        for(size_type i = 0; i < numRemain; i++, x++) {
+          sum += OP::eval(*x);
+        }
+
+        return sum;
+      }
+
       // Reduction of Two Vectors ////////////////////////////////////////////
 
       template<typename SIMD, typename OP, bool ALIGNED_a, bool ALIGNED_b>
@@ -138,6 +178,47 @@ namespace cs {
         const value_type sum = SIMD::to_value(SIMD::hadd(acc));
 
         return result_type{sum, numReduce*REDUCE_STRIDE, numElemsRemain};
+      }
+
+      template<typename SIMD, typename OP, bool ALIGNED_a, bool ALIGNED_b>
+      inline typename SIMD::value_type reduce(const typename SIMD::value_type *a,
+                                              const typename SIMD::value_type *b,
+                                              const typename SIMD::size_type count)
+      {
+        using  block_type = typename SIMD::block_type;
+        using result_type = ReduceResult<SIMD>;
+        using   size_type = typename SIMD::size_type;
+        using  value_type = typename SIMD::value_type;
+
+        if( a == nullptr  ||  b == nullptr  ||  count < 1 ) {
+          return konst<value_type>::INVALID_RESULT;
+        }
+
+        const result_type result = reduce4Blocks<SIMD,OP,ALIGNED_a,ALIGNED_b>(a, b, count);
+
+        value_type sum = getSum<SIMD>(result);
+        a += getReduced<SIMD>(result);
+        b += getReduced<SIMD>(result);
+
+        const size_type numBlocks = getRemain<SIMD>(result)/SIMD::NUM_ELEMS;
+        const size_type numRemain = getRemain<SIMD>(result)%SIMD::NUM_ELEMS;
+
+        if( numBlocks > 0 ) {
+          block_type acc = SIMD::zero();
+          for(size_type i = 0; i < numBlocks; i++, a += SIMD::NUM_ELEMS, b += SIMD::NUM_ELEMS) {
+            const block_type block_a = SIMD::load<ALIGNED_a>(a);
+            const block_type block_b = SIMD::load<ALIGNED_b>(b);
+
+            acc = SIMD::add(acc, OP::eval(block_a, block_b));
+          }
+          sum += SIMD::to_value(SIMD::hadd(acc));
+        }
+
+        for(size_type i = 0; i < numRemain; i++, a++, b++) {
+          sum += OP::eval(*a, *b);
+        }
+
+        return sum;
       }
 
     } // namespace impl_simd

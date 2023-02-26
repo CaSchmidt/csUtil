@@ -1,4 +1,5 @@
 list(APPEND csSIMD_HEADERS
+  include/cs/SIMD/OP.h
   include/cs/SIMD/SIMD.h
   include/cs/SIMD/SIMD128.h
   include/cs/SIMD/SIMD128Impl.h
