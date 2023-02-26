@@ -31,23 +31,38 @@
 
 #pragma once
 
-#include <cs/Core/TypeTraits.h>
+#include <cs/Core/Constants.h>
 
 namespace cs {
 
   struct Pointer {
-    using pointer_type = typename IntegralOfSize<sizeof(void*)>::unsigned_type;
+    using value_type = typename IntegralOfSize<sizeof(void*)>::unsigned_type;
 
-    template<typename DataT>
-    constexpr static bool isAlignedTo(const void *p)
+    template<typename T> requires IsPow2Size<T>
+    inline static bool isAlignedTo(const void *ptr)
     {
-      return ( reinterpret_cast<pointer_type>(p) & static_cast<pointer_type>(sizeof(DataT)-1) ) == 0;
+      constexpr value_type MASK = sizeof(T) - 1;
+      return (to_value(ptr) & MASK) == k::ZERO;
     }
 
-    template<typename DataT>
-    constexpr static void *alignTo(const void *p)
+    template<typename T> requires IsPow2Size<T>
+    inline static void *alignTo(const void *ptr)
     {
-      return static_cast<void*>( reinterpret_cast<pointer_type>(p) & ~static_cast<pointer_type>(sizeof(DataT)-1) );
+      constexpr value_type MASK = sizeof(T) - 1;
+      return to_pointer((to_value(ptr) + MASK) & ~MASK);
+    }
+
+  private:
+    using k = konst<value_type>;
+
+    inline static void *to_pointer(const value_type val)
+    {
+      return reinterpret_cast<void*>(val);
+    }
+
+    inline static value_type to_value(const void *ptr)
+    {
+      return reinterpret_cast<value_type>(ptr);
     }
   };
 
