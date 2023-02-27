@@ -59,17 +59,33 @@ namespace cs {
   // Arithmetic Category /////////////////////////////////////////////////////
 
   template<typename T>
-  using is_integral = std::bool_constant<
-  std::is_same_v<T,int8_t>         ||
+  using is_signed = std::bool_constant<
+  std::is_same_v<T,int8_t>   ||
+  std::is_same_v<T,int16_t>  ||
+  std::is_same_v<T,int32_t>  ||
+  std::is_same_v<T,int64_t>  ||
+  std::is_same_v<T,long>
+  >;
+
+  template<typename T>
+  inline constexpr bool is_signed_v = is_signed<T>::value;
+
+  template<typename T>
+  using is_unsigned = std::bool_constant<
   std::is_same_v<T,uint8_t>        ||
-  std::is_same_v<T,int16_t>        ||
   std::is_same_v<T,uint16_t>       ||
-  std::is_same_v<T,int32_t>        ||
   std::is_same_v<T,uint32_t>       ||
-  std::is_same_v<T,int64_t>        ||
   std::is_same_v<T,uint64_t>       ||
-  std::is_same_v<T,long>           ||
   std::is_same_v<T,unsigned long>
+  >;
+
+  template<typename T>
+  inline constexpr bool is_unsigned_v = is_unsigned<T>::value;
+
+  template<typename T>
+  using is_integral = std::bool_constant<
+  is_signed<T>::value    ||
+  is_unsigned<T>::value
   >;
 
   template<typename T>
