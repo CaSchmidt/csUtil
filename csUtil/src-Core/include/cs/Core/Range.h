@@ -68,7 +68,9 @@ namespace cs {
   requires IsCharacter<T>  ||  IsArithmetic<T>
   constexpr std::size_t distance(const T *ptr, const std::size_t len)
   {
-    return distance(ptr, ptr + len);
+    return isValid(ptr, len)
+        ? len
+        : 0;
   }
 
 } // namespace cs

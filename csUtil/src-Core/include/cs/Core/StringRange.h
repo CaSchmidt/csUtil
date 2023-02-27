@@ -66,9 +66,11 @@ namespace cs {
   requires IsCharacter<T>
   constexpr std::size_t length(const T *str, const std::size_t len)
   {
-    return len == MAX_SIZE_T
-        ? length(str)
-        : len;
+    return isValid(str, len)
+        ? len == MAX_SIZE_T
+          ? length(str)
+          : len
+        : 0;
   }
 
   template<typename T>
@@ -84,7 +86,9 @@ namespace cs {
   requires IsCharacter<T>
   inline std::size_t lengthRange(const T *str, const std::size_t len)
   {
-    return lengthRange(str, str + len);
+    return isValid(str, len)
+        ? lengthRange(str, str + len)
+        : 0;
   }
 
   template<typename T>
