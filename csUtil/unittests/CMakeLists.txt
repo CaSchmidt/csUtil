@@ -21,6 +21,10 @@ endmacro()
 
 ### Unit Tests ###############################################################
 
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../testutils/data/Word-List.txt
+  DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+  )
+
 cs_unittest(unittest_crc src/unittest_crc.cpp src/unittest_crc_main.cpp)
 cs_unittest(unittest_endian src/unittest_endian.cpp src/unittest_endian_impl.cpp src/unittest_endian_main.cpp)
 cs_unittest(unittest_fileio src/unittest_fileio.cpp src/unittest_fileio_main.cpp)

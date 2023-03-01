@@ -14,7 +14,7 @@
 
 #undef HAVE_BENCHMARK
 
-#define WORD_LIST  u8"../../csUtil/csUtil/testutils/data/Word-List.txt"
+#define WORD_LIST  u8"./Word-List.txt"
 
 constexpr std::size_t WORD_COUNT = 178691;
 
