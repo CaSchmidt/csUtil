@@ -92,10 +92,10 @@ namespace cs {
         for(size_type i = 0; i < numReduce; i++, x += REDUCE_STRIDE) {
           SIMD::prefetch(x + REDUCE_STRIDE);
 
-          acc = SIMD::add(acc, OP::eval(SIMD::load<ALIGNED>(x + SIMD::NUM_ELEMS*0)));
-          acc = SIMD::add(acc, OP::eval(SIMD::load<ALIGNED>(x + SIMD::NUM_ELEMS*1)));
-          acc = SIMD::add(acc, OP::eval(SIMD::load<ALIGNED>(x + SIMD::NUM_ELEMS*2)));
-          acc = SIMD::add(acc, OP::eval(SIMD::load<ALIGNED>(x + SIMD::NUM_ELEMS*3)));
+          acc = SIMD::add(acc, OP::eval(SIMD::template load<ALIGNED>(x + SIMD::NUM_ELEMS*0)));
+          acc = SIMD::add(acc, OP::eval(SIMD::template load<ALIGNED>(x + SIMD::NUM_ELEMS*1)));
+          acc = SIMD::add(acc, OP::eval(SIMD::template load<ALIGNED>(x + SIMD::NUM_ELEMS*2)));
+          acc = SIMD::add(acc, OP::eval(SIMD::template load<ALIGNED>(x + SIMD::NUM_ELEMS*3)));
         }
         const value_type sum = SIMD::to_value(SIMD::hadd(acc));
 
@@ -126,7 +126,7 @@ namespace cs {
         if( numBlocks > 0 ) {
           block_type acc = SIMD::zero();
           for(size_type i = 0; i < numBlocks; i++, x += SIMD::NUM_ELEMS) {
-            const block_type block = SIMD::load<ALIGNED>(x);
+            const block_type block = SIMD::template load<ALIGNED>(x);
 
             acc = SIMD::add(acc, OP::eval(block));
           }
@@ -166,14 +166,14 @@ namespace cs {
           SIMD::prefetch(a + REDUCE_STRIDE);
           SIMD::prefetch(b + REDUCE_STRIDE);
 
-          acc = SIMD::add(acc, OP::eval(SIMD::load<ALIGNED_a>(a + SIMD::NUM_ELEMS*0),
-                                        SIMD::load<ALIGNED_b>(b + SIMD::NUM_ELEMS*0)));
-          acc = SIMD::add(acc, OP::eval(SIMD::load<ALIGNED_a>(a + SIMD::NUM_ELEMS*1),
-                                        SIMD::load<ALIGNED_b>(b + SIMD::NUM_ELEMS*1)));
-          acc = SIMD::add(acc, OP::eval(SIMD::load<ALIGNED_a>(a + SIMD::NUM_ELEMS*2),
-                                        SIMD::load<ALIGNED_b>(b + SIMD::NUM_ELEMS*2)));
-          acc = SIMD::add(acc, OP::eval(SIMD::load<ALIGNED_a>(a + SIMD::NUM_ELEMS*3),
-                                        SIMD::load<ALIGNED_b>(b + SIMD::NUM_ELEMS*3)));
+          acc = SIMD::add(acc, OP::eval(SIMD::template load<ALIGNED_a>(a + SIMD::NUM_ELEMS*0),
+                                        SIMD::template load<ALIGNED_b>(b + SIMD::NUM_ELEMS*0)));
+          acc = SIMD::add(acc, OP::eval(SIMD::template load<ALIGNED_a>(a + SIMD::NUM_ELEMS*1),
+                                        SIMD::template load<ALIGNED_b>(b + SIMD::NUM_ELEMS*1)));
+          acc = SIMD::add(acc, OP::eval(SIMD::template load<ALIGNED_a>(a + SIMD::NUM_ELEMS*2),
+                                        SIMD::template load<ALIGNED_b>(b + SIMD::NUM_ELEMS*2)));
+          acc = SIMD::add(acc, OP::eval(SIMD::template load<ALIGNED_a>(a + SIMD::NUM_ELEMS*3),
+                                        SIMD::template load<ALIGNED_b>(b + SIMD::NUM_ELEMS*3)));
         }
         const value_type sum = SIMD::to_value(SIMD::hadd(acc));
 
@@ -206,8 +206,8 @@ namespace cs {
         if( numBlocks > 0 ) {
           block_type acc = SIMD::zero();
           for(size_type i = 0; i < numBlocks; i++, a += SIMD::NUM_ELEMS, b += SIMD::NUM_ELEMS) {
-            const block_type block_a = SIMD::load<ALIGNED_a>(a);
-            const block_type block_b = SIMD::load<ALIGNED_b>(b);
+            const block_type block_a = SIMD::template load<ALIGNED_a>(a);
+            const block_type block_b = SIMD::template load<ALIGNED_b>(b);
 
             acc = SIMD::add(acc, OP::eval(block_a, block_b));
           }

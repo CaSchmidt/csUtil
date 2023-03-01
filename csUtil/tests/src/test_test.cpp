@@ -30,7 +30,7 @@ namespace cs {
 
     namespace impl_concurrent {
 
-      using Semaphore = std::counting_semaphore<std::_Semaphore_max>;
+      using Semaphore = std::counting_semaphore<>;
 
       template<typename UnaryFunction, typename T, typename ...Args>
       concept IsForEach = std::is_invocable_v<UnaryFunction,T,Args...>;
