@@ -66,7 +66,7 @@ namespace cs {
     static constexpr auto under = static_cast<T>('_');
   };
 
-  ////// Functions ///////////////////////////////////////////////////////////
+  ////// Classification //////////////////////////////////////////////////////
 
   template<typename T> requires IsCharacter<T>
   constexpr bool isDigit(const T& c)
@@ -119,6 +119,8 @@ namespace cs {
     return isIdent<T,true>(c);
   }
 
+  ////// Case Conversion /////////////////////////////////////////////////////
+
   template<typename T> requires IsCharacter<T>
   constexpr T toLower(const T& c)
   {
@@ -133,6 +135,36 @@ namespace cs {
     return isLower(c)
         ? c - glyph<T>::a + glyph<T>::A
         : c;
+  }
+
+  ////// Hex Conversion //////////////////////////////////////////////////////
+
+  template<typename T> requires IsCharacter<T>
+  constexpr uint8_t fromHexChar(const T c)
+  {
+    using g = glyph<T>;
+    if(        g::a    <= c  &&  c <= g::f    ) {
+      return c - g::a + 10;
+    } else if( g::A    <= c  &&  c <= g::F    ) {
+      return c - g::A + 10;
+    } else if( g::zero <= c  &&  c <= g::nine ) {
+      return c - g::zero;
+    }
+    return std::numeric_limits<T>::max();
+  }
+
+  template<typename T, bool UPPER = false> requires IsCharacter<T>
+  constexpr T toHexChar(const uint8_t in, const bool hi_nibble = false)
+  {
+    constexpr T hex10 = UPPER
+        ? glyph<T>::A
+        : glyph<T>::a;
+    const uint8_t nibble = hi_nibble
+        ? in >>    4
+        : in  & 0x0F;
+    return nibble >= 10
+        ? nibble - 10 + hex10
+        : nibble + glyph<T>::zero;
   }
 
   ////// Lambdas /////////////////////////////////////////////////////////////
