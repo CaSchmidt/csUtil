@@ -48,9 +48,9 @@ namespace cs {
 
   template<typename T>
   requires IsCharacter<T>  ||  IsArithmetic<T>
-  constexpr bool isValid(const T *str, const std::size_t len)
+  constexpr bool isValid(const T *ptr, const std::size_t len)
   {
-    return str != nullptr  &&  len > 0;
+    return ptr != nullptr  &&  len > 0;
   }
 
   ////// Range's Distance ////////////////////////////////////////////////////
