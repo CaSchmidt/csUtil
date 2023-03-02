@@ -1,5 +1,6 @@
 list(APPEND csCore_HEADERS
   include/cs/Core/Bit.h
+  include/cs/Core/ByteArray.h
   include/cs/Core/CharUtil.h
   include/cs/Core/Concepts.h
   include/cs/Core/Constants.h
@@ -20,6 +21,7 @@ list(APPEND csCore_HEADERS
   )
 
 list(APPEND csCore_SOURCES
+  src/ByteArray.cpp
   src/main_core.cpp
   )
 
