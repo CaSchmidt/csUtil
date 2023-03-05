@@ -72,8 +72,7 @@ namespace cs {
   {
     const std::size_t max = std::min(length(a, len), length(b, len));
 
-    if( a == nullptr  ||  b == nullptr  ||
-        max < 1 ) {
+    if( max < 1 ) {
       return false;
     }
 
