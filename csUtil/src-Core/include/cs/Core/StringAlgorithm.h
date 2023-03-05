@@ -116,6 +116,25 @@ namespace cs {
     return equals(a, MAX_SIZE_T, b, MAX_SIZE_T, ignoreCase);
   }
 
+  ////// String is hexadecimal string... /////////////////////////////////////
+
+  template<typename T> requires IsCharacter<T>
+  inline bool isHexString(const T *first, const T *last)
+  {
+    if( !isValid(first, last) ) {
+      return false;
+    }
+
+    return std::all_of(first, last, lambda_is_hex<T>());
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline bool isHexString(const T *str, const std::size_t len = MAX_SIZE_T)
+  {
+    const std::size_t max = length(str, len);
+    return isHexString(str, str + max);
+  }
+
   ////// String is C-style identifier... /////////////////////////////////////
 
   template<typename T>

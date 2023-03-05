@@ -118,6 +118,14 @@ namespace cs {
     return equals(a.data(), a.size(), b.data(), b.size(), ignoreCase);
   }
 
+  ////// String is hexadecimal string... /////////////////////////////////////
+
+  template<typename T> requires IsCharacter<T>
+  inline bool isHexString(const String<T>& str)
+  {
+    return isHexString(str.data(), str.length());
+  }
+
   ////// String is C-style identifier... /////////////////////////////////////
 
   template<typename T>

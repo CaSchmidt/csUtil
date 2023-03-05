@@ -178,6 +178,14 @@ namespace cs {
   }
 
   template<typename T> requires IsCharacter<T>
+  constexpr auto lambda_is_hex()
+  {
+    return [](const T& c) -> bool {
+      return isHexDigit(c);
+    };
+  }
+
+  template<typename T> requires IsCharacter<T>
   constexpr auto lambda_is_ident()
   {
     return [](const T& c) -> bool {
