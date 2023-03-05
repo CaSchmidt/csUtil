@@ -44,9 +44,11 @@ namespace cs {
     static constexpr auto MAX = std::numeric_limits<value_type>::max();
     static constexpr auto MIN = std::numeric_limits<value_type>::lowest();
 
-    static constexpr value_type  ONE = 1;
-    static constexpr value_type  TWO = 2;
-    static constexpr value_type ZERO = 0;
+    static constexpr value_type  ZERO = 0;
+    static constexpr value_type   ONE = 1;
+    static constexpr value_type   TWO = 2;
+    static constexpr value_type THREE = 3;
+
   };
 
   /*
