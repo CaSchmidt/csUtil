@@ -10,7 +10,7 @@
 #include <cs/SIMD/SIMD.h>
 #include <cs/SIMD/SIMD128.h>
 
-namespace test_mean {
+namespace test_simd {
 
   TEMPLATE_TEST_CASE("Various SIMD algorithms.", "[simd]", double, float) {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
@@ -45,4 +45,4 @@ namespace test_mean {
     REQUIRE( cs::simd::sum_squared<simd_T>(values.data(), values.size()) == real_T{4324} );
   }
 
-} // namespace test_statistics
+} // namespace test_simd

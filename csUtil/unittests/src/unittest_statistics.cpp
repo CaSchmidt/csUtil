@@ -20,4 +20,4 @@ namespace test_mean {
     REQUIRE( cs::mean(values.data(), values.size()) == real_T{5} );
   }
 
-} // namespace test_statistics
+} // namespace test_mean
