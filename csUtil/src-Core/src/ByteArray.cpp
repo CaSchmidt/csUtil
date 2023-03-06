@@ -31,6 +31,90 @@
 
 #include "cs/Core/ByteArray.h"
 
+#include "cs/Core/CharUtil.h"
+#include "cs/Core/Constants.h"
+#include "cs/Core/Container.h"
+#include "cs/Core/StringAlgorithm.h"
+
 namespace cs {
+
+  ////// Private /////////////////////////////////////////////////////////////
+
+  namespace impl_bytearray {
+
+    template<bool UPPER, typename T> requires IsCharacter<T>
+    inline void toString(T *dest, const uint8_t *data, const std::size_t sizData,
+                         const std::size_t dpos)
+    {
+      for(std::size_t i = 0, pos = 0; i < sizData; i++, pos += dpos) {
+        dest[pos + 0] = toHexChar<T,UPPER>(data[i], true);
+        dest[pos + 1] = toHexChar<T,UPPER>(data[i]);
+      }
+    }
+
+  } // namespace impl_bytearray
+
+  ////// Public //////////////////////////////////////////////////////////////
+
+  CS_UTIL_EXPORT ByteArray toByteArray(const char *str, const std::size_t lenStr)
+  {
+    using k = konst<std::size_t>;
+
+    if( !isHexString(str, lenStr) ) {
+      return ByteArray{};
+    }
+
+    ByteArray result;
+    if( !resize(&result, (lenStr + k::ONE)/k::TWO) ) {
+      return ByteArray{};
+    }
+
+    const std::size_t i0 = result.size() != lenStr/k::TWO
+        ? 1
+        : 0;
+
+    if( i0 > k::ZERO ) {
+      result[0] = fromHexChar(str[0]);
+    }
+
+    for(std::size_t i = i0; i < result.size(); i++) {
+      const std::size_t idxStr = i*k::TWO - i0;
+      result[i]  = fromHexChar(str[idxStr + 0]) << 4;
+      result[i] |= fromHexChar(str[idxStr + 1]);
+    }
+
+    return result;
+  }
+
+  CS_UTIL_EXPORT std::string toString(const uint8_t *data, const std::size_t sizData,
+                                      const char fill, const bool is_upper)
+  {
+    using k = konst<std::size_t>;
+
+    if( !isValid(data, sizData) ) {
+      return std::string{};
+    }
+
+    const std::size_t length = fill != '\0'
+        ? sizData*k::THREE - k::ONE // sizeData*2 + (sizeData - 1)
+        : sizData*k::TWO;
+
+    std::string result;
+    if( !resize(&result, length, fill) ) {
+      return std::string{};
+    }
+
+    const std::size_t dpos = fill != '\0'
+        ? 3
+        : 2;
+
+    if( is_upper ) {
+      impl_bytearray::toString<true>(result.data(), data, sizData, dpos);
+    } else {
+      impl_bytearray::toString<false>(result.data(), data, sizData, dpos);
+    }
+
+    return result;
+  }
 
 } // namespace cs
