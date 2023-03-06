@@ -504,11 +504,25 @@ namespace cs {
     toLower(str->data(), str->size());
   }
 
+  template<typename T> requires IsCharacter<T>
+  inline String<T> toLower(String<T> str)
+  {
+    toLower(&str);
+    return str;
+  }
+
   template<typename T>
   requires IsCharacter<T>
   inline void toUpper(String<T> *str)
   {
     toUpper(str->data(), str->size());
+  }
+
+  template<typename T> requires IsCharacter<T>
+  inline String<T> toUpper(String<T> str)
+  {
+    toUpper(&str);
+    return str;
   }
 
   ////// Type conversion... //////////////////////////////////////////////////
