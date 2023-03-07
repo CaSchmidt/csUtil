@@ -35,45 +35,25 @@
 
 namespace cs {
 
+  ////// Constants ///////////////////////////////////////////////////////////
+
   template<typename T> requires IsIntegral<T>
   inline constexpr std::size_t NUM_BITS = sizeof(T)*8;
 
   template<typename T> requires IsIntegral<T>
   inline constexpr std::size_t MAX_BIT = NUM_BITS<T> - 1;
 
+  ////// Make Bit Mask of Integral Type //////////////////////////////////////
+
   namespace impl_bit {
-
-    template<typename T> requires IsIntegral<T>
-    constexpr bool testBit(const T in, const std::size_t bit)
-    {
-      using k = konst<T>;
-      return (in & (k::ONE << bit)) != k::ZERO;
-    }
-
-    template<typename T> requires IsIntegral<T>
-    constexpr T reflectBit(const T in, const std::size_t bit)
-    {
-      using k = konst<T>;
-      return testBit(in, bit)
-          ? k::ONE << (MAX_BIT<T> - bit)
-          : k::ZERO;
-    }
 
     template<typename T> requires IsIntegral<T>
     constexpr T makeBitMaskImpl(const std::size_t bit)
     {
       using k = konst<T>;
-      return bit <= std::size_t(0)
+      return bit <= std::size_t{0}
           ?  k::ONE
           : (k::ONE << bit) | makeBitMaskImpl<T>(bit - 1);
-    }
-
-    template<typename T> requires IsIntegral<T>
-    constexpr T reverseBitsImpl(const T in, const std::size_t bit)
-    {
-      return bit <= std::size_t(0)
-          ? reflectBit(in, 0)
-          : reflectBit(in, bit) | reverseBitsImpl(in, bit - 1);
     }
 
   } // namespace impl_bit
@@ -81,10 +61,44 @@ namespace cs {
   template<typename T> requires IsIntegral<T>
   constexpr T makeBitMask(const std::size_t bits)
   {
-    return std::size_t(0) < bits  &&  bits <= NUM_BITS<T>
+    return std::size_t{0} < bits  &&  bits <= NUM_BITS<T>
         ? impl_bit::makeBitMaskImpl<T>(bits - 1)
         : konst<T>::ZERO;
   }
+
+  ////// Test Single Bit of Integral Value ///////////////////////////////////
+
+  template<typename T> requires IsIntegral<T>
+  constexpr bool testBit(const T in, const std::size_t bit)
+  {
+    using k = konst<T>;
+    return (in & (k::ONE << bit)) != k::ZERO;
+  }
+
+  ////// Reflect Bits of Integral Value //////////////////////////////////////
+
+  template<typename T> requires IsIntegral<T>
+  constexpr T reflectBit(const T in, const std::size_t bit)
+  {
+    using k = konst<T>;
+    return testBit(in, bit)
+        ? k::ONE << (MAX_BIT<T> - bit)
+        : k::ZERO;
+  }
+
+  ////// Reverse Bits of Integral Value //////////////////////////////////////
+
+  namespace impl_bit {
+
+    template<typename T> requires IsIntegral<T>
+    constexpr T reverseBitsImpl(const T in, const std::size_t bit)
+    {
+      return bit <= std::size_t{0}
+          ? reflectBit(in, 0)
+          : reflectBit(in, bit) | reverseBitsImpl(in, bit - 1);
+    }
+
+  } // namespace impl_bit
 
   template<typename T> requires IsIntegral<T>
   constexpr T reverseBits(const T in)
