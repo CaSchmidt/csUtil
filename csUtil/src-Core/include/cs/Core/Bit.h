@@ -92,34 +92,4 @@ namespace cs {
     return impl_bit::reverseBitsImpl(in, MAX_BIT<T>);
   }
 
-  ////// Meta Programming based Implementation ///////////////////////////////
-
-  namespace impl_bit {
-
-    template<typename T, std::size_t BIT> requires IsIntegral<T>
-    struct BitMaskImpl {
-      static_assert( 0 < BIT  &&  BIT < sizeof(T)*8 );
-
-      static constexpr T run()
-      {
-        return (konst<T>::ONE << BIT) | BitMaskImpl<T,BIT-1>::run();
-      }
-    };
-
-    template<typename T> requires IsIntegral<T>
-    struct BitMaskImpl<T,0> {
-      static constexpr T run()
-      {
-        return konst<T>::ONE;
-      }
-    };
-
-  } // namespace impl_bit
-
-  template<typename T, std::size_t BITS> requires IsIntegral<T>
-  constexpr T makeBitMask()
-  {
-    return impl_bit::BitMaskImpl<T,BITS-1>::run();
-  }
-
 } // namespace cs
