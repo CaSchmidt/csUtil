@@ -51,6 +51,12 @@ namespace cs {
   template<typename T>
   concept IsReal = is_real_v<T>;
 
+  template<typename T>
+  concept IsSigned = is_signed_v<T>;
+
+  template<typename T>
+  concept IsUnsigned = is_unsigned_v<T>;
+
   // Character Types /////////////////////////////////////////////////////////
 
   template<typename T>
