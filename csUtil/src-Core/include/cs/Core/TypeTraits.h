@@ -50,7 +50,7 @@ namespace cs {
 
   template<typename T>
   using is_boolean = std::bool_constant<
-  std::is_same<T,bool>::value
+  std::is_same_v<T,bool>
   >;
 
   template<typename T>
@@ -60,11 +60,11 @@ namespace cs {
 
   template<typename T>
   using is_signed = std::bool_constant<
-  std::is_same<T,int8_t>::value   ||
-  std::is_same<T,int16_t>::value  ||
-  std::is_same<T,int32_t>::value  ||
-  std::is_same<T,int64_t>::value  ||
-  std::is_same<T,long>::value
+  std::is_same_v<T,int8_t>   ||
+  std::is_same_v<T,int16_t>  ||
+  std::is_same_v<T,int32_t>  ||
+  std::is_same_v<T,int64_t>  ||
+  std::is_same_v<T,long>
   >;
 
   template<typename T>
@@ -72,11 +72,11 @@ namespace cs {
 
   template<typename T>
   using is_unsigned = std::bool_constant<
-  std::is_same<T,uint8_t>::value        ||
-  std::is_same<T,uint16_t>::value       ||
-  std::is_same<T,uint32_t>::value       ||
-  std::is_same<T,uint64_t>::value       ||
-  std::is_same<T,unsigned long>::value
+  std::is_same_v<T,uint8_t>        ||
+  std::is_same_v<T,uint16_t>       ||
+  std::is_same_v<T,uint32_t>       ||
+  std::is_same_v<T,uint64_t>       ||
+  std::is_same_v<T,unsigned long>
   >;
 
   template<typename T>
@@ -84,8 +84,8 @@ namespace cs {
 
   template<typename T>
   using is_integral = std::bool_constant<
-  is_signed<T>::value    ||
-  is_unsigned<T>::value
+  is_signed_v<T>    ||
+  is_unsigned_v<T>
   >;
 
   template<typename T>
@@ -93,8 +93,8 @@ namespace cs {
 
   template<typename T>
   using is_real = std::bool_constant<
-  std::is_same<T,real32_t>::value  ||
-  std::is_same<T,real64_t>::value
+  std::is_same_v<T,real32_t>  ||
+  std::is_same_v<T,real64_t>
   >;
 
   template<typename T>
@@ -102,7 +102,7 @@ namespace cs {
 
   template<typename T>
   using is_real32 = std::bool_constant<
-  is_real<T>::value  &&  sizeof(T) == 4
+  is_real_v<T>  &&  sizeof(T) == 4
   >;
 
   template<typename T>
@@ -110,7 +110,7 @@ namespace cs {
 
   template<typename T>
   using is_real64 = std::bool_constant<
-  is_real<T>::value  &&  sizeof(T) == 8
+  is_real_v<T>  &&  sizeof(T) == 8
   >;
 
   template<typename T>
@@ -120,24 +120,24 @@ namespace cs {
 
   template<typename T>
   using is_char = std::bool_constant<
-  std::is_same<T,char>::value      ||
-  std::is_same<T,char8_t>::value   ||
-  std::is_same<T,char16_t>::value  ||
-  std::is_same<T,char32_t>::value  ||
-  std::is_same<T,wchar_t>::value
+  std::is_same_v<T,char>      ||
+  std::is_same_v<T,char8_t>   ||
+  std::is_same_v<T,char16_t>  ||
+  std::is_same_v<T,char32_t>  ||
+  std::is_same_v<T,wchar_t>
   >;
 
   template<typename T>
   inline constexpr bool is_char_v = is_char<T>::value;
 
   template<typename T>
-  using is_narrowchar = std::bool_constant<is_char<T>::value  &&  sizeof(T) == 1>;
+  using is_narrowchar = std::bool_constant<is_char_v<T>  &&  sizeof(T) == 1>;
 
   template<typename T>
   inline constexpr bool is_narrowchar_v = is_narrowchar<T>::value;
 
   template<typename T>
-  using is_widechar = std::bool_constant<is_char<T>::value  &&  (sizeof(T) > 1)>;
+  using is_widechar = std::bool_constant<is_char_v<T>  &&  (sizeof(T) > 1)>;
 
   template<typename T>
   inline constexpr bool is_widechar_v = is_widechar<T>::value;
@@ -210,7 +210,7 @@ namespace cs {
 
   template<typename T>
   using safe_underlying_type_t =
-  std::enable_if_t<std::is_enum<T>::value,std::underlying_type_t<T>>;
+  std::enable_if_t<std::is_enum_v<T>,std::underlying_type_t<T>>;
 
   ////// Constants ///////////////////////////////////////////////////////////
 
