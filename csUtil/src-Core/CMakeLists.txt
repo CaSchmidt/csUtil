@@ -21,7 +21,6 @@ list(APPEND csCore_HEADERS
   )
 
 list(APPEND csCore_SOURCES
-  src/ByteArray.cpp
   src/main_core.cpp
   )
 

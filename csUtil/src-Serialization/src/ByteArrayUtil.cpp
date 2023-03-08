@@ -29,7 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include "cs/Core/ByteArray.h"
+#include "cs/Serialization/ByteArrayUtil.h"
 
 #include "cs/Core/CharUtil.h"
 #include "cs/Core/Constants.h"

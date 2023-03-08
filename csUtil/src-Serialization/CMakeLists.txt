@@ -1,8 +1,10 @@
 list(APPEND csSerialization_HEADERS
+  include/cs/Serialization/ByteArrayUtil.h
   include/cs/Serialization/Deserialization.h
 )
 
 list(APPEND csSerialization_SOURCES
+  src/ByteArrayUtil.cpp
   src/main_serialization.cpp
 )
 
