@@ -1,6 +1,7 @@
 list(APPEND csSerialization_HEADERS
   include/cs/Serialization/ByteArrayUtil.h
   include/cs/Serialization/Deserialization.h
+  include/cs/Serialization/RawConverter.h
 )
 
 list(APPEND csSerialization_SOURCES

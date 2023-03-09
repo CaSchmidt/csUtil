@@ -5,7 +5,7 @@
 
 #undef HAVE_BENCHMARK
 
-#include <cs/Math/RawConverter.h>
+#include <cs/Serialization/RawConverter.h>
 #ifdef HAVE_BENCHMARK
 # include <cs/System/Time.h>
 #endif
