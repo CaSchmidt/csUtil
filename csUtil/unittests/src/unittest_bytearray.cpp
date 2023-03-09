@@ -8,7 +8,7 @@
 #include <cs/Core/PrintFormat.h>
 #include <cs/Core/PrintUtil.h>
 #include <cs/Core/StringUtil.h>
-#include <cs/Serialization/ByteArrayUtil.h>
+#include <cs/Convert/ByteArrayUtil.h>
 
 namespace test_bytearray {
 

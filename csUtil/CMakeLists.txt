@@ -86,11 +86,11 @@ endif()
 ### Modules ##################################################################
 
 add_subdirectory(src-Core)
+add_subdirectory(src-Convert)
 add_subdirectory(src-IO)
 add_subdirectory(src-Logging) # optionally depends on Qt
 add_subdirectory(src-SIMD)
 add_subdirectory(src-Math) # depends on SIMD
-add_subdirectory(src-Serialization)
 add_subdirectory(src-System)
 add_subdirectory(src-Trie)
 

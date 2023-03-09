@@ -6,7 +6,7 @@
 
 #include <catch.hpp>
 
-#include <cs/Serialization/Deserialization.h>
+#include <cs/Convert/Deserialize.h>
 
 namespace test_deserialization {
 
