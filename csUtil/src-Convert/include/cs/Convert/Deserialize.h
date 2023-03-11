@@ -36,8 +36,8 @@
 
 namespace cs {
 
-  template<typename T> requires IsUnsigned<T>
-  inline T toUnsignedFromBE(const uint8_t *data, const std::size_t sizData)
+  template<typename T> requires IsIntegral<T>
+  inline T toIntegralFromBE(const uint8_t *data, const std::size_t sizData)
   {
     if( !isValid(data, sizData) ) {
       return T{0};
@@ -57,8 +57,8 @@ namespace cs {
     return value;
   }
 
-  template<typename T> requires IsUnsigned<T>
-  inline T toUnsignedFromLE(const uint8_t *data, const std::size_t sizData)
+  template<typename T> requires IsIntegral<T>
+  inline T toIntegralFromLE(const uint8_t *data, const std::size_t sizData)
   {
     if( !isValid(data, sizData) ) {
       return T{0};
