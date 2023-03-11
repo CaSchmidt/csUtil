@@ -52,7 +52,7 @@ namespace cs {
   inline constexpr bool is_swappable_v = is_swappable<T>::value;
 
   template<typename T>
-  using if_swappable_t = std::enable_if_t<std::is_swappable_v<T>,T>;
+  concept IsSwappable = is_swappable_v<T>;
 
   // Implementation //////////////////////////////////////////////////////////
 
@@ -116,14 +116,14 @@ namespace cs {
 
   // User Interface //////////////////////////////////////////////////////////
 
-  template<bool SWAP, typename T>
-  constexpr if_swappable_t<T> copy(const T& value)
+  template<bool SWAP, typename T> requires IsSwappable<T>
+  constexpr T copy(const T& value)
   {
     return impl_endian::dispatch<SWAP  &&  sizeof(T) >= 2,T>(value);
   }
 
-  template<typename T>
-  constexpr if_swappable_t<T> swap(const T& value)
+  template<typename T> requires IsSwappable<T>
+  constexpr T swap(const T& value)
   {
     return impl_endian::dispatch<sizeof(T) >= 2,T>(value);
   }
@@ -132,26 +132,26 @@ namespace cs {
    * Convert endianness between host byte order and 'peer' byte order.
    */
 
-  template<typename T>
-  constexpr if_swappable_t<T> fromBigEndian(const T& peerValue)
+  template<typename T> requires IsSwappable<T>
+  constexpr T fromBigEndian(const T& peerValue)
   {
     return copy<std::endian::native != std::endian::big>(peerValue);
   }
 
-  template<typename T>
-  constexpr if_swappable_t<T> fromLittleEndian(const T& peerValue)
+  template<typename T> requires IsSwappable<T>
+  constexpr T fromLittleEndian(const T& peerValue)
   {
     return copy<std::endian::native != std::endian::little>(peerValue);
   }
 
-  template<typename T>
-  constexpr if_swappable_t<T> toBigEndian(const T& hostValue)
+  template<typename T> requires IsSwappable<T>
+  constexpr T toBigEndian(const T& hostValue)
   {
     return copy<std::endian::native != std::endian::big>(hostValue);
   }
 
-  template<typename T>
-  constexpr if_swappable_t<T> toLittleEndian(const T& hostValue)
+  template<typename T> requires IsSwappable<T>
+  constexpr T toLittleEndian(const T& hostValue)
   {
     return copy<std::endian::native != std::endian::little>(hostValue);
   }
