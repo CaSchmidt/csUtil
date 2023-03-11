@@ -106,4 +106,14 @@ namespace cs {
     return impl_bit::reverseBitsImpl(in, MAX_BIT<T>);
   }
 
+  ////// Sign Extension of Integral Value ////////////////////////////////////
+
+  template<typename T> requires IsSigned<T>
+  constexpr T signExtend(const T value, const std::size_t numBytes)
+  {
+    return 0 < numBytes  &&  numBytes < sizeof(T)  &&  testBit(value, numBytes*8 - 1)
+        ? value | (T{-1} << (numBytes*8))
+        : value;
+  }
+
 } // namespace cs
