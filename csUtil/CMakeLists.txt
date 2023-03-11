@@ -92,6 +92,7 @@ add_subdirectory(src-Logging) # optionally depends on Qt
 add_subdirectory(src-SIMD)
 add_subdirectory(src-Math) # depends on SIMD
 add_subdirectory(src-System)
+add_subdirectory(src-Text)
 add_subdirectory(src-Trie)
 
 if(ENABLE_CHARCONV)
