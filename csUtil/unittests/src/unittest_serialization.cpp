@@ -20,11 +20,11 @@ namespace test_deserialization {
 
       data.fill(0);
       data[0] = 2;
-      REQUIRE( cs::toUnsignedBE<uint8_t>(data.data(), 1) == VALUE );
+      REQUIRE( cs::toUnsignedFromBE<uint8_t>(data.data(), 1) == VALUE );
 
       data.fill(0);
       data[0] = 2;
-      REQUIRE( cs::toUnsignedLE<uint8_t>(data.data(), 1) == VALUE );
+      REQUIRE( cs::toUnsignedFromLE<uint8_t>(data.data(), 1) == VALUE );
     }
 
     { // 16bit
@@ -33,14 +33,14 @@ namespace test_deserialization {
       data.fill(0);
       data[0] = 1;
       data[1] = 2;
-      REQUIRE( cs::toUnsignedBE<uint16_t>(data.data(), 2) == VALUE );
-      REQUIRE( cs::toUnsignedBE<uint16_t>(data.data(), 1) == uint16_t{0x01} );
+      REQUIRE( cs::toUnsignedFromBE<uint16_t>(data.data(), 2) == VALUE );
+      REQUIRE( cs::toUnsignedFromBE<uint16_t>(data.data(), 1) == uint16_t{0x01} );
 
       data.fill(0);
       data[0] = 2;
       data[1] = 1;
-      REQUIRE( cs::toUnsignedLE<uint16_t>(data.data(), 2) == VALUE );
-      REQUIRE( cs::toUnsignedLE<uint16_t>(data.data(), 1) == uint16_t{0x02} );
+      REQUIRE( cs::toUnsignedFromLE<uint16_t>(data.data(), 2) == VALUE );
+      REQUIRE( cs::toUnsignedFromLE<uint16_t>(data.data(), 1) == uint16_t{0x02} );
     }
 
     { // 32bit
@@ -49,14 +49,14 @@ namespace test_deserialization {
       data.fill(0);
       data[0] = 1;
       data[3] = 2;
-      REQUIRE( cs::toUnsignedBE<uint32_t>(data.data(), 4) == VALUE );
-      REQUIRE( cs::toUnsignedBE<uint32_t>(data.data(), 3) == uint32_t{0x010000} );
+      REQUIRE( cs::toUnsignedFromBE<uint32_t>(data.data(), 4) == VALUE );
+      REQUIRE( cs::toUnsignedFromBE<uint32_t>(data.data(), 3) == uint32_t{0x010000} );
 
       data.fill(0);
       data[0] = 2;
       data[3] = 1;
-      REQUIRE( cs::toUnsignedLE<uint32_t>(data.data(), 4) == VALUE );
-      REQUIRE( cs::toUnsignedLE<uint32_t>(data.data(), 3) == uint32_t{0x000002} );
+      REQUIRE( cs::toUnsignedFromLE<uint32_t>(data.data(), 4) == VALUE );
+      REQUIRE( cs::toUnsignedFromLE<uint32_t>(data.data(), 3) == uint32_t{0x000002} );
     }
 
     { // 64bit
@@ -65,14 +65,14 @@ namespace test_deserialization {
       data.fill(0);
       data[0] = 1;
       data[7] = 2;
-      REQUIRE( cs::toUnsignedBE<uint64_t>(data.data(), 8) == VALUE );
-      REQUIRE( cs::toUnsignedBE<uint64_t>(data.data(), 7) == uint64_t{0x01000000000000} );
+      REQUIRE( cs::toUnsignedFromBE<uint64_t>(data.data(), 8) == VALUE );
+      REQUIRE( cs::toUnsignedFromBE<uint64_t>(data.data(), 7) == uint64_t{0x01000000000000} );
 
       data.fill(0);
       data[0] = 2;
       data[7] = 1;
-      REQUIRE( cs::toUnsignedLE<uint64_t>(data.data(), 8) == VALUE );
-      REQUIRE( cs::toUnsignedLE<uint64_t>(data.data(), 7) == uint64_t{0x00000000000002} );
+      REQUIRE( cs::toUnsignedFromLE<uint64_t>(data.data(), 8) == VALUE );
+      REQUIRE( cs::toUnsignedFromLE<uint64_t>(data.data(), 7) == uint64_t{0x00000000000002} );
     }
   }
 

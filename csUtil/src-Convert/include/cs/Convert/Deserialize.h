@@ -31,12 +31,13 @@
 
 #pragma once
 
+#include <cs/Core/Endian.h>
 #include <cs/Core/Range.h>
 
 namespace cs {
 
   template<typename T> requires IsUnsigned<T>
-  inline T toUnsignedBE(const uint8_t *data, const std::size_t sizData)
+  inline T toUnsignedFromBE(const uint8_t *data, const std::size_t sizData)
   {
     if( !isValid(data, sizData) ) {
       return T{0};
@@ -44,16 +45,20 @@ namespace cs {
 
     T value{0};
     const std::size_t numBytes = std::min(sizData, sizeof(T));
-    for(std::size_t i = 0; i < numBytes; /* cf. data[] */) {
-      value <<= 8;
-      value  |= T(data[i++]);
+    if( numBytes == sizeof(T) ) {
+      value = fromBigEndian(*reinterpret_cast<const T*>(&data[0]));
+    } else {
+      for(std::size_t i = 0; i < numBytes; /* cf. data[] */) {
+        value <<= 8;
+        value  |= T(data[i++]);
+      }
     }
 
     return value;
   }
 
   template<typename T> requires IsUnsigned<T>
-  inline T toUnsignedLE(const uint8_t *data, const std::size_t sizData)
+  inline T toUnsignedFromLE(const uint8_t *data, const std::size_t sizData)
   {
     if( !isValid(data, sizData) ) {
       return T{0};
@@ -61,9 +66,13 @@ namespace cs {
 
     T value{0};
     const std::size_t numBytes = std::min(sizData, sizeof(T));
-    for(std::size_t i = numBytes; i > 0; /* cf. data[] */) {
-      value <<= 8;
-      value  |= T(data[--i]);
+    if( numBytes == sizeof(T) ) {
+      value = fromLittleEndian(*reinterpret_cast<const T*>(&data[0]));
+    } else {
+      for(std::size_t i = numBytes; i > 0; /* cf. data[] */) {
+        value <<= 8;
+        value  |= T(data[--i]);
+      }
     }
 
     return value;
