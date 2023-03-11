@@ -36,7 +36,7 @@
 #include <ostream>
 
 #include <cs/Core/Flags.h>
-#include <cs/Core/StringAlgorithm.h>
+#include <cs/Text/StringAlgorithm.h>
 
 namespace cs {
 

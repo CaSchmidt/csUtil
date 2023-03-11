@@ -31,7 +31,7 @@
 
 #include "cs/IO/FileIO.h"
 
-#include "cs/Core/StringUtil.h"
+#include "cs/Text/StringUtil.h"
 #include "cs/IO/File.h"
 
 namespace cs {

@@ -34,7 +34,7 @@
 #include <list>
 #include <string>
 
-#include <cs/Core/StringAlgorithm.h>
+#include <cs/Text/StringAlgorithm.h>
 
 namespace cs {
 

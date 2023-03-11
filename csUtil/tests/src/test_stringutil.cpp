@@ -3,7 +3,7 @@
 
 #include <array>
 
-#include <cs/Core/StringUtil.h>
+#include <cs/Text/StringUtil.h>
 
 void simplify(const std::string& s)
 {

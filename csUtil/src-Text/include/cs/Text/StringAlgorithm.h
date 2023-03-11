@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include <cs/Core/StringRange.h>
+#include <cs/Text/StringRange.h>
 
 namespace cs {
 

@@ -6,11 +6,11 @@
 #include <vector>
 
 #include <cs/Core/Container.h>
-#include <cs/Core/PrintFormat.h>
-#include <cs/Core/PrintUtil.h>
 #include <cs/SIMD/SIMD.h>
 #include <cs/SIMD/SIMD128.h>
 #include <cs/System/Time.h>
+#include <cs/Text/PrintFormat.h>
+#include <cs/Text/PrintUtil.h>
 
 namespace util {
 

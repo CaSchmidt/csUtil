@@ -5,10 +5,10 @@
 
 #include <catch.hpp>
 
-#include <cs/Core/PrintFormat.h>
-#include <cs/Core/PrintUtil.h>
-#include <cs/Core/StringUtil.h>
 #include <cs/Convert/ByteArrayUtil.h>
+#include <cs/Text/PrintFormat.h>
+#include <cs/Text/PrintUtil.h>
+#include <cs/Text/StringUtil.h>
 
 namespace test_bytearray {
 

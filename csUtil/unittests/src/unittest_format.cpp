@@ -3,8 +3,8 @@
 #include <catch.hpp>
 
 #include <cs/Core/Constants.h>
-#include <cs/Core/PrintFormat.h>
-#include <cs/Core/PrintUtil.h>
+#include <cs/Text/PrintFormat.h>
+#include <cs/Text/PrintUtil.h>
 
 using size_type = std::size_t;
 

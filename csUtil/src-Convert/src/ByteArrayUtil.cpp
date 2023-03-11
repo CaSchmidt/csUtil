@@ -34,7 +34,7 @@
 #include "cs/Core/CharUtil.h"
 #include "cs/Core/Constants.h"
 #include "cs/Core/Container.h"
-#include "cs/Core/StringAlgorithm.h"
+#include "cs/Text/StringAlgorithm.h"
 
 namespace cs {
 

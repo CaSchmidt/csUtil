@@ -6,9 +6,9 @@
 
 #include <catch.hpp>
 
-#include <cs/Core/StringUtil.h>
 #include <cs/IO/File.h>
 #include <cs/IO/FileIO.h>
+#include <cs/Text/StringUtil.h>
 
 namespace fileio {
 

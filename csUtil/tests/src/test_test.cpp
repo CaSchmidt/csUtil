@@ -11,9 +11,9 @@
 #include <tuple>
 #include <utility>
 
-#include <cs/Core/PrintFormat.h>
-#include <cs/Core/PrintUtil.h>
 #include <cs/System/Time.h>
+#include <cs/Text/PrintFormat.h>
+#include <cs/Text/PrintUtil.h>
 
 template<typename ...Args>
 void print_sig(Args&&...)
