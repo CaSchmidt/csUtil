@@ -4,6 +4,9 @@
 
 #include <vector>
 
+#include <cs/Core/ByteArray.h>
+#include <cs/Core/Container.h>
+
 bool write(FILE *file, const void *buffer, const std::size_t size)
 {
   constexpr std::size_t COUNT = 1;
@@ -16,12 +19,9 @@ int main(int, char **)
 
   const char *filename = "space.bin";
 
-  std::vector<uint8_t> buffer;
-  try {
-    buffer.resize(BUFFER_SIZE, '\0');
-  } catch(...) {
-    buffer.clear();
-    fprintf(stderr, "ERROR: std::vector<>::resize()\n");
+  cs::ByteArray buffer;
+  if( !cs::resize(&buffer, BUFFER_SIZE, '\0') ) {
+    fprintf(stderr, "ERROR: resize()\n");
     return EXIT_FAILURE;
   }
 

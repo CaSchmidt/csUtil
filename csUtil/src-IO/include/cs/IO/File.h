@@ -31,12 +31,10 @@
 
 #pragma once
 
-#include <cstdint>
-
 #include <filesystem>
 #include <memory>
-#include <vector>
 
+#include <cs/Core/ByteArray.h>
 #include <cs/Core/Flags.h>
 #include <cs/IO/IODevice.h>
 
@@ -82,7 +80,7 @@ namespace cs {
     size_type read(void *buffer, const size_type length) const;
     size_type write(const void *buffer, const size_type length) const;
 
-    std::vector<uint8_t> readAll() const;
+    ByteArray readAll() const;
 
   private:
     FileImplPtr _impl{nullptr};

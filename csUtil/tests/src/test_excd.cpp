@@ -6,21 +6,8 @@
 #include <array>
 #include <vector>
 
+#include <cs/Core/Container.h>
 #include <cs/IO/File.h>
-
-template<typename T>
-bool resize(std::vector<T>& v, const std::size_t count, const T& value = T())
-{
-  try {
-    v.resize(count, value);
-  } catch(...) {
-    v.clear();
-    return false;
-  }
-  return true;
-}
-
-using Buffer = std::vector<uint8_t>;
 
 namespace cdrom {
 
@@ -46,7 +33,7 @@ namespace cdrom {
 
 } // namespace cdrom
 
-uint8_t scanBuffer(const Buffer& buffer, const std::size_t have)
+uint8_t scanBuffer(const cs::ByteArray& buffer, const std::size_t have)
 {
   if( have < 1 ) {
     return cdrom::INVALID_MODE;
@@ -79,7 +66,7 @@ uint8_t scanBuffer(const Buffer& buffer, const std::size_t have)
   return result;
 }
 
-void writeBuffer(const cs::File& out, const Buffer& buffer, const std::size_t have,
+void writeBuffer(const cs::File& out, const cs::ByteArray& buffer, const std::size_t have,
                  const std::size_t data_size)
 {
   if( have < 1  ||  data_size < 1  ||  data_size > cdrom::SIZ_Data2 ) {
@@ -112,11 +99,11 @@ int main(int /*argc*/, char **argv)
 
   printf("File \"%s\" opened.\n", cs::CSTR(infile.path().u8string().data()));
 
-  Buffer    buffer;
-  std::size_t have;
-  uint8_t     mode = cdrom::INVALID_MODE;
+  cs::ByteArray buffer;
+  std::size_t     have;
+  uint8_t         mode = cdrom::INVALID_MODE;
 
-  if( !resize(buffer, cdrom::SIZE_READBUFFER) ) {
+  if( !cs::resize(&buffer, cdrom::SIZE_READBUFFER) ) {
     fprintf(stderr, "ERROR: Unable to allocate read buffer!\n");
     return EXIT_FAILURE;
   }

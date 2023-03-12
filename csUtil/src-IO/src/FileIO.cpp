@@ -61,8 +61,6 @@ namespace cs {
 
   CS_UTIL_EXPORT std::string readTextFile(const std::filesystem::path& path, bool *ok)
   {
-    using Buffer = std::vector<uint8_t>;
-
     if( ok != nullptr ) {
       *ok = false;
     }
@@ -71,7 +69,7 @@ namespace cs {
     if( !file.open(path) ) {
       return String<char>();
     }
-    const Buffer buffer = file.readAll();
+    const ByteArray buffer = file.readAll();
     file.close();
 
     if( buffer.empty() ) {

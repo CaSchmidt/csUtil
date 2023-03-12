@@ -35,27 +35,25 @@
 
 namespace cs {
 
-  std::vector<uint8_t> File::readAll() const
+  ByteArray File::readAll() const
   {
-    using Buffer = std::vector<uint8_t>;
-
-    constexpr size_type MAX_SIZE = konst<Buffer::size_type>::MAX;
+    constexpr size_type MAX_SIZE = konst<ByteArray::size_type>::MAX;
     constexpr size_type      ONE = 1;
 
     const size_type numToRead = size();
 
     const bool is_size = ONE <= numToRead  &&  numToRead <= MAX_SIZE;
     if( !isOpen()  ||  !is_size ) {
-      return Buffer();
+      return ByteArray{};
     }
 
-    Buffer buffer;
+    ByteArray buffer;
     if( !resize(&buffer, numToRead, 0) ) {
-      return Buffer{};
+      return ByteArray{};
     }
 
     if( read(buffer.data(), numToRead) != numToRead ) {
-      return Buffer();
+      return ByteArray{};
     }
 
     return buffer;
