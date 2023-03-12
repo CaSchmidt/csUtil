@@ -31,17 +31,11 @@
 
 #pragma once
 
-#include <map>
-
-#include <cs/CLI/BooleanOption.h>
-#include <cs/CLI/IntegralOption.h>
-#include <cs/CLI/StringOption.h>
+#include <cs/CLI/Option.h>
 
 namespace cs {
 
-  using OptionsPtr = std::unique_ptr<class Options>;
-
-  class Options {
+  class BooleanOption : public Option {
   private:
     struct ctor_tag {
       ctor_tag() noexcept
@@ -50,54 +44,25 @@ namespace cs {
     };
 
   public:
-    using      OptionMap  = std::map<std::string,OptionPtr>;
-    using      OptionIter = OptionMap::iterator;
-    using ConstOptionIter = OptionMap::const_iterator;
+    using value_type = bool;
 
-    Options(const ctor_tag&) noexcept;
-    ~Options() noexcept;
+    BooleanOption(const ctor_tag&,
+                  const std::string& name) noexcept;
+    ~BooleanOption() noexcept;
 
-    void clear();
-
-    bool add(OptionPtr& ptr);
-
-    bool isValid(std::ostream *output) const;
-    bool parse(int argc, char **argv, std::ostream *output);
-
-    void printUsage(int argc, char **argv, std::ostream *output) const;
-
-    void setLongFormat(const bool on);
-
-    const Option *get(const std::string& name) const;
-
-    template<typename T>
-    inline if_boolean_t<T> value(const std::string& name) const
-    {
-      return dynamic_cast<const BooleanOption*>(get(name))->value();
-    }
-
-    template<typename T>
-    inline if_integral_t<T> value(const std::string& name) const
-    {
-      return dynamic_cast<const IntegralOption<T>*>(get(name))->value();
-    }
-
-    template<typename T>
-    inline if_real_t<T> value(const std::string& /*name*/) const
-    {
-      // TODO...
-    }
-
-    template<typename T>
-    inline std::enable_if_t<std::is_same_v<T,std::string>,T> value(const std::string& name) const
-    {
-      return dynamic_cast<const StringOption*>(get(name))->value();
-    }
-
-    static OptionsPtr make();
+    value_type value() const;
 
   private:
-    OptionMap _options;
+    BooleanOption() noexcept = delete;
+
+    value_type _value{false};
+
+    const char *impl_defaultValue() const final;
+    bool impl_parse(const char *value) final;
+    bool impl_isValid() const final;
+
+    template<typename DerivedT, typename... Args>
+    friend OptionPtr make_option(const std::string& name, Args&&... args);
   };
 
 } // namespace cs

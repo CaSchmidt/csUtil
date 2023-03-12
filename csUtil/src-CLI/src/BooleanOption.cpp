@@ -29,75 +29,48 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#pragma once
+#include "cs/CLI/BooleanOption.h"
 
-#include <map>
-
-#include <cs/CLI/BooleanOption.h>
-#include <cs/CLI/IntegralOption.h>
-#include <cs/CLI/StringOption.h>
+#include "cs/Text/StringRange.h"
 
 namespace cs {
 
-  using OptionsPtr = std::unique_ptr<class Options>;
+  ////// public //////////////////////////////////////////////////////////////
 
-  class Options {
-  private:
-    struct ctor_tag {
-      ctor_tag() noexcept
-      {
-      }
-    };
+  BooleanOption::BooleanOption(const ctor_tag&,
+                               const std::string& name) noexcept
+    : Option(name)
+  {
+  }
 
-  public:
-    using      OptionMap  = std::map<std::string,OptionPtr>;
-    using      OptionIter = OptionMap::iterator;
-    using ConstOptionIter = OptionMap::const_iterator;
+  BooleanOption::~BooleanOption() noexcept
+  {
+  }
 
-    Options(const ctor_tag&) noexcept;
-    ~Options() noexcept;
+  BooleanOption::value_type BooleanOption::value() const
+  {
+    return _value;
+  }
 
-    void clear();
+  ////// private /////////////////////////////////////////////////////////////
 
-    bool add(OptionPtr& ptr);
+  const char *BooleanOption::impl_defaultValue() const
+  {
+    return nullptr;
+  }
 
-    bool isValid(std::ostream *output) const;
-    bool parse(int argc, char **argv, std::ostream *output);
-
-    void printUsage(int argc, char **argv, std::ostream *output) const;
-
-    void setLongFormat(const bool on);
-
-    const Option *get(const std::string& name) const;
-
-    template<typename T>
-    inline if_boolean_t<T> value(const std::string& name) const
-    {
-      return dynamic_cast<const BooleanOption*>(get(name))->value();
+  bool BooleanOption::impl_parse(const char *value)
+  {
+    if( length(value) > 0 ) {
+      return false;
     }
+    _value = true;
+    return true;
+  }
 
-    template<typename T>
-    inline if_integral_t<T> value(const std::string& name) const
-    {
-      return dynamic_cast<const IntegralOption<T>*>(get(name))->value();
-    }
-
-    template<typename T>
-    inline if_real_t<T> value(const std::string& /*name*/) const
-    {
-      // TODO...
-    }
-
-    template<typename T>
-    inline std::enable_if_t<std::is_same_v<T,std::string>,T> value(const std::string& name) const
-    {
-      return dynamic_cast<const StringOption*>(get(name))->value();
-    }
-
-    static OptionsPtr make();
-
-  private:
-    OptionMap _options;
-  };
+  bool BooleanOption::impl_isValid() const
+  {
+    return true;
+  }
 
 } // namespace cs
