@@ -68,6 +68,8 @@ namespace cs {
 
   } // namespace impl_print
 
+  ////// User Interface //////////////////////////////////////////////////////
+
   template<typename CharT, typename ...Args>
   requires IsCharacter<CharT>
   void print(std::basic_ostream<CharT> *stream, const CharT *fmt, Args&&... args)
