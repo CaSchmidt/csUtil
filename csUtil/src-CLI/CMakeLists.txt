@@ -1,7 +1,11 @@
 list(APPEND csCLI_HEADERS
+  include/cs/CLI/Option.h
+  include/cs/CLI/Options.h
 )
 
 list(APPEND csCLI_SOURCES
+  src/Option.cpp
+  src/Options.cpp
   src/main_cli.cpp
 )
 
