@@ -56,6 +56,9 @@ namespace cs {
   template<typename T>
   inline constexpr bool is_boolean_v = is_boolean<T>::value;
 
+  template<typename T, typename ResultT = T>
+  using if_boolean_t = std::enable_if_t<is_boolean_v<T>,ResultT>;
+
   // Arithmetic Category /////////////////////////////////////////////////////
 
   template<typename T>
@@ -91,6 +94,9 @@ namespace cs {
   template<typename T>
   inline constexpr bool is_integral_v = is_integral<T>::value;
 
+  template<typename T, typename ResultT = T>
+  using if_integral_t = std::enable_if_t<is_integral_v<T>,ResultT>;
+
   template<typename T>
   using is_real = std::bool_constant<
   std::is_same_v<T,real32_t>  ||
@@ -99,6 +105,9 @@ namespace cs {
 
   template<typename T>
   inline constexpr bool is_real_v = is_real<T>::value;
+
+  template<typename T, typename ResultT = T>
+  using if_real_t = std::enable_if_t<is_real_v<T>,ResultT>;
 
   template<typename T>
   using is_real32 = std::bool_constant<
