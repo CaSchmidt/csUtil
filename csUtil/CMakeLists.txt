@@ -86,6 +86,7 @@ endif()
 ### Modules ##################################################################
 
 add_subdirectory(src-Core)
+add_subdirectory(src-CLI)
 add_subdirectory(src-Convert)
 add_subdirectory(src-IO)
 add_subdirectory(src-Logging) # optionally depends on Qt
