@@ -68,7 +68,7 @@ namespace cs {
 
     void setLongFormat(const bool on);
 
-    const Option *get(const std::string& name) const;
+    const IOption *get(const std::string& name) const;
 
     template<typename T>
     inline if_boolean_t<T> value(const std::string& name) const

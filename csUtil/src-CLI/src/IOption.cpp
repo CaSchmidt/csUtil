@@ -31,7 +31,7 @@
 
 #include <algorithm>
 
-#include "cs/CLI/Option.h"
+#include "cs/CLI/IOption.h"
 
 #include "cs/Text/Print.h"
 #include "cs/Text/StringUtil.h"
@@ -40,62 +40,62 @@ namespace cs {
 
   ////// public //////////////////////////////////////////////////////////////
 
-  Option::~Option() noexcept
+  IOption::~IOption() noexcept
   {
   }
 
-  std::string Option::help() const
+  std::string IOption::help() const
   {
     return _help;
   }
 
-  void Option::setHelp(const std::string& help)
+  void IOption::setHelp(const std::string& help)
   {
     _help = help;
   }
 
-  bool Option::isLongFormat() const
+  bool IOption::isLongFormat() const
   {
     return _isLongFormat;
   }
 
-  void Option::setLongFormat(const bool on)
+  void IOption::setLongFormat(const bool on)
   {
     _isLongFormat = on;
     initializePrefix();
   }
 
-  bool Option::isRequired() const
+  bool IOption::isRequired() const
   {
     return _isRequired;
   }
 
-  void Option::setRequired(const bool on)
+  void IOption::setRequired(const bool on)
   {
     _isRequired = on;
   }
 
-  const char *Option::name() const
+  const char *IOption::name() const
   {
     return _name.data();
   }
 
-  bool Option::isOption(const char *arg) const
+  bool IOption::isOption(const char *arg) const
   {
     return cs::startsWith(arg, _prefix.data());
   }
 
-  bool Option::parse(const char *arg)
+  bool IOption::parse(const char *arg)
   {
     return isOption(arg)  &&  impl_parse(arg + _prefix.size());
   }
 
-  bool Option::isValid() const
+  bool IOption::isValid() const
   {
     return impl_isValid();
   }
 
-  void Option::printUsage(std::ostream *output) const
+  void IOption::printUsage(std::ostream *output) const
   {
     if( isRequired() ) {
       print(output, "    ");
@@ -120,7 +120,7 @@ namespace cs {
     println(output, "");
   }
 
-  bool Option::isValidName(const char *s)
+  bool IOption::isValidName(const char *s)
   {
     const auto cnt = std::count_if(s, s + cs::length(s),
                                    [](const char c) -> bool { return cs::isSpace(c); });
@@ -129,14 +129,14 @@ namespace cs {
 
   ////// protected ///////////////////////////////////////////////////////////
 
-  Option::Option(const std::string& name) noexcept
+  IOption::IOption(const std::string& name) noexcept
     : _name(name)
   {
   }
 
   ////// private /////////////////////////////////////////////////////////////
 
-  void Option::initializePrefix()
+  void IOption::initializePrefix()
   {
     try {
       _prefix.clear();
@@ -157,7 +157,7 @@ namespace cs {
     }
   }
 
-  bool Option::isValueOption() const
+  bool IOption::isValueOption() const
   {
     return impl_defaultValue() != nullptr;
   }

@@ -33,11 +33,11 @@
 
 #include <functional>
 
-#include <cs/CLI/Option.h>
+#include <cs/CLI/IOption.h>
 
 namespace cs {
 
-  class StringOption : public Option {
+  class StringOption : public IOption {
   private:
     struct ctor_tag {
       ctor_tag() noexcept

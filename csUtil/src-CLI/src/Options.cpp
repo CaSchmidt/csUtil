@@ -52,7 +52,7 @@ namespace cs {
 
   bool Options::add(OptionPtr& ptr)
   {
-    if( !ptr  ||  !Option::isValidName(ptr->name()) ) {
+    if( !ptr  ||  !IOption::isValidName(ptr->name()) ) {
       return false;
     }
     OptionMap::value_type value{ptr->name(), std::move(ptr)};
@@ -63,7 +63,7 @@ namespace cs {
   bool Options::isValid(std::ostream *output) const
   {
     for(ConstOptionIter it = _options.cbegin(); it != _options.cend(); ++it) {
-      const Option *opt = it->second.get();
+      const IOption *opt = it->second.get();
       if( !opt->isValid() ) {
         println(output, "ERROR: Invalid value for option \"%\"!", opt->name());
         return false;
@@ -85,7 +85,7 @@ namespace cs {
 
       bool have_arg = false;
       for(OptionIter it = _options.begin(); it != _options.end(); ++it) {
-        Option *opt = it->second.get();
+        IOption *opt = it->second.get();
 
         if( !opt->isOption(arg) ) {
           continue;
@@ -126,7 +126,7 @@ namespace cs {
     }
   }
 
-  const Option *Options::get(const std::string& name) const
+  const IOption *Options::get(const std::string& name) const
   {
     const ConstOptionIter it = _options.find(name);
     return it != _options.cend()

@@ -39,7 +39,7 @@ namespace cs {
 
   BooleanOption::BooleanOption(const ctor_tag&,
                                const std::string& name) noexcept
-    : Option(name)
+    : IOption(name)
   {
   }
 

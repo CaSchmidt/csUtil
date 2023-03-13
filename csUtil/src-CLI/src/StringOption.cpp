@@ -41,7 +41,7 @@ namespace cs {
                              const std::string& name,
                              const valid_func& validator,
                              const value_type& defValue) noexcept
-    : Option(name)
+    : IOption(name)
     , _defValue(defValue)
     , _validator(validator)
     , _value(defValue)

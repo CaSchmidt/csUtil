@@ -38,11 +38,11 @@
 
 namespace cs {
 
-  using OptionPtr = std::unique_ptr<class Option>;
+  using OptionPtr = std::unique_ptr<class IOption>;
 
-  class Option {
+  class IOption {
   public:
-    virtual ~Option() noexcept;
+    virtual ~IOption() noexcept;
 
     std::string help() const;
     void setHelp(const std::string& help);
@@ -64,10 +64,10 @@ namespace cs {
     static bool isValidName(const char *s);
 
   protected:
-    Option(const std::string& name) noexcept;
+    IOption(const std::string& name) noexcept;
 
   private:
-    Option() noexcept = delete;
+    IOption() noexcept = delete;
 
     void initializePrefix();
     bool isValueOption() const;

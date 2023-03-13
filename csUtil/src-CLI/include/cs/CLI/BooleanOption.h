@@ -31,11 +31,11 @@
 
 #pragma once
 
-#include <cs/CLI/Option.h>
+#include <cs/CLI/IOption.h>
 
 namespace cs {
 
-  class BooleanOption : public Option {
+  class BooleanOption : public IOption {
   private:
     struct ctor_tag {
       ctor_tag() noexcept

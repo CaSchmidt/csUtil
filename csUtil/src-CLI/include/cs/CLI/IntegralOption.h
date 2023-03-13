@@ -35,13 +35,13 @@
 #include <charconv>
 #include <functional>
 
-#include <cs/CLI/Option.h>
+#include <cs/CLI/IOption.h>
 #include <cs/Text/StringRange.h>
 
 namespace cs {
 
   template<typename T>
-  class IntegralOption : public Option {
+  class IntegralOption : public IOption {
   private:
     struct ctor_tag {
       ctor_tag() noexcept
@@ -57,7 +57,7 @@ namespace cs {
                    const std::string& name,
                    const valid_func& validator,
                    const value_type defValue = value_type{0}) noexcept
-      : Option(name)
+      : IOption(name)
       , _defValue(defValue)
       , _validator(validator)
       , _value(defValue)
