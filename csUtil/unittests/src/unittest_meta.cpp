@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iostream>
 #include <iterator>
 #include <list>
@@ -125,3 +126,25 @@ namespace test_foreach {
   }
 
 } // namespace test_foreach
+
+namespace test_algorithm {
+
+  TEMPLATE_TEST_CASE("Standard algorithms.", "[algorithm]", int) {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    using value_type = TestType;
+
+    constexpr std::size_t    N = 3;
+    constexpr value_type VALUE = -7;
+
+    const value_type a[N] = {1, 2, 3};
+    value_type x[N];
+
+    cs::meta::copy<N>(x, a);
+    REQUIRE( std::equal(a, a + N, x) );
+
+    cs::meta::fill<N>(x, VALUE);
+    REQUIRE( std::count(x, x + N, VALUE) == N );
+  }
+
+} // namespace test_algorithm

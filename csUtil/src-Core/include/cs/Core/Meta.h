@@ -133,6 +133,24 @@ namespace cs {
       impl_meta::ForEach<N,N-1>::run(call, std::forward<Args>(args)...);
     }
 
+    ////// Algorithms ////////////////////////////////////////////////////////
+
+    template<std::size_t N, typename T>
+    inline void copy(T *dest, const T *src)
+    {
+      for_each<N>([](const std::size_t I, T *dest, const T *src) -> void {
+        dest[I] = src[I];
+      }, dest, src);
+    }
+
+    template<std::size_t N, typename T>
+    inline void fill(T *dest, const T& value = T{})
+    {
+      for_each<N>([](const std::size_t I, T *dest, const T& value) -> void {
+        dest[I] = value;
+      }, dest, value);
+    }
+
   } // namespace meta
 
 } // namespace cs
