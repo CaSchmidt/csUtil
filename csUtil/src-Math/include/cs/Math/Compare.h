@@ -36,6 +36,9 @@
 /*
  * NOTE:
  *
+ * "The Little Things: Comparing Floating Point Numbers", cf.
+ * https://codingnest.com/the-little-things-comparing-floating-point-numbers/
+ *
  * "Comparing Floating Point Numbers, 2012 Edition", cf.
  * https://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition/
  */
