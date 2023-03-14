@@ -73,6 +73,9 @@ namespace cs {
   template<typename T>
   inline constexpr bool is_signed_v = is_signed<T>::value;
 
+  template<typename T, typename ResultT = T>
+  using if_signed_t = std::enable_if_t<is_signed_v<T>,ResultT>;
+
   template<typename T>
   using is_unsigned = std::bool_constant<
   std::is_same_v<T,uint8_t>        ||
@@ -84,6 +87,9 @@ namespace cs {
 
   template<typename T>
   inline constexpr bool is_unsigned_v = is_unsigned<T>::value;
+
+  template<typename T, typename ResultT = T>
+  using if_unsigned_t = std::enable_if_t<is_unsigned_v<T>,ResultT>;
 
   template<typename T>
   using is_integral = std::bool_constant<
