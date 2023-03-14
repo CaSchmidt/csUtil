@@ -3,6 +3,7 @@ list(APPEND csMath_HEADERS
   include/cs/Math/Interval.h
   include/cs/Math/Math.h
   include/cs/Math/Numeric.h
+  include/cs/Math/Saturate.h
   include/cs/Math/Statistics.h
   )
 

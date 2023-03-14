@@ -1,9 +1,11 @@
+#include <algorithm>
 #include <iostream>
 
 #include <catch.hpp>
 
 #include <cs/Core/Constants.h>
 #include <cs/Math/Compare.h>
+#include <cs/Math/Saturate.h>
 
 namespace test_decomposition {
 
@@ -79,3 +81,32 @@ namespace test_rounding {
   }
 
 }
+
+namespace test_saturate {
+
+  inline int add(const int a, const int b, const int min, const int max)
+  {
+    return std::clamp<int>(a + b, min, max);
+  }
+
+  TEST_CASE("Saturated addition of integral values.", "[satadd]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    { // signed, saturated addition
+      using signed_type = int8_t;
+
+      constexpr signed_type SIGNED_MIN   = cs::konst<signed_type>::MIN;
+      constexpr signed_type SIGNED_MAX   = cs::konst<signed_type>::MAX;
+      constexpr std::size_t SIGNED_RANGE = cs::konst<std::size_t>::ONE << cs::NUM_BITS<signed_type>;
+
+      signed_type a = 0;
+      for(std::size_t i = 0; i < SIGNED_RANGE; i++, a++) {
+        signed_type b = 0;
+        for(std::size_t j = 0; j < SIGNED_RANGE; j++, b++) {
+          REQUIRE( cs::saturate::add(a, b) == add(a, b, SIGNED_MIN, SIGNED_MAX) );
+        } // for( b )
+      } // for( a )
+    }
+  }
+
+} // namespace test_saturate
