@@ -84,7 +84,23 @@ namespace test_rounding {
 
 namespace test_saturate {
 
-  inline int add(const int a, const int b, const int min, const int max)
+  template<typename T, typename TestFunc, typename RefFunc>
+  inline void test_run(TestFunc test_func, RefFunc ref_func)
+  {
+    constexpr T             MIN = cs::konst<T>::MIN;
+    constexpr T             MAX = cs::konst<T>::MAX;
+    constexpr std::size_t RANGE = cs::konst<std::size_t>::ONE << cs::NUM_BITS<T>;
+
+    T a = 0;
+    for(std::size_t i = 0; i < RANGE; i++, a++) {
+      T b = 0;
+      for(std::size_t j = 0; j < RANGE; j++, b++) {
+        REQUIRE( test_func(a, b) == ref_func(a, b, MIN, MAX) );
+      } // for( b )
+    } // for( a )
+  }
+
+  constexpr int add(const int a, const int b, const int min, const int max)
   {
     return std::clamp<int>(a + b, min, max);
   }
@@ -92,21 +108,18 @@ namespace test_saturate {
   TEST_CASE("Saturated addition of integral values.", "[satadd]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
-    { // signed, saturated addition
-      using signed_type = int8_t;
+    test_run<int8_t>(cs::saturate::add<int8_t>, add);
+  }
 
-      constexpr signed_type SIGNED_MIN   = cs::konst<signed_type>::MIN;
-      constexpr signed_type SIGNED_MAX   = cs::konst<signed_type>::MAX;
-      constexpr std::size_t SIGNED_RANGE = cs::konst<std::size_t>::ONE << cs::NUM_BITS<signed_type>;
+  constexpr int sub(const int a, const int b, const int min, const int max)
+  {
+    return std::clamp<int>(a - b, min, max);
+  }
 
-      signed_type a = 0;
-      for(std::size_t i = 0; i < SIGNED_RANGE; i++, a++) {
-        signed_type b = 0;
-        for(std::size_t j = 0; j < SIGNED_RANGE; j++, b++) {
-          REQUIRE( cs::saturate::add(a, b) == add(a, b, SIGNED_MIN, SIGNED_MAX) );
-        } // for( b )
-      } // for( a )
-    }
+  TEST_CASE("Saturated subtraction of integral values.", "[satsub]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    test_run<int8_t>(cs::saturate::sub<int8_t>, sub);
   }
 
 } // namespace test_saturate

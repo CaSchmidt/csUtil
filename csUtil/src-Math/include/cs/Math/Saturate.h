@@ -42,19 +42,27 @@ namespace cs {
      ************************************************************************/
 
     template<typename T>
-    inline if_signed_t<T> add(const T& a, const T& b)
+    constexpr if_signed_t<T> add(const T& a, const T& b)
     {
-      const bool is_abpos = testBit(~a & ~b, MAX_BIT<T>);
-      const bool is_abneg = testBit( a &  b, MAX_BIT<T>);
-
-      const T sum = a + b;
-
-      if(        is_abpos  &&  sum <  0 ) {
+      const T result = a + b;
+      if(        testBit(~a & ~b &  result, MAX_BIT<T>) ) { // pos -> neg
         return konst<T>::MAX;
-      } else if( is_abneg  &&  sum >= 0 ) {
+      } else if( testBit( a &  b & ~result, MAX_BIT<T>) ) { // neg -> pos
         return konst<T>::MIN;
       }
-      return sum;
+      return result;
+    }
+
+    template<typename T>
+    constexpr if_signed_t<T> sub(const T& a, const T& b)
+    {
+      const T result = a - b;
+      if(        testBit(~a &  b &  result, MAX_BIT<T>) ) { // pos -> neg
+        return konst<T>::MAX;
+      } else if( testBit( a & ~b & ~result, MAX_BIT<T>) ) { // neg -> pos
+        return konst<T>::MIN;
+      }
+      return result;
     }
 
   } // namespace saturate
