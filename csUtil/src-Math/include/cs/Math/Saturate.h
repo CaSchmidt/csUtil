@@ -31,11 +31,70 @@
 
 #pragma once
 
+#include <algorithm>
+
 #include <cs/Core/Bit.h>
 
 namespace cs {
 
   namespace saturate {
+
+    /************************************************************************
+     * Implementation *******************************************************
+     ************************************************************************/
+
+    namespace impl_saturation {
+
+      template<typename T>
+      inline if_unsigned_t<T> mul(const T& a, const T& b, const T& max)
+      {
+        // (1) Sanity Check & Optimization ///////////////////////////////////
+
+        if( a == 0  ||  b == 0  ||  max < 1 ) {
+          return 0;
+        }
+
+        const T lhs = std::min(a, b);
+        const T rhs = std::max(a, b);
+
+        const int numRhsBits = std::popcount(rhs);
+
+        // (2) Loop over LHS' Binary Digits //////////////////////////////////
+
+        T result = 0;
+
+        for(std::size_t i = NUM_BITS<T>; i > 0; i--) {
+          const std::size_t bit = i - 1;
+
+          // (2.1) Skip Zero Digit ///////////////////////////////////////////
+
+          if( !testBit(lhs, bit) ) {
+            continue;
+          }
+
+          // (2.2) Does summand overflow? ////////////////////////////////////
+
+          const T summand = rhs << bit;
+          if( summand >= max  ||  std::popcount(summand) < numRhsBits ) {
+            return max;
+          }
+
+          // (2.3) Does sum overflow? ////////////////////////////////////////
+
+          const T sum = result + summand;
+          if( sum >= max  ||  sum < result ) {
+            return max;
+          }
+
+          // (2.4) Update Result /////////////////////////////////////////////
+
+          result = sum;
+        } // for( i, bit )
+
+        return result;
+      }
+
+    } // namespace impl_saturation
 
     /************************************************************************
      * Signed ***************************************************************
@@ -83,6 +142,16 @@ namespace cs {
       const std::size_t condPN = testBit(~a &  b &  _result, MAX_BIT<T>); // pos -> neg
       const std::size_t condNP = testBit( a & ~b & ~_result, MAX_BIT<T>); // neg -> pos
       return results[konst<std::size_t>::ONE + condPN - condNP];
+    }
+
+    /************************************************************************
+     * Unsigned *************************************************************
+     ************************************************************************/
+
+    template<typename T>
+    inline if_unsigned_t<T> mul(const T& a, const T& b)
+    {
+      return impl_saturation::mul<T>(a, b, konst<T>::MAX);
     }
 
   } // namespace saturate
