@@ -54,6 +54,16 @@ namespace cs {
     }
 
     template<typename T>
+    constexpr if_signed_t<T> add_bl(const T& a, const T& b)
+    {
+      const T _result = a + b;
+      const T results[3] = { konst<T>::MIN, _result, konst<T>::MAX };
+      const std::size_t condPN = testBit(~a & ~b &  _result, MAX_BIT<T>); // pos -> neg
+      const std::size_t condNP = testBit( a &  b & ~_result, MAX_BIT<T>); // neg -> pos
+      return results[konst<std::size_t>::ONE + condPN - condNP];
+    }
+
+    template<typename T>
     constexpr if_signed_t<T> sub(const T& a, const T& b)
     {
       const T result = a - b;
@@ -63,6 +73,16 @@ namespace cs {
         return konst<T>::MIN;
       }
       return result;
+    }
+
+    template<typename T>
+    constexpr if_signed_t<T> sub_bl(const T& a, const T& b)
+    {
+      const T _result = a - b;
+      const T results[3] = { konst<T>::MIN, _result, konst<T>::MAX };
+      const std::size_t condPN = testBit(~a &  b &  _result, MAX_BIT<T>); // pos -> neg
+      const std::size_t condNP = testBit( a & ~b & ~_result, MAX_BIT<T>); // neg -> pos
+      return results[konst<std::size_t>::ONE + condPN - condNP];
     }
 
   } // namespace saturate

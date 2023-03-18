@@ -109,6 +109,7 @@ namespace test_saturate {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
     test_run<int8_t>(cs::saturate::add<int8_t>, add);
+    test_run<int8_t>(cs::saturate::add_bl<int8_t>, add);
   }
 
   constexpr int sub(const int a, const int b, const int min, const int max)
@@ -120,6 +121,7 @@ namespace test_saturate {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
     test_run<int8_t>(cs::saturate::sub<int8_t>, sub);
+    test_run<int8_t>(cs::saturate::sub_bl<int8_t>, sub);
   }
 
 } // namespace test_saturate
