@@ -223,6 +223,14 @@ namespace cs {
     using real_type = real64_t;
   };
 
+  ////// Integral Transformations ////////////////////////////////////////////
+
+  template<typename T>
+  using signed_from_unsigned_t = if_unsigned_t<T,typename IntegralOfSize<sizeof(T)>::signed_type>;
+
+  template<typename T>
+  using unsigned_from_signed_t = if_signed_t<T,typename IntegralOfSize<sizeof(T)>::unsigned_type>;
+
   ////// Miscellaneous Transformations ///////////////////////////////////////
 
   template<typename T>
