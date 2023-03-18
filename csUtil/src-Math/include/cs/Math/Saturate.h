@@ -43,7 +43,16 @@ namespace cs {
      * Implementation *******************************************************
      ************************************************************************/
 
-    namespace impl_saturation {
+    namespace impl_sat {
+
+      template<typename T>
+      constexpr unsigned_from_signed_t<T> abs(const T& x)
+      {
+        using k = konst<T>;
+        return x >= k::ZERO
+            ? x
+            : (~x) + k::ONE;
+      }
 
       template<typename T>
       inline if_unsigned_t<T> mul(const T& a, const T& b, const T& max)
@@ -89,12 +98,18 @@ namespace cs {
           // (2.4) Update Result /////////////////////////////////////////////
 
           result = sum;
-        } // for( i, bit )
+        } // for( i )
 
         return result;
       }
 
-    } // namespace impl_saturation
+      template<typename T>
+      constexpr signed_from_unsigned_t<T> neg(const T& x)
+      {
+        return (~x) + konst<T>::ONE;
+      }
+
+    } // namespace impl_sat
 
     /************************************************************************
      * Signed ***************************************************************
@@ -120,6 +135,24 @@ namespace cs {
       const std::size_t condPN = testBit(~a & ~b &  _result, MAX_BIT<T>); // pos -> neg
       const std::size_t condNP = testBit( a &  b & ~_result, MAX_BIT<T>); // neg -> pos
       return results[konst<std::size_t>::ONE + condPN - condNP];
+    }
+
+    template<typename T>
+    inline if_signed_t<T> mul(const T& a, const T& b)
+    {
+      using UnsignedT = unsigned_from_signed_t<T>;
+
+      const bool is_neg_result = testBit(a ^ b, MAX_BIT<T>);
+
+      const UnsignedT max = is_neg_result
+          ? konst<T>::MIN
+          : konst<T>::MAX;
+
+      const UnsignedT result = impl_sat::mul(impl_sat::abs(a), impl_sat::abs(b), max);
+
+      return is_neg_result
+          ? impl_sat::neg(result)
+          : result;
     }
 
     template<typename T>
@@ -151,7 +184,7 @@ namespace cs {
     template<typename T>
     inline if_unsigned_t<T> mul(const T& a, const T& b)
     {
-      return impl_saturation::mul<T>(a, b, konst<T>::MAX);
+      return impl_sat::mul<T>(a, b, konst<T>::MAX);
     }
 
   } // namespace saturate

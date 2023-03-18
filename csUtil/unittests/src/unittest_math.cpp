@@ -118,6 +118,11 @@ namespace test_saturate {
 
   ////// Mul /////////////////////////////////////////////////////////////////
 
+  constexpr int mul(const int a, const int b, const int min, const int max)
+  {
+    return std::clamp<int>(a*b, min, max);
+  }
+
   constexpr uint umul(const uint a, const uint b, const uint min, const uint max)
   {
     return std::clamp<uint>(a*b, min, max);
@@ -126,6 +131,7 @@ namespace test_saturate {
   TEST_CASE("Saturated multiplication of integral values.", "[satmul]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
+    test_run<int8_t>(cs::saturate::mul<int8_t>, mul);
     test_run<uint8_t>(cs::saturate::mul<uint8_t>, umul);
   }
 
