@@ -59,7 +59,7 @@ namespace cs {
   template<typename T, typename ResultT = T>
   using if_boolean_t = std::enable_if_t<is_boolean_v<T>,ResultT>;
 
-  // Arithmetic Category /////////////////////////////////////////////////////
+  // Integral Category ///////////////////////////////////////////////////////
 
   template<typename T>
   using is_signed = std::bool_constant<
@@ -102,6 +102,8 @@ namespace cs {
 
   template<typename T, typename ResultT = T>
   using if_integral_t = std::enable_if_t<is_integral_v<T>,ResultT>;
+
+  // Real Category ///////////////////////////////////////////////////////////
 
   template<typename T>
   using is_real = std::bool_constant<
