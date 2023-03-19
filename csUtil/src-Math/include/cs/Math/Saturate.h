@@ -182,9 +182,45 @@ namespace cs {
      ************************************************************************/
 
     template<typename T>
+    constexpr if_unsigned_t<T> add(const T& a, const T& b)
+    {
+      const T result = a + b;
+      if( result < a ) { // MAX -> 0
+        return konst<T>::MAX;
+      }
+      return result;
+    }
+
+    template<typename T>
+    constexpr if_unsigned_t<T> add_bl(const T& a, const T& b)
+    {
+      const T _result = a + b;
+      const T results[2] = { _result, konst<T>::MAX };
+      return results[_result < a]; // MAX -> 0
+    }
+
+    template<typename T>
     inline if_unsigned_t<T> mul(const T& a, const T& b)
     {
       return impl_sat::mul<T>(a, b, konst<T>::MAX);
+    }
+
+    template<typename T>
+    constexpr if_unsigned_t<T> sub(const T& a, const T& b)
+    {
+      const T result = a - b;
+      if( result > a ) { // 0 -> MAX
+        return konst<T>::MIN;
+      }
+      return result;
+    }
+
+    template<typename T>
+    constexpr if_unsigned_t<T> sub_bl(const T& a, const T& b)
+    {
+      const T _result = a - b;
+      const T results[2] = { _result, konst<T>::MIN };
+      return results[_result > a]; // 0 -> MAX
     }
 
   } // namespace saturate
