@@ -131,10 +131,10 @@ namespace cs {
     constexpr if_signed_t<T> add_bl(const T& a, const T& b)
     {
       const T _result = a + b;
-      const T results[3] = { konst<T>::MIN, _result, konst<T>::MAX };
-      const std::size_t condPN = testBit(~a & ~b &  _result, MAX_BIT<T>); // pos -> neg
-      const std::size_t condNP = testBit( a &  b & ~_result, MAX_BIT<T>); // neg -> pos
-      return results[konst<std::size_t>::ONE + condPN - condNP];
+      T results[2] = { _result, konst<T>::MAX };
+      results[0] = results[testBit(~a & ~b &  _result, MAX_BIT<T>)]; // pos -> neg
+      results[1] = konst<T>::MIN;
+      return results[testBit( a &  b & ~_result, MAX_BIT<T>)]; // neg -> pos
     }
 
     template<typename T>
@@ -171,10 +171,10 @@ namespace cs {
     constexpr if_signed_t<T> sub_bl(const T& a, const T& b)
     {
       const T _result = a - b;
-      const T results[3] = { konst<T>::MIN, _result, konst<T>::MAX };
-      const std::size_t condPN = testBit(~a &  b &  _result, MAX_BIT<T>); // pos -> neg
-      const std::size_t condNP = testBit( a & ~b & ~_result, MAX_BIT<T>); // neg -> pos
-      return results[konst<std::size_t>::ONE + condPN - condNP];
+      T results[2] = { _result, konst<T>::MAX };
+      results[0] = results[testBit(~a &  b &  _result, MAX_BIT<T>)]; // pos -> neg
+      results[1] = konst<T>::MIN;
+      return results[testBit( a & ~b & ~_result, MAX_BIT<T>)]; // neg -> pos
     }
 
     /************************************************************************
