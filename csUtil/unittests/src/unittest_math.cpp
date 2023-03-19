@@ -84,8 +84,6 @@ namespace test_rounding {
 
 namespace test_saturate {
 
-  using uint = unsigned int;
-
   template<typename T, typename TestFunc, typename RefFunc>
   inline void test_run(TestFunc test_func, RefFunc ref_func)
   {
@@ -114,6 +112,8 @@ namespace test_saturate {
 
     test_run<int8_t>(cs::saturate::add<int8_t>, add);
     test_run<int8_t>(cs::saturate::add_bl<int8_t>, add);
+    test_run<uint8_t>(cs::saturate::add<uint8_t>, add);
+    test_run<uint8_t>(cs::saturate::add_bl<uint8_t>, add);
   }
 
   ////// Mul /////////////////////////////////////////////////////////////////
@@ -123,16 +123,11 @@ namespace test_saturate {
     return std::clamp<int>(a*b, min, max);
   }
 
-  constexpr uint umul(const uint a, const uint b, const uint min, const uint max)
-  {
-    return std::clamp<uint>(a*b, min, max);
-  }
-
   TEST_CASE("Saturated multiplication of integral values.", "[satmul]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
     test_run<int8_t>(cs::saturate::mul<int8_t>, mul);
-    test_run<uint8_t>(cs::saturate::mul<uint8_t>, umul);
+    test_run<uint8_t>(cs::saturate::mul<uint8_t>, mul);
   }
 
   ////// Sub /////////////////////////////////////////////////////////////////
@@ -147,6 +142,8 @@ namespace test_saturate {
 
     test_run<int8_t>(cs::saturate::sub<int8_t>, sub);
     test_run<int8_t>(cs::saturate::sub_bl<int8_t>, sub);
+    test_run<uint8_t>(cs::saturate::sub<uint8_t>, sub);
+    test_run<uint8_t>(cs::saturate::sub_bl<uint8_t>, sub);
   }
 
 } // namespace test_saturate
