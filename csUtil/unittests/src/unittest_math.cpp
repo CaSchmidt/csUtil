@@ -100,11 +100,29 @@ namespace test_saturate {
     } // for( a )
   }
 
+  template<typename T, typename TestFunc, typename RefFunc>
+  inline void test_run_1D(TestFunc test_func, RefFunc ref_func)
+  {
+    constexpr T             MIN = cs::konst<T>::MIN;
+    constexpr T             MAX = cs::konst<T>::MAX;
+    constexpr std::size_t RANGE = cs::konst<std::size_t>::ONE << cs::NUM_BITS<T>;
+
+    T x = 0;
+    for(std::size_t i = 0; i < RANGE; i++) {
+      REQUIRE( test_func(x) == ref_func(x, MIN, MAX) );
+    }
+  }
+
   ////// Add /////////////////////////////////////////////////////////////////
 
   constexpr int add(const int a, const int b, const int min, const int max)
   {
     return std::clamp<int>(a + b, min, max);
+  }
+
+  constexpr int inc(const int x, const int min, const int max)
+  {
+    return std::clamp<int>(x + 1, min, max);
   }
 
   TEST_CASE("Saturated addition of integral values.", "[satadd]") {
@@ -114,6 +132,11 @@ namespace test_saturate {
     test_run<int8_t>(cs::saturate::add_bl<int8_t>, add);
     test_run<uint8_t>(cs::saturate::add<uint8_t>, add);
     test_run<uint8_t>(cs::saturate::add_bl<uint8_t>, add);
+
+    test_run_1D<int8_t>(cs::saturate::inc<int8_t>, inc);
+    test_run_1D<int8_t>(cs::saturate::inc_bl<int8_t>, inc);
+    test_run_1D<uint8_t>(cs::saturate::inc<uint8_t>, inc);
+    test_run_1D<uint8_t>(cs::saturate::inc_bl<uint8_t>, inc);
   }
 
   ////// Mul /////////////////////////////////////////////////////////////////
@@ -132,6 +155,11 @@ namespace test_saturate {
 
   ////// Sub /////////////////////////////////////////////////////////////////
 
+  constexpr int dec(const int x, const int min, const int max)
+  {
+    return std::clamp<int>(x - 1, min, max);
+  }
+
   constexpr int sub(const int a, const int b, const int min, const int max)
   {
     return std::clamp<int>(a - b, min, max);
@@ -139,6 +167,11 @@ namespace test_saturate {
 
   TEST_CASE("Saturated subtraction of integral values.", "[satsub]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    test_run_1D<int8_t>(cs::saturate::dec<int8_t>, dec);
+    test_run_1D<int8_t>(cs::saturate::dec_bl<int8_t>, dec);
+    test_run_1D<uint8_t>(cs::saturate::dec<uint8_t>, dec);
+    test_run_1D<uint8_t>(cs::saturate::dec_bl<uint8_t>, dec);
 
     test_run<int8_t>(cs::saturate::sub<int8_t>, sub);
     test_run<int8_t>(cs::saturate::sub_bl<int8_t>, sub);

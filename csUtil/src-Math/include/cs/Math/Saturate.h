@@ -222,6 +222,46 @@ namespace cs {
       return results[_result > a]; // 0 -> MAX
     }
 
+    /************************************************************************
+     * Arbitrary Signedness *************************************************
+     ************************************************************************/
+
+    template<typename T>
+    constexpr if_integral_t<T> dec(const T& x)
+    {
+      const T result = x - 1;
+      if( x == konst<T>::MIN ) {
+        return konst<T>::MIN;
+      }
+      return result;
+    }
+
+    template<typename T>
+    constexpr if_integral_t<T> dec_bl(const T& x)
+    {
+      const T _result = x - 1;
+      const T results[2] = { _result, konst<T>::MIN };
+      return results[x == konst<T>::MIN];
+    }
+
+    template<typename T>
+    constexpr if_integral_t<T> inc(const T& x)
+    {
+      const T result = x + 1;
+      if( x == konst<T>::MAX ) {
+        return konst<T>::MAX;
+      }
+      return result;
+    }
+
+    template<typename T>
+    constexpr if_integral_t<T> inc_bl(const T& x)
+    {
+      const T _result = x + 1;
+      const T results[2] = { _result, konst<T>::MAX };
+      return results[x == konst<T>::MAX];
+    }
+
   } // namespace saturate
 
 } // namespace cs
