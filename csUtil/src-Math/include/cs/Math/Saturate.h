@@ -48,10 +48,9 @@ namespace cs {
       template<typename T>
       constexpr unsigned_from_signed_t<T> abs(const T& x)
       {
-        using k = konst<T>;
-        return x >= k::ZERO
+        return x >= konst<T>::ZERO
             ? x
-            : (~x) + k::ONE;
+            : (~x) + konst<T>::ONE;
       }
 
       template<typename T>
