@@ -2,6 +2,7 @@ list(APPEND csConvert_HEADERS
   include/cs/Convert/ByteArrayUtil.h
   include/cs/Convert/Deserialize.h
   include/cs/Convert/RawConverter.h
+  include/cs/Convert/Serialize.h
 )
 
 list(APPEND csConvert_SOURCES
