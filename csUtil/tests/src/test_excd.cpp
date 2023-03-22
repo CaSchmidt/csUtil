@@ -33,7 +33,7 @@ namespace cdrom {
 
 } // namespace cdrom
 
-uint8_t scanBuffer(const cs::ByteArray& buffer, const std::size_t have)
+uint8_t scanBuffer(const cs::Buffer& buffer, const std::size_t have)
 {
   if( have < 1 ) {
     return cdrom::INVALID_MODE;
@@ -66,7 +66,7 @@ uint8_t scanBuffer(const cs::ByteArray& buffer, const std::size_t have)
   return result;
 }
 
-void writeBuffer(const cs::File& out, const cs::ByteArray& buffer, const std::size_t have,
+void writeBuffer(const cs::File& out, const cs::Buffer& buffer, const std::size_t have,
                  const std::size_t data_size)
 {
   if( have < 1  ||  data_size < 1  ||  data_size > cdrom::SIZ_Data2 ) {
@@ -99,9 +99,9 @@ int main(int /*argc*/, char **argv)
 
   printf("File \"%s\" opened.\n", cs::CSTR(infile.path().u8string().data()));
 
-  cs::ByteArray buffer;
-  std::size_t     have;
-  uint8_t         mode = cdrom::INVALID_MODE;
+  cs::Buffer  buffer;
+  std::size_t   have;
+  uint8_t       mode = cdrom::INVALID_MODE;
 
   if( !cs::resize(&buffer, cdrom::SIZE_READBUFFER) ) {
     fprintf(stderr, "ERROR: Unable to allocate read buffer!\n");

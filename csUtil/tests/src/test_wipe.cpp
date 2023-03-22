@@ -4,7 +4,7 @@
 
 #include <vector>
 
-#include <cs/Core/ByteArray.h>
+#include <cs/Core/Buffer.h>
 #include <cs/Core/Container.h>
 
 bool write(FILE *file, const void *buffer, const std::size_t size)
@@ -19,7 +19,7 @@ int main(int, char **)
 
   const char *filename = "space.bin";
 
-  cs::ByteArray buffer;
+  cs::Buffer buffer;
   if( !cs::resize(&buffer, BUFFER_SIZE, '\0') ) {
     fprintf(stderr, "ERROR: resize()\n");
     return EXIT_FAILURE;

@@ -37,6 +37,8 @@
 
 namespace cs {
 
-  using ByteArray = std::vector<uint8_t>;
+  using byte_type = uint8_t;
+
+  using Buffer = std::vector<byte_type>;
 
 } // namespace cs

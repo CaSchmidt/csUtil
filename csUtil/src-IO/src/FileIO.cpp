@@ -69,7 +69,7 @@ namespace cs {
     if( !file.open(path) ) {
       return String<char>();
     }
-    const ByteArray buffer = file.readAll();
+    const Buffer buffer = file.readAll();
     file.close();
 
     if( buffer.empty() ) {

@@ -35,25 +35,25 @@
 
 namespace cs {
 
-  ByteArray File::readAll() const
+  Buffer File::readAll() const
   {
-    constexpr size_type MAX_SIZE = konst<ByteArray::size_type>::MAX;
+    constexpr size_type MAX_SIZE = konst<Buffer::size_type>::MAX;
     constexpr size_type      ONE = 1;
 
     const size_type numToRead = size();
 
     const bool is_size = ONE <= numToRead  &&  numToRead <= MAX_SIZE;
     if( !isOpen()  ||  !is_size ) {
-      return ByteArray{};
+      return Buffer{};
     }
 
-    ByteArray buffer;
+    Buffer buffer;
     if( !resize(&buffer, numToRead, 0) ) {
-      return ByteArray{};
+      return Buffer{};
     }
 
     if( read(buffer.data(), numToRead) != numToRead ) {
-      return ByteArray{};
+      return Buffer{};
     }
 
     return buffer;

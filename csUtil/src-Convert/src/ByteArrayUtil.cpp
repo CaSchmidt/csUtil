@@ -56,17 +56,17 @@ namespace cs {
 
   ////// Public //////////////////////////////////////////////////////////////
 
-  CS_UTIL_EXPORT ByteArray toByteArray(const char *str, const std::size_t lenStr)
+  CS_UTIL_EXPORT Buffer toBuffer(const char *str, const std::size_t lenStr)
   {
     using k = konst<std::size_t>;
 
     if( !isHexString(str, lenStr) ) {
-      return ByteArray{};
+      return Buffer{};
     }
 
-    ByteArray result;
+    Buffer result;
     if( !resize(&result, (lenStr + k::ONE)/k::TWO) ) {
-      return ByteArray{};
+      return Buffer{};
     }
 
     const std::size_t i0 = result.size() != lenStr/k::TWO

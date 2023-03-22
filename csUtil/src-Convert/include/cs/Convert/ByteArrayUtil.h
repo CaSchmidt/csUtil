@@ -3,22 +3,22 @@
 #include <string>
 
 #include <cs/Core/csutil_config.h>
-#include <cs/Core/ByteArray.h>
+#include <cs/Core/Buffer.h>
 
 namespace cs {
 
   ////// Implementation //////////////////////////////////////////////////////
 
-  CS_UTIL_EXPORT ByteArray toByteArray(const char *str, const std::size_t lenStr);
+  CS_UTIL_EXPORT Buffer toBuffer(const char *str, const std::size_t lenStr);
 
   CS_UTIL_EXPORT std::string toString(const uint8_t *data, const std::size_t sizData,
                                       const char fill = '\0', const bool is_upper = false);
 
   ////// Helper //////////////////////////////////////////////////////////////
 
-  inline ByteArray toByteArray(const std::string& s)
+  inline Buffer toBuffer(const std::string& s)
   {
-    return toByteArray(s.data(), s.length());
+    return toBuffer(s.data(), s.length());
   }
 
   inline std::string toString(const uint8_t *data, const std::size_t sizData,
@@ -27,16 +27,16 @@ namespace cs {
     return toString(data, sizData, '\0', is_upper);
   }
 
-  inline std::string toString(const ByteArray& a,
+  inline std::string toString(const Buffer& buffer,
                               const char fill = '\0', const bool is_upper = false)
   {
-    return toString(a.data(), a.size(), fill, is_upper);
+    return toString(buffer.data(), buffer.size(), fill, is_upper);
   }
 
-  inline std::string toString(const ByteArray& a,
+  inline std::string toString(const Buffer& buffer,
                               const bool is_upper)
   {
-    return toString(a, '\0', is_upper);
+    return toString(buffer, '\0', is_upper);
   }
 
 } // namespace cs

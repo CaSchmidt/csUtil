@@ -34,7 +34,7 @@
 #include <filesystem>
 #include <memory>
 
-#include <cs/Core/ByteArray.h>
+#include <cs/Core/Buffer.h>
 #include <cs/Core/Flags.h>
 #include <cs/IO/IODevice.h>
 
@@ -80,7 +80,7 @@ namespace cs {
     size_type read(void *buffer, const size_type length) const;
     size_type write(const void *buffer, const size_type length) const;
 
-    ByteArray readAll() const;
+    Buffer readAll() const;
 
   private:
     FileImplPtr _impl{nullptr};
