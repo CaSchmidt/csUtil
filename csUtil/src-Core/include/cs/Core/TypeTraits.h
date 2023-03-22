@@ -41,6 +41,8 @@ namespace cs {
 
   ////// Portable Types //////////////////////////////////////////////////////
 
+  using byte_t = uint8_t;
+
   using real32_t = float;
   using real64_t = double;
 

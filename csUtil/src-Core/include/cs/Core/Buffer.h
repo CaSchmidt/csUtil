@@ -31,14 +31,12 @@
 
 #pragma once
 
-#include <cstdint>
-
 #include <vector>
+
+#include <cs/Core/TypeTraits.h>
 
 namespace cs {
 
-  using byte_type = uint8_t;
-
-  using Buffer = std::vector<byte_type>;
+  using Buffer = std::vector<byte_t>;
 
 } // namespace cs
