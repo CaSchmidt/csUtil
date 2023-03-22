@@ -53,6 +53,11 @@ namespace cs {
     return ptr != nullptr  &&  len > 0;
   }
 
+  constexpr bool isValid(const void *ptr, const std::size_t siz)
+  {
+    return ptr != nullptr  &&  siz > 0;
+  }
+
   ////// Range's Distance ////////////////////////////////////////////////////
 
   template<typename T>

@@ -60,24 +60,24 @@ namespace cs {
     }
 
     template<typename CS_SIZE_T>
-    inline CS_SIZE_T read(void *buffer, const CS_SIZE_T length) const
+    inline CS_SIZE_T read(void *data, const CS_SIZE_T sizData) const
     {
-      const DWORD numToRead = static_cast<DWORD>(length);
+      const DWORD numToRead = static_cast<DWORD>(sizData);
       DWORD numRead = 0;
-      if( !isOpen()  ||  !isRWLength(length)  ||
-          ReadFile(handle, buffer, numToRead, &numRead, NULL) == 0 ) {
+      if( !isOpen()  ||  !isRWLength(sizData)  ||
+          ReadFile(handle, data, numToRead, &numRead, NULL) == 0 ) {
         return 0;
       }
       return numRead;
     }
 
     template<typename CS_SIZE_T>
-    inline CS_SIZE_T write(const void *buffer, const CS_SIZE_T length) const
+    inline CS_SIZE_T write(const void *data, const CS_SIZE_T sizData) const
     {
-      const DWORD numToWrite = static_cast<DWORD>(length);
+      const DWORD numToWrite = static_cast<DWORD>(sizData);
       DWORD numWritten = 0;
-      if( !isOpen()  ||  !isRWLength(length)  ||
-          WriteFile(handle, buffer, numToWrite, &numWritten, NULL) == 0 ) {
+      if( !isOpen()  ||  !isRWLength(sizData)  ||
+          WriteFile(handle, data, numToWrite, &numWritten, NULL) == 0 ) {
         return 0;
       }
       return numWritten;

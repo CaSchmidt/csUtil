@@ -47,8 +47,8 @@ namespace cs {
 
     virtual void close() = 0;
 
-    virtual size_type read(void *buffer, const size_type length) const = 0;
-    virtual size_type write(const void *buffer, const size_type length) const = 0;
+    virtual size_type read(void *data, const size_type sizData) const = 0;
+    virtual size_type write(const void *data, const size_type sizData) const = 0;
   };
 
 } // namespace cs

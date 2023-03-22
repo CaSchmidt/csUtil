@@ -38,44 +38,46 @@
 namespace cs {
 
   template<typename T> requires IsIntegral<T>
-  void toBytesBE(uint8_t *data, const std::size_t sizData,
+  void toBytesBE(void *data, const std::size_t sizData,
                  T value)
   {
-    constexpr T MASK = makeBitMask<T>(sizeof(uint8_t)*8);
+    constexpr T MASK = makeBitMask<T>(sizeof(byte_t)*8);
 
     if( !isValid(data, sizData) ) {
       return;
     }
+    byte_t *dest = reinterpret_cast<byte_t*>(data);
 
     const std::size_t numBytes = std::min(sizData, sizeof(T));
     if( numBytes == sizeof(T) ) {
-      *reinterpret_cast<T*>(&data[0]) = toBigEndian(value);
+      *reinterpret_cast<T*>(&dest[0]) = toBigEndian(value);
 
     } else {
       for(std::size_t i = numBytes; i > 0; /* cf. data[] */) {
-        data[--i] = uint8_t(value & MASK);
+        dest[--i] = byte_t(value & MASK);
         value >>= 8;
       }
     }
   }
 
   template<typename T> requires IsIntegral<T>
-  void toBytesLE(uint8_t *data, const std::size_t sizData,
+  void toBytesLE(void *data, const std::size_t sizData,
                  T value)
   {
-    constexpr T MASK = makeBitMask<T>(sizeof(uint8_t)*8);
+    constexpr T MASK = makeBitMask<T>(sizeof(byte_t)*8);
 
     if( !isValid(data, sizData) ) {
       return;
     }
+    byte_t *dest = reinterpret_cast<byte_t*>(data);
 
     const std::size_t numBytes = std::min(sizData, sizeof(T));
     if( numBytes == sizeof(T) ) {
-      *reinterpret_cast<T*>(&data[0]) = toLittleEndian(value);
+      *reinterpret_cast<T*>(&dest[0]) = toLittleEndian(value);
 
     } else {
       for(std::size_t i = 0; i < numBytes; /* cf. data[] */) {
-        data[i++] = uint8_t(value & MASK);
+        dest[i++] = byte_t(value & MASK);
         value >>= 8;
       }
     }

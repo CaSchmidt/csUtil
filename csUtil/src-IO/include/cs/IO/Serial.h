@@ -51,8 +51,8 @@ namespace cs {
     bool isOpen() const;
     bool open(const std::filesystem::path& device, const int rate);
 
-    size_type read(void *buffer, const size_type length) const;
-    size_type write(const void *buffer, const size_type length) const;
+    size_type read(void *data, const size_type sizData) const;
+    size_type write(const void *data, const size_type sizData) const;
 
   private:
     SerialImplPtr _impl;

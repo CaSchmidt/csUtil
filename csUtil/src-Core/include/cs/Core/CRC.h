@@ -83,7 +83,6 @@ namespace cs {
            bool REVERSE_OUT = false> requires impl_crc::IsCrc<T>
   class CRC {
   public:
-    using  byte_type = uint8_t;
     using  size_type = std::size_t;
     using value_type = T;
 
@@ -105,15 +104,16 @@ namespace cs {
       return INIT ^ XOR;
     }
 
-    value_type operator()(const byte_type *buffer, const size_type count,
+    value_type operator()(const void *data, const size_type sizData,
                           value_type sum = makeInit()) const
     {
       sum ^= XOR;
 
-      for(size_type i = 0; i < count; i++) {
-        const byte_type input = REVERSE_IN
-            ? reverseBits(buffer[i])
-            : buffer[i];
+      const byte_t *src = reinterpret_cast<const byte_t*>(data);
+      for(size_type i = 0; i < sizData; i++) {
+        const byte_t input = REVERSE_IN
+            ? reverseBits(src[i])
+            : src[i];
         const size_type index =
             size_type(bitsShiftedOut<M>(sum)) ^ size_type(input);
         sum = shiftLeft<M>(sum);
@@ -128,7 +128,7 @@ namespace cs {
   private:
     using k = konst<value_type>;
 
-    static constexpr size_type M = NUM_BITS<byte_type>;
+    static constexpr size_type M = NUM_BITS<byte_t>;
     static constexpr size_type N = NUM_BITS<value_type>;
 
     template<size_type BITS = 1>

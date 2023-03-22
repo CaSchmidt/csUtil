@@ -201,7 +201,7 @@ namespace cs {
     return isOpen();
   }
 
-  IODevice::size_type Serial::read(void *buffer, const size_type length) const
+  IODevice::size_type Serial::read(void *data, const size_type sizData) const
   {
     if( !isOpen() ) {
       return 0;
@@ -211,13 +211,13 @@ namespace cs {
       return 0;
     }
 
-    return _impl->read(buffer, length);
+    return _impl->read(data, sizData);
   }
 
-  IODevice::size_type Serial::write(const void *buffer, const size_type length) const
+  IODevice::size_type Serial::write(const void *data, const size_type sizData) const
   {
     return isOpen()
-        ? _impl->write(buffer, length)
+        ? _impl->write(data, sizData)
         : 0;
   }
 

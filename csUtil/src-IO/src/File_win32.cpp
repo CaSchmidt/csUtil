@@ -196,17 +196,17 @@ namespace cs {
     return static_cast<size_type>(li.QuadPart);
   }
 
-  IODevice::size_type File::read(void *buffer, const size_type length) const
+  IODevice::size_type File::read(void *data, const size_type sizData) const
   {
     return isOpen()
-        ? _impl->read(buffer, length)
+        ? _impl->read(data, sizData)
         : 0;
   }
 
-  IODevice::size_type File::write(const void *buffer, const size_type length) const
+  IODevice::size_type File::write(const void *data, const size_type sizData) const
   {
     return isOpen()
-        ? _impl->write(buffer, length)
+        ? _impl->write(data, sizData)
         : 0;
   }
 

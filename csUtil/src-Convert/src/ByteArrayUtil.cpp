@@ -43,12 +43,12 @@ namespace cs {
   namespace impl_bytearray {
 
     template<bool UPPER, typename T> requires IsCharacter<T>
-    inline void toString(T *dest, const uint8_t *data, const std::size_t sizData,
+    inline void toString(T *dest, const byte_t *src, const std::size_t lenSrc,
                          const std::size_t dpos)
     {
-      for(std::size_t i = 0, pos = 0; i < sizData; i++, pos += dpos) {
-        dest[pos + 0] = toHexChar<T,UPPER>(data[i], true);
-        dest[pos + 1] = toHexChar<T,UPPER>(data[i]);
+      for(std::size_t i = 0, pos = 0; i < lenSrc; i++, pos += dpos) {
+        dest[pos + 0] = toHexChar<T,UPPER>(src[i], true);
+        dest[pos + 1] = toHexChar<T,UPPER>(src[i]);
       }
     }
 
@@ -86,7 +86,7 @@ namespace cs {
     return result;
   }
 
-  CS_UTIL_EXPORT std::string toString(const uint8_t *data, const std::size_t sizData,
+  CS_UTIL_EXPORT std::string toString(const void *data, const std::size_t sizData,
                                       const char fill, const bool is_upper)
   {
     using k = konst<std::size_t>;
@@ -108,10 +108,11 @@ namespace cs {
         ? 3
         : 2;
 
+    const byte_t *src = reinterpret_cast<const byte_t*>(data);
     if( is_upper ) {
-      impl_bytearray::toString<true>(result.data(), data, sizData, dpos);
+      impl_bytearray::toString<true>(result.data(), src, sizData, dpos);
     } else {
-      impl_bytearray::toString<false>(result.data(), data, sizData, dpos);
+      impl_bytearray::toString<false>(result.data(), src, sizData, dpos);
     }
 
     return result;

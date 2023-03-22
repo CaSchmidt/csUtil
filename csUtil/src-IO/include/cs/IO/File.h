@@ -77,8 +77,8 @@ namespace cs {
 
     size_type size() const;
 
-    size_type read(void *buffer, const size_type length) const;
-    size_type write(const void *buffer, const size_type length) const;
+    size_type read(void *data, const size_type sizData) const;
+    size_type write(const void *data, const size_type sizData) const;
 
     Buffer readAll() const;
 

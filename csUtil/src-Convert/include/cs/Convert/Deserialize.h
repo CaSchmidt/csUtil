@@ -38,22 +38,23 @@
 namespace cs {
 
   template<typename T> requires IsIntegral<T>
-  inline T toIntegralFromBE(const uint8_t *data, const std::size_t sizData,
+  inline T toIntegralFromBE(const void *data, const std::size_t sizData,
                             const bool sign_extend = false)
   {
     if( !isValid(data, sizData) ) {
       return T{0};
     }
+    const byte_t *src = reinterpret_cast<const byte_t*>(data);
 
     T value{0};
     const std::size_t numBytes = std::min(sizData, sizeof(T));
     if( numBytes == sizeof(T) ) {
-      value = fromBigEndian(*reinterpret_cast<const T*>(&data[0]));
+      value = fromBigEndian(*reinterpret_cast<const T*>(&src[0]));
 
     } else {
       for(std::size_t i = 0; i < numBytes; /* cf. data[] */) {
         value <<= 8;
-        value  |= T(data[i++]);
+        value  |= T(src[i++]);
       }
 
       if constexpr( is_signed_v<T> ) {
@@ -67,22 +68,23 @@ namespace cs {
   }
 
   template<typename T> requires IsIntegral<T>
-  inline T toIntegralFromLE(const uint8_t *data, const std::size_t sizData,
+  inline T toIntegralFromLE(const void *data, const std::size_t sizData,
                             const bool sign_extend = false)
   {
     if( !isValid(data, sizData) ) {
       return T{0};
     }
+    const byte_t *src = reinterpret_cast<const byte_t*>(data);
 
     T value{0};
     const std::size_t numBytes = std::min(sizData, sizeof(T));
     if( numBytes == sizeof(T) ) {
-      value = fromLittleEndian(*reinterpret_cast<const T*>(&data[0]));
+      value = fromLittleEndian(*reinterpret_cast<const T*>(&src[0]));
 
     } else {
       for(std::size_t i = numBytes; i > 0; /* cf. data[] */) {
         value <<= 8;
-        value  |= T(data[--i]);
+        value  |= T(src[--i]);
       }
 
       if constexpr( is_signed_v<T> ) {

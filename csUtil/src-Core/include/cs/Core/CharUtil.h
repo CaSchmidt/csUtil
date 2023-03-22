@@ -140,7 +140,7 @@ namespace cs {
   ////// Hex Conversion //////////////////////////////////////////////////////
 
   template<typename T> requires IsCharacter<T>
-  constexpr uint8_t fromHexChar(const T c)
+  constexpr byte_t fromHexChar(const T c)
   {
     using g = glyph<T>;
     if(        g::a    <= c  &&  c <= g::f    ) {
@@ -150,16 +150,16 @@ namespace cs {
     } else if( g::zero <= c  &&  c <= g::nine ) {
       return c - g::zero;
     }
-    return std::numeric_limits<T>::max();
+    return std::numeric_limits<byte_t>::max();
   }
 
   template<typename T, bool UPPER = false> requires IsCharacter<T>
-  constexpr T toHexChar(const uint8_t in, const bool hi_nibble = false)
+  constexpr T toHexChar(const byte_t in, const bool hi_nibble = false)
   {
     constexpr T hex10 = UPPER
         ? glyph<T>::A
         : glyph<T>::a;
-    const uint8_t nibble = hi_nibble
+    const byte_t nibble = hi_nibble
         ? in >>    4
         : in  & 0x0F;
     return nibble >= 10
