@@ -1,7 +1,9 @@
 list(APPEND csCrypto_HEADERS
+  include/cs/Crypto/Hash.h
 )
 
 list(APPEND csCrypto_SOURCES
+  src/Hash.cpp
   src/main_crypto.cpp
 )
 
