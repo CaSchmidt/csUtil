@@ -51,8 +51,8 @@ namespace cs {
     {
     }
 
+    virtual void copyResult(void *data, const std::size_t sizData) const = 0;
     virtual void reset() = 0;
-    virtual Buffer result() const = 0;
     virtual std::size_t size() const = 0;
     virtual void update(const void *data, const std::size_t sizData) = 0;
   };
@@ -72,21 +72,14 @@ namespace cs {
     {
     }
 
+    void copyResult(void *data, const std::size_t sizData) const
+    {
+      toBytesBE(data, sizData, _sum);
+    }
+
     void reset()
     {
       _sum = CRC32::makeInit();
-    }
-
-    Buffer result() const
-    {
-      Buffer buf;
-      if( !resize(&buf, size()) ) {
-        return Buffer{};
-      }
-
-      toBytesBE(buf.data(), buf.size(), _sum);
-
-      return buf;
     }
 
     std::size_t size() const
@@ -141,7 +134,14 @@ namespace cs {
 
   Buffer Hash::result() const
   {
-    return _impl->result();
+    Buffer buf;
+    if( !resize(&buf, _impl->size()) ) {
+      return Buffer{};
+    }
+
+    _impl->copyResult(buf.data(), buf.size());
+
+    return buf;
   }
 
   std::size_t Hash::size() const
