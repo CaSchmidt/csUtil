@@ -45,9 +45,9 @@
 #define S43 15
 #define S44 21
 
-static void MD5Transform(uint32_t [4], unsigned char [64]);
-static void Encode(unsigned char *, uint32_t *, unsigned int);
-static void Decode(uint32_t *, unsigned char *, unsigned int);
+static void MD5Transform(uint32_t [4], const unsigned char [64]);
+static void Encode(unsigned char *, const uint32_t *, const unsigned int);
+static void Decode(uint32_t *, const unsigned char *, const unsigned int);
 
 static unsigned char PADDING[64] = {
   0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -111,7 +111,7 @@ void MD5Init(MD5_CTX *context)
  * operation, processing another message block, and updating the
  * context.
  */
-void MD5Update(MD5_CTX *context, unsigned char *input, unsigned int inputLen)
+void MD5Update(MD5_CTX *context, const unsigned char *input, const unsigned int inputLen)
 {
   unsigned int i, index, partLen;
 
@@ -174,7 +174,7 @@ void MD5Final(unsigned char digest[16], MD5_CTX *context)
 /*
  * MD5 basic transformation. Transforms state based on block.
  */
-static void MD5Transform(uint32_t state[4], unsigned char block[64])
+static void MD5Transform(uint32_t state[4], const unsigned char block[64])
 {
   uint32_t a = state[0], b = state[1], c = state[2], d = state[3], x[16];
 
@@ -265,7 +265,7 @@ static void MD5Transform(uint32_t state[4], unsigned char block[64])
  * Encodes input (UINT4) into output (unsigned char). Assumes len is
  * a multiple of 4.
  */
-static void Encode(unsigned char *output, uint32_t *input, unsigned int len)
+static void Encode(unsigned char *output, const uint32_t *input, const unsigned int len)
 {
   unsigned int i, j;
 
@@ -281,7 +281,7 @@ static void Encode(unsigned char *output, uint32_t *input, unsigned int len)
  * Decodes input (unsigned char) into output (UINT4). Assumes len is
  * a multiple of 4.
  */
-static void Decode(uint32_t *output, unsigned char *input, unsigned int len)
+static void Decode(uint32_t *output, const unsigned char *input, const unsigned int len)
 {
   unsigned int i, j;
 
