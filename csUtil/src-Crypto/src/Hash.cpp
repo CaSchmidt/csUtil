@@ -52,8 +52,8 @@ namespace cs {
     }
 
     virtual void copyResult(void *data, const std::size_t sizData) const = 0;
+    virtual std::size_t digestSize() const = 0;
     virtual void reset() = 0;
-    virtual std::size_t size() const = 0;
     virtual void update(const void *data, const std::size_t sizData) = 0;
   };
 
@@ -77,14 +77,14 @@ namespace cs {
       toBytesBE(data, sizData, _sum);
     }
 
+    std::size_t digestSize() const
+    {
+      return Hash::Size_CRC32;
+    }
+
     void reset()
     {
       _sum = CRC32::makeInit();
-    }
-
-    std::size_t size() const
-    {
-      return 4;
     }
 
     void update(const void *data, const std::size_t sizData)
@@ -103,11 +103,11 @@ namespace cs {
 
   ////// public //////////////////////////////////////////////////////////////
 
-  Hash::Hash(const Algorithm algo) noexcept
+  Hash::Hash(const Function func) noexcept
     : _impl{nullptr}
   {
     try {
-      if( algo == CRC32 ) {
+      if( func == CRC32 ) {
         _impl = std::make_unique<HashCrc32>();
       }
     } catch(...) {
@@ -127,6 +127,11 @@ namespace cs {
     return !_impl;
   }
 
+  std::size_t Hash::digestSize() const
+  {
+    return _impl->digestSize();
+  }
+
   void Hash::reset()
   {
     _impl->reset();
@@ -135,18 +140,14 @@ namespace cs {
   Buffer Hash::result() const
   {
     Buffer buf;
-    if( !resize(&buf, _impl->size()) ) {
+    if( !resize(&buf, _impl->digestSize()) ) {
       return Buffer{};
     }
 
     _impl->copyResult(buf.data(), buf.size());
+    _impl->reset();
 
     return buf;
-  }
-
-  std::size_t Hash::size() const
-  {
-    return _impl->size();
   }
 
   void Hash::update(const void *data, const std::size_t sizData)

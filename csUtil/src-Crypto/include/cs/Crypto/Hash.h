@@ -43,18 +43,22 @@ namespace cs {
 
   class Hash {
   public:
-    enum Algorithm : unsigned int {
+    enum Function : unsigned int {
       CRC32 = 0
     };
 
-    Hash(const Algorithm algo) noexcept;
+    enum DigestSize : std::size_t {
+      Size_CRC32 = 4
+    };
+
+    Hash(const Function func) noexcept;
     ~Hash() noexcept;
 
     bool isNull() const;
 
+    std::size_t digestSize() const;
     void reset();
     Buffer result() const;
-    std::size_t size() const;
     void update(const void *data, const std::size_t sizData);
 
     inline void operator()(const void *data, const std::size_t sizData)
