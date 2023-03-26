@@ -44,11 +44,13 @@ namespace cs {
   class Hash {
   public:
     enum Function : unsigned int {
-      CRC32 = 0
+      CRC32 = 0,
+      MD5
     };
 
     enum DigestSize : std::size_t {
-      Size_CRC32 = 4
+      Size_CRC32 = 4,
+      Size_MD5 = 16
     };
 
     Hash(const Function func) noexcept;

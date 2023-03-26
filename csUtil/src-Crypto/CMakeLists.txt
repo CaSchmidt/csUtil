@@ -7,6 +7,12 @@ list(APPEND csCrypto_SOURCES
   src/main_crypto.cpp
 )
 
+### Dependencies #############################################################
+
+add_subdirectory(${csUtil_SOURCE_DIR}/3rdparty/md5
+  ${csUtil_BINARY_DIR}/3rdparty/md5
+)
+
 ### csUtil ###################################################################
 
 target_sources(csUtil
@@ -16,4 +22,8 @@ target_sources(csUtil
 
 target_include_directories(csUtil
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+target_link_libraries(csUtil
+  PRIVATE md5
 )

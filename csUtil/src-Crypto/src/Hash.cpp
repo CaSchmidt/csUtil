@@ -29,6 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <md5.h>
+
 #include "cs/Crypto/Hash.h"
 
 #include "cs/Convert/Serialize.h"
@@ -98,6 +100,47 @@ namespace cs {
   };
 
   /**************************************************************************
+   * MD5 Implementation *****************************************************
+   **************************************************************************/
+
+  class HashMd5 : public HashImpl {
+  public:
+    HashMd5() noexcept
+      : HashImpl()
+    {
+    }
+
+    ~HashMd5() noexcept
+    {
+    }
+
+    void copyResult(void *data, const std::size_t /*sizData*/) const
+    {
+      MD5Final(reinterpret_cast<unsigned char*>(data), const_cast<MD5_CTX*>(&_ctx));
+    }
+
+    std::size_t digestSize() const
+    {
+      return Hash::Size_MD5;
+    }
+
+    void reset()
+    {
+      MD5Init(&_ctx);
+    }
+
+    void update(const void *data, const std::size_t sizData)
+    {
+      MD5Update(&_ctx,
+                reinterpret_cast<const unsigned char*>(data),
+                static_cast<unsigned int>(sizData));
+    }
+
+  private:
+    MD5_CTX _ctx;
+  };
+
+  /**************************************************************************
    * User Interface *********************************************************
    **************************************************************************/
 
@@ -107,8 +150,10 @@ namespace cs {
     : _impl{nullptr}
   {
     try {
-      if( func == CRC32 ) {
+      if(        func == CRC32 ) {
         _impl = std::make_unique<HashCrc32>();
+      } else if( func == MD5 ) {
+        _impl = std::make_unique<HashMd5>();
       }
     } catch(...) {
       _impl.reset();
