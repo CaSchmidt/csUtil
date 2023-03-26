@@ -3,9 +3,9 @@
 #include <cstdint>
 
 #include <algorithm>
-#include <array>
 #include <vector>
 
+#include <cs/Core/ByteArray.h>
 #include <cs/Core/Container.h>
 #include <cs/IO/File.h>
 
@@ -23,30 +23,30 @@ namespace cdrom {
   constexpr std::size_t OFF_Mode = OFF_Addr + SIZ_Addr;
   constexpr std::size_t OFF_Data = OFF_Mode + SIZ_Mode;
 
-  const std::array<uint8_t,SIZ_Sync> sync_pattern{
+  const cs::ByteArray<SIZ_Sync> sync_pattern{
     0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00
   };
 
-  constexpr uint8_t INVALID_MODE = 0;
+  constexpr cs::byte_t INVALID_MODE = 0;
 
   constexpr std::size_t SIZE_READBUFFER = SIZ_Sect*8*1024;
 
 } // namespace cdrom
 
-uint8_t scanBuffer(const cs::Buffer& buffer, const std::size_t have)
+cs::byte_t scanBuffer(const cs::Buffer& buffer, const std::size_t have)
 {
   if( have < 1 ) {
     return cdrom::INVALID_MODE;
   }
 
-  uint8_t result = cdrom::INVALID_MODE;
+  cs::byte_t result = cdrom::INVALID_MODE;
 
   const std::size_t numSector = have/cdrom::SIZ_Sect;
   const std::size_t numRemain = have%cdrom::SIZ_Sect;
 
   for(std::size_t i = 0; i < numSector; i++) {
-    const uint8_t *sector = buffer.data() + i*cdrom::SIZ_Sect;
-    const uint8_t    mode = sector[cdrom::OFF_Mode];
+    const cs::byte_t *sector = buffer.data() + i*cdrom::SIZ_Sect;
+    const cs::byte_t    mode = sector[cdrom::OFF_Mode];
 
     if( !std::equal(cdrom::sync_pattern.begin(), cdrom::sync_pattern.end(), sector) ) {
       return cdrom::INVALID_MODE;
@@ -77,8 +77,8 @@ void writeBuffer(const cs::File& out, const cs::Buffer& buffer, const std::size_
   const std::size_t numRemain = have%cdrom::SIZ_Sect;
 
   for(std::size_t i = 0; i < numSector; i++) {
-    const uint8_t *sector = buffer.data() + i*cdrom::SIZ_Sect;
-    const uint8_t   *data = sector + cdrom::OFF_Data;
+    const cs::byte_t *sector = buffer.data() + i*cdrom::SIZ_Sect;
+    const cs::byte_t   *data = sector + cdrom::OFF_Data;
 
     out.write(data, data_size);
   }
@@ -101,7 +101,7 @@ int main(int /*argc*/, char **argv)
 
   cs::Buffer  buffer;
   std::size_t   have;
-  uint8_t       mode = cdrom::INVALID_MODE;
+  cs::byte_t    mode = cdrom::INVALID_MODE;
 
   if( !cs::resize(&buffer, cdrom::SIZE_READBUFFER) ) {
     fprintf(stderr, "ERROR: Unable to allocate read buffer!\n");
@@ -112,9 +112,9 @@ int main(int /*argc*/, char **argv)
 
   infile.seek(0);
   while( (have = infile.read(buffer.data(), buffer.size())) > 0 ) {
-    const uint8_t m = scanBuffer(buffer, have);
+    const cs::byte_t m = scanBuffer(buffer, have);
 
-    if(        m == cdrom::INVALID_MODE ) {
+    if(        m    == cdrom::INVALID_MODE ) {
       fprintf(stderr, "ERROR: Unable to detect mode!\n");
       return EXIT_FAILURE;
     } else if( mode == cdrom::INVALID_MODE ) {

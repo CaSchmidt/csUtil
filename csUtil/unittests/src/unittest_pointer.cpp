@@ -1,15 +1,15 @@
 #include <emmintrin.h>
 
-#include <array>
 #include <iostream>
 
 #include <catch.hpp>
 
+#include <cs/Core/ByteArray.h>
 #include <cs/Core/Pointer.h>
 
 namespace util {
 
-  std::array<uint8_t,128> data;
+  cs::ByteArray<128> data;
 
 } // namespace util
 

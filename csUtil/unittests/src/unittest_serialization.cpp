@@ -1,11 +1,11 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include <array>
 #include <iostream>
 
 #include <catch.hpp>
 
+#include <cs/Core/ByteArray.h>
 #include <cs/Convert/Serialize.h>
 #include <cs/Convert/Deserialize.h>
 
@@ -14,7 +14,7 @@ namespace test_deserialize {
   TEST_CASE("Deserialize to signed integral value.", "[signed]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
-    std::array<uint8_t,8> data;
+    cs::ByteArray<8> data;
 
     { // 8bit
       constexpr int8_t      VALUE{2};
@@ -84,7 +84,7 @@ namespace test_deserialize {
   TEST_CASE("Deserialize to signed integral value with sign extension.", "[sign_extend]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
-    std::array<uint8_t,8> data;
+    cs::ByteArray<8> data;
 
     { // 8bit
       constexpr int8_t      VALUE{-2};
@@ -148,7 +148,7 @@ namespace test_deserialize {
   TEST_CASE("Deserialize to unsigned integral value.", "[unsigned]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
-    std::array<uint8_t,8> data;
+    cs::ByteArray<8> data;
 
     { // 8bit
       constexpr uint8_t     VALUE{0x02};
@@ -219,7 +219,7 @@ namespace test_deserialize {
 
 namespace test_serialize {
 
-  using Buffer = std::array<uint8_t,8>;
+  using Buffer = cs::ByteArray<8>;
 
   constexpr bool cmpEQ(const Buffer& test, const Buffer& ref, const std::size_t count)
   {

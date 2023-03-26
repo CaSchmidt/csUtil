@@ -1,11 +1,12 @@
 #include <cstdio>
 #include <cstdlib>
 
+#include <cs/Core/ByteArray.h>
 #include <cs/Core/CRC.h>
 #include <cs/IO/File.h>
 
 template<std::size_t SIZE>
-void print32(const std::array<uint8_t,SIZE>& buffer)
+void print32(const cs::ByteArray<SIZE>& buffer)
 {
   cs::CRC32 crc32;
 
@@ -16,9 +17,9 @@ void print32(const std::array<uint8_t,SIZE>& buffer)
 int main(int argc, char **argv)
 {
   /*
-  print32(std::array<uint8_t,9>{'1', '2', '3', '4', '5', '6', '7', '8', '9'});
-  print32(std::array<uint8_t,4>{0x00, 0x00, 0x00, 0x00});
-  print32(std::array<uint8_t,4>{0xFF, 0xFF, 0xFF, 0xFF});
+  print32(cs::ByteArray<9>{'1', '2', '3', '4', '5', '6', '7', '8', '9'});
+  print32(cs::ByteArray<4>{0x00, 0x00, 0x00, 0x00});
+  print32(cs::ByteArray<4>{0xFF, 0xFF, 0xFF, 0xFF});
   */
 
   if( argc - 1 < 1  ||  argv[1] == nullptr ) {
@@ -38,7 +39,7 @@ int main(int argc, char **argv)
 
   constexpr fsize_type BLOCK = 1024;
 
-  std::array<uint8_t,BLOCK> buffer;
+  cs::ByteArray<BLOCK> buffer;
 
   fsize_type got = 0;
   while( (got = file.read(buffer.data(), buffer.size())) > 0 ) {
