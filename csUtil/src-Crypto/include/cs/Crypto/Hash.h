@@ -33,6 +33,8 @@
 
 #include <memory>
 
+#include <cs/Core/csutil_config.h>
+
 #include <cs/Core/Buffer.h>
 
 namespace cs {
@@ -41,7 +43,7 @@ namespace cs {
 
   using HashImplPtr = std::unique_ptr<HashImpl>;
 
-  class Hash {
+  class CS_UTIL_EXPORT Hash {
   public:
     enum Function : unsigned int {
       CRC32 = 0,
