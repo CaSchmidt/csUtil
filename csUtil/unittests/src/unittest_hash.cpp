@@ -7,6 +7,53 @@
 #include <cs/Crypto/Hash.h>
 #include <cs/Text/StringAlgorithm.h>
 
+namespace test_crc32 {
+
+  using Digest = cs::ByteArray<cs::Hash::Size_CRC32>;
+
+  template<std::size_t N>
+  bool test_digest(const cs::ByteArray<N>& message, const Digest& ref)
+  {
+    cs::Hash hash{cs::Hash::CRC32};
+
+    hash(message.data(), message.size());
+    const cs::Buffer digest = hash.result();
+
+    return std::equal(digest.begin(), digest.end(), ref.begin());
+  }
+
+  TEST_CASE("Compute CRC-32 message digests.", "[crc32]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    const Digest digest_No1{0xCB, 0xF4, 0x39, 0x26};
+    REQUIRE( test_digest(cs::ByteArray<9>{'1', '2', '3', '4', '5', '6', '7', '8', '9'},
+                         digest_No1) );
+
+    const Digest digest_No2{0x21, 0x44, 0xDF, 0x1C};
+    REQUIRE( test_digest(cs::ByteArray<4>{0x00, 0x00, 0x00, 0x00}, digest_No2) );
+
+    const Digest digest_No3{0x24, 0xAB, 0x9D, 0x77};
+    REQUIRE( test_digest(cs::ByteArray<3>{0xF2, 0x01, 0x83}, digest_No3) );
+
+    const Digest digest_No4{0xB6, 0xC9, 0xB2, 0x87};
+    REQUIRE( test_digest(cs::ByteArray<4>{0x0F, 0xAA, 0x00, 0x55}, digest_No4) );
+
+    const Digest digest_No5{0x32, 0xA0, 0x62, 0x12};
+    REQUIRE( test_digest(cs::ByteArray<4>{0x00, 0xFF, 0x55, 0x11}, digest_No5) );
+
+    const Digest digest_No6{0xB0, 0xAE, 0x86, 0x3D};
+    REQUIRE( test_digest(cs::ByteArray<9>{0x33, 0x22, 0x55, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF},
+                         digest_No6) );
+
+    const Digest digest_No7{0x9C, 0xDE, 0xA2, 0x9B};
+    REQUIRE( test_digest(cs::ByteArray<3>{0x92, 0x6B, 0x55}, digest_No7) );
+
+    const Digest digest_No8{0xFF, 0xFF, 0xFF, 0xFF};
+    REQUIRE( test_digest(cs::ByteArray<4>{0xFF, 0xFF, 0xFF, 0xFF}, digest_No8) );
+  }
+
+} // namespace test_crc32
+
 namespace test_md5 {
 
   using Digest = cs::ByteArray<cs::Hash::Size_MD5>;
