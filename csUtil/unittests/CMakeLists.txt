@@ -31,6 +31,7 @@ cs_unittest(unittest_endian src/unittest_endian.cpp src/unittest_endian_impl.cpp
 cs_unittest(unittest_fileio src/unittest_fileio.cpp src/unittest_fileio_main.cpp)
 cs_unittest(unittest_flags src/unittest_flags.cpp src/unittest_flags_main.cpp)
 cs_unittest(unittest_format src/unittest_format.cpp src/unittest_format_main.cpp)
+cs_unittest(unittest_hash src/unittest_hash.cpp src/unittest_hash_main.cpp)
 cs_unittest(unittest_math src/unittest_math.cpp src/unittest_math_main.cpp)
 cs_unittest(unittest_meta src/unittest_meta.cpp src/unittest_meta_main.cpp)
 cs_unittest(unittest_numeric src/unittest_numeric.cpp src/unittest_numeric_main.cpp)
