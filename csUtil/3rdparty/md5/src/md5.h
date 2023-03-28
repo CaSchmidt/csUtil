@@ -1,6 +1,3 @@
-#ifndef MD5_H
-#define MD5_H
-
 /*
  * Copyright (C) 1991-2, RSA Data Security, Inc. Created 1991.
  * All rights reserved.
@@ -23,6 +20,9 @@
  * These notices must be retained in any copies of any part of this
  * documentation and/or software.
  */
+
+#ifndef MD5_H
+#define MD5_H
 
 #include <stdint.h>
 
