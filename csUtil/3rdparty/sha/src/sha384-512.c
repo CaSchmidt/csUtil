@@ -69,12 +69,27 @@
  * Add "length" to the length.
  * Set Corrupted when overflow has occurred.
  */
+#if 0
 static uint64_t addTemp;
 #define SHA384_512AddLength(context, length)                   \
   (addTemp = context->Length_Low, context->Corrupted =        \
   ((context->Length_Low += length) < addTemp) &&             \
   (++context->Length_High == 0) ? shaInputTooLong :          \
   (context)->Corrupted)
+#else
+inline int SHA384_512AddLength(SHA512Context *context, const uint64_t length)
+{
+  const uint64_t old_Low = context->Length_Low;
+  context->Length_Low += length;
+  if( context->Length_Low < old_Low ) { /* 32bit overflow */
+    context->Length_High += 1;
+    if( context->Length_High == 0 ) { /* 64bit overflow */
+      context->Corrupted = shaInputTooLong;
+    }
+  }
+  return context->Corrupted;
+}
+#endif
 
 /* Local Function Prototypes */
 static int SHA384_512Reset(SHA512Context *context,
@@ -241,19 +256,30 @@ int SHA512Input(SHA512Context *context,
                 const uint8_t *message_array,
                 unsigned int length)
 {
-  if (!context) return shaNull;
-  if (!length) return shaSuccess;
-  if (!message_array) return shaNull;
-  if (context->Computed) return context->Corrupted = shaStateError;
-  if (context->Corrupted) return context->Corrupted;
+  if( !context ) {
+    return shaNull;
+  }
+  if( !length ) {
+    return shaSuccess;
+  }
+  if( !message_array ) {
+    return shaNull;
+  }
+  if( context->Computed ) {
+    return context->Corrupted = shaStateError;
+  }
+  if( context->Corrupted ) {
+    return context->Corrupted;
+  }
 
-  while (length--) {
+  while( length-- ) {
     context->Message_Block[context->Message_Block_Index++] =
         *message_array;
 
-    if ((SHA384_512AddLength(context, 8) == shaSuccess) &&
-        (context->Message_Block_Index == SHA512_Message_Block_Size))
+    if( (SHA384_512AddLength(context, 8) == shaSuccess) &&
+        (context->Message_Block_Index == SHA512_Message_Block_Size) ) {
       SHA384_512ProcessMessageBlock(context);
+    }
 
     message_array++;
   }
@@ -297,11 +323,21 @@ int SHA512FinalBits(SHA512Context *context,
     /* 6 0b00000010 */ 0x02, /* 7 0b00000001 */ 0x01
   };
 
-  if (!context) return shaNull;
-  if (!length) return shaSuccess;
-  if (context->Corrupted) return context->Corrupted;
-  if (context->Computed) return context->Corrupted = shaStateError;
-  if (length >= 8) return context->Corrupted = shaBadParam;
+  if( !context ) {
+    return shaNull;
+  }
+  if( !length ) {
+    return shaSuccess;
+  }
+  if( context->Corrupted ) {
+    return context->Corrupted;
+  }
+  if( context->Computed ) {
+    return context->Corrupted = shaStateError;
+  }
+  if( length >= 8 ) {
+    return context->Corrupted = shaBadParam;
+  }
 
   SHA384_512AddLength(context, length);
   SHA384_512Finalize(context, (uint8_t)
@@ -358,14 +394,17 @@ static int SHA384_512Reset(SHA512Context *context,
                            uint64_t H0[SHA512HashSize/8])
 {
   int i;
-  if (!context) return shaNull;
+  if( !context ) {
+    return shaNull;
+  }
 
   context->Message_Block_Index = 0;
 
   context->Length_High = context->Length_Low = 0;
 
-  for (i = 0; i < SHA512HashSize/8; i++)
+  for(i = 0; i < SHA512HashSize/8; i++) {
     context->Intermediate_Hash[i] = H0[i];
+  }
 
   context->Computed = 0;
   context->Corrupted = shaSuccess;
@@ -434,19 +473,23 @@ static void SHA384_512ProcessMessageBlock(SHA512Context *context)
   /*
    * Initialize the first 16 words in the array W
    */
-  for (t = t8 = 0; t < 16; t++, t8 += 8)
-    W[t] = ((uint64_t)(context->Message_Block[t8  ]) << 56) |
+  for(t = t8 = 0; t < 16; t++, t8 += 8) {
+    W[t] =
+        ((uint64_t)(context->Message_Block[t8    ]) << 56) |
         ((uint64_t)(context->Message_Block[t8 + 1]) << 48) |
         ((uint64_t)(context->Message_Block[t8 + 2]) << 40) |
         ((uint64_t)(context->Message_Block[t8 + 3]) << 32) |
         ((uint64_t)(context->Message_Block[t8 + 4]) << 24) |
         ((uint64_t)(context->Message_Block[t8 + 5]) << 16) |
-        ((uint64_t)(context->Message_Block[t8 + 6]) << 8) |
+        ((uint64_t)(context->Message_Block[t8 + 6]) <<  8) |
         ((uint64_t)(context->Message_Block[t8 + 7]));
+  }
 
-  for (t = 16; t < 80; t++)
+  for(t = 16; t < 80; t++) {
     W[t] = SHA512_sigma1(W[t-2]) + W[t-7] +
         SHA512_sigma0(W[t-15]) + W[t-16];
+  }
+
   A = context->Intermediate_Hash[0];
   B = context->Intermediate_Hash[1];
   C = context->Intermediate_Hash[2];
@@ -456,7 +499,7 @@ static void SHA384_512ProcessMessageBlock(SHA512Context *context)
   G = context->Intermediate_Hash[6];
   H = context->Intermediate_Hash[7];
 
-  for (t = 0; t < 80; t++) {
+  for(t = 0; t < 80; t++) {
     temp1 = H + SHA512_SIGMA1(E) + SHA_Ch(E,F,G) + K[t] + W[t];
     temp2 = SHA512_SIGMA0(A) + SHA_Maj(A,B,C);
     H = G;
@@ -506,8 +549,9 @@ static void SHA384_512Finalize(SHA512Context *context,
   int_least16_t i;
   SHA384_512PadMessage(context, Pad_Byte);
   /* message may be sensitive, clear it out */
-  for (i = 0; i < SHA512_Message_Block_Size; ++i)
+  for(i = 0; i < SHA512_Message_Block_Size; ++i) {
     context->Message_Block[i] = 0;
+  }
   context->Length_High = context->Length_Low = 0;
   context->Computed = 1;
 }
@@ -546,17 +590,20 @@ static void SHA384_512PadMessage(SHA512Context *context,
    * block, process it, and then continue padding into a second
    * block.
    */
-  if (context->Message_Block_Index >= (SHA512_Message_Block_Size-16)) {
+  if( context->Message_Block_Index >= (SHA512_Message_Block_Size-16) ) {
     context->Message_Block[context->Message_Block_Index++] = Pad_Byte;
-    while (context->Message_Block_Index < SHA512_Message_Block_Size)
+    while( context->Message_Block_Index < SHA512_Message_Block_Size ) {
       context->Message_Block[context->Message_Block_Index++] = 0;
+    }
 
     SHA384_512ProcessMessageBlock(context);
-  } else
+  } else {
     context->Message_Block[context->Message_Block_Index++] = Pad_Byte;
+  }
 
-  while (context->Message_Block_Index < (SHA512_Message_Block_Size-16))
+  while( context->Message_Block_Index < (SHA512_Message_Block_Size-16) ) {
     context->Message_Block[context->Message_Block_Index++] = 0;
+  }
 
   /*
    * Store the message length as the last 16 octets
@@ -609,16 +656,24 @@ static int SHA384_512ResultN(SHA512Context *context,
 {
   int i;
 
-  if (!context) return shaNull;
-  if (!Message_Digest) return shaNull;
-  if (context->Corrupted) return context->Corrupted;
+  if( !context ) {
+    return shaNull;
+  }
+  if( !Message_Digest ) {
+    return shaNull;
+  }
+  if( context->Corrupted ) {
+    return context->Corrupted;
+  }
 
-  if (!context->Computed)
+  if( !context->Computed ) {
     SHA384_512Finalize(context, 0x80);
+  }
 
-  for (i = 0; i < HashSize; ++i)
+  for(i = 0; i < HashSize; ++i) {
     Message_Digest[i] = (uint8_t)
         (context->Intermediate_Hash[i>>3] >> 8 * ( 7 - ( i % 8 ) ));
+  }
 
   return shaSuccess;
 }
