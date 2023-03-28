@@ -152,13 +152,9 @@ typedef struct SHA256Context {
  * hashing operation.
  */
 typedef struct SHA512Context {
-#ifdef USE_32BIT_ONLY
-  uint32_t Intermediate_Hash[SHA512HashSize/4]; /* Message Digest */
-  uint32_t Length[4];                   /* Message length in bits */
-#else /* !USE_32BIT_ONLY */
   uint64_t Intermediate_Hash[SHA512HashSize/8]; /* Message Digest */
+
   uint64_t Length_High, Length_Low;     /* Message length in bits */
-#endif /* USE_32BIT_ONLY */
 
   int_least16_t Message_Block_Index; /* Message_Block array index */
   /* 1024-bit message blocks */
