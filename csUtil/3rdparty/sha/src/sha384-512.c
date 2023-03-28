@@ -69,27 +69,18 @@
  * Add "length" to the length.
  * Set Corrupted when overflow has occurred.
  */
-#if 0
-static uint64_t addTemp;
-#define SHA384_512AddLength(context, length)                   \
-  (addTemp = context->Length_Low, context->Corrupted =        \
-  ((context->Length_Low += length) < addTemp) &&             \
-  (++context->Length_High == 0) ? shaInputTooLong :          \
-  (context)->Corrupted)
-#else
 inline int SHA384_512AddLength(SHA512Context *context, const uint64_t length)
 {
   const uint64_t old_Low = context->Length_Low;
   context->Length_Low += length;
-  if( context->Length_Low < old_Low ) { /* 32bit overflow */
+  if( context->Length_Low < old_Low ) { /* 32bit overflow occured */
     context->Length_High += 1;
-    if( context->Length_High == 0 ) { /* 64bit overflow */
+    if( context->Length_High == 0 ) { /* 64bit overflow occured */
       context->Corrupted = shaInputTooLong;
     }
   }
   return context->Corrupted;
 }
-#endif
 
 /* Local Function Prototypes */
 static int SHA384_512Reset(SHA512Context *context,

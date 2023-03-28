@@ -48,15 +48,6 @@
  * Add "length" to the length.
  * Set Corrupted when overflow has occurred.
  */
-#if 0 /* NOT thread safe */
-static uint32_t addTemp;
-#define SHA1AddLength(context, length)                     \
-  (addTemp = (context)->Length_Low,                      \
-  (context)->Corrupted =                                \
-  (((context)->Length_Low += (length)) < addTemp) && \
-  (++(context)->Length_High == 0) ? shaInputTooLong  \
-  : (context)->Corrupted )
-#else /* thread safe */
 inline int SHA1AddLength(SHA1Context *context, const uint32_t length)
 {
   const uint32_t old_Low = context->Length_Low;
@@ -69,7 +60,6 @@ inline int SHA1AddLength(SHA1Context *context, const uint32_t length)
   }
   return context->Corrupted;
 }
-#endif
 
 /* Local Function Prototypes */
 static void SHA1ProcessMessageBlock(SHA1Context *context);
