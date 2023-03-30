@@ -47,12 +47,24 @@ namespace cs {
   public:
     enum Function : unsigned int {
       CRC32 = 0,
-      MD5
+      MD5,
+      SHA1,
+      // SHA-2
+      SHA224,
+      SHA256,
+      SHA384,
+      SHA512
     };
 
     enum DigestSize : std::size_t {
       Size_CRC32 = 4,
-      Size_MD5 = 16
+      Size_MD5 = 16,
+      Size_SHA1 = 20,
+      // SHA-2
+      Size_SHA224 = 28,
+      Size_SHA256 = 32,
+      Size_SHA384 = 48,
+      Size_SHA512 = 64
     };
 
     Hash(const Function func) noexcept;
@@ -63,11 +75,11 @@ namespace cs {
     std::size_t digestSize() const;
     void reset();
     Buffer result() const;
-    void update(const void *data, const std::size_t sizData);
+    bool update(const void *data, const std::size_t sizData);
 
-    inline void operator()(const void *data, const std::size_t sizData)
+    inline bool operator()(const void *data, const std::size_t sizData)
     {
-      update(data, sizData);
+      return update(data, sizData);
     }
 
   private:

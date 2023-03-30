@@ -30,6 +30,7 @@
 *****************************************************************************/
 
 #include <md5.h>
+#include <sha.h>
 
 #include "cs/Crypto/Hash.h"
 
@@ -53,10 +54,10 @@ namespace cs {
     {
     }
 
-    virtual void copyResult(void *data, const std::size_t sizData) const = 0;
+    virtual void copyResult(void *data) const = 0;
     virtual std::size_t digestSize() const = 0;
     virtual void reset() = 0;
-    virtual void update(const void *data, const std::size_t sizData) = 0;
+    virtual bool update(const void *data, const std::size_t sizData) = 0;
   };
 
   /**************************************************************************
@@ -74,9 +75,9 @@ namespace cs {
     {
     }
 
-    void copyResult(void *data, const std::size_t sizData) const
+    void copyResult(void *data) const
     {
-      toBytesBE(data, sizData, _sum);
+      toBytesBE(data, Hash::Size_CRC32, _sum);
     }
 
     std::size_t digestSize() const
@@ -89,9 +90,10 @@ namespace cs {
       _sum = CRC32::makeInit();
     }
 
-    void update(const void *data, const std::size_t sizData)
+    bool update(const void *data, const std::size_t sizData)
     {
       _sum = _crc32(data, sizData, _sum);
+      return true;
     }
 
   private:
@@ -114,7 +116,7 @@ namespace cs {
     {
     }
 
-    void copyResult(void *data, const std::size_t /*sizData*/) const
+    void copyResult(void *data) const
     {
       MD5Final(reinterpret_cast<unsigned char*>(data), const_cast<MD5_CTX*>(&_ctx));
     }
@@ -129,15 +131,226 @@ namespace cs {
       MD5Init(&_ctx);
     }
 
-    void update(const void *data, const std::size_t sizData)
+    bool update(const void *data, const std::size_t sizData)
     {
       MD5Update(&_ctx,
                 reinterpret_cast<const unsigned char*>(data),
                 static_cast<unsigned int>(sizData));
+      return true;
     }
 
   private:
     MD5_CTX _ctx;
+  };
+
+  /**************************************************************************
+   * SHA-1 Implementation ***************************************************
+   **************************************************************************/
+
+  class HashSha1 : public HashImpl {
+  public:
+    HashSha1() noexcept
+      : HashImpl()
+    {
+    }
+
+    ~HashSha1() noexcept
+    {
+    }
+
+    void copyResult(void *data) const
+    {
+      SHA1Result(const_cast<SHA1Context*>(&_ctx),
+                 reinterpret_cast<uint8_t*>(data));
+    }
+
+    std::size_t digestSize() const
+    {
+      return Hash::Size_SHA1;
+    }
+
+    void reset()
+    {
+      SHA1Reset(&_ctx);
+    }
+
+    bool update(const void *data, const std::size_t sizData)
+    {
+      return SHA1Input(&_ctx,
+                       reinterpret_cast<const uint8_t*>(data),
+                       static_cast<unsigned int>(sizData)) == shaSuccess;
+    }
+
+  private:
+    SHA1Context _ctx;
+  };
+
+  /**************************************************************************
+   * SHA-224 (SHA-2) Implementation *****************************************
+   **************************************************************************/
+
+  class HashSha2_224 : public HashImpl {
+  public:
+    HashSha2_224() noexcept
+      : HashImpl()
+    {
+    }
+
+    ~HashSha2_224() noexcept
+    {
+    }
+
+    void copyResult(void *data) const
+    {
+      SHA224Result(const_cast<SHA224Context*>(&_ctx),
+                   reinterpret_cast<uint8_t*>(data));
+    }
+
+    std::size_t digestSize() const
+    {
+      return Hash::Size_SHA224;
+    }
+
+    void reset()
+    {
+      SHA224Reset(&_ctx);
+    }
+
+    bool update(const void *data, const std::size_t sizData)
+    {
+      return SHA224Input(&_ctx,
+                         reinterpret_cast<const uint8_t*>(data),
+                         static_cast<unsigned int>(sizData)) == shaSuccess;
+    }
+
+  private:
+    SHA224Context _ctx;
+  };
+
+  /**************************************************************************
+   * SHA-256 (SHA-2) Implementation *****************************************
+   **************************************************************************/
+
+  class HashSha2_256 : public HashImpl {
+  public:
+    HashSha2_256() noexcept
+      : HashImpl()
+    {
+    }
+
+    ~HashSha2_256() noexcept
+    {
+    }
+
+    void copyResult(void *data) const
+    {
+      SHA256Result(const_cast<SHA256Context*>(&_ctx),
+                   reinterpret_cast<uint8_t*>(data));
+    }
+
+    std::size_t digestSize() const
+    {
+      return Hash::Size_SHA256;
+    }
+
+    void reset()
+    {
+      SHA256Reset(&_ctx);
+    }
+
+    bool update(const void *data, const std::size_t sizData)
+    {
+      return SHA256Input(&_ctx,
+                         reinterpret_cast<const uint8_t*>(data),
+                         static_cast<unsigned int>(sizData)) == shaSuccess;
+    }
+
+  private:
+    SHA256Context _ctx;
+  };
+
+  /**************************************************************************
+   * SHA-384 (SHA-2) Implementation *****************************************
+   **************************************************************************/
+
+  class HashSha2_384 : public HashImpl {
+  public:
+    HashSha2_384() noexcept
+      : HashImpl()
+    {
+    }
+
+    ~HashSha2_384() noexcept
+    {
+    }
+
+    void copyResult(void *data) const
+    {
+      SHA384Result(const_cast<SHA384Context*>(&_ctx),
+                   reinterpret_cast<uint8_t*>(data));
+    }
+
+    std::size_t digestSize() const
+    {
+      return Hash::Size_SHA384;
+    }
+
+    void reset()
+    {
+      SHA384Reset(&_ctx);
+    }
+
+    bool update(const void *data, const std::size_t sizData)
+    {
+      return SHA384Input(&_ctx,
+                         reinterpret_cast<const uint8_t*>(data),
+                         static_cast<unsigned int>(sizData)) == shaSuccess;
+    }
+
+  private:
+    SHA384Context _ctx;
+  };
+
+  /**************************************************************************
+   * SHA-512 (SHA-2) Implementation *****************************************
+   **************************************************************************/
+
+  class HashSha2_512 : public HashImpl {
+  public:
+    HashSha2_512() noexcept
+      : HashImpl()
+    {
+    }
+
+    ~HashSha2_512() noexcept
+    {
+    }
+
+    void copyResult(void *data) const
+    {
+      SHA512Result(const_cast<SHA512Context*>(&_ctx),
+                   reinterpret_cast<uint8_t*>(data));
+    }
+
+    std::size_t digestSize() const
+    {
+      return Hash::Size_SHA512;
+    }
+
+    void reset()
+    {
+      SHA512Reset(&_ctx);
+    }
+
+    bool update(const void *data, const std::size_t sizData)
+    {
+      return SHA512Input(&_ctx,
+                         reinterpret_cast<const uint8_t*>(data),
+                         static_cast<unsigned int>(sizData)) == shaSuccess;
+    }
+
+  private:
+    SHA512Context _ctx;
   };
 
   /**************************************************************************
@@ -154,13 +367,25 @@ namespace cs {
         _impl = std::make_unique<HashCrc32>();
       } else if( func == MD5 ) {
         _impl = std::make_unique<HashMd5>();
+      } else if( func == SHA1 ) {
+        _impl = std::make_unique<HashSha1>();
+      } else if( func == SHA224 ) {
+        _impl = std::make_unique<HashSha2_224>();
+      } else if( func == SHA256 ) {
+        _impl = std::make_unique<HashSha2_256>();
+      } else if( func == SHA384 ) {
+        _impl = std::make_unique<HashSha2_384>();
+      } else if( func == SHA512 ) {
+        _impl = std::make_unique<HashSha2_512>();
       }
     } catch(...) {
       _impl.reset();
       return;
     }
 
-    _impl->reset();
+    if( _impl ) {
+      _impl->reset();
+    }
   }
 
   Hash::~Hash() noexcept
@@ -189,15 +414,15 @@ namespace cs {
       return Buffer{};
     }
 
-    _impl->copyResult(buf.data(), buf.size());
+    _impl->copyResult(buf.data());
     _impl->reset();
 
     return buf;
   }
 
-  void Hash::update(const void *data, const std::size_t sizData)
+  bool Hash::update(const void *data, const std::size_t sizData)
   {
-    _impl->update(data, sizData);
+    return _impl->update(data, sizData);
   }
 
 } // namespace cs

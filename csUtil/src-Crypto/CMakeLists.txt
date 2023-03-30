@@ -29,5 +29,5 @@ target_include_directories(csUtil
 )
 
 target_link_libraries(csUtil
-  PRIVATE md5
+  PRIVATE md5 sha
 )
