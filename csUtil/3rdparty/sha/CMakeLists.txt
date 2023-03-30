@@ -12,6 +12,10 @@ add_library(sha STATIC
 
 format_output_name(sha "sha")
 
+target_compile_definitions(sha
+  PRIVATE USE_MODIFIED_MACROS
+)
+
 target_include_directories(sha
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
