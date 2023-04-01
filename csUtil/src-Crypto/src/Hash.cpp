@@ -67,7 +67,7 @@ namespace cs {
   class HashCrc32 : public HashImpl {
   public:
     HashCrc32() noexcept
-      : HashImpl()
+      : HashImpl{}
     {
     }
 
@@ -108,7 +108,7 @@ namespace cs {
   class HashMd5 : public HashImpl {
   public:
     HashMd5() noexcept
-      : HashImpl()
+      : HashImpl{}
     {
     }
 
@@ -150,7 +150,7 @@ namespace cs {
   class HashSha1 : public HashImpl {
   public:
     HashSha1() noexcept
-      : HashImpl()
+      : HashImpl{}
     {
     }
 
@@ -192,7 +192,7 @@ namespace cs {
   class HashSha2_224 : public HashImpl {
   public:
     HashSha2_224() noexcept
-      : HashImpl()
+      : HashImpl{}
     {
     }
 
@@ -234,7 +234,7 @@ namespace cs {
   class HashSha2_256 : public HashImpl {
   public:
     HashSha2_256() noexcept
-      : HashImpl()
+      : HashImpl{}
     {
     }
 
@@ -276,7 +276,7 @@ namespace cs {
   class HashSha2_384 : public HashImpl {
   public:
     HashSha2_384() noexcept
-      : HashImpl()
+      : HashImpl{}
     {
     }
 
@@ -318,7 +318,7 @@ namespace cs {
   class HashSha2_512 : public HashImpl {
   public:
     HashSha2_512() noexcept
-      : HashImpl()
+      : HashImpl{}
     {
     }
 
