@@ -287,8 +287,8 @@ namespace test_sha1 {
                                digest_No6) );
 #endif
 
-    REQUIRE( test_cavp("./SHA1ShortMsg.rsp", FUNC) );
-    REQUIRE( test_cavp("./SHA1LongMsg.rsp", FUNC) );
+    REQUIRE( test_cavp("./testdata/SHA1ShortMsg.rsp", FUNC) );
+    REQUIRE( test_cavp("./testdata/SHA1LongMsg.rsp", FUNC) );
   }
 
 } // namespace test_sha1
@@ -333,8 +333,8 @@ namespace test_sha224 {
                                digest_No6) );
 #endif
 
-    REQUIRE( test_cavp("./SHA224ShortMsg.rsp", FUNC) );
-    REQUIRE( test_cavp("./SHA224LongMsg.rsp", FUNC) );
+    REQUIRE( test_cavp("./testdata/SHA224ShortMsg.rsp", FUNC) );
+    REQUIRE( test_cavp("./testdata/SHA224LongMsg.rsp", FUNC) );
   }
 
 } // namespace test_sha224
@@ -379,8 +379,8 @@ namespace test_sha256 {
                                digest_No6) );
 #endif
 
-    REQUIRE( test_cavp("./SHA256ShortMsg.rsp", FUNC) );
-    REQUIRE( test_cavp("./SHA256LongMsg.rsp", FUNC) );
+    REQUIRE( test_cavp("./testdata/SHA256ShortMsg.rsp", FUNC) );
+    REQUIRE( test_cavp("./testdata/SHA256LongMsg.rsp", FUNC) );
   }
 
 } // namespace test_sha256
@@ -425,8 +425,8 @@ namespace test_sha384 {
                                digest_No6) );
 #endif
 
-    REQUIRE( test_cavp("./SHA384ShortMsg.rsp", FUNC) );
-    REQUIRE( test_cavp("./SHA384LongMsg.rsp", FUNC) );
+    REQUIRE( test_cavp("./testdata/SHA384ShortMsg.rsp", FUNC) );
+    REQUIRE( test_cavp("./testdata/SHA384LongMsg.rsp", FUNC) );
   }
 
 } // namespace test_sha384
@@ -471,8 +471,8 @@ namespace sha512 {
                                digest_No6) );
 #endif
 
-    REQUIRE( test_cavp("./SHA512ShortMsg.rsp", FUNC) );
-    REQUIRE( test_cavp("./SHA512LongMsg.rsp", FUNC) );
+    REQUIRE( test_cavp("./testdata/SHA512ShortMsg.rsp", FUNC) );
+    REQUIRE( test_cavp("./testdata/SHA512LongMsg.rsp", FUNC) );
   }
 
 } // namespace sha512

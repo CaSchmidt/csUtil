@@ -27,6 +27,10 @@ endmacro()
 
 ### Tests ####################################################################
 
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/../testdata/test äuml.txt"
+  DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/testdata
+)
+
 cs_test(test_crc src/test_crc.cpp)
 cs_test(test_dot src/test_dot.cpp)
 cs_test(test_endian src/test_endian.cpp ../testutils/include/util.h)

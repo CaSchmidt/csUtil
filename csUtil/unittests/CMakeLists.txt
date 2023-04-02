@@ -32,12 +32,12 @@ file(COPY
   ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/CAVP/SHA/SHA384ShortMsg.rsp
   ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/CAVP/SHA/SHA512LongMsg.rsp
   ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/CAVP/SHA/SHA512ShortMsg.rsp
-  DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+  DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/testdata
 )
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../testutils/data/Word-List.txt
-  DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-  )
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/Word-List.txt
+  DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/testdata
+)
 
 cs_unittest(unittest_bytearray src/unittest_bytearray.cpp src/unittest_bytearray_main.cpp)
 cs_unittest(unittest_crc src/unittest_crc.cpp src/unittest_crc_main.cpp)
