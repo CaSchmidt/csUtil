@@ -1,12 +1,12 @@
 list(APPEND csConvert_HEADERS
-  include/cs/Convert/ByteArrayUtil.h
+  include/cs/Convert/BufferUtil.h
   include/cs/Convert/Deserialize.h
   include/cs/Convert/RawConverter.h
   include/cs/Convert/Serialize.h
 )
 
 list(APPEND csConvert_SOURCES
-  src/ByteArrayUtil.cpp
+  src/BufferUtil.cpp
   src/main_convert.cpp
 )
 
