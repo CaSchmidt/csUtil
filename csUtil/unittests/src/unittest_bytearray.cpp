@@ -5,7 +5,7 @@
 
 #include <catch.hpp>
 
-#include <cs/Convert/ByteArrayUtil.h>
+#include <cs/Convert/BufferUtil.h>
 #include <cs/Text/PrintFormat.h>
 #include <cs/Text/PrintUtil.h>
 #include <cs/Text/StringUtil.h>
