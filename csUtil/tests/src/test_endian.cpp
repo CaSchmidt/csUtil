@@ -6,17 +6,13 @@
 #include <iostream>
 
 #include <cs/Core/Endian.h>
-
-#include "util.h"
+#include <cs/Text/PrintFormat.h>
+#include <cs/Text/PrintUtil.h>
 
 template<typename T>
 void print(const T& from, const T& to)
 {
-  std::cout
-      << "0x" << FormatInteger<char,T>(from, sizeof(T)*2, 16, '0')
-      << " -> "
-      << "0x" << FormatInteger<char,T>(to, sizeof(T)*2, 16, '0')
-      << std::endl;
+  cs::println("0x% -> 0x%", cs::hexf(from, true), cs::hexf(to, true));
 }
 
 template<typename T>

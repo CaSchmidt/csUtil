@@ -10,8 +10,6 @@
 #define CATCH_CONFIG_ENABLE_BENCHMARKING
 #include <catch.hpp>
 
-#include "util.h"
-
 #undef HAVE_BENCHMARK
 
 #define WORD_LIST  u8"./testdata/Word-List.txt"
