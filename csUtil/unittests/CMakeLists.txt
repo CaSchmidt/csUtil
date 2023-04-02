@@ -21,6 +21,20 @@ endmacro()
 
 ### Unit Tests ###############################################################
 
+file(COPY
+  ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/CAVP/SHA/SHA1LongMsg.rsp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/CAVP/SHA/SHA1ShortMsg.rsp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/CAVP/SHA/SHA224LongMsg.rsp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/CAVP/SHA/SHA224ShortMsg.rsp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/CAVP/SHA/SHA256LongMsg.rsp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/CAVP/SHA/SHA256ShortMsg.rsp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/CAVP/SHA/SHA384LongMsg.rsp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/CAVP/SHA/SHA384ShortMsg.rsp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/CAVP/SHA/SHA512LongMsg.rsp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/CAVP/SHA/SHA512ShortMsg.rsp
+  DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+)
+
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../testutils/data/Word-List.txt
   DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
   )

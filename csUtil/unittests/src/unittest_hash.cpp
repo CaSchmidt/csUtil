@@ -1,18 +1,24 @@
-#include "cs/Core/Container.h"
 #include <algorithm>
+#include <charconv>
 #include <iostream>
 
 #include <catch.hpp>
 
+#include <cs/Convert/BufferUtil.h>
 #include <cs/Core/ByteArray.h>
+#include <cs/Core/Container.h>
 #include <cs/Crypto/Hash.h>
-#include <cs/Text/StringAlgorithm.h>
+#include <cs/IO/FileIO.h>
+#include <cs/Text/StringUtil.h>
 
 #undef HAVE_MESSAGE_XL
 
 /*
  * "Test vectors for SHA-1, SHA-2 and SHA-3", cf.
  * https://www.di-mgt.com.au/sha_testvectors.html
+ *
+ * "Cryptographic Algorithm Validation Program", cf.
+ * https://csrc.nist.gov/Projects/cryptographic-algorithm-validation-program/Secure-Hashing
  */
 
 namespace test_util {
@@ -49,6 +55,74 @@ namespace test_util {
     const cs::Buffer result = hash.result();
 
     return std::equal(result.begin(), result.end(), digest.begin());
+  }
+
+  bool test_cavp(const std::filesystem::path& path,
+                 const cs::Hash::Function func)
+  {
+    std::list<std::string> lines = cs::readLines(path, true, true);
+    if( lines.empty() ) {
+      return false;
+    }
+
+    std::size_t cntDigestsOK = 0;
+    std::size_t cntMessages  = 0;
+
+    std::size_t length = cs::MAX_SIZE_T;
+    cs::Buffer message;
+    for(const std::string& line : lines) {
+      const char *prefix_Len = "Len = ";
+      const char *prefix_Msg = "Msg = ";
+      const char *prefix_MD = "MD = ";
+
+      if(        cs::startsWith(line, prefix_Len) ) {
+        length = cs::MAX_SIZE_T;
+
+        const std::string value = line.substr(cs::length(prefix_Len));
+
+        const std::from_chars_result result =
+            std::from_chars(value.data(), value.data() + value.size(), length);
+        if( result.ec != std::errc{} ) {
+          continue;
+        }
+
+        length /= 8;
+
+        cntMessages++;
+
+      } else if( cs::startsWith(line, prefix_Msg) ) {
+        message = cs::toBuffer(line.substr(cs::length(prefix_Msg)));
+        if( length != 0  &&  message.size() != length ) {
+          length = cs::MAX_SIZE_T;
+          continue;
+        }
+
+      } else if( cs::startsWith(line, prefix_MD) ) {
+        if( length == cs::MAX_SIZE_T ) {
+          continue;
+        }
+
+        const cs::Buffer ref = cs::toBuffer(line.substr(cs::length(prefix_MD)));
+        if( ref.size() != sizeOfHash(func) ) {
+          length = cs::MAX_SIZE_T;
+          continue;
+        }
+
+        cs::Hash hash{func};
+        hash(message.data(), length);
+        const cs::Buffer digest = hash.result();
+
+        if( digest == ref ) {
+          cntDigestsOK++;
+        }
+
+        length = cs::MAX_SIZE_T;
+      }
+    } // for( lines )
+
+    std::cout << path.string() << ": " << cntDigestsOK << "/" << cntMessages << std::endl;
+
+    return cntDigestsOK == cntMessages;
   }
 
   std::string makeMessage1M()
@@ -212,6 +286,9 @@ namespace test_sha1 {
     REQUIRE( test_digest<FUNC>(message_No6,
                                digest_No6) );
 #endif
+
+    REQUIRE( test_cavp("./SHA1ShortMsg.rsp", FUNC) );
+    REQUIRE( test_cavp("./SHA1LongMsg.rsp", FUNC) );
   }
 
 } // namespace test_sha1
@@ -255,6 +332,9 @@ namespace test_sha224 {
     REQUIRE( test_digest<FUNC>(message_No6,
                                digest_No6) );
 #endif
+
+    REQUIRE( test_cavp("./SHA224ShortMsg.rsp", FUNC) );
+    REQUIRE( test_cavp("./SHA224LongMsg.rsp", FUNC) );
   }
 
 } // namespace test_sha224
@@ -298,6 +378,9 @@ namespace test_sha256 {
     REQUIRE( test_digest<FUNC>(message_No6,
                                digest_No6) );
 #endif
+
+    REQUIRE( test_cavp("./SHA256ShortMsg.rsp", FUNC) );
+    REQUIRE( test_cavp("./SHA256LongMsg.rsp", FUNC) );
   }
 
 } // namespace test_sha256
@@ -341,6 +424,9 @@ namespace test_sha384 {
     REQUIRE( test_digest<FUNC>(message_No6,
                                digest_No6) );
 #endif
+
+    REQUIRE( test_cavp("./SHA384ShortMsg.rsp", FUNC) );
+    REQUIRE( test_cavp("./SHA384LongMsg.rsp", FUNC) );
   }
 
 } // namespace test_sha384
@@ -384,6 +470,9 @@ namespace sha512 {
     REQUIRE( test_digest<FUNC>(message_No6,
                                digest_No6) );
 #endif
+
+    REQUIRE( test_cavp("./SHA512ShortMsg.rsp", FUNC) );
+    REQUIRE( test_cavp("./SHA512LongMsg.rsp", FUNC) );
   }
 
 } // namespace sha512
