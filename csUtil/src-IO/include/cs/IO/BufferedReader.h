@@ -32,14 +32,15 @@
 #pragma once
 
 #include <string_view>
-#include <vector>
 
+#include <cs/Core/Buffer.h>
 #include <cs/IO/IODevice.h>
 
 namespace cs {
 
   class CS_UTIL_EXPORT BufferedReader {
   public:
+    using byte_type = Buffer::value_type;
     using size_type = IODevice::size_type;
 
     BufferedReader(const size_type sizeBuffer = 128*1024) noexcept;
@@ -55,18 +56,24 @@ namespace cs {
   private:
     static constexpr size_type ONE = 1;
 
-    char *beginData();
-    char *endData();
+    byte_type *beginData();
+    byte_type *endData();
 
-    const char *cbeginData() const;
-    const char *cendData() const;
+    const byte_type *cbeginData() const;
+    const byte_type *cendData() const;
+
+    template<typename T>
+    const T *cbeginDataAs() const
+    {
+      return reinterpret_cast<const T*>(cbeginData());
+    }
 
     void fillBuffer(const IODevice *dev);
     void syncBuffer(const IODevice *dev);
 
-    size_type scanData(const char sep) const;
+    size_type scanData(const byte_type sep) const;
 
-    std::vector<char> _buffer{};
+    Buffer _buffer{};
     size_type _idxData{0};
     size_type _numData{0};
   };
