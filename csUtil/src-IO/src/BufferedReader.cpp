@@ -98,11 +98,7 @@ namespace cs {
 
     // (4) Advance Index /////////////////////////////////////////////////////
 
-    if( hit < _numData ) {
-      _idxData = hit + ONE;
-    } else {
-      _idxData = _numData;
-    }
+    _idxData = std::min(hit + ONE, _numData);
 
     return true;
   }
@@ -139,7 +135,7 @@ namespace cs {
   {
     // (1) Copy unconsumed data //////////////////////////////////////////////
 
-    if( _idxData >= ONE ) {
+    if( _idxData >= ONE  &&  _idxData <= _numData ) {
       std::copy(cbeginData(), cendData(), _buffer.data());
       _numData -= _idxData;
       _idxData  = 0;
