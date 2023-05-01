@@ -135,7 +135,7 @@ namespace cs {
 
   void BufferedReader::syncBuffer(const IODevice *dev)
   {
-    // (1) Copy unconsumed data //////////////////////////////////////////////
+    // (1) Copy Unconsumed Data //////////////////////////////////////////////
 
     if( _idxData >= ONE  &&  _idxData <= _numData ) {
       std::copy(cbeginData(), cendData(), _buffer.data());
@@ -143,7 +143,7 @@ namespace cs {
       _idxData  = 0;
     }
 
-    // (2) Fill buffer ///////////////////////////////////////////////////////
+    // (2) Fill Buffer ///////////////////////////////////////////////////////
 
     if( _numData < _buffer.size() ) {
       _numData += dev->read(endData(), _buffer.size() - _numData);
