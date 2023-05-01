@@ -64,6 +64,8 @@ namespace cs {
   bool BufferedReader::getLine(std::string_view *view, const IODevice *dev,
                                const char sep)
   {
+    static_assert( sizeof(byte_type) == sizeof(char) );
+
     // (0) Sanity Check //////////////////////////////////////////////////////
 
     if( view == nullptr  ||  dev == nullptr ) {
@@ -93,7 +95,7 @@ namespace cs {
     // (3) Create Data View //////////////////////////////////////////////////
 
     if( hit - _idxData >= ONE ) {
-      *view = std::string_view{cbeginData(), hit - _idxData};
+      *view = std::string_view{cbeginDataAs<char>(), hit - _idxData};
     }
 
     // (4) Advance Index /////////////////////////////////////////////////////
@@ -105,22 +107,22 @@ namespace cs {
 
   ////// private /////////////////////////////////////////////////////////////
 
-  char *BufferedReader::beginData()
+  BufferedReader::byte_type *BufferedReader::beginData()
   {
     return _buffer.data() + _idxData;
   }
 
-  char *BufferedReader::endData()
+  BufferedReader::byte_type *BufferedReader::endData()
   {
     return _buffer.data() + _numData;
   }
 
-  const char *BufferedReader::cbeginData() const
+  const BufferedReader::byte_type *BufferedReader::cbeginData() const
   {
     return _buffer.data() + _idxData;
   }
 
-  const char *BufferedReader::cendData() const
+  const BufferedReader::byte_type *BufferedReader::cendData() const
   {
     return _buffer.data() + _numData;
   }
@@ -148,7 +150,7 @@ namespace cs {
     }
   }
 
-  BufferedReader::size_type BufferedReader::scanData(const char sep) const
+  BufferedReader::size_type BufferedReader::scanData(const byte_type sep) const
   {
     return std::distance(_buffer.data(),
                          std::find(cbeginData(), cendData(), sep));
