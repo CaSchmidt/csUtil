@@ -90,6 +90,19 @@ namespace cs {
     return glyph<T>::a <= c  &&  c <= glyph<T>::z;
   }
 
+  template<typename T, bool OR_SPACE = false> requires IsCharacter<T>
+  constexpr bool isPrintable(const T& c)
+  {
+    using g = glyph<T>;
+    return (g::space < c  &&  c < g::del)  ||  (OR_SPACE  &&  c == g::space);
+  }
+
+  template<typename T> requires IsCharacter<T>
+  constexpr bool isPrintableOrSpace(const T& c)
+  {
+    return isPrintable<T,true>(c);
+  }
+
   template<typename T> requires IsCharacter<T>
   constexpr bool isSpace(const T& c)
   {
@@ -191,6 +204,22 @@ namespace cs {
   {
     return [](const T& c) -> bool {
       return isIdent(c);
+    };
+  }
+
+  template<typename T> requires IsCharacter<T>
+  constexpr auto lambda_is_printable()
+  {
+    return [](const T& c) -> bool {
+      return isPrintable(c);
+    };
+  }
+
+  template<typename T> requires IsCharacter<T>
+  constexpr auto lambda_is_printable_or_space()
+  {
+    return [](const T& c) -> bool {
+      return isPrintableOrSpace(c);
     };
   }
 
