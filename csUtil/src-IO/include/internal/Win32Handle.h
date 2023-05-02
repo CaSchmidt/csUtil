@@ -34,7 +34,9 @@
 #include <filesystem>
 #include <type_traits>
 
-#define NOMINMAX
+#ifndef NOMINMAX
+# define NOMINMAX
+#endif
 #include <Windows.h>
 
 #include "cs/Core/Constants.h"
