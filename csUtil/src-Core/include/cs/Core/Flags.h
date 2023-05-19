@@ -211,6 +211,11 @@ namespace cs {
       set(f, false);
     }
 
+    inline void toggle(const enum_type f)
+    {
+      _flags ^= f;
+    }
+
   private:
     static constexpr value_type ZERO = 0;
 
