@@ -261,7 +261,7 @@ namespace cs {
 
   template<typename T>
   requires IsCharacter<T>
-  inline void replaceAll(String<T> *str, const T& pat, const char *txt)
+  inline void replaceAll(String<T> *str, const T& pat, const T *txt)
   {
     replaceAll(str, &pat, 1, txt, MAX_SIZE_T);
   }
