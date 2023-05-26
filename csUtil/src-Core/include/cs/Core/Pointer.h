@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include <cs/Core/Constants.h>
+#include <cs/Core/Concepts.h>
 
 namespace cs {
 
@@ -42,7 +42,7 @@ namespace cs {
     inline static bool isAlignedTo(const void *ptr)
     {
       constexpr value_type MASK = sizeof(T) - 1;
-      return (to_value(ptr) & MASK) == k::ZERO;
+      return (to_value(ptr) & MASK) == ZERO;
     }
 
     template<typename T> requires IsPow2Size<T>
@@ -53,7 +53,7 @@ namespace cs {
     }
 
   private:
-    using k = konst<value_type>;
+    static constexpr value_type ZERO = 0;
 
     inline static void *to_pointer(const value_type val)
     {
