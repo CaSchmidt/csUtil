@@ -3,7 +3,6 @@ list(APPEND csText_HEADERS
   include/cs/Text/PrintFormat.h
   include/cs/Text/PrintUtil.h
   include/cs/Text/StringAlgorithm.h
-  include/cs/Text/StringRange.h
   include/cs/Text/StringUtil.h
 )
 
