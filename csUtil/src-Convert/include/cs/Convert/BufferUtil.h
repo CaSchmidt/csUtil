@@ -18,7 +18,7 @@ namespace cs {
 
   inline Buffer toBuffer(const std::string& s)
   {
-    return toBuffer(s.data(), s.length());
+    return toBuffer(s.data(), s.size());
   }
 
   inline std::string toString(const void *data, const std::size_t sizData,
