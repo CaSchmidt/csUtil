@@ -169,6 +169,6 @@ namespace cs {
   };
 
   // Ethernet, PKZIP
-  using CRC32 = cs::CRC<uint32_t,0x04C11DB7,0xFFFFFFFF,0xFFFFFFFF>;
+  using CRC32 = CRC<uint32_t,0x04C11DB7,0xFFFFFFFF,0xFFFFFFFF>;
 
 } // namespace cs

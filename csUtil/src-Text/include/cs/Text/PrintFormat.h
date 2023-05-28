@@ -67,7 +67,7 @@ namespace cs {
                        const std::size_t width, const CharT fill,
                        const FormatFlags& flags)
     {
-      const bool is_left = flags.testAny(cs::FormatFlag::Left);
+      const bool is_left = flags.testAny(FormatFlag::Left);
 
       if( !is_left ) { // right adjust -> fill left
         for(std::size_t i = lenstr; i < width; i++) {
@@ -197,7 +197,7 @@ namespace cs {
 
         // (2) (Optionally) Convert string to upper case /////////////////////
 
-        if( _flags.testAny(cs::FormatFlag::Upper) ) {
+        if( _flags.testAny(FormatFlag::Upper) ) {
           toUpper(ndata.data(), result.ptr);
         }
 
@@ -283,7 +283,7 @@ namespace cs {
     const std::size_t width = fill_digits
         ? sizeof(T)*2
         : 0;
-    return format<T,CharT>(value, 16, width, glyph<CharT>::zero, cs::FormatFlag::Upper);
+    return format<T,CharT>(value, 16, width, glyph<CharT>::zero, FormatFlag::Upper);
   }
 
   ////// User Interface - Real ///////////////////////////////////////////////

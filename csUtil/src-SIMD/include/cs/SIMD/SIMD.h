@@ -45,7 +45,7 @@ namespace cs {
     inline typename SIMD::value_type reduce(const typename SIMD::value_type *x,
                                             const typename SIMD::size_type count)
     {
-      const bool is_aligned = cs::Pointer::isAlignedTo<typename SIMD::block_type>(x);
+      const bool is_aligned = Pointer::isAlignedTo<typename SIMD::block_type>(x);
       if( is_aligned ) {
         return impl_simd::reduce<SIMD,OP<SIMD>,true>(x, count);
       }
@@ -57,8 +57,8 @@ namespace cs {
                                             const typename SIMD::value_type *b,
                                             const typename SIMD::size_type count)
     {
-      const bool is_aligned_a = cs::Pointer::isAlignedTo<typename SIMD::block_type>(a);
-      const bool is_aligned_b = cs::Pointer::isAlignedTo<typename SIMD::block_type>(b);
+      const bool is_aligned_a = Pointer::isAlignedTo<typename SIMD::block_type>(a);
+      const bool is_aligned_b = Pointer::isAlignedTo<typename SIMD::block_type>(b);
       if( is_aligned_a  &&  is_aligned_b ) {
         return impl_simd::reduce<SIMD,OP<SIMD>,true,true>(a, b, count);
       } else if( is_aligned_a ) {

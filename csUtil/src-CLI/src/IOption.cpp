@@ -82,7 +82,7 @@ namespace cs {
 
   bool IOption::isOption(const char *arg) const
   {
-    return cs::startsWith(arg, _prefix.data());
+    return startsWith(arg, _prefix.data());
   }
 
   bool IOption::parse(const char *arg)
@@ -110,8 +110,8 @@ namespace cs {
     }
 
     if( !_help.empty() ) {
-      const cs::StringList<char> lines = cs::split(_help, "\n");
-      for(const cs::String<char>& line : lines) {
+      const StringList<char> lines = split(_help, "\n");
+      for(const String<char>& line : lines) {
         println(output, "");
         print(output, "        %", line);
       }
@@ -123,7 +123,7 @@ namespace cs {
   bool IOption::isValidName(const char *s)
   {
     const auto cnt = std::count_if(s, s + strlen(s),
-                                   [](const char c) -> bool { return cs::isSpace(c); });
+                                   [](const char c) -> bool { return isSpace(c); });
     return static_cast<std::size_t>(cnt) < 1;
   }
 
