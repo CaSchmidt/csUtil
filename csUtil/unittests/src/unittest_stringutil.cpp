@@ -21,6 +21,20 @@ namespace stringutil {
   const char *STR_ABC  = "ABC";
   const char *STR_BCD  = "BCD";
 
+  const char *STR_tainted = "abc\0d";
+
+  TEST_CASE("Length of a string.", "[length]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    REQUIRE( cs::strlen(&STR_abcd[0], &STR_abcd[4]) == 4 );
+    REQUIRE( cs::strlen(STR_abcd) == 4 );
+    REQUIRE( cs::strlen(STR_abcd, 4) == 4 );
+
+    REQUIRE( cs::strlen(&STR_tainted[0], &STR_tainted[5]) == 3 );
+    REQUIRE( cs::strlen(STR_tainted) == 3 );
+    REQUIRE( cs::strlen(STR_tainted, 5) == 3 );
+  }
+
   TEST_CASE("Beautification of a string.", "[beautification]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 

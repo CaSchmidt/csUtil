@@ -26,7 +26,7 @@ namespace fileio {
     REQUIRE( file.open(filename, cs::FileOpenFlag::Write) );
 
     const char *STR_lines = "\n abc \n\n xyz \n   \n";
-    file.write(STR_lines, cs::length(STR_lines));
+    file.write(STR_lines, cs::strlen(STR_lines));
 
     file.close();
 

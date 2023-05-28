@@ -6,9 +6,9 @@
 
 #include <catch.hpp>
 
+#include <cs/Core/Range.h>
 #include <cs/IO/BufferedReader.h>
 #include <cs/IO/File.h>
-#include <cs/Text/StringRange.h>
 
 namespace bufferedreader {
 
@@ -31,7 +31,7 @@ namespace bufferedreader {
     {
       cs::File output;
       REQUIRE( output.open(filename, cs::FileOpenFlag::Write) );
-      output.write(test_data, cs::length(test_data));
+      output.write(test_data, cs::strlen(test_data));
     }
 
     // (2) Bufferd Input /////////////////////////////////////////////////////

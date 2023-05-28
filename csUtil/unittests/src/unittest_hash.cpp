@@ -78,7 +78,7 @@ namespace test_util {
       if(        cs::startsWith(line, prefix_Len) ) {
         length = cs::MAX_SIZE_T;
 
-        const std::string value = line.substr(cs::length(prefix_Len));
+        const std::string value = line.substr(cs::strlen(prefix_Len));
 
         const std::from_chars_result result =
             std::from_chars(value.data(), value.data() + value.size(), length);
@@ -91,7 +91,7 @@ namespace test_util {
         cntMessages++;
 
       } else if( cs::startsWith(line, prefix_Msg) ) {
-        message = cs::toBuffer(line.substr(cs::length(prefix_Msg)));
+        message = cs::toBuffer(line.substr(cs::strlen(prefix_Msg)));
         if( length != 0  &&  message.size() != length ) {
           length = cs::MAX_SIZE_T;
           continue;
@@ -102,7 +102,7 @@ namespace test_util {
           continue;
         }
 
-        const cs::Buffer ref = cs::toBuffer(line.substr(cs::length(prefix_MD)));
+        const cs::Buffer ref = cs::toBuffer(line.substr(cs::strlen(prefix_MD)));
         if( ref.size() != sizeOfHash(func) ) {
           length = cs::MAX_SIZE_T;
           continue;
