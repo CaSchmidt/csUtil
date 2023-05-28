@@ -31,8 +31,6 @@
 
 #pragma once
 
-#include <algorithm>
-
 #include <cs/Core/Range.h>
 
 namespace cs {
@@ -45,18 +43,16 @@ namespace cs {
                        const T *pat, const std::size_t lenpat,
                        const bool ignoreCase = false)
   {
-    constexpr std::size_t ONE = 1;
-
     const std::size_t maxstr = strlen(str, lenstr);
     const std::size_t maxpat = strlen(pat, lenpat);
 
-    if( maxstr < ONE  ||  maxpat < ONE  ||  maxstr < maxpat ) {
-      return false;
+    if( maxstr > 0  &&  maxpat > 0  &&  maxstr >= maxpat ) {
+      return ignoreCase
+          ? std::equal(str + maxstr - maxpat, str + maxstr, pat, lambda_eqI<T>())
+          : std::equal(str + maxstr - maxpat, str + maxstr, pat);
     }
 
-    return ignoreCase
-        ? std::equal(str + maxstr - maxpat, str + maxstr, pat, lambda_eqI<T>())
-        : std::equal(str + maxstr - maxpat, str + maxstr, pat);
+    return false;
   }
 
   template<typename T>
@@ -73,17 +69,15 @@ namespace cs {
   inline bool equalsN(const T *a, const T *b, const std::size_t len,
                       const bool ignoreCase = false)
   {
-    constexpr std::size_t ONE = 1;
-
     const std::size_t max = std::min(strlen(a, len), strlen(b, len));
 
-    if( max < ONE ) {
-      return false;
+    if( max > 0 ) {
+      return ignoreCase
+          ? std::equal(a, a + max, b, lambda_eqI<T>())
+          : std::equal(a, a + max, b);
     }
 
-    return ignoreCase
-        ? std::equal(a, a + max, b, lambda_eqI<T>())
-        : std::equal(a, a + max, b);
+    return false;
   }
 
   template<typename T>
@@ -101,18 +95,16 @@ namespace cs {
                      const T *b, const std::size_t lenb,
                      const bool ignoreCase = false)
   {
-    constexpr std::size_t ONE = 1;
-
     const std::size_t maxa = strlen(a, lena);
     const std::size_t maxb = strlen(b, lenb);
 
-    if( maxa < ONE  ||  maxb < ONE  ||  maxa != maxb ) {
-      return false;
+    if( maxa > 0  &&  maxb > 0  &&  maxa == maxb ) {
+      return ignoreCase
+          ? std::equal(a, a + maxa, b, lambda_eqI<T>())
+          : std::equal(a, a + maxa, b);
     }
 
-    return ignoreCase
-        ? std::equal(a, a + maxa, b, lambda_eqI<T>())
-        : std::equal(a, a + maxa, b);
+    return false;
   }
 
   template<typename T>
@@ -598,18 +590,16 @@ namespace cs {
                          const T *pat, const std::size_t lenpat, // needle
                          const bool ignoreCase = false)
   {
-    constexpr std::size_t ONE = 1;
-
     const std::size_t maxstr = strlen(str, lenstr);
     const std::size_t maxpat = strlen(pat, lenpat);
 
-    if( maxstr < ONE  ||  maxpat < ONE  ||  maxstr < maxpat ) {
-      return false;
+    if( maxstr > 0  &&  maxpat > 0  &&  maxstr >= maxpat ) {
+      return ignoreCase
+          ? std::equal(str, str + maxpat, pat, lambda_eqI<T>())
+          : std::equal(str, str + maxpat, pat);
     }
 
-    return ignoreCase
-        ? std::equal(str, str + maxpat, pat, lambda_eqI<T>())
-        : std::equal(str, str + maxpat, pat);
+    return false;
   }
 
   template<typename T>

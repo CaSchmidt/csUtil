@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <iterator>
 
 #include <cs/Core/CharUtil.h>
