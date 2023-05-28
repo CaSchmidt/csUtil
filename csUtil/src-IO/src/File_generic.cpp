@@ -29,15 +29,15 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include "cs/Core/Constants.h"
 #include "cs/Core/Container.h"
+#include "cs/Core/TypeTraits.h"
 #include "cs/IO/File.h"
 
 namespace cs {
 
   Buffer File::readAll() const
   {
-    constexpr size_type MAX_SIZE = konst<Buffer::size_type>::MAX;
+    constexpr size_type MAX_SIZE = std::numeric_limits<Buffer::size_type>::max();
     constexpr size_type      ONE = 1;
 
     const size_type numToRead = size();
