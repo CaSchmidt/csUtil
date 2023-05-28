@@ -67,9 +67,9 @@ namespace cs {
 
   template<typename T>
   requires IsCharacter<T>
-  inline std::size_t lengthRange(const String<T>& str)
+  inline std::size_t strlen(const String<T>& str)
   {
-    return lengthRange(str.data(), str.size());
+    return strlen(str.data(), str.size());
   }
 
   ////// String ends with pattern... /////////////////////////////////////////
@@ -123,7 +123,7 @@ namespace cs {
   template<typename T> requires IsCharacter<T>
   inline bool isHexString(const String<T>& str)
   {
-    return isHexString(str.data(), str.length());
+    return isHexString(str.data(), str.size());
   }
 
   ////// String is C-style identifier... /////////////////////////////////////
@@ -168,7 +168,7 @@ namespace cs {
                         const T *pat, const std::size_t lenpat = MAX_SIZE_T)
   {
     removeAll(str->data(), str->size(), pat, lenpat);
-    str->resize(lengthRange(*str));
+    str->resize(strlen(*str));
   }
 
   template<typename T>
@@ -185,7 +185,7 @@ namespace cs {
   inline void removeAll(String<T> *str, const T& pat)
   {
     removeAll(str->data(), str->size(), pat);
-    str->resize(lengthRange(*str));
+    str->resize(strlen(*str));
   }
 
   ////// Remove character matching predicate from string... //////////////////
@@ -195,7 +195,7 @@ namespace cs {
   inline void removeAll(String<T> *str, PredFunc func)
   {
     removeAll<T,PredFunc>(str->data(), str->size(), func);
-    str->resize(lengthRange(*str));
+    str->resize(strlen(*str));
   }
 
   ////// Remove Trailing Zeros from Fixed-Notation Floating-Point String /////
@@ -205,10 +205,27 @@ namespace cs {
   inline void removeTrailingZeros(String<T> *str, const bool removeDot = true)
   {
     removeTrailingZeros(str->data(), str->size(), removeDot);
-    str->resize(lengthRange(*str));
+    str->resize(strlen(*str));
   }
 
   ////// Replace pattern in string... ////////////////////////////////////////
+
+  namespace impl_string {
+
+    template<typename T>
+    requires IsCharacter<T>
+    inline void replaceAll(String<T> *str,
+                           const T *pat, const std::size_t maxpat,
+                           const T *txt, const std::size_t maxtxt)
+    {
+      for(std::size_t pos = 0;
+          (pos = str->find(pat, pos, maxpat)) != NPOS<T>;
+          pos += maxtxt) {
+        str->replace(pos, maxpat, txt, maxtxt);
+      }
+    }
+
+  } // namespace impl_string
 
   template<typename T>
   requires IsCharacter<T>
@@ -216,18 +233,10 @@ namespace cs {
                          const T *pat, const std::size_t lenpat,
                          const T *txt, const std::size_t lentxt = MAX_SIZE_T)
   {
-    const std::size_t maxpat = length(pat, lenpat);
-    const std::size_t maxtxt = length(txt, lentxt);
-
-    if( str->size() < 1  ||  !isValid(pat, maxpat)  ||  !isValid(txt, maxtxt)  ||
-        str->size() < maxpat ) {
-      return;
-    }
-
-    for(std::size_t pos = 0;
-        (pos = str->find(pat, pos, maxpat)) != NPOS<T>;
-        pos += maxtxt) {
-      str->replace(pos, maxpat, txt, maxtxt);
+    const std::size_t maxpat = strlen(pat, lenpat);
+    const std::size_t maxtxt = strlen(txt, lentxt);
+    if( str->size() > 0  &&  maxpat > 0  &&  maxtxt > 0  &&  str->size() >= maxpat ) {
+      impl_string::replaceAll(str, pat, maxpat, txt, maxtxt);
     }
   }
 
@@ -297,7 +306,7 @@ namespace cs {
   requires IsCharacter<T>
   inline void shrink(String<T> *str)
   {
-    str->resize(lengthRange(*str));
+    str->resize(strlen(*str));
     str->shrink_to_fit();
   }
 
@@ -308,7 +317,7 @@ namespace cs {
   inline void trim(String<T> *str)
   {
     trim(str->data(), str->size());
-    str->resize(lengthRange(*str));
+    str->resize(strlen(*str));
   }
 
   template<typename T>
@@ -326,7 +335,7 @@ namespace cs {
   inline void simplify(String<T> *str)
   {
     simplify(str->data(), str->size());
-    str->resize(lengthRange(*str));
+    str->resize(strlen(*str));
   }
 
   template<typename T>
@@ -357,10 +366,29 @@ namespace cs {
       }
 
       if( doTrim ) {
-        trim(&part);
+        ::cs::trim(&part);
       }
 
       result->push_back(std::move(part));
+    }
+
+    template<typename T>
+    requires IsCharacter<T>
+    inline StringList<T> split(const T *first, const T *last,
+                               const T *pat, const std::size_t maxpat,
+                               const bool skipEmpty, const bool doTrim)
+    {
+      StringList<T> result;
+
+      const T *from = first;
+      for(const T *hit = nullptr;
+          (hit = std::search(from, last, pat, pat + maxpat)) != last;
+          from = hit + maxpat) {
+        extract(&result, from, hit, skipEmpty, doTrim);
+      }
+      extract(&result, from, last, skipEmpty, doTrim);
+
+      return result;
     }
 
   } // namespace impl_string
@@ -371,24 +399,11 @@ namespace cs {
                              const T *pat, const std::size_t lenpat = MAX_SIZE_T,
                              const bool skipEmpty = false, const bool doTrim = false)
   {
-    const std::size_t maxpat = length(pat, lenpat);
-
-    if( !isValid(first, last)  ||  !isValid(pat, maxpat)  ||
-        distance(first, last) < maxpat ) {
-      return StringList<T>{};
-    }
-
-    StringList<T> result;
-
-    const T *from = first;
-    for(const T *hit = nullptr;
-        (hit = std::search(from, last, pat, pat + maxpat)) != last;
-        from = hit + maxpat) {
-      impl_string::extract(&result, from, hit, skipEmpty, doTrim);
-    }
-    impl_string::extract(&result, from, last, skipEmpty, doTrim);
-
-    return result;
+    const std::size_t maxstr = strlen(first, last);
+    const std::size_t maxpat = strlen(pat, lenpat);
+    return maxstr > 0  &&  maxpat > 0  &&  maxstr >= maxpat
+        ? impl_string::split(first, last, pat, maxpat, skipEmpty, doTrim)
+        : StringList<T>{};
   }
 
   template<typename T>
@@ -397,8 +412,11 @@ namespace cs {
                              const T *pat, const std::size_t lenpat,
                              const bool skipEmpty = false, const bool doTrim = false)
   {
-    const std::size_t maxstr = length(str, lenstr);
-    return split(str, str + maxstr, pat, lenpat, skipEmpty, doTrim);
+    const std::size_t maxstr = strlen(str, lenstr);
+    const std::size_t maxpat = strlen(pat, lenpat);
+    return maxstr > 0  &&  maxpat > 0  &&  maxstr >= maxpat
+        ? impl_string::split(str, str + maxstr, pat, maxpat, skipEmpty, doTrim)
+        : StringList<T>{};
   }
 
   template<typename T>
@@ -421,27 +439,38 @@ namespace cs {
 
   ////// Split string at character... ////////////////////////////////////////
 
+  namespace impl_string {
+
+    template<typename T>
+    requires IsCharacter<T>
+    inline StringList<T> split(const T *first, const T *last,
+                               const T& pat,
+                               const bool skipEmpty, const bool doTrim)
+    {
+      StringList<T> result;
+
+      const T *from = first;
+      for(const T *hit = nullptr;
+          (hit = std::find(from, last, pat)) != last;
+          from = hit + 1) {
+        extract(&result, from, hit, skipEmpty, doTrim);
+      }
+      extract(&result, from, last, skipEmpty, doTrim);
+
+      return result;
+    }
+
+  } // namespace impl_string
+
   template<typename T>
   requires IsCharacter<T>
   inline StringList<T> split(const T *first, const T *last,
                              const T& pat,
                              const bool skipEmpty = false, const bool doTrim = false)
   {
-    if( !isValid(first, last) ) {
-      return StringList<T>{};
-    }
-
-    StringList<T> result;
-
-    const T *from = first;
-    for(const T *hit = nullptr;
-        (hit = std::find(from, last, pat)) != last;
-        from = hit + 1) {
-      impl_string::extract(&result, from, hit, skipEmpty, doTrim);
-    }
-    impl_string::extract(&result, from, last, skipEmpty, doTrim);
-
-    return result;
+    return Pointer::isValidRange(first, last)
+        ? impl_string::split(first, last, pat, skipEmpty, doTrim)
+        : StringList<T>{};
   }
 
   template<typename T>
@@ -450,8 +479,10 @@ namespace cs {
                              const T& pat,
                              const bool skipEmpty = false, const bool doTrim = false)
   {
-    const std::size_t max = length(str, len);
-    return split(str, str + max, pat, skipEmpty, doTrim);
+    const std::size_t max = strlen(str, len);
+    return max > 0
+        ? impl_string::split(str, str + max, pat, skipEmpty, doTrim)
+        : StringList<T>{};
   }
 
   template<typename T>

@@ -34,7 +34,7 @@
 #include <ostream>
 #include <utility>
 
-#include <cs/Text/StringRange.h>
+#include <cs/Core/Range.h>
 
 namespace cs {
 
@@ -44,7 +44,7 @@ namespace cs {
     requires IsCharacter<CharT>
     void print(std::basic_ostream<CharT> *stream, const CharT *first, const CharT *last)
     {
-      if( !isValid(first, last) ) {
+      if( !Pointer::isValidRange(first, last) ) {
         return;
       }
       stream->write(first, distance(first, last));
@@ -74,7 +74,7 @@ namespace cs {
   requires IsCharacter<CharT>
   void print(std::basic_ostream<CharT> *stream, const CharT *fmt, Args&&... args)
   {
-    impl_print::print(stream, fmt, fmt + length(fmt), std::forward<Args>(args)...);
+    impl_print::print(stream, fmt, fmt + strlen(fmt), std::forward<Args>(args)...);
   }
 
   template<typename CharT, typename ...Args>
