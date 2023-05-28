@@ -31,9 +31,11 @@
 
 #pragma once
 
+#include <algorithm>
+
 #include <cs/Core/Bit.h>
 #include <cs/Core/Endian.h>
-#include <cs/Core/Range.h>
+#include <cs/Core/Pointer.h>
 
 namespace cs {
 
@@ -41,7 +43,7 @@ namespace cs {
   inline T toIntegralFromBE(const void *data, const std::size_t sizData,
                             const bool sign_extend = false)
   {
-    if( !isValid(data, sizData) ) {
+    if( !Pointer::isValidRange(data, sizData) ) {
       return T{0};
     }
     const byte_t *src = reinterpret_cast<const byte_t*>(data);
@@ -71,7 +73,7 @@ namespace cs {
   inline T toIntegralFromLE(const void *data, const std::size_t sizData,
                             const bool sign_extend = false)
   {
-    if( !isValid(data, sizData) ) {
+    if( !Pointer::isValidRange(data, sizData) ) {
       return T{0};
     }
     const byte_t *src = reinterpret_cast<const byte_t*>(data);

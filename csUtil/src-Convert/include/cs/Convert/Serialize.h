@@ -31,9 +31,11 @@
 
 #pragma once
 
+#include <algorithm>
+
 #include <cs/Core/Bit.h>
 #include <cs/Core/Endian.h>
-#include <cs/Core/Range.h>
+#include <cs/Core/Pointer.h>
 
 namespace cs {
 
@@ -43,7 +45,7 @@ namespace cs {
   {
     constexpr T MASK = makeBitMask<T>(sizeof(byte_t)*8);
 
-    if( !isValid(data, sizData) ) {
+    if( !Pointer::isValidRange(data, sizData) ) {
       return;
     }
     byte_t *dest = reinterpret_cast<byte_t*>(data);
@@ -66,7 +68,7 @@ namespace cs {
   {
     constexpr T MASK = makeBitMask<T>(sizeof(byte_t)*8);
 
-    if( !isValid(data, sizData) ) {
+    if( !Pointer::isValidRange(data, sizData) ) {
       return;
     }
     byte_t *dest = reinterpret_cast<byte_t*>(data);

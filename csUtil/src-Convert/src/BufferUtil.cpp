@@ -34,6 +34,7 @@
 #include "cs/Core/CharUtil.h"
 #include "cs/Core/Constants.h"
 #include "cs/Core/Container.h"
+#include "cs/Core/Pointer.h"
 #include "cs/Text/StringAlgorithm.h"
 
 namespace cs {
@@ -91,7 +92,7 @@ namespace cs {
   {
     using k = konst<std::size_t>;
 
-    if( !isValid(data, sizData) ) {
+    if( !Pointer::isValidRange(data, sizData) ) {
       return std::string{};
     }
 
