@@ -68,6 +68,11 @@ namespace cs {
   template<typename T>
   concept IsWideCharacter = is_widechar_v<T>;
 
+  // Pointer Types ///////////////////////////////////////////////////////////
+
+  template<typename T>
+  concept IsPointer = std::is_pointer_v<T>;
+
   // Generic Types ///////////////////////////////////////////////////////////
 
   template<typename T>

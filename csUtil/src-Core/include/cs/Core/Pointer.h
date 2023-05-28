@@ -38,6 +38,12 @@ namespace cs {
   struct Pointer {
     using value_type = typename IntegralOfSize<sizeof(void*)>::unsigned_type;
 
+    template<typename T> requires IsPointer<T>
+    inline static T top()
+    {
+      return reinterpret_cast<T>(TOP);
+    }
+
     template<typename T> requires IsPow2Size<T>
     inline static bool isAlignedTo(const void *ptr)
     {
@@ -52,12 +58,49 @@ namespace cs {
       return to_pointer((to_value(ptr) + MASK) & ~MASK);
     }
 
+    /*
+     * NOTE:
+     *
+     * The purpose of the functions below is to check the validity of
+     * range-based operations on fundamental types, usually applying
+     * the standard algorithms.
+     *
+     * Checking the validity of a range of pointers can get tricky!
+     *
+     * 1. Arithmetic operations on pointers may overflow.
+     *
+     * 2. Validity may depend on the operating system's memory model;
+     *    e.g. "Canonical Form Addresses":
+     *    https://en.wikipedia.org/wiki/X86-64#Canonical_form_addresses
+     *
+     * The functions below validate the range [first, last) or
+     * [ptr, ptr + siz), effectively excluding TOP.
+     */
+
+    inline static bool isValidRange(const void *first, const void *last)
+    {
+      return first != nullptr  &&  to_value(first) < to_value(last);
+    }
+
+    inline static bool isValidRange(const void *ptr, const std::size_t siz)
+    {
+      return ptr != nullptr  &&  siz > 0  &&  TOP - to_value(ptr) >= to_value(siz);
+    }
+
   private:
+    static constexpr value_type  TOP = std::numeric_limits<value_type>::max();
     static constexpr value_type ZERO = 0;
 
     inline static void *to_pointer(const value_type val)
     {
       return reinterpret_cast<void*>(val);
+    }
+
+    inline static value_type to_value(const std::size_t siz)
+    {
+      static_assert( sizeof(value_type) >= sizeof(std::size_t) );
+
+      return static_cast<value_type>(siz);
     }
 
     inline static value_type to_value(const void *ptr)
