@@ -31,7 +31,7 @@
 
 #include "cs/CLI/StringOption.h"
 
-#include "cs/Text/StringRange.h"
+#include "cs/Core/Range.h"
 
 namespace cs {
 
@@ -66,7 +66,7 @@ namespace cs {
 
   bool StringOption::impl_parse(const char *value)
   {
-    if( length(value) < 1 ) {
+    if( strlen(value) < 1 ) {
       return false;
     }
     _value = value;

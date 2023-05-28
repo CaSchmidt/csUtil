@@ -36,7 +36,7 @@
 #include <functional>
 
 #include <cs/CLI/IOption.h>
-#include <cs/Text/StringRange.h>
+#include <cs/Core/Range.h>
 
 namespace cs {
 
@@ -102,7 +102,7 @@ namespace cs {
 
     bool impl_parse(const char *value) final
     {
-      const std::size_t length0 = length(value);
+      const std::size_t length0 = strlen(value);
       if( length0 < 1 ) {
         return false;
       }
@@ -123,7 +123,7 @@ namespace cs {
       }
 
       const char *first = value;
-      const char  *last = first + length(first);
+      const char  *last = first + strlen(first);
       const std::from_chars_result result = std::from_chars(first, last, _value, base);
       const bool is_ok = result.ec == std::errc{}  &&  result.ptr == last;
 

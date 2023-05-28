@@ -122,7 +122,7 @@ namespace cs {
 
   bool IOption::isValidName(const char *s)
   {
-    const auto cnt = std::count_if(s, s + cs::length(s),
+    const auto cnt = std::count_if(s, s + strlen(s),
                                    [](const char c) -> bool { return cs::isSpace(c); });
     return static_cast<std::size_t>(cnt) < 1;
   }

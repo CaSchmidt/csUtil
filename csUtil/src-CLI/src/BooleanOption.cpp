@@ -31,7 +31,7 @@
 
 #include "cs/CLI/BooleanOption.h"
 
-#include "cs/Text/StringRange.h"
+#include "cs/Core/Range.h"
 
 namespace cs {
 
@@ -61,7 +61,7 @@ namespace cs {
 
   bool BooleanOption::impl_parse(const char *value)
   {
-    if( length(value) > 0 ) {
+    if( strlen(value) > 0 ) {
       return false;
     }
     _value = true;
