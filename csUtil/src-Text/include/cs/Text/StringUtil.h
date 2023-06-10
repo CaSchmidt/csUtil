@@ -72,6 +72,42 @@ namespace cs {
     return strlen(str.data(), str.size());
   }
 
+  ////// String contains character... ////////////////////////////////////////
+
+  template<typename T>
+  requires IsCharacter<T>
+  inline bool contains(const String<T>& str, const T& pat)
+  {
+    return contains(str.data(), str.size(), pat);
+  }
+
+  ////// String contains predicate... ////////////////////////////////////////
+
+  template<typename T, typename PredFunc>
+  requires IsCharacter<T>
+  inline bool contains(const String<T>& str, PredFunc func)
+  {
+    return contains<T,PredFunc>(str.data(), str.size(), func);
+  }
+
+  ////// String contains pattern... //////////////////////////////////////////
+
+  template<typename T>
+  requires IsCharacter<T>
+  inline bool contains(const String<T>& str, const String<T>& pat,
+                       const bool ignoreCase = false)
+  {
+    return contains(str.data(), str.size(), pat.data(), pat.size(), ignoreCase);
+  }
+
+  template<typename T>
+  requires IsCharacter<T>
+  inline bool contains(const String<T>& str, const T *pat,
+                       const bool ignoreCase = false)
+  {
+    return contains(str.data(), str.size(), pat, MAX_SIZE_T, ignoreCase);
+  }
+
   ////// String ends with pattern... /////////////////////////////////////////
 
   template<typename T>

@@ -35,6 +35,137 @@
 
 namespace cs {
 
+  ////// String contains character... ////////////////////////////////////////
+
+  namespace impl_string {
+
+    template<typename T>
+    requires IsCharacter<T>
+    inline bool contains(const T *first, const T *last, const T& pat)
+    {
+      return std::find(first, last, pat) != last;
+    }
+
+  } // namespace impl_string
+
+  template<typename T>
+  requires IsCharacter<T>
+  inline bool contains(const T *first, const T *last, const T& pat)
+  {
+    return Pointer::isValidRange(first, last)
+        ? impl_string::contains(first, last, pat)
+        : false;
+  }
+
+  template<typename T>
+  requires IsCharacter<T>
+  inline bool contains(const T *str, const std::size_t len, const T& pat)
+  {
+    const std::size_t max = strlen(str, len);
+    return max > 0
+        ? impl_string::contains(str, str + max, pat)
+        : false;
+  }
+
+  template<typename T>
+  requires IsCharacter<T>
+  inline bool contains(const T *str, const T& pat)
+  {
+    return contains(str, MAX_SIZE_T, pat);
+  }
+
+  ////// String contains predicate... ////////////////////////////////////////
+
+  namespace impl_string {
+
+    template<typename T, typename PredFunc>
+    requires IsCharacter<T>
+    inline bool contains(const T *first, const T *last, PredFunc func)
+    {
+      return std::find_if(first, last, func) != last;
+    }
+
+  } // namespace impl_string
+
+  template<typename T, typename PredFunc>
+  requires IsCharacter<T>
+  inline bool contains(const T *first, const T *last, PredFunc func)
+  {
+    return Pointer::isValidRange(first, last)
+        ? impl_string::contains<T,PredFunc>(first, last, func)
+        : false;
+  }
+
+  template<typename T, typename PredFunc>
+  requires IsCharacter<T>
+  inline bool contains(const T *str, const std::size_t len, PredFunc func)
+  {
+    const std::size_t max = strlen(str, len);
+    return max > 0
+        ? impl_string::contains<T,PredFunc>(str, str + max, func)
+        : false;
+  }
+
+  template<typename T, typename PredFunc>
+  requires IsCharacter<T>
+  inline bool contains(const T *str, PredFunc func)
+  {
+    return contains<T,PredFunc>(str, MAX_SIZE_T, func);
+  }
+
+  ////// String contains pattern... //////////////////////////////////////////
+
+  namespace impl_string {
+
+    template<typename T>
+    requires IsCharacter<T>
+    inline bool contains(const T *strfirst, const T *strlast,
+                         const T *patfirst, const T *patlast,
+                         const bool ignoreCase)
+    {
+      const T *hit = ignoreCase
+          ? std::search(strfirst, strlast, patfirst, patlast, lambda_eqI<T>())
+          : std::search(strfirst, strlast, patfirst, patlast);
+      return hit != strlast;
+    }
+
+  } // namespace impl_string
+
+  template<typename T>
+  requires IsCharacter<T>
+  inline bool contains(const T *strfirst, const T *strlast,
+                       const T *patfirst, const T *patlast,
+                       const bool ignoreCase = false)
+  {
+    const bool str_valid = Pointer::isValidRange(strfirst, strlast);
+    const bool pat_valid = Pointer::isValidRange(patfirst, patlast);
+    return str_valid  &&  pat_valid
+        ? impl_string::contains(strfirst, strlast, patfirst, patlast, ignoreCase)
+        : false;
+  }
+
+  template<typename T>
+  requires IsCharacter<T>
+  inline bool contains(const T *str, const std::size_t lenstr,
+                       const T *pat, const std::size_t lenpat,
+                       const bool ignoreCase = false)
+  {
+    const std::size_t maxstr = strlen(str, lenstr);
+    const std::size_t maxpat = strlen(pat, lenpat);
+    return maxstr > 0  &&  maxpat
+        ? impl_string::contains(str, str + maxstr, pat, pat + maxpat, ignoreCase)
+        : false;
+  }
+
+  template<typename T>
+  requires IsCharacter<T>
+  inline bool contains(const T *str,
+                       const T *pat,
+                       const bool ignoreCase = false)
+  {
+    return contains(str, MAX_SIZE_T, pat, MAX_SIZE_T, ignoreCase);
+  }
+
   ////// String ends with pattern... /////////////////////////////////////////
 
   template<typename T>

@@ -78,6 +78,18 @@ namespace stringutil {
     REQUIRE( !cs::isSpace(" \f\n\r\t\v-") );
   }
 
+  TEST_CASE("String contains pattern.", "[contains]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    REQUIRE(  cs::contains(STR_abcd, 'a') );
+    REQUIRE( !cs::contains(STR_abcd, 'A') );
+    REQUIRE(  cs::contains("Hello, World!", cs::lambda_is_space<char>()) );
+    REQUIRE( !cs::contains(STR_abcd, cs::lambda_is_space<char>()) );
+    REQUIRE(  cs::contains(STR_ABCD, "BC") );
+    REQUIRE( !cs::contains(STR_ABCD, "bc") );
+    REQUIRE(  cs::contains(STR_ABCD, "bc", true) );
+  }
+
   TEST_CASE("String ends with pattern.", "[ends]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
