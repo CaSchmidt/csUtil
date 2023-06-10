@@ -7,8 +7,8 @@
 #include <catch.hpp>
 
 #include <cs/IO/File.h>
-#include <cs/IO/FileIO.h>
 #include <cs/Text/StringUtil.h>
+#include <cs/Text/TextIO.h>
 
 namespace fileio {
 

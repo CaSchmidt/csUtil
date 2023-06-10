@@ -1,7 +1,7 @@
 #include <iostream>
 #include <unordered_set>
 
-#include <cs/IO/FileIO.h>
+#include <cs/Text/TextIO.h>
 #include <cs/Trie/Trie.h>
 
 #include "internal/TrieNode.h"

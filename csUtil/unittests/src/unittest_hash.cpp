@@ -8,8 +8,8 @@
 #include <cs/Core/ByteArray.h>
 #include <cs/Core/Container.h>
 #include <cs/Crypto/Hash.h>
-#include <cs/IO/FileIO.h>
 #include <cs/Text/StringUtil.h>
+#include <cs/Text/TextIO.h>
 
 #undef HAVE_MESSAGE_XL
 

@@ -2,7 +2,7 @@
 #include <cstdlib>
 
 #include <cs/Core/TypeTraits.h>
-#include <cs/IO/FileIO.h>
+#include <cs/Text/TextIO.h>
 
 using StringList = std::list<std::string>;
 

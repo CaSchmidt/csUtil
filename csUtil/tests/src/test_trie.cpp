@@ -5,7 +5,7 @@
 #include <set>
 
 #include <cs/Core/TypeTraits.h>
-#include <cs/IO/FileIO.h>
+#include <cs/Text/TextIO.h>
 #include <cs/Trie/FlatTrie.h>
 #include <cs/Trie/Trie.h>
 
