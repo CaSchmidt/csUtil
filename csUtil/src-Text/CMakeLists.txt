@@ -4,9 +4,11 @@ list(APPEND csText_HEADERS
   include/cs/Text/PrintUtil.h
   include/cs/Text/StringAlgorithm.h
   include/cs/Text/StringUtil.h
+  include/cs/Text/TextIO.h
 )
 
 list(APPEND csText_SOURCES
+  src/TextIO.cpp
   src/main_text.cpp
 )
 

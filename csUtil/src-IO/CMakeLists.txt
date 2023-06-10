@@ -1,7 +1,6 @@
 list(APPEND csIO_HEADERS
   include/cs/IO/BufferedReader.h
   include/cs/IO/File.h
-  include/cs/IO/FileIO.h
   include/cs/IO/IODevice.h
   include/cs/IO/Serial.h
   )
@@ -9,7 +8,6 @@ list(APPEND csIO_HEADERS
 list(APPEND csIO_SOURCES
   src/BufferedReader.cpp
   src/File_generic.cpp
-  src/FileIO.cpp
   src/IODevice.cpp
   src/main_io.cpp
   )

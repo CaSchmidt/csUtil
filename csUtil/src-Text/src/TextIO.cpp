@@ -29,7 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include "cs/IO/FileIO.h"
+#include "cs/Text/TextIO.h"
 
 #include "cs/Text/StringUtil.h"
 #include "cs/IO/File.h"
@@ -42,16 +42,16 @@ namespace cs {
                                                   const bool skipBlank,
                                                   const bool doTrim)
   {
-    constexpr auto lambda_is_blank = [](const String<char>& str) -> bool {
+    constexpr auto lambda_is_blank = [](const std::string& str) -> bool {
       return str.empty()  ||  isSpace(str);
     };
 
     const std::string text = readTextFile(path);
     if( text.empty() ) {
-      return StringList<char>();
+      return std::list<std::string>{};
     }
 
-    StringList<char> lines = split(text, '\n', false, doTrim);
+    std::list<std::string> lines = split(text, '\n', false, doTrim);
     if( skipBlank ) {
       lines.remove_if(lambda_is_blank);
     }
@@ -67,16 +67,16 @@ namespace cs {
 
     File file;
     if( !file.open(path) ) {
-      return String<char>();
+      return std::string{};
     }
     const Buffer buffer = file.readAll();
     file.close();
 
     if( buffer.empty() ) {
-      return String<char>();
+      return std::string{};
     }
 
-    const String<char> text(reinterpret_cast<const char*>(buffer.data()), buffer.size());
+    const std::string text(reinterpret_cast<const char*>(buffer.data()), buffer.size());
 
     if( ok != nullptr ) {
       *ok = true;
