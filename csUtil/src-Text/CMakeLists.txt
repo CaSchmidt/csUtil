@@ -8,8 +8,8 @@ list(APPEND csText_HEADERS
 )
 
 list(APPEND csText_SOURCES
-  src/TextIO.cpp
   src/main_text.cpp
+  src/TextIO.cpp
 )
 
 ### csUtil ###################################################################
