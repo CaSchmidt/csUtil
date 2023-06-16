@@ -103,6 +103,8 @@ namespace cs {
           impl_fs::append(&result, entry.path(), flags);
         }
       } // For Each Entry
+
+      result.sort();
     } catch(...) {
       result.clear();
     }
