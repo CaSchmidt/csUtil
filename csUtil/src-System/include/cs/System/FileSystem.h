@@ -60,6 +60,10 @@ namespace cs {
 
   using PathList = std::list<std::filesystem::path>;
 
+  using ConstPathListIter = PathList::const_iterator;
+
+  using PathListIter = PathList::iterator;
+
   CS_UTIL_EXPORT PathList filter(const PathList& list, const PathListFlags flags);
 
   CS_UTIL_EXPORT bool isDirectory(const std::filesystem::path& p);
