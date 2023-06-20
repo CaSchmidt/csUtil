@@ -21,6 +21,11 @@ namespace cs {
     return toBuffer(s.data(), s.size());
   }
 
+  inline Buffer toBuffer(const std::string_view& view)
+  {
+    return toBuffer(view.data(), view.size());
+  }
+
   inline std::string toString(const void *data, const std::size_t sizData,
                               const bool is_upper)
   {
