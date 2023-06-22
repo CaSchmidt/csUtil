@@ -58,6 +58,9 @@ namespace cs {
   template<typename T> requires IsCharacter<T>
   using ConstStringListIter = typename StringList<T>::const_iterator;
 
+  template<typename T> requires IsCharacter<T>
+  using StringView = std::basic_string_view<T>;
+
   ////// Constants ///////////////////////////////////////////////////////////
 
   template<typename T> requires IsCharacter<T>
@@ -364,6 +367,13 @@ namespace cs {
     return str;
   }
 
+  template<typename T>
+  requires IsCharacter<T>
+  inline String<T> trimmed(const StringView<T>& view)
+  {
+    return trimmed(String<T>{view.data(), view.size()});
+  }
+
   ////// Replace consecutive whitespace with single space... /////////////////
 
   template<typename T>
@@ -380,6 +390,13 @@ namespace cs {
   {
     simplify(&str);
     return str;
+  }
+
+  template<typename T>
+  requires IsCharacter<T>
+  inline String<T> simplified(const StringView<T>& view)
+  {
+    return simplified(String<T>{view.data(), view.size()});
   }
 
   ////// Split string at pattern... //////////////////////////////////////////
