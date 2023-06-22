@@ -77,7 +77,7 @@ namespace cs {
     requires IsCharacter<T>
     inline std::size_t strlen(const T *first, const T *last)
     {
-      return distance(first, std::find(first, last, glyph<T>::null));
+      return distance(first, std::ranges::find(first, last, glyph<T>::null));
     }
 
   } // namespace impl_range
