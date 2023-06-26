@@ -31,6 +31,8 @@
 
 #pragma once
 
+#include <utility>
+
 namespace cs {
 
   template<typename C>
@@ -45,6 +47,25 @@ namespace cs {
       return false;
     }
     return true;
+  }
+
+  template<typename C>
+  inline typename C::value_type takeFirst(C *container,
+                                          const typename C::value_type& defValue = typename C::value_type{})
+  {
+    if( container->empty() ) {
+      return defValue;
+    }
+
+    typename C::value_type result{};
+    try {
+      result = std::move(container->front());
+      container->pop_front();
+    } catch(...) {
+      return defValue;
+    }
+
+    return result;
   }
 
 } // namespace cs
