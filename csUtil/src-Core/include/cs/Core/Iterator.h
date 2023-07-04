@@ -36,18 +36,18 @@
 namespace cs {
 
   template<typename IterT>
-  inline IterT pred(IterT iter, IterT beg)
+  inline IterT prev(IterT pos, IterT beg)
   {
-    return iter > beg
-        ? std::prev(iter, 1)
+    return pos > beg
+        ? std::prev(pos, 1)
         : beg;
   }
 
   template<typename IterT>
-  inline IterT succ(IterT iter, IterT end)
+  inline IterT next(IterT pos, IterT end)
   {
-    return iter < end
-        ? std::next(iter, 1)
+    return pos < end
+        ? std::next(pos, 1)
         : end;
   }
 
