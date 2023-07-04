@@ -13,8 +13,8 @@ namespace text {
   TEST_CASE("Make key-value pairs.", "[keyvalue]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
-    const cs::KeyValues<char> pairs
-        = cs::makeKeyValues(",,key1:value1,,:value2,key3:,,key4:value4,key5,,");
+    const cs::KeyValuePairs<char> pairs
+        = cs::makeKVPairs(",,key1:value1,,:value2,key3:,,key4:value4,key5,,");
 
     REQUIRE( pairs.size() == 4 );
 

@@ -37,20 +37,20 @@
 namespace cs {
 
   template<typename T> requires IsCharacter<T>
-  using KeyValue = std::pair<String<T>,String<T>>;
+  using KeyValuePair = std::pair<String<T>,String<T>>;
 
   template<typename T>
-  using KeyValues = std::list<KeyValue<T>>;
+  using KeyValuePairs = std::list<KeyValuePair<T>>;
 
-  namespace impl_keyvalue {
+  namespace impl_kv {
 
     template<typename T> requires IsCharacter<T>
-    inline KeyValues<T> makeKeyValues(const T *first, const T *last)
+    inline KeyValuePairs<T> makeKVPairs(const T *first, const T *last)
     {
       constexpr T SEP_PAIR  = glyph<T>::comma;
       constexpr T SEP_VALUE = glyph<T>::colon;
 
-      KeyValues<T> result;
+      KeyValuePairs<T> result;
       for(const T *begPair = first; begPair != last; ) {
         const T *endPair = std::find(begPair, last, SEP_PAIR);
 
@@ -58,48 +58,48 @@ namespace cs {
           const T *posValue = std::find(begPair, endPair, SEP_VALUE);
 
           const String<T> key{begPair, posValue};
-          const String<T> value{succ(posValue, endPair), endPair};
+          const String<T> value{next(posValue, endPair), endPair};
 
           if( !key.empty() ) {
             result.emplace_back(key, value);
           }
         }
 
-        begPair = succ(endPair, last);
+        begPair = next(endPair, last);
       }
 
       return result;
     }
 
-  } // namespace impl_keyvalue
+  } // namespace impl_kv
 
   template<typename T> requires IsCharacter<T>
-  inline KeyValues<T> makeKeyValues(const T *first, const T *last)
+  inline KeyValuePairs<T> makeKVPairs(const T *first, const T *last)
   {
     return Pointer::isValidRange(first, last)
-        ? impl_keyvalue::makeKeyValues(first, last)
-        : KeyValues<T>{};
+        ? impl_kv::makeKVPairs(first, last)
+        : KeyValuePairs<T>{};
   }
 
   template<typename T> requires IsCharacter<T>
-  inline KeyValues<T> makeKeyValues(const T *str, const std::size_t len = MAX_SIZE_T)
+  inline KeyValuePairs<T> makeKVPairs(const T *str, const std::size_t len = MAX_SIZE_T)
   {
     const std::size_t max = strlen(str, len);
     return max > 0
-        ? impl_keyvalue::makeKeyValues(str, str + max)
-        : KeyValues<T>{};
+        ? impl_kv::makeKVPairs(str, str + max)
+        : KeyValuePairs<T>{};
   }
 
   template<typename T> requires IsCharacter<T>
-  inline KeyValues<T> makeKeyValues(const String<T>& str)
+  inline KeyValuePairs<T> makeKVPairs(const String<T>& str)
   {
-    return makeKeyValues(str.data(), str.size());
+    return makeKVPairs(str.data(), str.size());
   }
 
   template<typename T> requires IsCharacter<T>
-  inline KeyValues<T> makeKeyValues(const StringView<T>& view)
+  inline KeyValuePairs<T> makeKVPairs(const StringView<T>& view)
   {
-    return makeKeyValues(view.data(), view.size());
+    return makeKVPairs(view.data(), view.size());
   }
 
 } // namespace cs
