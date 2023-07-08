@@ -42,10 +42,10 @@ namespace cs {
   template<typename T>
   using KeyValuePairs = std::list<KeyValuePair<T>>;
 
-  namespace impl_kv {
+  namespace impl_keyvalue {
 
     template<typename T> requires IsCharacter<T>
-    inline KeyValuePairs<T> makeKVPairs(const T *first, const T *last)
+    inline KeyValuePairs<T> makeKeyValuePairs(const T *first, const T *last)
     {
       constexpr T SEP_PAIR  = glyph<T>::comma;
       constexpr T SEP_VALUE = glyph<T>::colon;
@@ -71,35 +71,35 @@ namespace cs {
       return result;
     }
 
-  } // namespace impl_kv
+  } // namespace impl_keyvalue
 
   template<typename T> requires IsCharacter<T>
-  inline KeyValuePairs<T> makeKVPairs(const T *first, const T *last)
+  inline KeyValuePairs<T> makeKeyValuePairs(const T *first, const T *last)
   {
     return Pointer::isValidRange(first, last)
-        ? impl_kv::makeKVPairs(first, last)
+        ? impl_keyvalue::makeKeyValuePairs(first, last)
         : KeyValuePairs<T>{};
   }
 
   template<typename T> requires IsCharacter<T>
-  inline KeyValuePairs<T> makeKVPairs(const T *str, const std::size_t len = MAX_SIZE_T)
+  inline KeyValuePairs<T> makeKeyValuePairs(const T *str, const std::size_t len = MAX_SIZE_T)
   {
     const std::size_t max = strlen(str, len);
     return max > 0
-        ? impl_kv::makeKVPairs(str, str + max)
+        ? impl_keyvalue::makeKeyValuePairs(str, str + max)
         : KeyValuePairs<T>{};
   }
 
   template<typename T> requires IsCharacter<T>
-  inline KeyValuePairs<T> makeKVPairs(const String<T>& str)
+  inline KeyValuePairs<T> makeKeyValuePairs(const String<T>& str)
   {
-    return makeKVPairs(str.data(), str.size());
+    return makeKeyValuePairs(str.data(), str.size());
   }
 
   template<typename T> requires IsCharacter<T>
-  inline KeyValuePairs<T> makeKVPairs(const StringView<T>& view)
+  inline KeyValuePairs<T> makeKeyValuePairs(const StringView<T>& view)
   {
-    return makeKVPairs(view.data(), view.size());
+    return makeKeyValuePairs(view.data(), view.size());
   }
 
 } // namespace cs
