@@ -37,8 +37,21 @@ namespace cs {
 
   template<typename C>
   inline bool resize(C *container,
+                     const typename C::size_type count)
+  {
+    try {
+      container->resize(count);
+    } catch(...) {
+      container->clear();
+      return false;
+    }
+    return true;
+  }
+
+  template<typename C>
+  inline bool resize(C *container,
                      const typename C::size_type count,
-                     const typename C::value_type& value = typename C::value_type{})
+                     const typename C::value_type& value)
   {
     try {
       container->resize(count, value);
