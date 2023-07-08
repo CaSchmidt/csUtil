@@ -14,7 +14,7 @@ namespace text {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
     const cs::KeyValuePairs<char> pairs
-        = cs::makeKVPairs(",,key1:value1,,:value2,key3:,,key4:value4,key5,,");
+        = cs::makeKeyValuePairs(",,key1:value1,,:value2,key3:,,key4:value4,key5,,");
 
     REQUIRE( pairs.size() == 4 );
 
