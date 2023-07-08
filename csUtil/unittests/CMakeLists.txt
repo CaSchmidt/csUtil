@@ -41,6 +41,7 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/Word-List.txt
 
 cs_unittest(unittest_bufferedreader src/unittest_bufferedreader.cpp src/unittest_bufferedreader_main.cpp)
 cs_unittest(unittest_bytearray src/unittest_bytearray.cpp src/unittest_bytearray_main.cpp)
+cs_unittest(unittest_concurrent src/unittest_concurrent.cpp src/unittest_concurrent_main.cpp)
 cs_unittest(unittest_crc src/unittest_crc.cpp src/unittest_crc_main.cpp)
 cs_unittest(unittest_endian src/unittest_endian.cpp src/unittest_endian_impl.cpp src/unittest_endian_main.cpp)
 cs_unittest(unittest_fileio src/unittest_fileio.cpp src/unittest_fileio_main.cpp)
