@@ -49,7 +49,7 @@ namespace util {
     std::mutex _mutex{};
   };
 
-  Delay<5> delay;
+  Delay<5> delay{};
 
   struct Increment {
     Increment() noexcept

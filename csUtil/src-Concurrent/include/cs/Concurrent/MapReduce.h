@@ -35,6 +35,7 @@
 
 #include <future>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 #include <cs/Core/Container.h>
@@ -91,12 +92,20 @@ namespace cs {
 
   ////// Map /////////////////////////////////////////////////////////////////
 
+  /*
+   * Signature of the map function:
+   * U map(T& item)
+   *
+   * NOTE: The return value is never used; AKA in-place map.
+   */
+
   template<typename MapFunc, typename IterT>
   concept IsMapFunction = std::is_invocable_v<MapFunc,impl_mapreduce::iter_reference<IterT>>;
 
   template<typename InputIt, typename MapFunc>
   requires IsMapFunction<MapFunc,InputIt>
-  void blockingMap(const std::size_t numThreads, InputIt first, InputIt last, MapFunc map)
+  void blockingMap(const std::size_t numThreads,
+                   InputIt first, InputIt last, MapFunc&& map)
   {
     using namespace impl_mapreduce;
 
@@ -119,7 +128,8 @@ namespace cs {
         }
 
         if( !future.valid() ) {
-          future = std::async(ASYNC, map, std::ref(*first));
+          future = std::async(ASYNC, std::forward<MapFunc>(map),
+                              std::ref(*first));
           ++first;
         }
       } // For Each Future
@@ -144,11 +154,13 @@ namespace cs {
 
   template<typename InputIt, typename MapFunc>
   requires IsMapFunction<MapFunc,InputIt>
-  [[nodiscard]] std::future<void> map(const std::size_t numThreads, InputIt first, InputIt last, MapFunc map)
+  [[nodiscard]] std::future<void> map(const std::size_t numThreads,
+                                      InputIt first, InputIt last, MapFunc&& map)
   {
     using namespace impl_mapreduce;
 
-    return std::async(ASYNC, blockingMap<InputIt,MapFunc>, numThreads, first, last, map);
+    return std::async(ASYNC, blockingMap<InputIt,MapFunc>,
+                      numThreads, first, last, std::forward<MapFunc>(map));
   }
 
 } // namespace cs
