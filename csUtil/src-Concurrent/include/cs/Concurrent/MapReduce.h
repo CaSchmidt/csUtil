@@ -44,26 +44,20 @@ namespace cs {
 
   namespace impl_mapreduce {
 
-    // Types /////////////////////////////////////////////////////////////////
-
-    template<typename T>
-    using Futures = std::vector<std::future<T>>;
-
     // Constants /////////////////////////////////////////////////////////////
 
     constexpr auto ASYNC = std::launch::async;
 
     constexpr std::size_t ONE = 1;
 
-    constexpr auto READY = std::future_status::ready;
-
-    constexpr auto TIMEOUT = std::chrono::milliseconds{50};
-
     // Implementation ////////////////////////////////////////////////////////
 
     template<typename T>
     inline bool isValidReady(const std::future<T>& f)
     {
+      constexpr auto READY = std::future_status::ready;
+      constexpr auto TIMEOUT = std::chrono::milliseconds{50};
+
       return f.valid()  &&  f.wait_for(TIMEOUT) == READY;
     }
 
@@ -81,17 +75,18 @@ namespace cs {
   template<typename MapFunc, typename IterT>
   concept IsMapFunction = std::is_invocable_v<MapFunc,impl_iter::iter_reference<IterT>>;
 
-  template<typename InputIt, typename MapFunc>
-  requires IsMapFunction<MapFunc,InputIt>
+  template<typename ForwardIt, typename MapFunc>
+  requires IsMapFunction<MapFunc,ForwardIt>
   void blockingMap(const std::size_t numThreads,
-                   InputIt first, InputIt last, MapFunc&& map)
+                   ForwardIt first, ForwardIt last, MapFunc&& map)
   {
     using namespace impl_mapreduce;
 
-    using map_result_type = std::invoke_result_t<MapFunc,impl_iter::iter_reference<InputIt>>;
-    using Future = typename Futures<map_result_type>::value_type;
+    using map_result_type = std::invoke_result_t<MapFunc,impl_iter::iter_reference<ForwardIt>>;
+    using Futures = std::vector<std::future<map_result_type>>;
+    using Future = typename Futures::value_type;
 
-    Futures<map_result_type> futures;
+    Futures futures;
     if( numThreads < ONE  ||  !cs::resize(&futures, numThreads) ) {
       return;
     }
@@ -131,14 +126,14 @@ namespace cs {
     }
   }
 
-  template<typename InputIt, typename MapFunc>
-  requires IsMapFunction<MapFunc,InputIt>
+  template<typename ForwardIt, typename MapFunc>
+  requires IsMapFunction<MapFunc,ForwardIt>
   [[nodiscard]] std::future<void> map(const std::size_t numThreads,
-                                      InputIt first, InputIt last, MapFunc&& map)
+                                      ForwardIt first, ForwardIt last, MapFunc&& map)
   {
     using namespace impl_mapreduce;
 
-    return std::async(ASYNC, blockingMap<InputIt,MapFunc>,
+    return std::async(ASYNC, blockingMap<ForwardIt,MapFunc>,
                       numThreads, first, last, std::forward<MapFunc>(map));
   }
 
