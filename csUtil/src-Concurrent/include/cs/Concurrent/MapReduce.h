@@ -34,11 +34,11 @@
 #include <cstddef>
 
 #include <future>
-#include <type_traits>
 #include <utility>
 #include <vector>
 
 #include <cs/Core/Container.h>
+#include <cs/Core/Iterator.h>
 
 namespace cs {
 
@@ -48,27 +48,6 @@ namespace cs {
 
     template<typename T>
     using Futures = std::vector<std::future<T>>;
-
-    // Type Tratis ///////////////////////////////////////////////////////////
-
-    template<typename IterT>
-    struct iterator_traits {
-      using value_type = std::remove_cvref_t<decltype(*IterT())>;
-
-      using pointer = std::add_pointer_t<value_type>;
-
-      using const_pointer = std::add_const_t<pointer>;
-
-      using reference = std::add_lvalue_reference_t<value_type>;
-
-      using const_reference = std::add_const_t<reference>;
-    };
-
-    template<typename IterT>
-    using iter_reference = typename iterator_traits<IterT>::reference;
-
-    template<typename IterT>
-    using iter_value_type = typename iterator_traits<IterT>::value_type;
 
     // Constants /////////////////////////////////////////////////////////////
 
@@ -100,7 +79,7 @@ namespace cs {
    */
 
   template<typename MapFunc, typename IterT>
-  concept IsMapFunction = std::is_invocable_v<MapFunc,impl_mapreduce::iter_reference<IterT>>;
+  concept IsMapFunction = std::is_invocable_v<MapFunc,impl_iter::iter_reference<IterT>>;
 
   template<typename InputIt, typename MapFunc>
   requires IsMapFunction<MapFunc,InputIt>
@@ -109,7 +88,7 @@ namespace cs {
   {
     using namespace impl_mapreduce;
 
-    using map_result_type = std::invoke_result_t<MapFunc,iter_reference<InputIt>>;
+    using map_result_type = std::invoke_result_t<MapFunc,impl_iter::iter_reference<InputIt>>;
     using Future = typename Futures<map_result_type>::value_type;
 
     Futures<map_result_type> futures;

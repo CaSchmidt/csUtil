@@ -32,8 +32,36 @@
 #pragma once
 
 #include <iterator>
+#include <type_traits>
 
 namespace cs {
+
+  ////// Implementation //////////////////////////////////////////////////////
+
+  namespace impl_iter { // TODO: Promote to public API?
+
+    template<typename IterT>
+    struct iterator_traits {
+      using value_type = std::remove_cvref_t<decltype(*IterT())>;
+
+      using pointer = std::add_pointer_t<value_type>;
+
+      using const_pointer = std::add_const_t<pointer>;
+
+      using reference = std::add_lvalue_reference_t<value_type>;
+
+      using const_reference = std::add_const_t<reference>;
+    };
+
+    template<typename IterT>
+    using iter_reference = typename iterator_traits<IterT>::reference;
+
+    template<typename IterT>
+    using iter_value_type = typename iterator_traits<IterT>::value_type;
+
+  } // namespace impl_iter
+
+  ////// Public //////////////////////////////////////////////////////////////
 
   template<typename IterT>
   inline IterT prev(IterT pos, IterT beg)
