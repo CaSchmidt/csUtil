@@ -66,7 +66,7 @@ namespace cs {
   template<typename IterT>
   inline IterT prev(IterT pos, IterT beg)
   {
-    return pos > beg
+    return pos != beg
         ? std::prev(pos, 1)
         : beg;
   }
@@ -74,7 +74,7 @@ namespace cs {
   template<typename IterT>
   inline IterT next(IterT pos, IterT end)
   {
-    return pos < end
+    return pos != end
         ? std::next(pos, 1)
         : end;
   }
