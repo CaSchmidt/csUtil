@@ -54,6 +54,9 @@ namespace cs {
     };
 
     template<typename IterT>
+    using iter_const_reference = typename iterator_traits<IterT>::const_reference;
+
+    template<typename IterT>
     using iter_reference = typename iterator_traits<IterT>::reference;
 
     template<typename IterT>
