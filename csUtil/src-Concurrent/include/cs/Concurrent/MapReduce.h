@@ -50,6 +50,24 @@ namespace cs {
 
     constexpr std::size_t ONE = 1;
 
+    // Type Traits ///////////////////////////////////////////////////////////
+
+    /*
+     * Syntax of map() function:
+     *
+     * U map(T& item)
+     *
+     * NOTE: Return value is never used!
+     */
+
+    template<typename MapFunc, typename IterT>
+    using is_map = std::bool_constant<
+    std::is_invocable_v<MapFunc,impl_iter::iter_reference<IterT>>
+    >;
+
+    template<typename MapFunc, typename IterT>
+    inline constexpr bool is_map_v = is_map<MapFunc,IterT>::value;
+
     // Implementation ////////////////////////////////////////////////////////
 
     template<typename T>
@@ -65,15 +83,8 @@ namespace cs {
 
   ////// Map /////////////////////////////////////////////////////////////////
 
-  /*
-   * Signature of the map function:
-   * U map(T& item)
-   *
-   * NOTE: The return value is never used; AKA in-place map.
-   */
-
   template<typename MapFunc, typename IterT>
-  concept IsMapFunction = std::is_invocable_v<MapFunc,impl_iter::iter_reference<IterT>>;
+  concept IsMapFunction = impl_mapreduce::is_map_v<MapFunc,IterT>;
 
   template<typename ForwardIt, typename MapFunc>
   requires IsMapFunction<MapFunc,ForwardIt>
