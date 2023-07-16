@@ -68,6 +68,20 @@ namespace cs {
     template<typename MapFunc, typename IterT>
     inline constexpr bool is_map_v = is_map<MapFunc,IterT>::value;
 
+    /*
+     * Syntax of mapTo() function:
+     *
+     * U mapTo(const T& item)
+     */
+
+    template<typename OutputIt, typename MapToFunc, typename InputIt>
+    using is_mapTo = std::bool_constant<
+    std::is_invocable_r_v<impl_iter::iter_value_type<OutputIt>,MapToFunc,impl_iter::iter_const_reference<InputIt>>
+    >;
+
+    template<typename OutputIt, typename MapToFunc, typename InputIt>
+    inline constexpr bool is_mapTo_v = is_mapTo<OutputIt,MapToFunc,InputIt>::value;
+
     // Implementation ////////////////////////////////////////////////////////
 
     template<typename T>
@@ -146,6 +160,75 @@ namespace cs {
 
     return std::async(ASYNC, blockingMap<ForwardIt,MapFunc>,
                       numThreads, first, last, std::forward<MapFunc>(map));
+  }
+
+  ////// (Unsorted) Map //////////////////////////////////////////////////////
+
+  template<typename OutputIt, typename MapToFunc, typename InputIt>
+  concept IsMapToFunction = impl_mapreduce::is_mapTo_v<OutputIt,MapToFunc,InputIt>;
+
+  template<typename OutputIt, typename InputIt, typename MapToFunc>
+  // requires IsMapToFunction<OutputIt,MapToFunc,InputIt>
+  void blockingMapUnsorted(const std::size_t numThreads,
+                           OutputIt dest, InputIt first, InputIt last, MapToFunc&& mapTo)
+  {
+    using namespace impl_mapreduce;
+
+    using map_result_type = std::invoke_result_t<MapToFunc,impl_iter::iter_const_reference<InputIt>>;
+    using Futures = std::vector<std::future<map_result_type>>;
+    using Future = typename Futures::value_type;
+
+    Futures futures;
+    if( numThreads < ONE  ||  !resize(&futures, numThreads) ) {
+      return;
+    }
+
+    // (1) Run Threads ///////////////////////////////////////////////////////
+
+    while( first != last ) {
+      for(std::size_t i = 0; i < futures.size()  &&  first != last; i++) {
+        Future& future = futures[i];
+
+        if( isValidReady(future) ) {
+          *dest = future.get();
+          ++dest;
+        }
+
+        if( !future.valid() ) {
+          future = std::async(ASYNC, std::forward<MapToFunc>(mapTo),
+                              std::cref(*first));
+          ++first;
+        }
+      } // For Each Future
+    }
+
+    // (2) Wait for Threads to Finish ////////////////////////////////////////
+
+    std::size_t cntFinished = 0;
+    while( cntFinished != futures.size() ) {
+      cntFinished = 0;
+      for(Future& future : futures) {
+        if( isValidReady(future) ) {
+          *dest = future.get();
+          ++dest;
+        }
+
+        if( !future.valid() ) {
+          cntFinished++;
+        }
+      } // For Each Future
+    }
+  }
+
+  template<typename OutputIt, typename InputIt, typename MapToFunc>
+  // requires IsMapToFunction<OutputIt,MapToFunc,InputIt>
+  [[nodiscard]] std::future<void> mapUnsorted(const std::size_t numThreads,
+                                              OutputIt dest, InputIt first, InputIt last, MapToFunc&& mapTo)
+  {
+    using namespace impl_mapreduce;
+
+    return std::async(ASYNC, blockingMapUnsorted<OutputIt,InputIt,MapToFunc>,
+                      numThreads, dest, first, last, std::forward<MapToFunc>(mapTo));
   }
 
 } // namespace cs
