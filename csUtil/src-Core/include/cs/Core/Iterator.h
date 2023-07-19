@@ -33,6 +33,7 @@
 
 #include <iterator>
 #include <type_traits>
+#include <utility>
 
 namespace cs {
 
@@ -42,7 +43,7 @@ namespace cs {
 
     template<typename IterT>
     struct iterator_traits {
-      using value_type = std::remove_cvref_t<decltype(*IterT())>;
+      using value_type = std::remove_cvref_t<decltype(*std::declval<IterT>())>;
 
       using pointer = std::add_pointer_t<value_type>;
 
@@ -51,6 +52,9 @@ namespace cs {
       using reference = std::add_lvalue_reference_t<value_type>;
 
       using const_reference = std::add_const_t<reference>;
+
+      template<typename T>
+      struct is_dereferenceable : std::is_assignable<decltype(*std::declval<IterT>()),T> {};
     };
 
     template<typename IterT>
@@ -61,6 +65,9 @@ namespace cs {
 
     template<typename IterT>
     using iter_value_type = typename iterator_traits<IterT>::value_type;
+
+    template<typename IterT, typename T>
+    inline constexpr bool iter_is_dereferenceable_v = iterator_traits<IterT>::template is_dereferenceable<T>::value;
 
   } // namespace impl_iter
 
