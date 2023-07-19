@@ -76,7 +76,7 @@ namespace cs {
 
     template<typename OutputIt, typename MapToFunc, typename InputIt>
     using is_mapTo = std::bool_constant<
-    std::is_invocable_r_v<impl_iter::iter_value_type<OutputIt>,MapToFunc,impl_iter::iter_const_reference<InputIt>>
+    impl_iter::iter_is_dereferenceable_v<OutputIt,std::invoke_result_t<MapToFunc,impl_iter::iter_const_reference<InputIt>>>
     >;
 
     template<typename OutputIt, typename MapToFunc, typename InputIt>
@@ -168,7 +168,7 @@ namespace cs {
   concept IsMapToFunction = impl_mapreduce::is_mapTo_v<OutputIt,MapToFunc,InputIt>;
 
   template<typename OutputIt, typename InputIt, typename MapToFunc>
-  // requires IsMapToFunction<OutputIt,MapToFunc,InputIt>
+  requires IsMapToFunction<OutputIt,MapToFunc,InputIt>
   void blockingMapUnsorted(const std::size_t numThreads,
                            OutputIt dest, InputIt first, InputIt last, MapToFunc&& mapTo)
   {
@@ -221,7 +221,7 @@ namespace cs {
   }
 
   template<typename OutputIt, typename InputIt, typename MapToFunc>
-  // requires IsMapToFunction<OutputIt,MapToFunc,InputIt>
+  requires IsMapToFunction<OutputIt,MapToFunc,InputIt>
   [[nodiscard]] std::future<void> mapUnsorted(const std::size_t numThreads,
                                               OutputIt dest, InputIt first, InputIt last, MapToFunc&& mapTo)
   {

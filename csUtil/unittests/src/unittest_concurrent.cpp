@@ -222,7 +222,7 @@ namespace test_map {
       std::vector<int> v;
 
       cs::blockingMapUnsorted(4, std::back_inserter(v),
-                              data.begin(), data.end(), util::incTo);
+                              data.begin(), data.end(), &util::incTo);
 
       util::print(v.begin(), v.end(), "vnew = ");
 
