@@ -45,7 +45,7 @@ namespace cs {
       container->clear();
       return false;
     }
-    return true;
+    return container->size() == count;
   }
 
   template<typename C>
@@ -59,7 +59,7 @@ namespace cs {
       container->clear();
       return false;
     }
-    return true;
+    return container->size() == count;
   }
 
   template<typename C>
