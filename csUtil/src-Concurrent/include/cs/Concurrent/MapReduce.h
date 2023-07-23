@@ -131,8 +131,8 @@ namespace cs {
 
     // (1) Run Threads ///////////////////////////////////////////////////////
 
-    while( first != last ) {
-      for(std::size_t i = 0; i < futures.size()  &&  first != last; i++) {
+    for(bool is_done = isDone(first, last); !is_done; ) {
+      for(std::size_t i = 0; i < futures.size()  &&  !is_done; i++) {
         Future& future = futures[i];
 
         if( isValidReady(future) ) {
@@ -144,14 +144,16 @@ namespace cs {
                               std::ref(*first));
           ++first;
         }
+
+        is_done = isDone(first, last);
       } // For Each Future
     }
 
     // (2) Wait for Threads to Finish ////////////////////////////////////////
 
-    std::size_t cntFinished = 0;
-    while( cntFinished != futures.size() ) {
+    for(std::size_t cntFinished = 0; cntFinished != futures.size(); ) {
       cntFinished = 0;
+
       for(Future& future : futures) {
         if( isValidReady(future) ) {
           future.get();
@@ -198,8 +200,8 @@ namespace cs {
 
     // (1) Run Threads ///////////////////////////////////////////////////////
 
-    while( first != last ) {
-      for(std::size_t i = 0; i < futures.size()  &&  first != last; i++) {
+    for(bool is_done = isDone(first, last); !is_done; ) {
+      for(std::size_t i = 0; i < futures.size()  &&  !is_done; i++) {
         Future& future = futures[i];
 
         if( isValidReady(future) ) {
@@ -212,14 +214,16 @@ namespace cs {
                               std::cref(*first));
           ++first;
         }
+
+        is_done = isDone(first, last);
       } // For Each Future
     }
 
     // (2) Wait for Threads to Finish ////////////////////////////////////////
 
-    std::size_t cntFinished = 0;
-    while( cntFinished != futures.size() ) {
+    for(std::size_t cntFinished = 0; cntFinished != futures.size(); ) {
       cntFinished = 0;
+
       for(Future& future : futures) {
         if( isValidReady(future) ) {
           *dest = future.get();
@@ -265,8 +269,7 @@ namespace cs {
 
     // (1) Run Threads ///////////////////////////////////////////////////////
 
-    bool is_done = isDone(destFirst, destLast, srcFirst, srcLast);
-    while( !is_done ) {
+    for(bool is_done = isDone(destFirst, destLast, srcFirst, srcLast); !is_done; ) {
       for(std::size_t i = 0; i < futures.size()  &&  !is_done; i++) {
         auto& [future, dest] = futures[i];
         {}
@@ -290,9 +293,9 @@ namespace cs {
 
     // (2) Wait for Threads to Finish ////////////////////////////////////////
 
-    std::size_t cntFinished = 0;
-    while( cntFinished != futures.size() ) {
+    for(std::size_t cntFinished = 0; cntFinished != futures.size(); ) {
       cntFinished = 0;
+
       for(Pair& pair : futures) {
         auto& [future, dest] = pair;
         {}
