@@ -84,6 +84,19 @@ namespace cs {
 
     // Implementation ////////////////////////////////////////////////////////
 
+    template<typename IterT>
+    inline bool isDone(IterT first, IterT last)
+    {
+      return first == last;
+    }
+
+    template<typename OutputIt, typename InputIt>
+    inline bool isDone(OutputIt destFirst, OutputIt destLast,
+                       InputIt srcFirst, InputIt srcLast)
+    {
+      return isDone(destFirst, destLast)  ||  isDone(srcFirst, srcLast);
+    }
+
     template<typename T>
     inline bool isValidReady(const std::future<T>& f)
     {
@@ -229,6 +242,82 @@ namespace cs {
 
     return std::async(ASYNC, blockingMapUnsorted<OutputIt,InputIt,MapToFunc>,
                       numThreads, dest, first, last, std::forward<MapToFunc>(mapTo));
+  }
+
+  ////// (Sorted) Map ////////////////////////////////////////////////////////
+
+  template<typename OutputIt, typename InputIt, typename MapToFunc>
+  requires IsMapToFunction<OutputIt,MapToFunc,InputIt>
+  void blockingMapSorted(const std::size_t numThreads,
+                         OutputIt destFirst, OutputIt destLast,
+                         InputIt srcFirst, InputIt srcLast, MapToFunc&& mapTo)
+  {
+    using namespace impl_mapreduce;
+
+    using map_result_type = std::invoke_result_t<MapToFunc,impl_iter::iter_const_reference<InputIt>>;
+    using Pair = std::pair<std::future<map_result_type>,OutputIt>;
+    using Futures = std::vector<Pair>;
+
+    Futures futures;
+    if( numThreads < ONE  ||  !resize(&futures, numThreads) ) {
+      return;
+    }
+
+    // (1) Run Threads ///////////////////////////////////////////////////////
+
+    bool is_done = isDone(destFirst, destLast, srcFirst, srcLast);
+    while( !is_done ) {
+      for(std::size_t i = 0; i < futures.size()  &&  !is_done; i++) {
+        auto& [future, dest] = futures[i];
+        {}
+
+        if( isValidReady(future) ) {
+          *dest = future.get();
+        }
+
+        if( !future.valid() ) {
+          dest = destFirst;
+          future = std::async(ASYNC, std::forward<MapToFunc>(mapTo),
+                              std::cref(*srcFirst));
+
+          ++destFirst;
+          ++srcFirst;
+        }
+
+        is_done = isDone(destFirst, destLast, srcFirst, srcLast);
+      } // For Each Future
+    }
+
+    // (2) Wait for Threads to Finish ////////////////////////////////////////
+
+    std::size_t cntFinished = 0;
+    while( cntFinished != futures.size() ) {
+      cntFinished = 0;
+      for(Pair& pair : futures) {
+        auto& [future, dest] = pair;
+        {}
+
+        if( isValidReady(future) ) {
+          *dest = future.get();
+        }
+
+        if( !future.valid() ) {
+          cntFinished++;
+        }
+      } // For Each Future
+    }
+  }
+
+  template<typename OutputIt, typename InputIt, typename MapToFunc>
+  requires IsMapToFunction<OutputIt,MapToFunc,InputIt>
+  [[nodiscard]] std::future<void> mapSorted(const std::size_t numThreads,
+                                            OutputIt destFirst, OutputIt destLast,
+                                            InputIt srcFirst, InputIt srcLast, MapToFunc&& mapTo)
+  {
+    using namespace impl_mapreduce;
+
+    return std::async(ASYNC, blockingMapSorted<OutputIt,InputIt,MapToFunc>,
+                      numThreads, destFirst, destLast, srcFirst, srcLast, std::forward<MapToFunc>(mapTo));
   }
 
 } // namespace cs

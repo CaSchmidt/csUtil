@@ -52,6 +52,8 @@ namespace util {
 
   Delay<5> delay{};
 
+  ////////////////////////////////////////////////////////////////////////////
+
   struct Increment {
     Increment() noexcept
     {
@@ -67,6 +69,8 @@ namespace util {
     }
   };
 
+  ////////////////////////////////////////////////////////////////////////////
+
   struct Print {
     Print() noexcept
     {
@@ -79,6 +83,8 @@ namespace util {
       printf("%d\n", i); fflush(stdout);
     }
   };
+
+  ////////////////////////////////////////////////////////////////////////////
 
   int inc(int& i)
   {
@@ -240,6 +246,43 @@ namespace test_map {
       util::print(a, COUNT, "anew = ");
 
       REQUIRE( util::accumulate(a, COUNT) == 35 );
+    }
+  }
+
+  TEST_CASE("Map sequence to sorted sequence.", "[mapsorted]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    constexpr std::size_t COUNT = 7;
+    constexpr std::size_t EXTRA = 3;
+    const std::array<int,COUNT+EXTRA> data{1, 2, 3, 4, 5, 6, 7, 0, 0, 0};
+
+    util::print(data.begin(), data.end(), "data = ");
+
+    std::cout << "---------------------------------------------" << std::endl;
+
+    {
+      std::vector<int> v(COUNT + EXTRA, 0);
+
+      cs::blockingMapSorted(4, v.begin(), std::next(v.begin(), COUNT),
+                            data.begin(), data.end(), &util::incTo);
+
+      util::print(v.begin(), v.end(), "vnew = ");
+
+      REQUIRE( util::isEqualSequence(v.begin(), std::next(v.begin(), COUNT), 2) );
+    }
+
+    std::cout << "---------------------------------------------" << std::endl;
+
+    {
+      int a[COUNT + EXTRA] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+      auto f = cs::mapSorted(4, a, a + COUNT + EXTRA,
+                             data.begin(), std::next(data.begin(), COUNT), &util::incTo);
+      f.get();
+
+      util::print(a, COUNT + EXTRA, "anew = ");
+
+      REQUIRE( util::isEqualSequence(a, COUNT, 2) );
     }
   }
 
