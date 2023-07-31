@@ -260,18 +260,18 @@ namespace cs {
 
     using map_result_type = std::invoke_result_t<MapToFunc,impl_iter::iter_const_reference<InputIt>>;
     using Pair = std::pair<std::future<map_result_type>,OutputIt>;
-    using Futures = std::vector<Pair>;
+    using Pairs = std::vector<Pair>;
 
-    Futures futures;
-    if( numThreads < ONE  ||  !resize(&futures, numThreads) ) {
+    Pairs pairs;
+    if( numThreads < ONE  ||  !resize(&pairs, numThreads) ) {
       return;
     }
 
     // (1) Run Threads ///////////////////////////////////////////////////////
 
     for(bool is_done = isDone(destFirst, destLast, srcFirst, srcLast); !is_done; ) {
-      for(std::size_t i = 0; i < futures.size()  &&  !is_done; i++) {
-        auto& [future, dest] = futures[i];
+      for(std::size_t i = 0; i < pairs.size()  &&  !is_done; i++) {
+        auto& [future, dest] = pairs[i];
         {}
 
         if( isValidReady(future) ) {
@@ -293,10 +293,10 @@ namespace cs {
 
     // (2) Wait for Threads to Finish ////////////////////////////////////////
 
-    for(std::size_t cntFinished = 0; cntFinished != futures.size(); ) {
+    for(std::size_t cntFinished = 0; cntFinished != pairs.size(); ) {
       cntFinished = 0;
 
-      for(Pair& pair : futures) {
+      for(Pair& pair : pairs) {
         auto& [future, dest] = pair;
         {}
 
