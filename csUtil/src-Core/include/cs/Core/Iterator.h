@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <iterator>
 #include <type_traits>
 #include <utility>
@@ -73,16 +74,24 @@ namespace cs {
 
   ////// Public //////////////////////////////////////////////////////////////
 
-  template<typename IterT>
-  inline IterT prev(IterT pos, IterT beg)
+  template<typename InputIt>
+  constexpr auto distance0(InputIt first, InputIt last)
+  {
+    using diff_t = typename std::iterator_traits<InputIt>::difference_type;
+
+    return std::max<diff_t>(0, std::distance(first, last));
+  }
+
+  template<typename BidirIt>
+  constexpr BidirIt prev(BidirIt pos, BidirIt beg)
   {
     return pos != beg
         ? std::prev(pos, 1)
         : beg;
   }
 
-  template<typename IterT>
-  inline IterT next(IterT pos, IterT end)
+  template<typename InputIt>
+  constexpr InputIt next(InputIt pos, InputIt end)
   {
     return pos != end
         ? std::next(pos, 1)
