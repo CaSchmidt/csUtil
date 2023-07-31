@@ -31,13 +31,18 @@
 
 #pragma once
 
+#include <list>
+#include <string>
+
+#include <cs/Core/CharUtil.h>
 #include <cs/Core/Iterator.h>
-#include <cs/Text/StringUtil.h>
+#include <cs/Core/Pointer.h>
+#include <cs/Core/Range.h>
 
 namespace cs {
 
   template<typename T> requires IsCharacter<T>
-  using KeyValuePair = std::pair<String<T>,String<T>>;
+  using KeyValuePair = std::pair<std::basic_string<T>,std::basic_string<T>>;
 
   template<typename T>
   using KeyValuePairs = std::list<KeyValuePair<T>>;
@@ -57,8 +62,8 @@ namespace cs {
         if( begPair < endPair ) {
           const T *posValue = std::find(begPair, endPair, SEP_VALUE);
 
-          const String<T> key{begPair, posValue};
-          const String<T> value{next(posValue, endPair), endPair};
+          const std::basic_string<T> key{begPair, posValue};
+          const std::basic_string<T> value{next(posValue, endPair), endPair};
 
           if( !key.empty() ) {
             result.emplace_back(key, value);
@@ -91,13 +96,13 @@ namespace cs {
   }
 
   template<typename T> requires IsCharacter<T>
-  inline KeyValuePairs<T> makeKeyValuePairs(const String<T>& str)
+  inline KeyValuePairs<T> makeKeyValuePairs(const std::basic_string<T>& str)
   {
     return makeKeyValuePairs(str.data(), str.size());
   }
 
   template<typename T> requires IsCharacter<T>
-  inline KeyValuePairs<T> makeKeyValuePairs(const StringView<T>& view)
+  inline KeyValuePairs<T> makeKeyValuePairs(const std::basic_string_view<T>& view)
   {
     return makeKeyValuePairs(view.data(), view.size());
   }
