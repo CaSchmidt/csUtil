@@ -138,7 +138,7 @@ namespace cs {
         const char *str = _base != 10  &&  ndata[0] == '-'
             ? ndata.data() + 1
             : ndata.data();
-        const size_type lenstr = distance(str, result.ptr);
+        const size_type lenstr = strlen(str, result.ptr);
 
         // (4) Output string /////////////////////////////////////////////////
 
@@ -204,7 +204,7 @@ namespace cs {
         // (3) Get string's bounds ///////////////////////////////////////////
 
         const char *str = ndata.data();
-        const std::size_t lenstr = distance(str, result.ptr);
+        const std::size_t lenstr = strlen(str, result.ptr);
 
         // (4) Output string /////////////////////////////////////////////////
 

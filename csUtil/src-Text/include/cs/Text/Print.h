@@ -47,7 +47,7 @@ namespace cs {
       if( !Pointer::isValidRange(first, last) ) {
         return;
       }
-      stream->write(first, distance(first, last));
+      stream->write(first, strlen(first, last));
     }
 
     template<typename CharT, typename T, typename ...Args>

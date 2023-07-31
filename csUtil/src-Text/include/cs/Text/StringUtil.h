@@ -409,7 +409,7 @@ namespace cs {
                         const T *first, const T *last,
                         const bool skipEmpty, const bool doTrim)
     {
-      const std::size_t len = distance(first, last);
+      const std::size_t len = strlen(first, last);
       String<T> part = len > 0
           ? String<T>{first, len}
           : String<T>{};

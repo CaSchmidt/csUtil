@@ -32,55 +32,56 @@
 #pragma once
 
 #include <algorithm>
-#include <iterator>
 
 #include <cs/Core/CharUtil.h>
 #include <cs/Core/Pointer.h>
 
 namespace cs {
 
+  ////// Implementation //////////////////////////////////////////////////////
+
   namespace impl_range {
 
     template<typename T>
     requires IsArithmetic<T>  ||  IsCharacter<T>
-    inline std::size_t distance(const T *first, const T *last)
+    inline std::size_t size(const T *first, const T *last)
     {
-      using iter_t = decltype(first);
-      using diff_t = typename std::iterator_traits<iter_t>::difference_type;
+      static_assert( sizeof(std::size_t) >= sizeof(std::ptrdiff_t) );
 
-      return std::max<diff_t>(0, std::distance(first, last));
+      const std::ptrdiff_t diff = last - first;
+      return diff > 0
+          ? diff
+          : 0;
     }
-
-  } // namespace impl_range
-
-  template<typename T>
-  requires IsArithmetic<T>  ||  IsCharacter<T>
-  inline std::size_t distance(const T *first, const T *last)
-  {
-    return Pointer::isValidRange(first, last)
-        ? impl_range::distance(first, last)
-        : 0;
-  }
-
-  template<typename T>
-  requires IsArithmetic<T>  ||  IsCharacter<T>
-  inline std::size_t distance(const T *ptr, const std::size_t len)
-  {
-    return Pointer::isValidRange(ptr, len)
-        ? len
-        : 0;
-  }
-
-  namespace impl_range {
 
     template<typename T>
     requires IsCharacter<T>
     inline std::size_t strlen(const T *first, const T *last)
     {
-      return distance(first, std::ranges::find(first, last, glyph<T>::null));
+      return size(first, std::ranges::find(first, last, glyph<T>::null));
     }
 
   } // namespace impl_range
+
+  ////// Public //////////////////////////////////////////////////////////////
+
+  template<typename T>
+  requires IsArithmetic<T>  ||  IsCharacter<T>
+  inline std::size_t size(const T *first, const T *last)
+  {
+    return Pointer::isValidRange(first, last)
+        ? impl_range::size(first, last)
+        : 0;
+  }
+
+  template<typename T>
+  requires IsArithmetic<T>  ||  IsCharacter<T>
+  inline std::size_t size(const T *ptr, const std::size_t siz)
+  {
+    return Pointer::isValidRange(ptr, siz)
+        ? siz
+        : 0;
+  }
 
   template<typename T> requires IsCharacter<T>
   inline std::size_t strlen(const T *first, const T *last)
