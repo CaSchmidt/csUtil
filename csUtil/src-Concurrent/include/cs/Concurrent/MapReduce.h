@@ -147,12 +147,12 @@ namespace cs {
 
         is_done = isDone(first, last);
       } // For Each Future
-    }
+    } // While Items Available
 
     // (2) Wait for Threads to Finish ////////////////////////////////////////
 
-    for(std::size_t cntFinished = 0; cntFinished != futures.size(); ) {
-      cntFinished = 0;
+    for(bool is_finished = false; !is_finished; ) {
+      std::size_t cntFinished = 0;
 
       for(Future& future : futures) {
         if( isValidReady(future) ) {
@@ -163,7 +163,9 @@ namespace cs {
           cntFinished++;
         }
       } // For Each Future
-    }
+
+      is_finished = cntFinished == futures.size();
+    } // While Not Finished
   }
 
   template<typename ForwardIt, typename MapFunc>
@@ -217,12 +219,12 @@ namespace cs {
 
         is_done = isDone(first, last);
       } // For Each Future
-    }
+    } // While Items Available
 
     // (2) Wait for Threads to Finish ////////////////////////////////////////
 
-    for(std::size_t cntFinished = 0; cntFinished != futures.size(); ) {
-      cntFinished = 0;
+    for(bool is_finished = false; !is_finished; ) {
+      std::size_t cntFinished = 0;
 
       for(Future& future : futures) {
         if( isValidReady(future) ) {
@@ -234,7 +236,9 @@ namespace cs {
           cntFinished++;
         }
       } // For Each Future
-    }
+
+      is_finished = cntFinished == futures.size();
+    } // While Not Finished
   }
 
   template<typename OutputIt, typename InputIt, typename MapToFunc>
@@ -289,12 +293,12 @@ namespace cs {
 
         is_done = isDone(destFirst, destLast, srcFirst, srcLast);
       } // For Each Future
-    }
+    } // While Items Available
 
     // (2) Wait for Threads to Finish ////////////////////////////////////////
 
-    for(std::size_t cntFinished = 0; cntFinished != pairs.size(); ) {
-      cntFinished = 0;
+    for(bool is_finished = false; !is_finished; ) {
+      std::size_t cntFinished = 0;
 
       for(Pair& pair : pairs) {
         auto& [future, dest] = pair;
@@ -308,7 +312,9 @@ namespace cs {
           cntFinished++;
         }
       } // For Each Future
-    }
+
+      is_finished = cntFinished == pairs.size();
+    } // While Not Finished
   }
 
   template<typename OutputIt, typename InputIt, typename MapToFunc>
