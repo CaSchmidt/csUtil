@@ -100,13 +100,18 @@ namespace cs {
     template<typename T>
     inline bool isValidReady(const std::future<T>& f)
     {
-      constexpr auto READY = std::future_status::ready;
-      constexpr auto TIMEOUT = std::chrono::milliseconds{50};
+      using Clock = std::chrono::high_resolution_clock;
 
-      return f.valid()  &&  f.wait_for(TIMEOUT) == READY;
+      constexpr auto READY = std::future_status::ready;
+
+      return f.valid()  &&  f.wait_until(Clock::now()) == READY;
     }
 
   } // namespace impl_mapreduce
+
+  ////// Constants ///////////////////////////////////////////////////////////
+
+  constexpr std::chrono::milliseconds MAP_WAIT_ms{50};
 
   ////// Map /////////////////////////////////////////////////////////////////
 
@@ -116,7 +121,8 @@ namespace cs {
   template<typename ForwardIt, typename MapFunc>
   requires IsMapFunction<MapFunc,ForwardIt>
   void blockingMap(const std::size_t numThreads,
-                   ForwardIt first, ForwardIt last, MapFunc&& map)
+                   ForwardIt first, ForwardIt last, MapFunc&& map,
+                   const std::chrono::milliseconds& wait_ms = MAP_WAIT_ms)
   {
     using namespace impl_mapreduce;
 
@@ -147,6 +153,10 @@ namespace cs {
 
         is_done = isDone(first, last);
       } // For Each Future
+
+      if( !is_done ) {
+        std::this_thread::sleep_for(wait_ms);
+      }
     } // While Items Available
 
     // (2) Wait for Threads to Finish ////////////////////////////////////////
@@ -165,18 +175,23 @@ namespace cs {
       } // For Each Future
 
       is_finished = cntFinished == futures.size();
+
+      if( !is_finished ) {
+        std::this_thread::sleep_for(wait_ms);
+      }
     } // While Not Finished
   }
 
   template<typename ForwardIt, typename MapFunc>
   requires IsMapFunction<MapFunc,ForwardIt>
   [[nodiscard]] std::future<void> map(const std::size_t numThreads,
-                                      ForwardIt first, ForwardIt last, MapFunc&& map)
+                                      ForwardIt first, ForwardIt last, MapFunc&& map,
+                                      const std::chrono::milliseconds& wait_ms = MAP_WAIT_ms)
   {
     using namespace impl_mapreduce;
 
     return std::async(ASYNC, blockingMap<ForwardIt,MapFunc>,
-                      numThreads, first, last, std::forward<MapFunc>(map));
+                      numThreads, first, last, std::forward<MapFunc>(map), wait_ms);
   }
 
   ////// (Unsorted) Map //////////////////////////////////////////////////////
@@ -187,7 +202,8 @@ namespace cs {
   template<typename OutputIt, typename InputIt, typename MapToFunc>
   requires IsMapToFunction<OutputIt,MapToFunc,InputIt>
   void blockingMapUnsorted(const std::size_t numThreads,
-                           OutputIt dest, InputIt first, InputIt last, MapToFunc&& mapTo)
+                           OutputIt dest, InputIt first, InputIt last, MapToFunc&& mapTo,
+                           const std::chrono::milliseconds& wait_ms = MAP_WAIT_ms)
   {
     using namespace impl_mapreduce;
 
@@ -219,6 +235,10 @@ namespace cs {
 
         is_done = isDone(first, last);
       } // For Each Future
+
+      if( !is_done ) {
+        std::this_thread::sleep_for(wait_ms);
+      }
     } // While Items Available
 
     // (2) Wait for Threads to Finish ////////////////////////////////////////
@@ -238,18 +258,23 @@ namespace cs {
       } // For Each Future
 
       is_finished = cntFinished == futures.size();
+
+      if( !is_finished ) {
+        std::this_thread::sleep_for(wait_ms);
+      }
     } // While Not Finished
   }
 
   template<typename OutputIt, typename InputIt, typename MapToFunc>
   requires IsMapToFunction<OutputIt,MapToFunc,InputIt>
   [[nodiscard]] std::future<void> mapUnsorted(const std::size_t numThreads,
-                                              OutputIt dest, InputIt first, InputIt last, MapToFunc&& mapTo)
+                                              OutputIt dest, InputIt first, InputIt last, MapToFunc&& mapTo,
+                                              const std::chrono::milliseconds& wait_ms = MAP_WAIT_ms)
   {
     using namespace impl_mapreduce;
 
     return std::async(ASYNC, blockingMapUnsorted<OutputIt,InputIt,MapToFunc>,
-                      numThreads, dest, first, last, std::forward<MapToFunc>(mapTo));
+                      numThreads, dest, first, last, std::forward<MapToFunc>(mapTo), wait_ms);
   }
 
   ////// (Sorted) Map ////////////////////////////////////////////////////////
@@ -258,7 +283,8 @@ namespace cs {
   requires IsMapToFunction<OutputIt,MapToFunc,InputIt>
   void blockingMapSorted(const std::size_t numThreads,
                          OutputIt destFirst, OutputIt destLast,
-                         InputIt srcFirst, InputIt srcLast, MapToFunc&& mapTo)
+                         InputIt srcFirst, InputIt srcLast, MapToFunc&& mapTo,
+                         const std::chrono::milliseconds& wait_ms = MAP_WAIT_ms)
   {
     using namespace impl_mapreduce;
 
@@ -293,6 +319,10 @@ namespace cs {
 
         is_done = isDone(destFirst, destLast, srcFirst, srcLast);
       } // For Each Future
+
+      if( !is_done ) {
+        std::this_thread::sleep_for(wait_ms);
+      }
     } // While Items Available
 
     // (2) Wait for Threads to Finish ////////////////////////////////////////
@@ -314,6 +344,10 @@ namespace cs {
       } // For Each Future
 
       is_finished = cntFinished == pairs.size();
+
+      if( !is_finished ) {
+        std::this_thread::sleep_for(wait_ms);
+      }
     } // While Not Finished
   }
 
@@ -321,12 +355,13 @@ namespace cs {
   requires IsMapToFunction<OutputIt,MapToFunc,InputIt>
   [[nodiscard]] std::future<void> mapSorted(const std::size_t numThreads,
                                             OutputIt destFirst, OutputIt destLast,
-                                            InputIt srcFirst, InputIt srcLast, MapToFunc&& mapTo)
+                                            InputIt srcFirst, InputIt srcLast, MapToFunc&& mapTo,
+                                            const std::chrono::milliseconds& wait_ms = MAP_WAIT_ms)
   {
     using namespace impl_mapreduce;
 
     return std::async(ASYNC, blockingMapSorted<OutputIt,InputIt,MapToFunc>,
-                      numThreads, destFirst, destLast, srcFirst, srcLast, std::forward<MapToFunc>(mapTo));
+                      numThreads, destFirst, destLast, srcFirst, srcLast, std::forward<MapToFunc>(mapTo), wait_ms);
   }
 
 } // namespace cs
