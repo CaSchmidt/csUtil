@@ -126,8 +126,8 @@ namespace cs {
   {
     using namespace impl_mapreduce;
 
-    using map_result_type = std::invoke_result_t<MapFunc,impl_iter::iter_reference<ForwardIt>>;
-    using Futures = std::vector<std::future<map_result_type>>;
+    using mapped_t = std::invoke_result_t<MapFunc,impl_iter::iter_reference<ForwardIt>>;
+    using Futures = std::vector<std::future<mapped_t>>;
     using Future = typename Futures::value_type;
 
     Futures futures;
@@ -207,8 +207,8 @@ namespace cs {
   {
     using namespace impl_mapreduce;
 
-    using map_result_type = std::invoke_result_t<MapToFunc,impl_iter::iter_const_reference<InputIt>>;
-    using Futures = std::vector<std::future<map_result_type>>;
+    using mapped_t = std::invoke_result_t<MapToFunc,impl_iter::iter_const_reference<InputIt>>;
+    using Futures = std::vector<std::future<mapped_t>>;
     using Future = typename Futures::value_type;
 
     Futures futures;
@@ -274,7 +274,8 @@ namespace cs {
     using namespace impl_mapreduce;
 
     return std::async(ASYNC, blockingMapUnsorted<OutputIt,InputIt,MapToFunc>,
-                      numThreads, dest, first, last, std::forward<MapToFunc>(mapTo), wait_ms);
+                      numThreads, dest,
+                      first, last, std::forward<MapToFunc>(mapTo), wait_ms);
   }
 
   ////// (Sorted) Map ////////////////////////////////////////////////////////
@@ -288,8 +289,8 @@ namespace cs {
   {
     using namespace impl_mapreduce;
 
-    using map_result_type = std::invoke_result_t<MapToFunc,impl_iter::iter_const_reference<InputIt>>;
-    using Pair = std::pair<std::future<map_result_type>,OutputIt>;
+    using mapped_t = std::invoke_result_t<MapToFunc,impl_iter::iter_const_reference<InputIt>>;
+    using Pair = std::pair<std::future<mapped_t>,OutputIt>;
     using Pairs = std::vector<Pair>;
 
     Pairs pairs;
@@ -361,7 +362,54 @@ namespace cs {
     using namespace impl_mapreduce;
 
     return std::async(ASYNC, blockingMapSorted<OutputIt,InputIt,MapToFunc>,
-                      numThreads, destFirst, destLast, srcFirst, srcLast, std::forward<MapToFunc>(mapTo), wait_ms);
+                      numThreads, destFirst, destLast,
+                      srcFirst, srcLast, std::forward<MapToFunc>(mapTo), wait_ms);
+  }
+
+  ////// (Sorted) Map-Reduce /////////////////////////////////////////////////
+
+  template<typename T, typename ForwardIt, typename MapToFunc, typename ReduceFunc>
+  T blockingMapReduce(const std::size_t numThreads,
+                      ForwardIt first, ForwardIt last, MapToFunc&& mapTo,
+                      ReduceFunc&& reduce,
+                      const std::chrono::milliseconds wait_ms = MAP_WAIT_ms)
+  {
+    using namespace impl_mapreduce;
+
+    using mapped_t = std::invoke_result_t<MapToFunc,impl_iter::iter_const_reference<ForwardIt>>;
+    using Mapped = std::vector<mapped_t>;
+
+    Mapped mapped;
+    if( numThreads < ONE  ||  !resize(&mapped, distance0(first, last)) ) {
+      return T{};
+    }
+
+    // (1) Map Items /////////////////////////////////////////////////////////
+
+    blockingMapSorted(numThreads, mapped.begin(), mapped.end(),
+                      first, last, std::forward<MapToFunc>(mapTo), wait_ms);
+
+    // (2) Reduce Items //////////////////////////////////////////////////////
+
+    T result;
+    for(const mapped_t& item : mapped) {
+      std::invoke(std::forward<ReduceFunc>(reduce), std::ref(result), std::cref(item));
+    }
+
+    return result;
+  }
+
+  template<typename T, typename ForwardIt, typename MapToFunc, typename ReduceFunc>
+  [[nodiscard]] std::future<T> mapReduce(const std::size_t numThreads,
+                                         ForwardIt first, ForwardIt last, MapToFunc&& mapTo,
+                                         ReduceFunc&& reduce,
+                                         const std::chrono::milliseconds wait_ms = MAP_WAIT_ms)
+  {
+    using namespace impl_mapreduce;
+
+    return std::async(ASYNC, blockingMapReduce<T,ForwardIt,MapToFunc,ReduceFunc>,
+                      numThreads, first, last, std::forward<MapToFunc>(mapTo),
+                      std::forward<ReduceFunc>(reduce), wait_ms);
   }
 
 } // namespace cs

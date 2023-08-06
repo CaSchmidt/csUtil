@@ -8,6 +8,7 @@
 #include <catch.hpp>
 
 #include <cs/Concurrent/MapReduce.h>
+#include <cs/Text/PrintUtil.h>
 
 namespace util {
 
@@ -105,6 +106,13 @@ namespace util {
     printf("%d -> %d\n", in , out); fflush(stdout);
 
     return out;
+  }
+
+  ////////////////////////////////////////////////////////////////////////////
+
+  void reduce(std::string& result, const int i)
+  {
+    result += cs::sprint("%", i);
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -287,3 +295,40 @@ namespace test_map {
   }
 
 } // namespace test_map
+
+namespace test_mapreduce {
+
+  TEST_CASE("Reduce mapped sequence.", "[mapreduce]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    constexpr std::size_t COUNT = 7;
+    const std::array<int,COUNT> data{1, 2, 3, 4, 5, 6, 7};
+
+    util::print(data.begin(), data.end(), "data = ");
+
+    std::cout << "---------------------------------------------" << std::endl;
+
+    {
+      const std::string reduced =
+          cs::blockingMapReduce<std::string>(4,
+                                             data.begin(), data.end(), &util::incTo,
+                                             &util::reduce);
+      cs::println("reduced = %", reduced);
+
+      REQUIRE( reduced == "2345678" );
+    }
+
+    std::cout << "---------------------------------------------" << std::endl;
+
+    {
+      auto f = cs::mapReduce<std::string>(4,
+                                          data.begin(), data.end(), &util::incTo,
+                                          &util::reduce);
+      const std::string reduced = f.get();
+      cs::println("reduced = %", reduced);
+
+      REQUIRE( reduced == "2345678" );
+    }
+  }
+
+} // namespace test_mapreduce
