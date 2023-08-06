@@ -39,6 +39,12 @@ namespace cs {
   inline bool resize(C *container,
                      const typename C::size_type count)
   {
+    container->clear();
+
+    if( count <= 0 ) {
+      return false;
+    }
+
     try {
       container->resize(count);
     } catch(...) {
@@ -53,6 +59,12 @@ namespace cs {
                      const typename C::size_type count,
                      const typename C::value_type& value)
   {
+    container->clear();
+
+    if( count <= 0 ) {
+      return false;
+    }
+
     try {
       container->resize(count, value);
     } catch(...) {
