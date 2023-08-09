@@ -112,7 +112,7 @@ namespace util {
 
   void reduce(std::string& result, const int i)
   {
-    result += cs::sprint("%", i);
+    result += std::to_string(i);
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -220,6 +220,8 @@ namespace test_map {
 
       REQUIRE( util::isEqualSequence(a, COUNT, 2) );
     }
+
+    std::cout << std::endl;
   }
 
   TEST_CASE("Map sequence to unsorted sequence.", "[mapunsorted]") {
@@ -255,6 +257,8 @@ namespace test_map {
 
       REQUIRE( util::accumulate(a, COUNT) == 35 );
     }
+
+    std::cout << std::endl;
   }
 
   TEST_CASE("Map sequence to sorted sequence.", "[mapsorted]") {
@@ -292,9 +296,69 @@ namespace test_map {
 
       REQUIRE( util::isEqualSequence(a, COUNT, 2) );
     }
+
+    std::cout << std::endl;
   }
 
 } // namespace test_map
+
+namespace test_reduce {
+
+  TEST_CASE("Reduce sequence.", "[reduce]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    constexpr std::size_t COUNT = 11;
+    std::array<int,COUNT> data{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+    util::print(data.begin(), data.end(), "data = ");
+
+    std::cout << "---------------------------------------------" << std::endl;
+
+    {
+      const std::string reduced =
+          cs::blockingReduce<std::string>(4, data.begin(), data.end(),
+                                          &util::reduce, std::plus<>{});
+      cs::println("reduced = %", reduced);
+
+      REQUIRE( reduced == "1234567891011" );
+    }
+
+    std::cout << "---------------------------------------------" << std::endl;
+
+    {
+      const std::string reduced =
+          cs::blockingReduce<std::string>(4, data.begin(), std::next(data.begin(), 3),
+                                          &util::reduce, std::plus<>{});
+      cs::println("reduced = %", reduced);
+
+      REQUIRE( reduced == "123" );
+    }
+
+    std::cout << "---------------------------------------------" << std::endl;
+
+    {
+      const std::string reduced =
+          cs::blockingReduce<std::string>(4, data.begin(), std::next(data.begin(), 4),
+                                          &util::reduce, std::plus<>{});
+      cs::println("reduced = %", reduced);
+
+      REQUIRE( reduced == "1234" );
+    }
+
+    std::cout << "---------------------------------------------" << std::endl;
+
+    {
+      const std::string reduced =
+          cs::blockingReduce<std::string>(4, data.begin(), std::next(data.begin(), 7),
+                                          &util::reduce);
+      cs::println("reduced = %", reduced);
+
+      REQUIRE( reduced == "1234567" );
+    }
+
+    std::cout << std::endl;
+  }
+
+} // namespace test_reduce
 
 namespace test_mapreduce {
 
@@ -329,6 +393,8 @@ namespace test_mapreduce {
 
       REQUIRE( reduced == "2345678" );
     }
+
+    std::cout << std::endl;
   }
 
 } // namespace test_mapreduce

@@ -33,6 +33,7 @@
 
 #include <cstddef>
 
+#include <functional>
 #include <future>
 #include <utility>
 #include <vector>
@@ -52,6 +53,8 @@ namespace cs {
 
     // Type Traits ///////////////////////////////////////////////////////////
 
+    using namespace impl_iter;
+
     /*
      * Syntax of map() function:
      *
@@ -62,7 +65,7 @@ namespace cs {
 
     template<typename MapFunc, typename IterT>
     using is_map = std::bool_constant<
-    std::is_invocable_v<MapFunc,impl_iter::iter_reference<IterT>>
+    std::is_invocable_v<MapFunc,iter_reference<IterT>>
     >;
 
     template<typename MapFunc, typename IterT>
@@ -76,13 +79,62 @@ namespace cs {
 
     template<typename OutputIt, typename MapToFunc, typename InputIt>
     using is_mapTo = std::bool_constant<
-    impl_iter::iter_is_dereferenceable_v<OutputIt,std::invoke_result_t<MapToFunc,impl_iter::iter_const_reference<InputIt>>>
+    iter_is_dereferenceable_v<OutputIt,std::invoke_result_t<MapToFunc,iter_const_reference<InputIt>>>
     >;
 
     template<typename OutputIt, typename MapToFunc, typename InputIt>
     inline constexpr bool is_mapTo_v = is_mapTo<OutputIt,MapToFunc,InputIt>::value;
 
+    /*
+     * Syntax of reduce() function:
+     *
+     * V reduce(T& reduced, const U& mapped)
+     */
+
+    template<typename ReduceFunc, typename T, typename IterT>
+    using is_reduce = std::bool_constant<
+    std::is_invocable_v<ReduceFunc,std::add_lvalue_reference_t<T>,iter_const_reference<IterT>>
+    >;
+
+    template<typename ReduceFunc, typename T, typename IterT>
+    inline constexpr bool is_reduce_v = is_reduce<ReduceFunc,T,IterT>::value;
+
+    /*
+     * Syntax of fold() function:
+     *
+     * T fold(T, T)
+     */
+
+    template<typename FoldFunc, typename T>
+    using is_fold = std::bool_constant<
+    std::is_invocable_r_v<T,FoldFunc,T,T>
+    >;
+
+    template<typename FoldFunc, typename T>
+    inline constexpr bool is_fold_v = is_fold<FoldFunc,T>::value;
+
+    // Types /////////////////////////////////////////////////////////////////
+
+    using ReduceInfo = std::tuple<std::size_t,std::size_t,std::size_t>;
+
     // Implementation ////////////////////////////////////////////////////////
+
+    inline ReduceInfo computeReduceInfo(const std::size_t numThreads,
+                                        const std::size_t numItems)
+    {
+      if( numThreads < ONE  ||  numItems < ONE ) {
+        return ReduceInfo{0, 0, 0};
+      }
+
+      if( numItems <= numThreads ) {
+        return ReduceInfo{numItems, 1, 0};
+      }
+
+      const std::size_t stride = numItems/numThreads;
+      const std::size_t remain = numItems%numThreads;
+
+      return ReduceInfo{numThreads, stride, remain};
+    }
 
     template<typename IterT>
     inline bool isDone(IterT first, IterT last)
@@ -105,6 +157,17 @@ namespace cs {
       constexpr auto READY = std::future_status::ready;
 
       return f.valid()  &&  f.wait_until(Clock::now()) == READY;
+    }
+
+    template<typename T, typename ForwardIt, typename ReduceFunc>
+    T reduceRange(ForwardIt first, ForwardIt last, ReduceFunc&& reduce)
+    {
+      T result{};
+      for(; first != last; ++first) {
+        std::invoke(std::forward<ReduceFunc>(reduce),
+                    std::ref(result), std::cref(*first));
+      }
+      return result;
     }
 
   } // namespace impl_mapreduce
@@ -194,7 +257,7 @@ namespace cs {
                       numThreads, first, last, std::forward<MapFunc>(map), wait_ms);
   }
 
-  ////// (Unsorted) Map //////////////////////////////////////////////////////
+  ////// Unsorted Map ////////////////////////////////////////////////////////
 
   template<typename OutputIt, typename MapToFunc, typename InputIt>
   concept IsMapToFunction = impl_mapreduce::is_mapTo_v<OutputIt,MapToFunc,InputIt>;
@@ -278,7 +341,7 @@ namespace cs {
                       first, last, std::forward<MapToFunc>(mapTo), wait_ms);
   }
 
-  ////// (Sorted) Map ////////////////////////////////////////////////////////
+  ////// Sorted Map //////////////////////////////////////////////////////////
 
   template<typename OutputIt, typename InputIt, typename MapToFunc>
   requires IsMapToFunction<OutputIt,MapToFunc,InputIt>
@@ -366,7 +429,68 @@ namespace cs {
                       srcFirst, srcLast, std::forward<MapToFunc>(mapTo), wait_ms);
   }
 
-  ////// (Sorted) Map-Reduce /////////////////////////////////////////////////
+  ////// Sorted Recude ///////////////////////////////////////////////////////
+
+  template<typename ReduceFunc, typename T, typename IterT>
+  concept IsReduceFunction = impl_mapreduce::is_reduce_v<ReduceFunc,T,IterT>;
+
+  template<typename FoldFunc, typename T>
+  concept IsFoldFunction = impl_mapreduce::is_fold_v<FoldFunc,T>;
+
+  template<typename T, typename ForwardIt, typename ReduceFunc, typename FoldFunc>
+  requires IsReduceFunction<ReduceFunc,T,ForwardIt>  &&  IsFoldFunction<FoldFunc,T>
+  T blockingReduce(const std::size_t _numThreads,
+                   ForwardIt first, ForwardIt last, ReduceFunc&& reduce,
+                   FoldFunc&& fold)
+  {
+    using namespace impl_mapreduce;
+
+    using Futures = std::vector<std::future<T>>;
+    using  Future = typename Futures::value_type;
+
+    const auto [numThreads, stride, remain] =
+        impl_mapreduce::computeReduceInfo(_numThreads, distance0(first, last));
+    {}
+
+    Futures futures;
+    if( numThreads < ONE  ||  !resize(&futures, numThreads) ) {
+      return T{};
+    }
+
+    // (1) Run Threads ///////////////////////////////////////////////////////
+
+    for(std::size_t i = 0; i < numThreads; i++) {
+      const ForwardIt last = i < remain
+          ? std::next(first, stride + ONE)
+          : std::next(first, stride);
+
+      futures[i] = std::async(ASYNC, reduceRange<T,ForwardIt,ReduceFunc>,
+                              first, last, std::forward<ReduceFunc>(reduce));
+
+      first = last;
+    }
+
+    // (2) Fold Results //////////////////////////////////////////////////////
+
+    T result{};
+    for(Future& future : futures) {
+      result = std::invoke(std::forward<FoldFunc>(fold),
+                           std::move(result), future.get());
+    }
+
+    return result;
+  }
+
+  template<typename T, typename ForwardIt, typename ReduceFunc>
+  requires IsReduceFunction<ReduceFunc,T,ForwardIt>
+  T blockingReduce(const std::size_t _numThreads,
+                   ForwardIt first, ForwardIt last, ReduceFunc&& reduce)
+  {
+    return blockingReduce<T>(_numThreads, first, last, std::forward<ReduceFunc>(reduce),
+                             std::plus<>{});
+  }
+
+  ////// Sorted Map-Reduce ///////////////////////////////////////////////////
 
   template<typename T, typename ForwardIt, typename MapToFunc, typename ReduceFunc>
   T blockingMapReduce(const std::size_t numThreads,
