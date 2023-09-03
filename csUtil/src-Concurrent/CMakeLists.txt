@@ -1,5 +1,6 @@
 list(APPEND csConcurrent_HEADERS
   include/cs/Concurrent/MapReduce.h
+  include/cs/Concurrent/Reduce.h
 )
 
 list(APPEND csConcurrent_SOURCES

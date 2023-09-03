@@ -336,9 +336,9 @@ namespace test_reduce {
     std::cout << "---------------------------------------------" << std::endl;
 
     {
-      const std::string reduced =
-          cs::blockingReduce<std::string>(4, data.begin(), std::next(data.begin(), 4),
-                                          &util::reduce, std::plus<>{});
+      auto f = cs::reduce<std::string>(4, data.begin(), std::next(data.begin(), 4),
+                                       &util::reduce, std::plus<>{});
+      const std::string reduced = f.get();
       cs::println("reduced = %", reduced);
 
       REQUIRE( reduced == "1234" );
@@ -347,9 +347,9 @@ namespace test_reduce {
     std::cout << "---------------------------------------------" << std::endl;
 
     {
-      const std::string reduced =
-          cs::blockingReduce<std::string>(4, data.begin(), std::next(data.begin(), 7),
-                                          &util::reduce);
+      auto f = cs::reduce<std::string>(4, data.begin(), std::next(data.begin(), 7),
+                                       &util::reduce);
+      const std::string reduced = f.get();
       cs::println("reduced = %", reduced);
 
       REQUIRE( reduced == "1234567" );
