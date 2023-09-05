@@ -51,6 +51,8 @@ namespace cs {
      * Syntax of reduce() function:
      *
      * V reduce(T& reduced, const U& mapped)
+     *
+     * NOTE: Return value is never used!
      */
 
     template<typename ReduceFunc, typename T, typename IterT>
