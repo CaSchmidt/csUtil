@@ -1,4 +1,5 @@
 list(APPEND csConcurrent_HEADERS
+  include/cs/Concurrent/Map.h
   include/cs/Concurrent/MapReduce.h
   include/cs/Concurrent/Reduce.h
 )
