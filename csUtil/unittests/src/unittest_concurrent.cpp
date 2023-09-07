@@ -375,8 +375,8 @@ namespace test_mapreduce {
     {
       const std::string reduced =
           cs::blockingMapReduce<std::string>(4,
-                                             data.begin(), data.end(), &util::incTo,
-                                             &util::reduce);
+                                             data.begin(), data.end(),
+                                             &util::incTo, &util::reduce);
       cs::println("reduced = %", reduced);
 
       REQUIRE( reduced == "2345678" );
