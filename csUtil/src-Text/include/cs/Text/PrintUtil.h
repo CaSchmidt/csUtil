@@ -32,6 +32,7 @@
 #pragma once
 
 #include <iostream>
+#include <sstream>
 
 #include <cs/Text/Print.h>
 
