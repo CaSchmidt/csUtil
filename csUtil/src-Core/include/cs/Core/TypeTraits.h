@@ -243,6 +243,22 @@ namespace cs {
 
   inline constexpr auto MAX_SIZE_T = std::numeric_limits<std::size_t>::max();
 
+  template<typename A, typename B>
+  using maxab = std::integral_constant<A,
+  sizeof(A) == sizeof(B)
+  ? std::is_signed_v<A>
+    ? std::numeric_limits<A>::max()
+    // NOTE: Handle both cases where B is signed and both A and B are unsigned!
+    : std::numeric_limits<B>::max()
+  : (sizeof(A) > sizeof(B))
+    ? std::numeric_limits<B>::max()
+    // NOTE: sizeof(A) < sizeof(B)
+    : std::numeric_limits<A>::max()
+  >;
+
+  template<typename A, typename B>
+  inline constexpr A maxab_v = maxab<A,B>::value;
+
   ////// Pointer Conversions /////////////////////////////////////////////////
 
   inline const char *CSTR(const char8_t *s)
