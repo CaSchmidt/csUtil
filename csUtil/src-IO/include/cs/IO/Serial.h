@@ -34,13 +34,13 @@
 #include <filesystem>
 #include <memory>
 
-#include <cs/IO/IODevice.h>
+#include <cs/IO/AbstractIODevice.h>
 
 namespace cs {
 
   using SerialImplPtr = std::unique_ptr<class SerialImpl>;
 
-  class CS_UTIL_EXPORT Serial : public IODevice {
+  class CS_UTIL_EXPORT Serial : public AbstractIODevice {
   public:
     Serial() noexcept;
     ~Serial() noexcept;

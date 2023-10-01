@@ -29,20 +29,23 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <type_traits>
+#pragma once
 
-#include "cs/IO/IODevice.h"
+#include <cstddef>
+
+#include <cs/Core/csutil_config.h>
 
 namespace cs {
 
-  ////// public //////////////////////////////////////////////////////////////
+  class CS_UTIL_EXPORT AbstractIODevice {
+  public:
+    AbstractIODevice() noexcept;
+    virtual ~AbstractIODevice() noexcept;
 
-  IODevice::IODevice() noexcept
-  {
-  }
+    virtual void close() = 0;
 
-  IODevice::~IODevice() noexcept
-  {
-  }
+    virtual std::size_t read(void *data, const std::size_t sizData) const = 0;
+    virtual std::size_t write(const void *data, const std::size_t sizData) const = 0;
+  };
 
 } // namespace cs

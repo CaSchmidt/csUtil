@@ -34,7 +34,7 @@
 #include <string_view>
 
 #include <cs/Core/Buffer.h>
-#include <cs/IO/IODevice.h>
+#include <cs/IO/AbstractIODevice.h>
 
 namespace cs {
 
@@ -49,7 +49,7 @@ namespace cs {
 
     void reset();
 
-    bool getLine(std::string_view *view, const IODevice *dev,
+    bool getLine(std::string_view *view, const AbstractIODevice *dev,
                  const char sep = '\n');
 
   private:
@@ -67,8 +67,8 @@ namespace cs {
       return reinterpret_cast<const T*>(cbeginData());
     }
 
-    void fillBuffer(const IODevice *dev);
-    void syncBuffer(const IODevice *dev);
+    void fillBuffer(const AbstractIODevice *dev);
+    void syncBuffer(const AbstractIODevice *dev);
 
     std::size_t scanData(const byte_type sep) const;
 

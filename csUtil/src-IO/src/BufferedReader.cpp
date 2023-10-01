@@ -61,7 +61,7 @@ namespace cs {
     _idxData = _numData = 0;
   }
 
-  bool BufferedReader::getLine(std::string_view *view, const IODevice *dev,
+  bool BufferedReader::getLine(std::string_view *view, const AbstractIODevice *dev,
                                const char sep)
   {
     static_assert( sizeof(byte_type) == sizeof(char) );
@@ -127,13 +127,13 @@ namespace cs {
     return _buffer.data() + _numData;
   }
 
-  void BufferedReader::fillBuffer(const IODevice *dev)
+  void BufferedReader::fillBuffer(const AbstractIODevice *dev)
   {
     _numData = dev->read(_buffer.data(), _buffer.size());
     _idxData = 0;
   }
 
-  void BufferedReader::syncBuffer(const IODevice *dev)
+  void BufferedReader::syncBuffer(const AbstractIODevice *dev)
   {
     // (1) Copy Unconsumed Data //////////////////////////////////////////////
 

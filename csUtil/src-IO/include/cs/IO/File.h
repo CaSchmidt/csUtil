@@ -36,7 +36,7 @@
 
 #include <cs/Core/Buffer.h>
 #include <cs/Core/Flags.h>
-#include <cs/IO/IODevice.h>
+#include <cs/IO/AbstractIODevice.h>
 
 namespace cs {
 
@@ -57,7 +57,7 @@ namespace cs {
 
   using FileImplPtr = std::unique_ptr<class FileImpl>;
 
-  class CS_UTIL_EXPORT File : public IODevice {
+  class CS_UTIL_EXPORT File : public AbstractIODevice {
   public:
     using offset_type = uint64_t;
 
