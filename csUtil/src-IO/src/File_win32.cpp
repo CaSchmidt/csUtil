@@ -37,6 +37,21 @@ namespace cs {
 
   ////// Implementation //////////////////////////////////////////////////////
 
+  namespace impl_win32 {
+
+    using win32fp_type = decltype(LARGE_INTEGER().QuadPart);
+
+    inline bool checkSeekOffset(const File::offset_type offset)
+    {
+      constexpr File::offset_type MAX_SEEK_OFFSET =
+          cs::maxab_v<File::offset_type,win32fp_type>;
+      constexpr File::offset_type            ZERO = 0;
+
+      return ZERO <= offset  &&  offset <= MAX_SEEK_OFFSET;
+    }
+
+  } // namespace impl_win32
+
   class FileImpl : public Win32Handle {
   public:
     FileImpl() noexcept
@@ -48,10 +63,14 @@ namespace cs {
     {
     }
 
-    bool seek(const IODevice::pos_type pos) const
+    bool seek(const File::offset_type offset) const
     {
+      if( !impl_win32::checkSeekOffset(offset) ) {
+        return false;
+      }
+
       LARGE_INTEGER li;
-      li.QuadPart = pos;
+      li.QuadPart = static_cast<impl_win32::win32fp_type>(offset);
 
       return isOpen()  &&  SetFilePointerEx(handle, li, NULL, FILE_BEGIN) != 0;
     }
@@ -69,6 +88,9 @@ namespace cs {
       return isOpen()  &&  seek(0)  &&  SetEndOfFile(handle) != 0;
     }
   };
+
+  static_assert( sizeof(File::offset_type) >= sizeof(impl_win32::win32fp_type) );
+  static_assert( std::is_unsigned_v<File::offset_type> );
 
   ////// public //////////////////////////////////////////////////////////////
 
@@ -165,45 +187,51 @@ namespace cs {
     return _impl->path;
   }
 
-  bool File::seek(const pos_type pos) const
+  /*
+   * NOTE: Check in FileImpl::seek() prevents erroneous cast
+   *       from 'offset_type' to Win32 specific file pointer.
+   */
+  bool File::seek(const File::offset_type offset) const
   {
-    return isOpen()  &&  _impl->seek(pos);
+    return isOpen()  &&  _impl->seek(offset);
   }
 
-  IODevice::pos_type File::tell() const
+  /*
+   * NOTE: Erroneous cast from Win32 file pointer to 'offset_type'
+   *       in tell() and size() is prevented by static_assert();
+   *       cf. above.
+   */
+
+  File::offset_type File::tell() const
   {
     LARGE_INTEGER in;
     in.QuadPart = 0;
     LARGE_INTEGER out;
     out.QuadPart = 0;
 
-    if( !isOpen()  ||  SetFilePointerEx(_impl->handle, in, &out, FILE_CURRENT) == 0 ) {
-      return 0;
-    }
-
-    return out.QuadPart;
+    return isOpen()  &&  SetFilePointerEx(_impl->handle, in, &out, FILE_CURRENT) != 0
+        ? static_cast<File::offset_type>(out.QuadPart)
+        : 0;
   }
 
-  IODevice::size_type File::size() const
+  File::offset_type File::size() const
   {
     LARGE_INTEGER li;
     li.QuadPart = 0;
 
-    if( !isOpen()  ||  GetFileSizeEx(_impl->handle, &li) == 0 ) {
-      return 0;
-    }
-
-    return static_cast<size_type>(li.QuadPart);
+    return isOpen()  &&  GetFileSizeEx(_impl->handle, &li) != 0
+        ? static_cast<File::offset_type>(li.QuadPart)
+        : 0;
   }
 
-  IODevice::size_type File::read(void *data, const size_type sizData) const
+  std::size_t File::read(void *data, const std::size_t sizData) const
   {
     return isOpen()
         ? _impl->read(data, sizData)
         : 0;
   }
 
-  IODevice::size_type File::write(const void *data, const size_type sizData) const
+  std::size_t File::write(const void *data, const std::size_t sizData) const
   {
     return isOpen()
         ? _impl->write(data, sizData)

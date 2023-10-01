@@ -38,9 +38,7 @@
 
 namespace cs {
 
-  class SerialImpl;
-
-  using SerialImplPtr = std::unique_ptr<SerialImpl>;
+  using SerialImplPtr = std::unique_ptr<class SerialImpl>;
 
   class CS_UTIL_EXPORT Serial : public IODevice {
   public:
@@ -51,8 +49,8 @@ namespace cs {
     bool isOpen() const;
     bool open(const std::filesystem::path& device, const int rate);
 
-    size_type read(void *data, const size_type sizData) const;
-    size_type write(const void *data, const size_type sizData) const;
+    std::size_t read(void *data, const std::size_t sizData) const;
+    std::size_t write(const void *data, const std::size_t sizData) const;
 
   private:
     SerialImplPtr _impl;

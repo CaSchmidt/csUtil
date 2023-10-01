@@ -35,13 +35,11 @@ int main(int argc, char **argv)
     return EXIT_FAILURE;
   }
 
-  using fsize_type = cs::File::size_type;
-
-  constexpr fsize_type BLOCK = 1024;
+  constexpr std::size_t BLOCK = 1024;
 
   cs::ByteArray<BLOCK> buffer;
 
-  fsize_type got = 0;
+  std::size_t got = 0;
   while( (got = file.read(buffer.data(), buffer.size())) > 0 ) {
     crcsum = crc32(buffer.data(), got, crcsum);
   }

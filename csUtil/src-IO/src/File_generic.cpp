@@ -37,23 +37,26 @@ namespace cs {
 
   Buffer File::readAll() const
   {
-    constexpr size_type MAX_SIZE = std::numeric_limits<Buffer::size_type>::max();
-    constexpr size_type      ONE = 1;
+    constexpr offset_type MAX_OFFSET = maxab_v<offset_type,std::size_t>;
+    constexpr offset_type        ONE = 1;
 
-    const size_type numToRead = size();
+    const offset_type sizFile = size(); // NOTE: checks isOpen()
 
-    const bool is_size = ONE <= numToRead  &&  numToRead <= MAX_SIZE;
-    if( !isOpen()  ||  !is_size ) {
-      return Buffer{};
+    const bool size_ok = ONE <= sizFile  &&  sizFile <= MAX_OFFSET;
+    if( !size_ok ) {
+      return Buffer();
     }
+
+    // NOTE: Cast is guarded by 'size_ok'.
+    const std::size_t numToRead = static_cast<std::size_t>(sizFile);
 
     Buffer buffer;
-    if( !resize(&buffer, numToRead, 0) ) {
-      return Buffer{};
+    if( !resize(&buffer, numToRead) ) {
+      return Buffer();
     }
 
-    if( read(buffer.data(), numToRead) != numToRead ) {
-      return Buffer{};
+    if( read(buffer.data(), buffer.size()) != numToRead ) {
+      return Buffer();
     }
 
     return buffer;

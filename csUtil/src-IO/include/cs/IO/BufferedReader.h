@@ -41,9 +41,8 @@ namespace cs {
   class CS_UTIL_EXPORT BufferedReader {
   public:
     using byte_type = Buffer::value_type;
-    using size_type = IODevice::size_type;
 
-    BufferedReader(const size_type sizeBuffer = 128*1024) noexcept;
+    BufferedReader(const std::size_t sizeBuffer = 128*1024) noexcept;
     ~BufferedReader() noexcept;
 
     bool isEmpty() const;
@@ -54,7 +53,7 @@ namespace cs {
                  const char sep = '\n');
 
   private:
-    static constexpr size_type ONE = 1;
+    static constexpr std::size_t ONE = 1;
 
     byte_type *beginData();
     byte_type *endData();
@@ -71,11 +70,11 @@ namespace cs {
     void fillBuffer(const IODevice *dev);
     void syncBuffer(const IODevice *dev);
 
-    size_type scanData(const byte_type sep) const;
+    std::size_t scanData(const byte_type sep) const;
 
     Buffer _buffer{};
-    size_type _idxData{0};
-    size_type _numData{0};
+    std::size_t _idxData{0};
+    std::size_t _numData{0};
   };
 
 } // namespace cs

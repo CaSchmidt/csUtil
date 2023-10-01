@@ -55,12 +55,12 @@ CS_ENABLE_FLAGS(cs::FileOpenFlag);
 
 namespace cs {
 
-  class FileImpl;
-
-  using FileImplPtr = std::unique_ptr<FileImpl>;
+  using FileImplPtr = std::unique_ptr<class FileImpl>;
 
   class CS_UTIL_EXPORT File : public IODevice {
   public:
+    using offset_type = uint64_t;
+
     using OpenFlags = Flags<FileOpenFlag>;
 
     File() noexcept;
@@ -72,13 +72,13 @@ namespace cs {
 
     std::filesystem::path path() const;
 
-    bool seek(const pos_type pos) const;
-    pos_type tell() const;
+    bool seek(const offset_type offset) const;
+    offset_type tell() const;
 
-    size_type size() const;
+    offset_type size() const;
 
-    size_type read(void *data, const size_type sizData) const;
-    size_type write(const void *data, const size_type sizData) const;
+    std::size_t read(void *data, const std::size_t sizData) const;
+    std::size_t write(const void *data, const std::size_t sizData) const;
 
     Buffer readAll() const;
 

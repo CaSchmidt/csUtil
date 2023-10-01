@@ -35,9 +35,6 @@
 
 namespace cs {
 
-  static_assert( std::is_signed_v<IODevice::pos_type>     &&  sizeof(IODevice::pos_type)  == 8 );
-  static_assert( std::is_unsigned_v<IODevice::size_type>  &&  sizeof(IODevice::size_type) == 8 );
-
   ////// public //////////////////////////////////////////////////////////////
 
   IODevice::IODevice() noexcept

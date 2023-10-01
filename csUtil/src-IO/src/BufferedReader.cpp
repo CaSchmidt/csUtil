@@ -40,7 +40,7 @@ namespace cs {
 
   ////// public //////////////////////////////////////////////////////////////
 
-  BufferedReader::BufferedReader(const size_type sizeBuffer) noexcept
+  BufferedReader::BufferedReader(const std::size_t sizeBuffer) noexcept
     : _buffer{}
   {
     reset();
@@ -86,7 +86,7 @@ namespace cs {
 
     // (2) Scan Data Buffer //////////////////////////////////////////////////
 
-    size_type hit = scanData(sep);
+    std::size_t hit = scanData(sep);
     if( hit == _numData ) {
       syncBuffer(dev);
       hit = scanData(sep);
@@ -150,7 +150,7 @@ namespace cs {
     }
   }
 
-  BufferedReader::size_type BufferedReader::scanData(const byte_type sep) const
+  std::size_t BufferedReader::scanData(const byte_type sep) const
   {
     return std::distance(_buffer.data(),
                          std::find(cbeginData(), cendData(), sep));

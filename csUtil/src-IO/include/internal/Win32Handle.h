@@ -38,8 +38,6 @@
 #endif
 #include <Windows.h>
 
-#include "cs/Core/TypeTraits.h"
-
 namespace cs {
 
   class Win32Handle {
@@ -49,40 +47,9 @@ namespace cs {
 
     bool isOpen() const;
 
-    template<typename CS_SIZE_T>
-    inline static bool isRWLength(const CS_SIZE_T length)
-    {
-      static_assert(std::is_integral_v<CS_SIZE_T>  &&  sizeof(CS_SIZE_T) > sizeof(DWORD));
+    std::size_t read(void *data, const std::size_t sizData) const;
 
-      constexpr CS_SIZE_T MAX_DWORD = std::numeric_limits<DWORD>::max();
-      constexpr CS_SIZE_T       ONE = 1;
-
-      return ONE <= length  &&  length <= MAX_DWORD;
-    }
-
-    template<typename CS_SIZE_T>
-    inline CS_SIZE_T read(void *data, const CS_SIZE_T sizData) const
-    {
-      const DWORD numToRead = static_cast<DWORD>(sizData);
-      DWORD numRead = 0;
-      if( !isOpen()  ||  !isRWLength(sizData)  ||
-          ReadFile(handle, data, numToRead, &numRead, NULL) == 0 ) {
-        return 0;
-      }
-      return numRead;
-    }
-
-    template<typename CS_SIZE_T>
-    inline CS_SIZE_T write(const void *data, const CS_SIZE_T sizData) const
-    {
-      const DWORD numToWrite = static_cast<DWORD>(sizData);
-      DWORD numWritten = 0;
-      if( !isOpen()  ||  !isRWLength(sizData)  ||
-          WriteFile(handle, data, numToWrite, &numWritten, NULL) == 0 ) {
-        return 0;
-      }
-      return numWritten;
-    }
+    std::size_t write(const void *data, const std::size_t sizData) const;
 
     HANDLE handle{INVALID_HANDLE_VALUE};
     std::filesystem::path path{};

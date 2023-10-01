@@ -201,7 +201,7 @@ namespace cs {
     return isOpen();
   }
 
-  IODevice::size_type Serial::read(void *data, const size_type sizData) const
+  std::size_t Serial::read(void *data, const std::size_t sizData) const
   {
     if( !isOpen() ) {
       return 0;
@@ -214,7 +214,7 @@ namespace cs {
     return _impl->read(data, sizData);
   }
 
-  IODevice::size_type Serial::write(const void *data, const size_type sizData) const
+  std::size_t Serial::write(const void *data, const std::size_t sizData) const
   {
     return isOpen()
         ? _impl->write(data, sizData)

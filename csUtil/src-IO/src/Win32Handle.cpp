@@ -29,9 +29,25 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include "cs/Core/TypeTraits.h"
+
 #include "internal/Win32Handle.h"
 
 namespace cs {
+
+  ////// Private /////////////////////////////////////////////////////////////
+
+  namespace impl_win32 {
+
+    inline bool checkRwSize(const std::size_t size)
+    {
+      constexpr std::size_t MAX_RW_SIZE = maxab_v<std::size_t,DWORD>;
+      constexpr std::size_t         ONE = 1;
+
+      return ONE <= size  &&  size <= MAX_RW_SIZE;
+    }
+
+  } // namespace impl_win32
 
   ////// public //////////////////////////////////////////////////////////////
 
@@ -53,6 +69,32 @@ namespace cs {
   bool Win32Handle::isOpen() const
   {
     return handle != INVALID_HANDLE_VALUE;
+  }
+
+  std::size_t Win32Handle::read(void *data, const std::size_t sizData) const
+  {
+    if( !impl_win32::checkRwSize(sizData) ) {
+      return 0;
+    }
+
+    const DWORD numToRead = static_cast<DWORD>(sizData);
+    DWORD numRead = 0;
+    return isOpen()  &&  ReadFile(handle, data, numToRead, &numRead, NULL) != 0
+        ? static_cast<std::size_t>(numRead)
+        : 0;
+  }
+
+  std::size_t Win32Handle::write(const void *data, const std::size_t sizData) const
+  {
+    if( !impl_win32::checkRwSize(sizData) ) {
+      return 0;
+    }
+
+    const DWORD numToWrite = static_cast<DWORD>(sizData);
+    DWORD numWritten = 0;
+    return isOpen()  &&  WriteFile(handle, data, numToWrite, &numWritten, NULL) != 0
+        ? static_cast<std::size_t>(numWritten)
+        : 0;
   }
 
 } // namespace cs

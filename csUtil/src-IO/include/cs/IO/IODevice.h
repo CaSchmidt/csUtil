@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include <cstdint>
+#include <cstddef>
 
 #include <cs/Core/csutil_config.h>
 
@@ -39,16 +39,13 @@ namespace cs {
 
   class CS_UTIL_EXPORT IODevice {
   public:
-    using  pos_type =  int64_t;
-    using size_type = uint64_t;
-
     IODevice() noexcept;
     virtual ~IODevice() noexcept;
 
     virtual void close() = 0;
 
-    virtual size_type read(void *data, const size_type sizData) const = 0;
-    virtual size_type write(const void *data, const size_type sizData) const = 0;
+    virtual std::size_t read(void *data, const std::size_t sizData) const = 0;
+    virtual std::size_t write(const void *data, const std::size_t sizData) const = 0;
   };
 
 } // namespace cs
