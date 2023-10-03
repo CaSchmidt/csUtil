@@ -49,7 +49,7 @@ namespace cs {
   struct cmp {
     using value_type = T;
 
-    static constexpr value_type DEFAULT_TOL = 0x1.0p-10;
+    static constexpr value_type DEFAULT_TOL = real_konst<value_type>::milli;
 
     inline static bool equal_to(const value_type& lhs, const value_type& rhs,
                                 const value_type& tol = DEFAULT_TOL)
