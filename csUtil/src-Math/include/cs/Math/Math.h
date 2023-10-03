@@ -33,7 +33,7 @@
 
 #include <math.h>
 
-#include <cs/Core/Concepts.h>
+#include <cs/Core/Constants.h>
 
 namespace cs {
 
@@ -51,9 +51,30 @@ namespace cs {
       return ::fabsf(x);
     }
 
+    inline static value_type acos(const value_type& x)
+    {
+      return ::acosf(x);
+    }
+
+    inline static value_type atan2(const value_type& y, const value_type& x)
+    {
+      return ::atan2f(y, x);
+    }
+
     inline static value_type ceil(const value_type& x)
     {
       return ::ceilf(x);
+    }
+
+    inline static value_type cos(const value_type& x)
+    {
+      return ::cosf(x);
+    }
+
+    inline static value_type cosPI2(const signed int i)
+    {
+      static const value_type tab[4] = { 1, 0, -1, 0 };
+      return tab[i & 0x3];
     }
 
     inline static value_type floor(const value_type& x)
@@ -89,6 +110,12 @@ namespace cs {
       return isnan(x) != 0;
     }
 
+    inline static bool isZero(const value_type& x,
+                              const value_type& tol = real_konst<value_type>::micro)
+    {
+      return abs(x) <= tol;
+    }
+
     inline static value_type log(const value_type& x)
     {
       return ::logf(x);
@@ -97,6 +124,11 @@ namespace cs {
     inline static value_type log10(const value_type& x)
     {
       return ::log10f(x);
+    }
+
+    inline static value_type mod(const value_type& x, const value_type& y)
+    {
+      return ::fmodf(x, y);
     }
 
     inline static value_type pow(const value_type& base, const value_type& exponent)
@@ -109,9 +141,25 @@ namespace cs {
       return ::roundf(x);
     }
 
+    inline static value_type sin(const value_type& x)
+    {
+      return ::sinf(x);
+    }
+
+    inline static value_type sinPI2(const signed int i)
+    {
+      static const value_type tab[4] = { 0, 1, 0, -1 };
+      return tab[i & 0x3];
+    }
+
     inline static value_type sqrt(const value_type& x)
     {
       return ::sqrtf(x);
+    }
+
+    inline static value_type tan(const value_type& x)
+    {
+      return ::tanf(x);
     }
   };
 
@@ -124,9 +172,30 @@ namespace cs {
       return ::fabs(x);
     }
 
+    inline static value_type acos(const value_type& x)
+    {
+      return ::acos(x);
+    }
+
+    inline static value_type atan2(const value_type& y, const value_type& x)
+    {
+      return ::atan2(y, x);
+    }
+
     inline static value_type ceil(const value_type& x)
     {
       return ::ceil(x);
+    }
+
+    inline static value_type cos(const value_type& x)
+    {
+      return ::cos(x);
+    }
+
+    inline static value_type cosPI2(const signed int i)
+    {
+      static const value_type tab[4] = { 1, 0, -1, 0 };
+      return tab[i & 0x3];
     }
 
     inline static value_type floor(const value_type& x)
@@ -162,6 +231,12 @@ namespace cs {
       return isnan(x) != 0;
     }
 
+    inline static bool isZero(const value_type& x,
+                              const value_type& tol = real_konst<value_type>::micro)
+    {
+      return abs(x) <= tol;
+    }
+
     inline static value_type log(const value_type& x)
     {
       return ::log(x);
@@ -170,6 +245,11 @@ namespace cs {
     inline static value_type log10(const value_type& x)
     {
       return ::log10(x);
+    }
+
+    inline static value_type mod(const value_type& x, const value_type& y)
+    {
+      return ::fmod(x, y);
     }
 
     inline static value_type pow(const value_type& base, const value_type& exponent)
@@ -182,9 +262,25 @@ namespace cs {
       return ::round(x);
     }
 
+    inline static value_type sin(const value_type& x)
+    {
+      return ::sin(x);
+    }
+
+    inline static value_type sinPI2(const signed int i)
+    {
+      static const value_type tab[4] = { 0, 1, 0, -1 };
+      return tab[i & 0x3];
+    }
+
     inline static value_type sqrt(const value_type& x)
     {
       return ::sqrt(x);
+    }
+
+    inline static value_type tan(const value_type& x)
+    {
+      return ::tan(x);
     }
   };
 
