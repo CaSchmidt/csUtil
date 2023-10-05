@@ -36,7 +36,7 @@
 namespace cs {
 
   template<int E0, int E1, int E2, int E3>
-  constexpr int simd128_shuffle_mask()
+  constexpr int simd128_pshufd_mask()
   {
     static_assert( 0 <= E0  &&  E0 <= 3 );
     static_assert( 0 <= E1  &&  E1 <= 3 );
@@ -44,38 +44,6 @@ namespace cs {
     static_assert( 0 <= E3  &&  E3 <= 3 );
 
     return (E3 << 6) | (E2 << 4) | (E1 << 2) | E0;
-  }
-
-  template<int E0, int E1, int E2, int E3>
-  inline __m128i simd128_swizzle_epi32(const __m128i& x)
-  {
-    constexpr int MASK = simd128_shuffle_mask<E0,E1,E2,E3>();
-
-    return _mm_shuffle_epi32(x, MASK);
-  }
-
-  template<int E0, int E1>
-  inline __m128d simd128_swizzle_pd(const __m128d& x)
-  {
-    static_assert( 0 <= E0  &&  E0 <= 1 );
-    static_assert( 0 <= E1  &&  E1 <= 1 );
-
-    constexpr int M0 = E0*2;
-    constexpr int M1 = E0*2 + 1;
-    constexpr int M2 = E1*2;
-    constexpr int M3 = E1*2 + 1;
-
-    constexpr int MASK = simd128_shuffle_mask<M0,M1,M2,M3>();
-
-    return _mm_castsi128_pd(_mm_shuffle_epi32(_mm_castpd_si128(x), MASK));
-  }
-
-  template<int E0, int E1, int E2, int E3>
-  inline __m128 simd128_swizzle_ps(const __m128& x)
-  {
-    constexpr int MASK = simd128_shuffle_mask<E0,E1,E2,E3>();
-
-    return _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(x), MASK));
   }
 
 } // namespace cs

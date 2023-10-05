@@ -57,8 +57,8 @@ namespace cs {
 
     inline static block_type hadd(const block_type& x)
     {
-      const block_type y = _mm_add_ps(x, simd128_swizzle_ps<1,0,3,2>(x));
-      return               _mm_add_ps(y, simd128_swizzle_ps<3,2,1,0>(y));
+      const block_type y = _mm_add_ps(x, swizzle<1,0,3,2>(x));
+      return               _mm_add_ps(y, swizzle<3,2,1,0>(y));
     }
 
     template<bool ALIGNED = true>
@@ -77,6 +77,14 @@ namespace cs {
     inline static void prefetch(const value_type *ptr)
     {
       _mm_prefetch(reinterpret_cast<const char*>(ptr), _MM_HINT_NTA);
+    }
+
+    template<int E0, int E1, int E2, int E3>
+    inline static block_type swizzle(const block_type& x)
+    {
+      constexpr int MASK = simd128_pshufd_mask<E0,E1,E2,E3>();
+
+      return _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(x), MASK));
     }
 
     inline static value_type to_value(const block_type& x)
