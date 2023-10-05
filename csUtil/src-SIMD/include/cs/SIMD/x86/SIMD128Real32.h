@@ -79,6 +79,38 @@ namespace cs {
       _mm_prefetch(reinterpret_cast<const char*>(ptr), _MM_HINT_NTA);
     }
 
+    template<int BITS>
+    inline static block_type shiftl(const block_type& x)
+    {
+      static_assert( 0 <= BITS  &&  BITS <= 31 );
+
+      return _mm_castsi128_ps(_mm_slli_epi32(_mm_castps_si128(x), BITS));
+    }
+
+    template<int BYTES>
+    inline static block_type shiftl8(const block_type& x)
+    {
+      static_assert( 0 <= BYTES  &&  BYTES <= 15 );
+
+      return _mm_castsi128_ps(_mm_slli_si128(_mm_castps_si128(x), BYTES));
+    }
+
+    template<int BITS>
+    inline static block_type shiftr(const block_type& x)
+    {
+      static_assert( 0 <= BITS  &&  BITS <= 31 );
+
+      return _mm_castsi128_ps(_mm_srli_epi32(_mm_castps_si128(x), BITS));
+    }
+
+    template<int BYTES>
+    inline static block_type shiftr8(const block_type& x)
+    {
+      static_assert( 0 <= BYTES  &&  BYTES <= 15 );
+
+      return _mm_castsi128_ps(_mm_srli_si128(_mm_castps_si128(x), BYTES));
+    }
+
     template<int E0, int E1, int E2, int E3>
     inline static block_type swizzle(const block_type& x)
     {
