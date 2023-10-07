@@ -60,9 +60,19 @@ namespace cs {
       return add(x, swizzle<1,0>(x));
     }
 
+    inline static block_type div(const block_type& a, const block_type& b)
+    {
+      return _mm_div_pd(a, b);
+    }
+
     inline static block_type mul(const block_type& a, const block_type& b)
     {
       return _mm_mul_pd(a, b);
+    }
+
+    inline static block_type sub(const block_type& a, const block_type& b)
+    {
+      return _mm_sub_pd(a, b);
     }
 
     ////// Assignment, Load & Store //////////////////////////////////////////
