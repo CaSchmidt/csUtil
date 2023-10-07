@@ -122,6 +122,54 @@ namespace cs {
       _mm_prefetch(reinterpret_cast<const char*>(ptr), _MM_HINT_NTA);
     }
 
+    ////// Relations /////////////////////////////////////////////////////////
+
+    inline static block_type clamp(const block_type& x,
+                                   const block_type& lo, const block_type& hi)
+    {
+      return max(lo, min(x, hi));
+    }
+
+    inline static block_type cmp_eq(const block_type& a, const block_type& b)
+    {
+      return _mm_cmpeq_pd(a, b);
+    }
+
+    inline static block_type cmp_geq(const block_type& a, const block_type& b)
+    {
+      return _mm_cmpge_pd(a, b);
+    }
+
+    inline static block_type cmp_gt(const block_type& a, const block_type& b)
+    {
+      return _mm_cmpgt_pd(a, b);
+    }
+
+    inline static block_type cmp_leq(const block_type& a, const block_type& b)
+    {
+      return _mm_cmple_pd(a, b);
+    }
+
+    inline static block_type cmp_lt(const block_type& a, const block_type& b)
+    {
+      return _mm_cmplt_pd(a, b);
+    }
+
+    inline static block_type cmp_neq(const block_type& a, const block_type& b)
+    {
+      return _mm_cmpneq_pd(a, b);
+    }
+
+    inline static block_type max(const block_type& a, const block_type& b)
+    {
+      return _mm_max_pd(a, b);
+    }
+
+    inline static block_type min(const block_type& a, const block_type& b)
+    {
+      return _mm_min_pd(a, b);
+    }
+
     ////// Shift /////////////////////////////////////////////////////////////
 
     template<int BITS>

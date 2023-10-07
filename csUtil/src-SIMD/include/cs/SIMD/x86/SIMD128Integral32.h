@@ -114,6 +114,23 @@ namespace cs {
       _mm_prefetch(reinterpret_cast<const char*>(ptr), _MM_HINT_NTA);
     }
 
+    ////// Relations /////////////////////////////////////////////////////////
+
+    inline static block_type cmp_eq(const block_type& a, const block_type& b)
+    {
+      return _mm_cmpeq_epi32(a, b);
+    }
+
+    inline static block_type cmp_gt(const block_type& a, const block_type& b)
+    {
+      return _mm_cmpgt_epi32(a, b);
+    }
+
+    inline static block_type cmp_lt(const block_type& a, const block_type& b)
+    {
+      return _mm_cmplt_epi32(a, b);
+    }
+
     ////// Shift /////////////////////////////////////////////////////////////
 
     template<int BITS>
