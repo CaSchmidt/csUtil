@@ -110,6 +110,36 @@ namespace cs {
 
     ////// Bit Operations ////////////////////////////////////////////////////
 
+    inline static block_type bit_and(const block_type& a, const block_type& b)
+    {
+      return _mm_and_pd(a, b);
+    }
+
+    inline static block_type bit_andnot(const block_type& a, const block_type& b)
+    {
+      return _mm_andnot_pd(a, b); // NOTE: ~a & b
+    }
+
+    inline static block_type bit_or(const block_type& a, const block_type& b)
+    {
+      return _mm_or_pd(a, b);
+    }
+
+    inline static block_type bit_xor(const block_type& a, const block_type& b)
+    {
+      return _mm_xor_pd(a, b);
+    }
+
+    inline static int cmp_mask(const block_type& x)
+    {
+      return _mm_movemask_pd(x);
+    }
+
+    inline static block_type one()
+    {
+      return cmp_eq(zero(), zero());
+    }
+
     inline static block_type zero()
     {
       return _mm_setzero_pd();
