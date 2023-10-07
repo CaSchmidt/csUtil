@@ -109,7 +109,7 @@ namespace cs {
     template<int E0, int E1, int E2, int E3>
     inline static block_type swizzle(const block_type& x)
     {
-      constexpr int MASK = simd128_pshufd_mask<E0,E1,E2,E3>();
+      constexpr int MASK = simd128_shuffle_mask<E0,E1,E2,E3>();
 
       return _mm_shuffle_epi32(x, MASK);
     }

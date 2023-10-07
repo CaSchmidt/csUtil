@@ -111,10 +111,18 @@ namespace cs {
       return _mm_castsi128_ps(_mm_srli_si128(_mm_castps_si128(x), BYTES));
     }
 
+    template<int A0, int A1, int B2, int B3>
+    inline static block_type shuffle(const block_type& a, const block_type& b)
+    {
+      constexpr int MASK = simd128_shuffle_mask<A0,A1,B2,B3>();
+
+      return _mm_shuffle_ps(a, b, MASK);
+    }
+
     template<int E0, int E1, int E2, int E3>
     inline static block_type swizzle(const block_type& x)
     {
-      constexpr int MASK = simd128_pshufd_mask<E0,E1,E2,E3>();
+      constexpr int MASK = simd128_shuffle_mask<E0,E1,E2,E3>();
 
       return _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(x), MASK));
     }

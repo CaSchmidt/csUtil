@@ -36,7 +36,7 @@
 namespace cs {
 
   template<int E0, int E1, int E2, int E3>
-  constexpr int simd128_pshufd_mask()
+  constexpr int simd128_shuffle_mask()
   {
     static_assert( 0 <= E0  &&  E0 <= 3 );
     static_assert( 0 <= E1  &&  E1 <= 3 );
