@@ -78,11 +78,29 @@ namespace cs {
     ////// Assignment, Load & Store //////////////////////////////////////////
 
     template<bool ALIGNED = true>
-    inline static block_type load(const value_type *ptr)
+    inline static block_type load(const value_type *src)
     {
       return ALIGNED
-          ? _mm_load_pd(ptr)
-          : _mm_loadu_pd(ptr);
+          ? _mm_load_pd(src)
+          : _mm_loadu_pd(src);
+    }
+
+    inline static block_type set(const value_type val)
+    {
+      return _mm_set1_pd(val);
+    }
+
+    inline static block_type set(const value_type e0, const value_type e1)
+    {
+      return _mm_set_pd(e1, e0);
+    }
+
+    template<bool ALIGNED = true>
+    inline static void store(value_type *dest, const block_type& x)
+    {
+      return ALIGNED
+          ? _mm_store_pd(dest, x)
+          : _mm_storeu_pd(dest, x);
     }
 
     inline static value_type to_value(const block_type& x)

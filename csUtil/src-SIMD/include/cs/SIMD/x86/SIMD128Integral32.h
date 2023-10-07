@@ -69,11 +69,30 @@ namespace cs {
     ////// Assignment, Load & Store //////////////////////////////////////////
 
     template<bool ALIGNED = true>
-    inline static block_type load(const value_type *ptr)
+    inline static block_type load(const value_type *src)
     {
       return ALIGNED
-          ? _mm_load_si128(reinterpret_cast<const __m128i*>(ptr))
-          : _mm_loadu_si128(reinterpret_cast<const __m128i*>(ptr));
+          ? _mm_load_si128(reinterpret_cast<const __m128i*>(src))
+          : _mm_loadu_si128(reinterpret_cast<const __m128i*>(src));
+    }
+
+    inline static block_type set(const value_type val)
+    {
+      return _mm_set1_epi32(val);
+    }
+
+    inline static block_type set(const value_type e0, const value_type e1,
+                                 const value_type e2, const value_type e3)
+    {
+      return _mm_set_epi32(e3, e2, e1, e0);
+    }
+
+    template<bool ALIGNED = true>
+    inline static void store(value_type *dest, const block_type& x)
+    {
+      return ALIGNED
+          ? _mm_store_si128(reinterpret_cast<__m128i*>(dest), x)
+          : _mm_storeu_si128(reinterpret_cast<__m128i*>(dest), x);
     }
 
     inline static value_type to_value(const block_type& x)
