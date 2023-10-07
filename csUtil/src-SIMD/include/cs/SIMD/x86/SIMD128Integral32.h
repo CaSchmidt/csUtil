@@ -48,7 +48,7 @@ namespace cs {
 
     static_assert( NUM_ELEM == 4 );
 
-    ////// Functions /////////////////////////////////////////////////////////
+    ////// Arithmetic ////////////////////////////////////////////////////////
 
     inline static block_type add(const block_type& a, const block_type& b)
     {
@@ -57,9 +57,11 @@ namespace cs {
 
     inline static block_type hadd(const block_type& x)
     {
-      const block_type y = _mm_add_epi32(x, swizzle<1,0,3,2>(x));
-      return               _mm_add_epi32(y, swizzle<3,2,1,0>(y));
+      const block_type y = add(x, swizzle<1,0,3,2>(x));
+      return               add(y, swizzle<3,2,1,0>(y));
     }
+
+    ////// Assignment, Load & Store //////////////////////////////////////////
 
     template<bool ALIGNED = true>
     inline static block_type load(const value_type *ptr)
@@ -69,10 +71,26 @@ namespace cs {
           : _mm_loadu_si128(reinterpret_cast<const __m128i*>(ptr));
     }
 
+    inline static value_type to_value(const block_type& x)
+    {
+      return _mm_cvtsi128_si32(x);
+    }
+
+    ////// Bit Operations ////////////////////////////////////////////////////
+
+    inline static block_type zero()
+    {
+      return _mm_setzero_si128();
+    }
+
+    ////// Data Flow /////////////////////////////////////////////////////////
+
     inline static void prefetch(const value_type *ptr)
     {
       _mm_prefetch(reinterpret_cast<const char*>(ptr), _MM_HINT_NTA);
     }
+
+    ////// Shift /////////////////////////////////////////////////////////////
 
     template<int BITS>
     inline static block_type shiftl(const block_type& x)
@@ -106,22 +124,14 @@ namespace cs {
       return _mm_srli_si128(x, BYTES);
     }
 
+    ////// Shuffle ///////////////////////////////////////////////////////////
+
     template<int E0, int E1, int E2, int E3>
     inline static block_type swizzle(const block_type& x)
     {
       constexpr int MASK = simd128_shuffle_mask<E0,E1,E2,E3>();
 
       return _mm_shuffle_epi32(x, MASK);
-    }
-
-    inline static value_type to_value(const block_type& x)
-    {
-      return _mm_cvtsi128_si32(x);
-    }
-
-    inline static block_type zero()
-    {
-      return _mm_setzero_si128();
     }
   };
 

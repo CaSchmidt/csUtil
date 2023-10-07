@@ -48,7 +48,7 @@ namespace cs {
 
     static_assert( NUM_ELEM == 2 );
 
-    ////// Functions /////////////////////////////////////////////////////////
+    ////// Arithmetic ////////////////////////////////////////////////////////
 
     inline static block_type add(const block_type& a, const block_type& b)
     {
@@ -57,8 +57,15 @@ namespace cs {
 
     inline static block_type hadd(const block_type& x)
     {
-      return _mm_add_pd(x, swizzle<1,0>(x));
+      return add(x, swizzle<1,0>(x));
     }
+
+    inline static block_type mul(const block_type& a, const block_type& b)
+    {
+      return _mm_mul_pd(a, b);
+    }
+
+    ////// Assignment, Load & Store //////////////////////////////////////////
 
     template<bool ALIGNED = true>
     inline static block_type load(const value_type *ptr)
@@ -68,15 +75,26 @@ namespace cs {
           : _mm_loadu_pd(ptr);
     }
 
-    inline static block_type mul(const block_type& a, const block_type& b)
+    inline static value_type to_value(const block_type& x)
     {
-      return _mm_mul_pd(a, b);
+      return _mm_cvtsd_f64(x);
     }
+
+    ////// Bit Operations ////////////////////////////////////////////////////
+
+    inline static block_type zero()
+    {
+      return _mm_setzero_pd();
+    }
+
+    ////// Data Flow /////////////////////////////////////////////////////////
 
     inline static void prefetch(const value_type *ptr)
     {
       _mm_prefetch(reinterpret_cast<const char*>(ptr), _MM_HINT_NTA);
     }
+
+    ////// Shift /////////////////////////////////////////////////////////////
 
     template<int BITS>
     inline static block_type shiftl(const block_type& x)
@@ -110,6 +128,8 @@ namespace cs {
       return _mm_castsi128_pd(_mm_srli_si128(_mm_castpd_si128(x), BYTES));
     }
 
+    ////// Shuffle ///////////////////////////////////////////////////////////
+
     template<int A0, int B1>
     inline static block_type shuffle(const block_type& a, const block_type& b)
     {
@@ -135,16 +155,6 @@ namespace cs {
       constexpr int MASK = simd128_shuffle_mask<M0,M1,M2,M3>();
 
       return _mm_castsi128_pd(_mm_shuffle_epi32(_mm_castpd_si128(x), MASK));
-    }
-
-    inline static value_type to_value(const block_type& x)
-    {
-      return _mm_cvtsd_f64(x);
-    }
-
-    inline static block_type zero()
-    {
-      return _mm_setzero_pd();
     }
   };
 
