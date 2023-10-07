@@ -44,9 +44,9 @@ namespace cs {
     using  size_type = std::size_t;
     using value_type = RealOfSize<4>::real_type;
 
-    static constexpr size_type NUM_ELEMS = sizeof(block_type)/sizeof(value_type);
+    static constexpr size_type NUM_ELEM = sizeof(block_type)/sizeof(value_type);
 
-    static_assert( NUM_ELEMS == 4 );
+    static_assert( NUM_ELEM == 4 );
 
     ////// Functions /////////////////////////////////////////////////////////
 

@@ -79,7 +79,7 @@ namespace cs {
         using   size_type = typename SIMD::size_type;
         using  value_type = typename SIMD::value_type;
 
-        constexpr size_type REDUCE_STRIDE = SIMD::NUM_ELEMS*4;
+        constexpr size_type REDUCE_STRIDE = SIMD::NUM_ELEM*4;
 
         const size_type numReduce      = count/REDUCE_STRIDE;
         const size_type numElemsRemain = count%REDUCE_STRIDE;
@@ -92,10 +92,10 @@ namespace cs {
         for(size_type i = 0; i < numReduce; i++, x += REDUCE_STRIDE) {
           SIMD::prefetch(x + REDUCE_STRIDE);
 
-          acc = SIMD::add(acc, OP::eval(SIMD::template load<ALIGNED>(x + SIMD::NUM_ELEMS*0)));
-          acc = SIMD::add(acc, OP::eval(SIMD::template load<ALIGNED>(x + SIMD::NUM_ELEMS*1)));
-          acc = SIMD::add(acc, OP::eval(SIMD::template load<ALIGNED>(x + SIMD::NUM_ELEMS*2)));
-          acc = SIMD::add(acc, OP::eval(SIMD::template load<ALIGNED>(x + SIMD::NUM_ELEMS*3)));
+          acc = SIMD::add(acc, OP::eval(SIMD::template load<ALIGNED>(x + SIMD::NUM_ELEM*0)));
+          acc = SIMD::add(acc, OP::eval(SIMD::template load<ALIGNED>(x + SIMD::NUM_ELEM*1)));
+          acc = SIMD::add(acc, OP::eval(SIMD::template load<ALIGNED>(x + SIMD::NUM_ELEM*2)));
+          acc = SIMD::add(acc, OP::eval(SIMD::template load<ALIGNED>(x + SIMD::NUM_ELEM*3)));
         }
         const value_type sum = SIMD::to_value(SIMD::hadd(acc));
 
@@ -120,12 +120,12 @@ namespace cs {
         value_type sum = getSum<SIMD>(result);
         x += getReduced<SIMD>(result);
 
-        const size_type numBlocks = getRemain<SIMD>(result)/SIMD::NUM_ELEMS;
-        const size_type numRemain = getRemain<SIMD>(result)%SIMD::NUM_ELEMS;
+        const size_type numBlocks = getRemain<SIMD>(result)/SIMD::NUM_ELEM;
+        const size_type numRemain = getRemain<SIMD>(result)%SIMD::NUM_ELEM;
 
         if( numBlocks > 0 ) {
           block_type acc = SIMD::zero();
-          for(size_type i = 0; i < numBlocks; i++, x += SIMD::NUM_ELEMS) {
+          for(size_type i = 0; i < numBlocks; i++, x += SIMD::NUM_ELEM) {
             const block_type block = SIMD::template load<ALIGNED>(x);
 
             acc = SIMD::add(acc, OP::eval(block));
@@ -152,7 +152,7 @@ namespace cs {
         using   size_type = typename SIMD::size_type;
         using  value_type = typename SIMD::value_type;
 
-        constexpr size_type REDUCE_STRIDE = SIMD::NUM_ELEMS*4;
+        constexpr size_type REDUCE_STRIDE = SIMD::NUM_ELEM*4;
 
         const size_type numReduce      = count/REDUCE_STRIDE;
         const size_type numElemsRemain = count%REDUCE_STRIDE;
@@ -166,14 +166,14 @@ namespace cs {
           SIMD::prefetch(a + REDUCE_STRIDE);
           SIMD::prefetch(b + REDUCE_STRIDE);
 
-          acc = SIMD::add(acc, OP::eval(SIMD::template load<ALIGNED_a>(a + SIMD::NUM_ELEMS*0),
-                                        SIMD::template load<ALIGNED_b>(b + SIMD::NUM_ELEMS*0)));
-          acc = SIMD::add(acc, OP::eval(SIMD::template load<ALIGNED_a>(a + SIMD::NUM_ELEMS*1),
-                                        SIMD::template load<ALIGNED_b>(b + SIMD::NUM_ELEMS*1)));
-          acc = SIMD::add(acc, OP::eval(SIMD::template load<ALIGNED_a>(a + SIMD::NUM_ELEMS*2),
-                                        SIMD::template load<ALIGNED_b>(b + SIMD::NUM_ELEMS*2)));
-          acc = SIMD::add(acc, OP::eval(SIMD::template load<ALIGNED_a>(a + SIMD::NUM_ELEMS*3),
-                                        SIMD::template load<ALIGNED_b>(b + SIMD::NUM_ELEMS*3)));
+          acc = SIMD::add(acc, OP::eval(SIMD::template load<ALIGNED_a>(a + SIMD::NUM_ELEM*0),
+                                        SIMD::template load<ALIGNED_b>(b + SIMD::NUM_ELEM*0)));
+          acc = SIMD::add(acc, OP::eval(SIMD::template load<ALIGNED_a>(a + SIMD::NUM_ELEM*1),
+                                        SIMD::template load<ALIGNED_b>(b + SIMD::NUM_ELEM*1)));
+          acc = SIMD::add(acc, OP::eval(SIMD::template load<ALIGNED_a>(a + SIMD::NUM_ELEM*2),
+                                        SIMD::template load<ALIGNED_b>(b + SIMD::NUM_ELEM*2)));
+          acc = SIMD::add(acc, OP::eval(SIMD::template load<ALIGNED_a>(a + SIMD::NUM_ELEM*3),
+                                        SIMD::template load<ALIGNED_b>(b + SIMD::NUM_ELEM*3)));
         }
         const value_type sum = SIMD::to_value(SIMD::hadd(acc));
 
@@ -200,12 +200,12 @@ namespace cs {
         a += getReduced<SIMD>(result);
         b += getReduced<SIMD>(result);
 
-        const size_type numBlocks = getRemain<SIMD>(result)/SIMD::NUM_ELEMS;
-        const size_type numRemain = getRemain<SIMD>(result)%SIMD::NUM_ELEMS;
+        const size_type numBlocks = getRemain<SIMD>(result)/SIMD::NUM_ELEM;
+        const size_type numRemain = getRemain<SIMD>(result)%SIMD::NUM_ELEM;
 
         if( numBlocks > 0 ) {
           block_type acc = SIMD::zero();
-          for(size_type i = 0; i < numBlocks; i++, a += SIMD::NUM_ELEMS, b += SIMD::NUM_ELEMS) {
+          for(size_type i = 0; i < numBlocks; i++, a += SIMD::NUM_ELEM, b += SIMD::NUM_ELEM) {
             const block_type block_a = SIMD::template load<ALIGNED_a>(a);
             const block_type block_b = SIMD::template load<ALIGNED_b>(b);
 
