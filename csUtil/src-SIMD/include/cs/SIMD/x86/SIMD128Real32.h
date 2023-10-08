@@ -238,6 +238,16 @@ namespace cs {
 
     ////// Shuffle ///////////////////////////////////////////////////////////
 
+    inline static block_type intrlvhi(const block_type& a, const block_type& b)
+    {
+      return _mm_unpackhi_ps(a, b);
+    }
+
+    inline static block_type intrlvlo(const block_type& a, const block_type& b)
+    {
+      return _mm_unpacklo_ps(a, b);
+    }
+
     template<int A0, int A1, int B2, int B3>
     inline static block_type shuffle(const block_type& a, const block_type& b)
     {
