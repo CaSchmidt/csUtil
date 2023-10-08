@@ -39,10 +39,10 @@
 namespace cs {
 
   template<>
-  struct simd128_impl<4,true> {
+  struct simd128_impl<real32_t> {
     using block_type = __m128;
     using  size_type = std::size_t;
-    using value_type = RealOfSize<4>::real_type;
+    using value_type = real32_t;
 
     static constexpr size_type NUM_ELEM = sizeof(block_type)/sizeof(value_type);
 

@@ -35,7 +35,7 @@
 
 namespace cs {
 
-  template<std::size_t SIZE, bool IS_REAL>
+  template<typename T> requires is_arithmetic_v<T>
   struct simd128_impl {
     // SFINAE
   };

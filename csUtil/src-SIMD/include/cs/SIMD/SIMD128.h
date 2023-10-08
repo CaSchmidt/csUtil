@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include <cs/Core/Concepts.h>
+#include <cs/Core/TypeTraits.h>
 
 #include <cs/SIMD/x86/SIMD128Integral32.h>
 #include <cs/SIMD/x86/SIMD128Real32.h>
@@ -39,7 +39,7 @@
 
 namespace cs {
 
-  template<typename T> requires IsArithmetic<T>
-  using simd128 = simd128_impl<sizeof(T),is_real_v<T>>;
+  template<typename T> requires is_arithmetic_v<T>
+  using simd128_t = simd128_impl<T>;
 
 } // namespace cs

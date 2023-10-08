@@ -141,7 +141,7 @@ namespace simd_bench {
   value_type sum_simd(const vector_type& v,
                       const size_type beg, const size_type end)
   {
-    using SIMD = cs::simd128<value_type>;
+    using SIMD = cs::simd128_t<value_type>;
     return cs::simd::sum<SIMD>(v.data() + beg, end - beg);
   }
 
@@ -158,7 +158,7 @@ namespace simd_bench {
   value_type dot_simd(const vector_type& v1, const vector_type& v2,
                       const size_type beg, const size_type end)
   {
-    using SIMD = cs::simd128<value_type>;
+    using SIMD = cs::simd128_t<value_type>;
     if constexpr( cs::is_real_v<value_type> ) {
       return cs::simd::dot<SIMD>(v1.data() + beg, v2.data() + beg, end - beg);
     }
