@@ -43,7 +43,7 @@ namespace cs {
   // Arithmetic Types ////////////////////////////////////////////////////////
 
   template<typename T>
-  concept IsArithmetic = is_integral_v<T>  ||  is_real_v<T>;
+  concept IsArithmetic = is_arithmetic_v<T>;
 
   template<typename T>
   concept IsIntegral = is_integral_v<T>;

@@ -135,6 +135,17 @@ namespace cs {
   template<typename T>
   inline constexpr bool is_real64_v = is_real64<T>::value;
 
+  // Arithmetic Category /////////////////////////////////////////////////////
+
+  template<typename T>
+  using is_arithmetic = std::bool_constant<
+  is_integral_v<T>  ||
+  is_real_v<T>
+  >;
+
+  template<typename T>
+  inline constexpr bool is_arithmetic_v = is_arithmetic<T>::value;
+
   // Character Category //////////////////////////////////////////////////////
 
   template<typename T>
