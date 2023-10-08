@@ -33,6 +33,8 @@
 
 #include <cs/Core/TypeTraits.h>
 
+#include <cs/SIMD/SIMDFunctions.h>
+
 namespace cs {
 
   template<typename T> requires is_arithmetic_v<T>

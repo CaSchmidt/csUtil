@@ -154,12 +154,30 @@ namespace cs {
       _mm_prefetch(reinterpret_cast<const char*>(ptr), _MM_HINT_NTA);
     }
 
+    ////// Math Functions ////////////////////////////////////////////////////
+
+    inline static block_type abs(const block_type& x)
+    {
+      return simd::abs<simd128_impl>(x);
+    }
+
+    inline static block_type sqrt(const block_type& x)
+    {
+      return _mm_sqrt_ps(x);
+    }
+
     ////// Relations /////////////////////////////////////////////////////////
 
     inline static block_type clamp(const block_type& x,
                                    const block_type& lo, const block_type& hi)
     {
       return max(lo, min(x, hi));
+    }
+
+    inline static block_type cmov(const block_type& cond_a,
+                                  const block_type& a, const block_type& b)
+    {
+      return simd::cmov<simd128_impl>(cond_a, a, b);
     }
 
     inline static block_type cmp_eq(const block_type& a, const block_type& b)

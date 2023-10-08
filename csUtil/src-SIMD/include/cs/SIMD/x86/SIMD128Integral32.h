@@ -147,7 +147,20 @@ namespace cs {
       _mm_prefetch(reinterpret_cast<const char*>(ptr), _MM_HINT_NTA);
     }
 
+    ////// Math Functions ////////////////////////////////////////////////////
+
+    inline static block_type abs(const block_type& x)
+    {
+      return simd::abs<simd128_impl>(x);
+    }
+
     ////// Relations /////////////////////////////////////////////////////////
+
+    inline static block_type cmov(const block_type& cond_a,
+                                  const block_type& a, const block_type& b)
+    {
+      return simd::cmov<simd128_impl>(cond_a, a, b);
+    }
 
     inline static block_type cmp_eq(const block_type& a, const block_type& b)
     {
