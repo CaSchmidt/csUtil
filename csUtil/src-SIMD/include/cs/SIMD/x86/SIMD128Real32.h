@@ -134,12 +134,17 @@ namespace cs {
 
     inline static int cmp_mask(const block_type& x)
     {
-      return _mm_movemask_ps(x);
+      return sign_mask(x);
     }
 
     inline static block_type one()
     {
       return cmp_eq(zero(), zero());
+    }
+
+    inline static int sign_mask(const block_type& x)
+    {
+      return _mm_movemask_ps(x);
     }
 
     inline static block_type zero()

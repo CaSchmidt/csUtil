@@ -120,7 +120,7 @@ namespace test_simd {
     }
   }
 
-  TEMPLATE_TEST_CASE("SIMD Absolute Value.", "[abs]", int32_t, float) {
+  TEMPLATE_TEST_CASE("SIMD Absolute Value & Sign.", "[abs]", int32_t, float) {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
     using SIMD = cs::simd128_t<TestType>;
@@ -138,6 +138,30 @@ namespace test_simd {
       cs::println("");
 
       REQUIRE( test_util::equals<SIMD>(result, 0, 1, 2, 3) );
+    }
+
+    {
+      REQUIRE( SIMD::sign_mask(SIMD::set(-1, -2, -3, -4)) == 0xF );
+    }
+
+    {
+      REQUIRE( SIMD::sign_mask(SIMD::set(-1, 2, 3, 4)) == 0x1 );
+    }
+
+    {
+      REQUIRE( SIMD::sign_mask(SIMD::set(1, -2, 3, 4)) == 0x2 );
+    }
+
+    {
+      REQUIRE( SIMD::sign_mask(SIMD::set(1, 2, -3, 4)) == 0x4 );
+    }
+
+    {
+      REQUIRE( SIMD::sign_mask(SIMD::set(1, 2, 3, -4)) == 0x8 );
+    }
+
+    {
+      REQUIRE( SIMD::sign_mask(SIMD::set(1, 2, 3, 4)) == 0x0 );
     }
   }
 

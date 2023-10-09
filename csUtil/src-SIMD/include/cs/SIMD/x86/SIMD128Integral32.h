@@ -33,6 +33,7 @@
 
 #include <emmintrin.h>
 
+#include <cs/Core/Bit.h>
 #include <cs/SIMD/SIMD128Impl.h>
 #include <cs/SIMD/x86/SIMD128Util.h>
 
@@ -124,15 +125,20 @@ namespace cs {
 
     inline static int cmp_mask(const block_type& x)
     {
-      const int mask = _mm_movemask_epi8(x);
-      return
-          moveBitR<15,3>(mask) | moveBitR<11,2>(mask) |
-          moveBitR<7,1>(mask)  | moveBitR<3,0>(mask);
+      return sign_mask(x);
     }
 
     inline static block_type one()
     {
       return cmp_eq(zero(), zero());
+    }
+
+    inline static int sign_mask(const block_type& x)
+    {
+      const int mask = _mm_movemask_epi8(x);
+      return
+          moveBitR<15,3>(mask) | moveBitR<11,2>(mask) |
+          moveBitR<7,1>(mask)  | moveBitR<3,0>(mask);
     }
 
     inline static block_type zero()
@@ -229,20 +235,6 @@ namespace cs {
       constexpr int MASK = simd128_shuffle_mask<E0,E1,E2,E3>();
 
       return _mm_shuffle_epi32(x, MASK);
-    }
-
-  private:
-    template<std::size_t FROM, std::size_t TO, typename T>
-    inline static T moveBitR(const T in)
-    {
-      static_assert( 0 <= FROM  &&  FROM <= sizeof(T)*8 - 1 );
-      static_assert( 0 <= TO    &&  TO   <= sizeof(T)*8 - 1 );
-
-      static_assert( FROM > TO );
-
-      constexpr T MASK = T{1} << TO;
-
-      return (in >> (FROM - TO)) & MASK;
     }
   };
 
