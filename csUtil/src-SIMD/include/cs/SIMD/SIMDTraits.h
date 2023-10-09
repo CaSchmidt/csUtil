@@ -35,24 +35,28 @@
 
 namespace cs {
 
-  // Integral SIMD Type //////////////////////////////////////////////////////
+  namespace simd {
 
-  template<typename SIMD>
-  using is_integral_simd = std::bool_constant<
-  is_integral_v<typename SIMD::value_type>
-  >;
+    // Integral SIMD Type ////////////////////////////////////////////////////
 
-  template<typename SIMD>
-  inline constexpr bool is_integral_simd_v = is_integral_simd<SIMD>::value;
+    template<typename SIMD>
+    using is_simd_integral = std::bool_constant<
+    is_integral_v<typename SIMD::value_type>
+    >;
 
-  // Real SIMD Type //////////////////////////////////////////////////////////
+    template<typename SIMD>
+    inline constexpr bool is_simd_integral_v = is_simd_integral<SIMD>::value;
 
-  template<typename SIMD>
-  using is_real_simd = std::bool_constant<
-  is_real_v<typename SIMD::value_type>
-  >;
+    // Real SIMD Type ////////////////////////////////////////////////////////
 
-  template<typename SIMD>
-  inline constexpr bool is_real_simd_v = is_real_simd<SIMD>::value;
+    template<typename SIMD>
+    using is_simd_real = std::bool_constant<
+    is_real_v<typename SIMD::value_type>
+    >;
+
+    template<typename SIMD>
+    inline constexpr bool is_simd_real_v = is_simd_real<SIMD>::value;
+
+  } // namespace simd
 
 } // namespace cs

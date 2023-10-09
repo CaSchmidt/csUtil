@@ -51,7 +51,7 @@ namespace cs {
 
     template<typename SIMD>
     typename SIMD::block_type abs(const typename SIMD::block_type& x,
-                                  const std::enable_if_t<is_integral_simd_v<SIMD>> * = nullptr)
+                                  const std::enable_if_t<is_simd_integral_v<SIMD>> * = nullptr)
     {
       const typename SIMD::block_type cmpl2 = // Two's Complement
           SIMD::add(SIMD::bit_xor(x, SIMD::one()), SIMD::template shiftr<31>(SIMD::one()));
@@ -60,7 +60,7 @@ namespace cs {
 
     template<typename SIMD>
     typename SIMD::block_type abs(const typename SIMD::block_type& x,
-                                  const std::enable_if_t<is_real_simd_v<SIMD>> * = nullptr)
+                                  const std::enable_if_t<is_simd_real_v<SIMD>> * = nullptr)
     {
       return SIMD::bit_and(x, SIMD::template shiftr<1>(SIMD::one()));
     }
