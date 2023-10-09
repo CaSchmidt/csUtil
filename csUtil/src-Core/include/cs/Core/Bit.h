@@ -43,6 +43,22 @@ namespace cs {
   template<typename T> requires IsIntegral<T>
   inline constexpr std::size_t MAX_BIT = NUM_BITS<T> - 1;
 
+  ////// Move Single Bit /////////////////////////////////////////////////////
+
+  template<std::size_t FROM, std::size_t TO, typename T> requires is_integral_v<T>
+  constexpr T moveBitR(const T in)
+  {
+    static_assert( 0 <= FROM  &&  FROM <= sizeof(T)*8 - 1 );
+    static_assert( 0 <= TO    &&  TO   <= sizeof(T)*8 - 1 );
+
+    static_assert( FROM > TO );
+
+    constexpr T  ONE = 1;
+    constexpr T MASK = ONE << TO;
+
+    return (in >> (FROM - TO)) & MASK;
+  }
+
   ////// Make Bit Mask of Integral Type //////////////////////////////////////
 
   namespace impl_bit {

@@ -39,6 +39,7 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/Word-List.txt
   DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/testdata
 )
 
+cs_unittest(unittest_bit src/unittest_bit.cpp src/unittest_bit_main.cpp)
 cs_unittest(unittest_bufferedreader src/unittest_bufferedreader.cpp src/unittest_bufferedreader_main.cpp)
 cs_unittest(unittest_bytearray src/unittest_bytearray.cpp src/unittest_bytearray_main.cpp)
 cs_unittest(unittest_concurrent src/unittest_concurrent.cpp src/unittest_concurrent_main.cpp)
