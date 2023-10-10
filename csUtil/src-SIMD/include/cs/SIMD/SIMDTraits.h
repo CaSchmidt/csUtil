@@ -37,7 +37,17 @@ namespace cs {
 
   namespace simd {
 
-    // Integral SIMD Type ////////////////////////////////////////////////////
+    // SIMD Width ////////////////////////////////////////////////////////////
+
+    template<typename SIMD>
+    using is_simd128 = std::bool_constant<
+    sizeof(typename SIMD::block_type) == 16
+    >;
+
+    template<typename SIMD>
+    inline constexpr bool is_simd128_v = is_simd128<SIMD>::value;
+
+    // Integral Type /////////////////////////////////////////////////////////
 
     template<typename SIMD>
     using is_simd_integral = std::bool_constant<
@@ -47,7 +57,7 @@ namespace cs {
     template<typename SIMD>
     inline constexpr bool is_simd_integral_v = is_simd_integral<SIMD>::value;
 
-    // Real SIMD Type ////////////////////////////////////////////////////////
+    // Real Type /////////////////////////////////////////////////////////////
 
     template<typename SIMD>
     using is_simd_real = std::bool_constant<
@@ -56,6 +66,16 @@ namespace cs {
 
     template<typename SIMD>
     inline constexpr bool is_simd_real_v = is_simd_real<SIMD>::value;
+
+    // Number of Elements ////////////////////////////////////////////////////
+
+    template<typename SIMD, std::size_t NUM_ELEM>
+    using is_simd_elem = std::bool_constant<
+    SIMD::NUM_ELEM == NUM_ELEM
+    >;
+
+    template<typename SIMD, std::size_t NUM_ELEM>
+    inline constexpr bool is_simd_elem_v = is_simd_elem<SIMD,NUM_ELEM>::value;
 
   } // namespace simd
 
