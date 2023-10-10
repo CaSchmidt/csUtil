@@ -57,8 +57,7 @@ namespace cs {
 
     inline static block_type hadd(const block_type& x)
     {
-      const block_type y = add(x, swizzle<1,0,3,2>(x));
-      return               add(y, swizzle<3,2,1,0>(y));
+      return simd::hadd<simd128_impl>(x);
     }
 
     inline static block_type div(const block_type& a, const block_type& b)
@@ -139,7 +138,7 @@ namespace cs {
 
     inline static block_type one()
     {
-      return cmp_eq(zero(), zero());
+      return simd::one<simd128_impl>();
     }
 
     inline static int sign_mask(const block_type& x)

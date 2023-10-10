@@ -76,6 +76,21 @@ namespace test_simd {
     REQUIRE( cs::simd::sum_squared<simd_T>(values.data(), values.size()) == real_T{4324} );
   }
 
+  TEMPLATE_TEST_CASE("SIMD Arithmetic.", "[arithmetic]", int32_t, float) {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    using SIMD = cs::simd128_t<TestType>;
+    using block_type = typename SIMD::block_type;
+
+    const block_type v1234 = SIMD::set(1, 2, 3, 4);
+
+    {
+      const block_type result = SIMD::hadd(v1234);
+
+      REQUIRE( test_util::equals<SIMD>(result, 10, 10, 10, 10) );
+    }
+  }
+
   TEMPLATE_TEST_CASE("SIMD Bit Operations.", "[bitops]", int32_t, float) {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 

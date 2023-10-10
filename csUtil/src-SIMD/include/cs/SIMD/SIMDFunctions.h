@@ -37,6 +37,31 @@ namespace cs {
 
   namespace simd {
 
+    // Arithmetic ////////////////////////////////////////////////////////////
+
+    template<typename SIMD>
+    typename SIMD::block_type hadd(const typename SIMD::block_type& x,
+                                   const std::enable_if_t<is_simd_elem_v<SIMD,2>> * = nullptr)
+    {
+      return SIMD::add(x, SIMD::template swizzle<1,0>(x));
+    }
+
+    template<typename SIMD>
+    typename SIMD::block_type hadd(const typename SIMD::block_type& x,
+                                   const std::enable_if_t<is_simd_elem_v<SIMD,4>> * = nullptr)
+    {
+      const typename SIMD::block_type y = SIMD::add(x, SIMD::template swizzle<1,0,3,2>(x));
+      return                              SIMD::add(y, SIMD::template swizzle<3,2,1,0>(y));
+    }
+
+    // Bit Operations ////////////////////////////////////////////////////////
+
+    template<typename SIMD>
+    typename SIMD::block_type one()
+    {
+      return SIMD::cmp_eq(SIMD::zero(), SIMD::zero());
+    }
+
     // Math //////////////////////////////////////////////////////////////////
 
     template<typename SIMD>
