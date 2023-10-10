@@ -37,17 +37,7 @@ namespace cs {
 
   namespace simd {
 
-    // Conditional Move //////////////////////////////////////////////////////
-
-    template<typename SIMD>
-    typename SIMD::block_type cmov(const typename SIMD::block_type& cond_a,
-                                   const typename SIMD::block_type& a,
-                                   const typename SIMD::block_type& b)
-    {
-      return SIMD::bit_or(SIMD::bit_and(cond_a, a), SIMD::bit_andnot(cond_a, b));
-    }
-
-    // Absolute Value ////////////////////////////////////////////////////////
+    // Math //////////////////////////////////////////////////////////////////
 
     template<typename SIMD>
     typename SIMD::block_type abs(const typename SIMD::block_type& x,
@@ -55,7 +45,7 @@ namespace cs {
     {
       const typename SIMD::block_type cmpl2 = // Two's Complement
           SIMD::add(SIMD::bit_xor(x, SIMD::one()), SIMD::template shiftr<31>(SIMD::one()));
-      return cmov<SIMD>(SIMD::cmp_gt(cmpl2, x), cmpl2, x);
+      return SIMD::cmov(SIMD::cmp_gt(cmpl2, x), cmpl2, x);
     }
 
     template<typename SIMD>
@@ -63,6 +53,16 @@ namespace cs {
                                   const std::enable_if_t<is_simd_real_v<SIMD>> * = nullptr)
     {
       return SIMD::bit_and(x, SIMD::template shiftr<1>(SIMD::one()));
+    }
+
+    // Relations /////////////////////////////////////////////////////////////
+
+    template<typename SIMD>
+    typename SIMD::block_type cmov(const typename SIMD::block_type& cond_a,
+                                   const typename SIMD::block_type& a,
+                                   const typename SIMD::block_type& b)
+    {
+      return SIMD::bit_or(SIMD::bit_and(cond_a, a), SIMD::bit_andnot(cond_a, b));
     }
 
   } // namespace simd

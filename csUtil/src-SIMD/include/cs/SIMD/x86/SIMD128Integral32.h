@@ -153,7 +153,7 @@ namespace cs {
       _mm_prefetch(reinterpret_cast<const char*>(ptr), _MM_HINT_NTA);
     }
 
-    ////// Math Functions ////////////////////////////////////////////////////
+    ////// Math //////////////////////////////////////////////////////////////
 
     inline static block_type abs(const block_type& x)
     {
