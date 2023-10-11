@@ -51,6 +51,7 @@ cs_unittest(unittest_format src/unittest_format.cpp src/unittest_format_main.cpp
 cs_unittest(unittest_hash src/unittest_hash.cpp src/unittest_hash_main.cpp)
 cs_unittest(unittest_math src/unittest_math.cpp src/unittest_math_main.cpp)
 cs_unittest(unittest_meta src/unittest_meta.cpp src/unittest_meta_main.cpp)
+cs_unittest(unittest_n4 src/unittest_n4.cpp src/unittest_n4_main.cpp)
 cs_unittest(unittest_numeric src/unittest_numeric.cpp src/unittest_numeric_main.cpp)
 cs_unittest(unittest_pointer src/unittest_pointer.cpp src/unittest_pointer_main.cpp)
 cs_unittest(unittest_serialization src/unittest_serialization.cpp src/unittest_serialization_main.cpp)

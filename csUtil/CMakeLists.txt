@@ -94,6 +94,7 @@ add_subdirectory(src-IO)
 add_subdirectory(src-Logging) # optionally depends on Qt
 add_subdirectory(src-SIMD)
 add_subdirectory(src-Math) # depends on SIMD
+add_subdirectory(src-N4)
 add_subdirectory(src-System)
 add_subdirectory(src-Text)
 add_subdirectory(src-Trie)
