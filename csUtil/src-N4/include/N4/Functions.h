@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef N4_FUNCTIONS_H
-#define N4_FUNCTIONS_H
+#pragma once
 
 #include <N4/Dispatch.h>
 
@@ -181,5 +180,3 @@ namespace n4 {
   }
 
 } // namespace n4
-
-#endif // N4_FUNCTIONS_H

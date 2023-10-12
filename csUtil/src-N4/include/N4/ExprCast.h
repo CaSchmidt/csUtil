@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef EXPRCAST_H
-#define EXPRCAST_H
+#pragma once
 
 #include <N4/ExprBase.h>
 #include <N4/SIMD.h>
@@ -79,5 +78,3 @@ namespace n4 {
   }
 
 } // namespace n4
-
-#endif // EXPRCAST_H

@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef N4_COLOR3F_H
-#define N4_COLOR3F_H
+#pragma once
 
 #include <cstdint>
 
@@ -133,5 +132,3 @@ namespace n4 {
   using Color3f = Vector4f<Color3fTraits,Color3fManipulator>;
 
 } // namespace n4
-
-#endif // N4_COLOR3F_H

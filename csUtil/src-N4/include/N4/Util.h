@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef N4_UTIL_H
-#define N4_UTIL_H
+#pragma once
 
 #include <N4/ExprCast.h>
 #include <N4/Functions.h>
@@ -100,5 +99,3 @@ namespace n4 {
   } // namespace util
 
 } // namespace n4
-
-#endif // N4_UTIL_H

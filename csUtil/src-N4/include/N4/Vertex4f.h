@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef N4_VERTEX4F_H
-#define N4_VERTEX4F_H
+#pragma once
 
 #include <N4/Vector4f.h>
 
@@ -64,5 +63,3 @@ namespace n4 {
   using Vertex4f = Vector4f<Vertex4fTraits,Vertex4fManipulator>;
 
 } // namespace n4
-
-#endif // N4_VERTEX4F_H

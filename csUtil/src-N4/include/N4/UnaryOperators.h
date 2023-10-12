@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef N4_UNARYOPERATORS_H
-#define N4_UNARYOPERATORS_H
+#pragma once
 
 #include <N4/Dispatch.h>
 
@@ -71,5 +70,3 @@ namespace n4 {
   }
 
 } // namespace n4
-
-#endif // N4_UNARYOPERATORS_H

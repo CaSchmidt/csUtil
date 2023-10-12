@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef N4_OPTICS_H
-#define N4_OPTICS_H
+#pragma once
 
 #include <algorithm>
 
@@ -89,5 +88,3 @@ namespace n4 {
   } // namespace optics
 
 } // namespace n4
-
-#endif // N4_OPTICS_H

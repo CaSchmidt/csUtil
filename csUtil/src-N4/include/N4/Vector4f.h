@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef N4_VECTOR4F_H
-#define N4_VECTOR4F_H
+#pragma once
 
 #include <algorithm>
 #include <initializer_list>
@@ -300,5 +299,3 @@ namespace n4 {
   };
 
 } // namespace n4
-
-#endif // N4_VECTOR4F_H

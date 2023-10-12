@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef N4_NORMAL3F_H
-#define N4_NORMAL3F_H
+#pragma once
 
 #include <N4/Vector4f.h>
 
@@ -62,5 +61,3 @@ namespace n4 {
   using Normal3f = Vector4f<Normal3fTraits,Normal3fManipulator>;
 
 } // namespace n4
-
-#endif // N4_NORMAL3F_H

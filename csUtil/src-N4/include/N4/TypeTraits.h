@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef N4_TYPETRAITS_H
-#define N4_TYPETRAITS_H
+#pragma once
 
 #include <cstddef>
 #include <cstdint>
@@ -83,5 +82,3 @@ namespace n4 {
   }
 
 } // namespace n4
-
-#endif // N4_TYPETRAITS_H

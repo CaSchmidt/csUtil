@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef N4_DISPATCH_H
-#define N4_DISPATCH_H
+#pragma once
 
 #include <N4/ExprBase.h>
 #include <N4/SIMD.h>
@@ -152,5 +151,3 @@ namespace n4 {
   } // namespace impl
 
 } // namespace n4
-
-#endif // N4_DISPATCH_H

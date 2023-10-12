@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef N4_SIMD_H
-#define N4_SIMD_H
+#pragma once
 
 #include <emmintrin.h> // SSE2
 
@@ -472,5 +471,3 @@ namespace simd {
   }
 
 } // namespace simd
-
-#endif // N4_SIMD_H

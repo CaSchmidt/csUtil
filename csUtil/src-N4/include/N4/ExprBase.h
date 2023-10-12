@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef N4_EXPRBASE_H
-#define N4_EXPRBASE_H
+#pragma once
 
 namespace n4 {
 
@@ -46,5 +45,3 @@ namespace n4 {
   };
 
 } // namespace n4
-
-#endif // N4_EXPRBASE_H

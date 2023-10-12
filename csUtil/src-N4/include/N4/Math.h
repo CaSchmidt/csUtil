@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef N4_MATH_H
-#define N4_MATH_H
+#pragma once
 
 #include <math.h>
 
@@ -126,5 +125,3 @@ namespace n4 {
   }
 
 } // namespace n4
-
-#endif // N4_MATH_H

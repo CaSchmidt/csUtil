@@ -29,8 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#ifndef N4_H
-#define N4_H
+#pragma once
 
 #include <N4/BinaryOperators.h>
 #include <N4/Color3f.h>
@@ -39,5 +38,3 @@
 #include <N4/Normal3f.h>
 #include <N4/UnaryOperators.h>
 #include <N4/Vertex4f.h>
-
-#endif // N4_H
