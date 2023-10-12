@@ -39,7 +39,7 @@
 namespace cs {
 
   template<>
-  struct simd128_impl<real64_t> {
+  struct SIMD128Impl<real64_t> {
     using block_type = __m128d;
     using  size_type = std::size_t;
     using value_type = real64_t;
@@ -57,7 +57,7 @@ namespace cs {
 
     inline static block_type hadd(const block_type& x)
     {
-      return simd::hadd<simd128_impl>(x);
+      return simd::hadd<SIMD128Impl>(x);
     }
 
     inline static block_type div(const block_type& a, const block_type& b)
@@ -137,7 +137,7 @@ namespace cs {
 
     inline static block_type one()
     {
-      return simd::one<simd128_impl>();
+      return simd::one<SIMD128Impl>();
     }
 
     inline static int sign_mask(const block_type& x)
@@ -161,7 +161,7 @@ namespace cs {
 
     inline static block_type abs(const block_type& x)
     {
-      return simd::abs<simd128_impl>(x);
+      return simd::abs<SIMD128Impl>(x);
     }
 
     inline static block_type sqrt(const block_type& x)
@@ -180,7 +180,7 @@ namespace cs {
     inline static block_type cmov(const block_type& cond_a,
                                   const block_type& a, const block_type& b)
     {
-      return simd::cmov<simd128_impl>(cond_a, a, b);
+      return simd::cmov<SIMD128Impl>(cond_a, a, b);
     }
 
     inline static block_type cmp_eq(const block_type& a, const block_type& b)

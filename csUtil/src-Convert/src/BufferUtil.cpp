@@ -59,7 +59,7 @@ namespace cs {
 
   CS_UTIL_EXPORT Buffer toBuffer(const char *str, const std::size_t lenStr)
   {
-    using k = konst<std::size_t>;
+    using k = Konst<std::size_t>;
 
     if( !isHexString(str, lenStr) ) {
       return Buffer{};
@@ -90,7 +90,7 @@ namespace cs {
   CS_UTIL_EXPORT std::string toString(const void *data, const std::size_t sizData,
                                       const char fill, const bool is_upper)
   {
-    using k = konst<std::size_t>;
+    using k = Konst<std::size_t>;
 
     if( !Pointer::isValidRange(data, sizData) ) {
       return std::string{};

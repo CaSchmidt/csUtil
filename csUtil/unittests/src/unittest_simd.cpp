@@ -47,7 +47,7 @@ namespace test_simd {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
     using real_T = TestType;
-    using simd_T = cs::simd128_t<real_T>;
+    using simd_T = cs::SIMD128<real_T>;
 
     const std::array<real_T,5> values = {1, 2, 5, 8, 9};
     //                                   1  4 25 64  81
@@ -64,7 +64,7 @@ namespace test_simd {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
     using real_T = TestType;
-    using simd_T = cs::simd128_t<real_T>;
+    using simd_T = cs::SIMD128<real_T>;
 
     std::array<real_T,23> values;
     std::iota(values.begin(), values.end(), real_T{1});
@@ -79,7 +79,7 @@ namespace test_simd {
   TEMPLATE_TEST_CASE("SIMD Arithmetic.", "[arithmetic]", int32_t, float) {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
-    using SIMD = cs::simd128_t<TestType>;
+    using SIMD = cs::SIMD128<TestType>;
     using block_type = typename SIMD::block_type;
 
     const block_type v1234 = SIMD::set(1, 2, 3, 4);
@@ -94,7 +94,7 @@ namespace test_simd {
   TEMPLATE_TEST_CASE("SIMD Bit Operations.", "[bitops]", int32_t, float) {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
-    using SIMD = cs::simd128_t<TestType>;
+    using SIMD = cs::SIMD128<TestType>;
     using block_type = typename SIMD::block_type;
 
     const block_type v1234 = SIMD::set(1, 2, 3, 4);
@@ -138,7 +138,7 @@ namespace test_simd {
   TEMPLATE_TEST_CASE("SIMD Absolute Value & Sign.", "[abs]", int32_t, float) {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
-    using SIMD = cs::simd128_t<TestType>;
+    using SIMD = cs::SIMD128<TestType>;
     using block_type = typename SIMD::block_type;
 
     const block_type v0n12n3 = SIMD::set(0, -1, 2, -3);
@@ -183,7 +183,7 @@ namespace test_simd {
   TEMPLATE_TEST_CASE("SIMD Shuffle Operations.", "[shuffle]", int32_t, float) {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
-    using SIMD = cs::simd128_t<TestType>;
+    using SIMD = cs::SIMD128<TestType>;
     using block_type = typename SIMD::block_type;
 
     const block_type v1234 = SIMD::set(1, 2, 3, 4);

@@ -38,7 +38,7 @@
 namespace cs {
 
   template<typename T> requires is_arithmetic_v<T>
-  struct simd128_impl {
+  struct SIMD128Impl {
     // SFINAE
   };
 

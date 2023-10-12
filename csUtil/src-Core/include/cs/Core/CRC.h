@@ -126,7 +126,7 @@ namespace cs {
     }
 
   private:
-    using k = konst<value_type>;
+    using k = Konst<value_type>;
 
     static constexpr size_type M = NUM_BITS<byte_t>;
     static constexpr size_type N = NUM_BITS<value_type>;

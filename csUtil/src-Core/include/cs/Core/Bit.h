@@ -66,7 +66,7 @@ namespace cs {
     template<typename T> requires IsIntegral<T>
     constexpr T makeBitMaskImpl(const std::size_t bit)
     {
-      using k = konst<T>;
+      using k = Konst<T>;
       return bit <= std::size_t{0}
           ?  k::ONE
           : (k::ONE << bit) | makeBitMaskImpl<T>(bit - 1);
@@ -79,7 +79,7 @@ namespace cs {
   {
     return std::size_t{0} < bits  &&  bits <= NUM_BITS<T>
         ? impl_bit::makeBitMaskImpl<T>(bits - 1)
-        : konst<T>::ZERO;
+        : Konst<T>::ZERO;
   }
 
   ////// Test Single Bit of Integral Value ///////////////////////////////////
@@ -87,7 +87,7 @@ namespace cs {
   template<typename T> requires IsIntegral<T>
   constexpr bool testBit(const T in, const std::size_t bit)
   {
-    using k = konst<T>;
+    using k = Konst<T>;
     return (in & (k::ONE << bit)) != k::ZERO;
   }
 
@@ -96,7 +96,7 @@ namespace cs {
   template<typename T> requires IsIntegral<T>
   constexpr T reflectBit(const T in, const std::size_t bit)
   {
-    using k = konst<T>;
+    using k = Konst<T>;
     return testBit(in, bit)
         ? k::ONE << (MAX_BIT<T> - bit)
         : k::ZERO;

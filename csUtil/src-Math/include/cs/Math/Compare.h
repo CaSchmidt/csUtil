@@ -49,12 +49,12 @@ namespace cs {
   struct cmp {
     using value_type = T;
 
-    static constexpr value_type DEFAULT_TOL = real_konst<value_type>::milli;
+    static constexpr value_type DEFAULT_TOL = RealKonst<value_type>::milli;
 
     inline static bool equal_to(const value_type& lhs, const value_type& rhs,
                                 const value_type& tol = DEFAULT_TOL)
     {
-      return math<value_type>::abs(lhs - rhs) <= tol;
+      return Math<value_type>::abs(lhs - rhs) <= tol;
     }
 
     inline static bool greater_equal(const value_type& lhs, const value_type& rhs,
@@ -84,7 +84,7 @@ namespace cs {
     inline static bool not_equal_to(const value_type& lhs, const value_type& rhs,
                                     const value_type& tol = DEFAULT_TOL)
     {
-      return math<value_type>::abs(lhs - rhs) > tol;
+      return Math<value_type>::abs(lhs - rhs) > tol;
     }
   };
 

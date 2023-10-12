@@ -36,7 +36,7 @@
 namespace cs {
 
   template<typename T> requires IsArithmetic<T>
-  struct konst {
+  struct Konst {
     using value_type = T;
 
     static constexpr auto INVALID_RESULT = std::numeric_limits<value_type>::quiet_NaN();
@@ -58,12 +58,12 @@ namespace cs {
    */
 
   template<std::size_t SIZE>
-  struct real_konst_impl {
+  struct RealKonstImpl {
     // SFINAE
   };
 
   template<>
-  struct real_konst_impl<4> : public konst<RealOfSize<4>::real_type> {
+  struct RealKonstImpl<4> : public Konst<RealOfSize<4>::real_type> {
     using value_type = RealOfSize<4>::real_type;
 
     static constexpr value_type  e = 0x1.5bf0a8p+1f;
@@ -76,7 +76,7 @@ namespace cs {
   };
 
   template<>
-  struct real_konst_impl<8> : public konst<RealOfSize<8>::real_type> {
+  struct RealKonstImpl<8> : public Konst<RealOfSize<8>::real_type> {
     using value_type = RealOfSize<8>::real_type;
 
     static constexpr value_type  e = 0x1.5bf0a8b145769p+1;
@@ -89,6 +89,6 @@ namespace cs {
   };
 
   template<typename T> requires IsReal<T>
-  using real_konst = real_konst_impl<sizeof(T)>;
+  using RealKonst = RealKonstImpl<sizeof(T)>;
 
 } // namespace cs

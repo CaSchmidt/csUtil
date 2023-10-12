@@ -45,7 +45,7 @@ namespace cs {
     template<typename T> requires IsReal<T>
     inline bool isCount(const std::size_t count)
     {
-      using k = konst<std::size_t>;
+      using k = Konst<std::size_t>;
 
       constexpr k::value_type MIN = k::TWO;
       constexpr k::value_type MAX = sizeof(k::value_type) >= sizeof(T)
@@ -61,69 +61,69 @@ namespace cs {
   inline T mean(const T *x, const std::size_t count)
   {
     if( x == nullptr  ||  !impl_statistics::isCount<T>(count) ) {
-      return real_konst<T>::INVALID_RESULT;
+      return RealKonst<T>::INVALID_RESULT;
     }
 
     const T N = static_cast<T>(count);
 
-    const T sum = simd::sum<simd128_t<T>>(x, count);
+    const T sum = simd::sum<SIMD128<T>>(x, count);
 
     return sum/N;
   }
 
   template<typename T> requires IsReal<T>
   inline T cov(const T *x, const T *y, const std::size_t count,
-               const T _meanX = real_konst<T>::INVALID_RESULT,
-               const T _meanY = real_konst<T>::INVALID_RESULT)
+               const T _meanX = RealKonst<T>::INVALID_RESULT,
+               const T _meanY = RealKonst<T>::INVALID_RESULT)
   {
-    using k = konst<T>;
+    using k = Konst<T>;
 
     if( x == nullptr  ||  y == nullptr  ||  !impl_statistics::isCount<T>(count) ) {
-      return real_konst<T>::INVALID_RESULT;
+      return RealKonst<T>::INVALID_RESULT;
     }
 
     const T     N = static_cast<T>(count);
-    const T meanX = !math<T>::isNaN(_meanX)
+    const T meanX = !Math<T>::isNaN(_meanX)
         ? _meanX
         : mean(x, count);
-    const T meanY = !math<T>::isNaN(_meanY)
+    const T meanY = !Math<T>::isNaN(_meanY)
         ? _meanY
         : mean(y, count);
 
-    const T sum = simd::dot<simd128_t<T>>(x, y, count);
+    const T sum = simd::dot<SIMD128<T>>(x, y, count);
 
     return (sum - N*meanX*meanY)/(N - k::ONE);
   }
 
   template<typename T> requires IsReal<T>
   inline T var(const T *x, const std::size_t count,
-               const T _meanX = real_konst<T>::INVALID_RESULT)
+               const T _meanX = RealKonst<T>::INVALID_RESULT)
   {
-    using k = konst<T>;
+    using k = Konst<T>;
 
     if( x == nullptr  ||  !impl_statistics::isCount<T>(count) ) {
-      return real_konst<T>::INVALID_RESULT;
+      return RealKonst<T>::INVALID_RESULT;
     }
 
     const T     N = static_cast<T>(count);
-    const T meanX = !math<T>::isNaN(_meanX)
+    const T meanX = !Math<T>::isNaN(_meanX)
         ? _meanX
         : mean(x, count);
 
-    const T sum = simd::sum_squared<simd128_t<T>>(x, count);
+    const T sum = simd::sum_squared<SIMD128<T>>(x, count);
 
     return (sum - N*meanX*meanX)/(N - k::ONE);
   }
 
   template<typename T> requires IsReal<T>
   inline T stddev(const T *x, const std::size_t count,
-                  const T _meanX = real_konst<T>::INVALID_RESULT)
+                  const T _meanX = RealKonst<T>::INVALID_RESULT)
   {
     const T ss = var(x, count, _meanX);
-    if( math<T>::isNaN(ss) ) {
-      return real_konst<T>::INVALID_RESULT;
+    if( Math<T>::isNaN(ss) ) {
+      return RealKonst<T>::INVALID_RESULT;
     }
-    return math<T>::sqrt(ss);
+    return Math<T>::sqrt(ss);
   }
 
 } // namespace cs

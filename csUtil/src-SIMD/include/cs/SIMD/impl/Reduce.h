@@ -112,7 +112,7 @@ namespace cs {
         using  value_type = typename SIMD::value_type;
 
         if( x == nullptr  ||  count < 1 ) {
-          return konst<value_type>::INVALID_RESULT;
+          return Konst<value_type>::INVALID_RESULT;
         }
 
         const result_type result = reduce4Blocks<SIMD,OP,ALIGNED>(x, count);
@@ -191,7 +191,7 @@ namespace cs {
         using  value_type = typename SIMD::value_type;
 
         if( a == nullptr  ||  b == nullptr  ||  count < 1 ) {
-          return konst<value_type>::INVALID_RESULT;
+          return Konst<value_type>::INVALID_RESULT;
         }
 
         const result_type result = reduce4Blocks<SIMD,OP,ALIGNED_a,ALIGNED_b>(a, b, count);

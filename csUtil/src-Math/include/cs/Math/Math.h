@@ -38,12 +38,12 @@
 namespace cs {
 
   template<std::size_t SIZE>
-  struct math_impl {
+  struct MathImpl {
     // SFINAE
   };
 
   template<>
-  struct math_impl<4> {
+  struct MathImpl<4> {
     using value_type = RealOfSize<4>::real_type;
 
     inline static value_type abs(const value_type& x)
@@ -111,7 +111,7 @@ namespace cs {
     }
 
     inline static bool isZero(const value_type& x,
-                              const value_type& tol = real_konst<value_type>::micro)
+                              const value_type& tol = RealKonst<value_type>::micro)
     {
       return abs(x) <= tol;
     }
@@ -164,7 +164,7 @@ namespace cs {
   };
 
   template<>
-  struct math_impl<8> {
+  struct MathImpl<8> {
     using value_type = RealOfSize<8>::real_type;
 
     inline static value_type abs(const value_type& x)
@@ -232,7 +232,7 @@ namespace cs {
     }
 
     inline static bool isZero(const value_type& x,
-                              const value_type& tol = real_konst<value_type>::micro)
+                              const value_type& tol = RealKonst<value_type>::micro)
     {
       return abs(x) <= tol;
     }
@@ -285,6 +285,6 @@ namespace cs {
   };
 
   template<typename T> requires IsReal<T>
-  using math = math_impl<sizeof(T)>;
+  using Math = MathImpl<sizeof(T)>;
 
 } // namespace cs

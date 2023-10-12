@@ -48,9 +48,9 @@ namespace cs {
       template<typename T>
       constexpr unsigned_from_signed_t<T> abs(const T& x)
       {
-        return x >= konst<T>::ZERO
+        return x >= Konst<T>::ZERO
             ? x
-            : (~x) + konst<T>::ONE;
+            : (~x) + Konst<T>::ONE;
       }
 
       template<typename T>
@@ -105,7 +105,7 @@ namespace cs {
       template<typename T>
       constexpr signed_from_unsigned_t<T> neg(const T& x)
       {
-        return (~x) + konst<T>::ONE;
+        return (~x) + Konst<T>::ONE;
       }
 
     } // namespace impl_sat
@@ -119,9 +119,9 @@ namespace cs {
     {
       const T result = a + b;
       if(        testBit(~a & ~b &  result, MAX_BIT<T>) ) { // pos -> neg
-        return konst<T>::MAX;
+        return Konst<T>::MAX;
       } else if( testBit( a &  b & ~result, MAX_BIT<T>) ) { // neg -> pos
-        return konst<T>::MIN;
+        return Konst<T>::MIN;
       }
       return result;
     }
@@ -130,9 +130,9 @@ namespace cs {
     constexpr if_signed_t<T> add_bl(const T& a, const T& b)
     {
       const T _result = a + b;
-      T results[2] = { _result, konst<T>::MAX };
+      T results[2] = { _result, Konst<T>::MAX };
       results[0] = results[testBit(~a & ~b &  _result, MAX_BIT<T>)]; // pos -> neg
-      results[1] = konst<T>::MIN;
+      results[1] = Konst<T>::MIN;
       return results[testBit( a &  b & ~_result, MAX_BIT<T>)]; // neg -> pos
     }
 
@@ -144,8 +144,8 @@ namespace cs {
       const bool is_neg_result = testBit(a ^ b, MAX_BIT<T>);
 
       const UnsignedT max = is_neg_result
-          ? konst<T>::MIN
-          : konst<T>::MAX;
+          ? Konst<T>::MIN
+          : Konst<T>::MAX;
 
       const UnsignedT result = impl_sat::mul(impl_sat::abs(a), impl_sat::abs(b), max);
 
@@ -159,9 +159,9 @@ namespace cs {
     {
       const T result = a - b;
       if(        testBit(~a &  b &  result, MAX_BIT<T>) ) { // pos -> neg
-        return konst<T>::MAX;
+        return Konst<T>::MAX;
       } else if( testBit( a & ~b & ~result, MAX_BIT<T>) ) { // neg -> pos
-        return konst<T>::MIN;
+        return Konst<T>::MIN;
       }
       return result;
     }
@@ -170,9 +170,9 @@ namespace cs {
     constexpr if_signed_t<T> sub_bl(const T& a, const T& b)
     {
       const T _result = a - b;
-      T results[2] = { _result, konst<T>::MAX };
+      T results[2] = { _result, Konst<T>::MAX };
       results[0] = results[testBit(~a &  b &  _result, MAX_BIT<T>)]; // pos -> neg
-      results[1] = konst<T>::MIN;
+      results[1] = Konst<T>::MIN;
       return results[testBit( a & ~b & ~_result, MAX_BIT<T>)]; // neg -> pos
     }
 
@@ -185,7 +185,7 @@ namespace cs {
     {
       const T result = a + b;
       if( result < a ) { // MAX -> 0
-        return konst<T>::MAX;
+        return Konst<T>::MAX;
       }
       return result;
     }
@@ -194,14 +194,14 @@ namespace cs {
     constexpr if_unsigned_t<T> add_bl(const T& a, const T& b)
     {
       const T _result = a + b;
-      const T results[2] = { _result, konst<T>::MAX };
+      const T results[2] = { _result, Konst<T>::MAX };
       return results[_result < a]; // MAX -> 0
     }
 
     template<typename T>
     inline if_unsigned_t<T> mul(const T& a, const T& b)
     {
-      return impl_sat::mul<T>(a, b, konst<T>::MAX);
+      return impl_sat::mul<T>(a, b, Konst<T>::MAX);
     }
 
     template<typename T>
@@ -209,7 +209,7 @@ namespace cs {
     {
       const T result = a - b;
       if( result > a ) { // 0 -> MAX
-        return konst<T>::MIN;
+        return Konst<T>::MIN;
       }
       return result;
     }
@@ -218,7 +218,7 @@ namespace cs {
     constexpr if_unsigned_t<T> sub_bl(const T& a, const T& b)
     {
       const T _result = a - b;
-      const T results[2] = { _result, konst<T>::MIN };
+      const T results[2] = { _result, Konst<T>::MIN };
       return results[_result > a]; // 0 -> MAX
     }
 
@@ -230,8 +230,8 @@ namespace cs {
     constexpr if_integral_t<T> dec(const T& x)
     {
       const T result = x - 1;
-      if( x == konst<T>::MIN ) {
-        return konst<T>::MIN;
+      if( x == Konst<T>::MIN ) {
+        return Konst<T>::MIN;
       }
       return result;
     }
@@ -240,16 +240,16 @@ namespace cs {
     constexpr if_integral_t<T> dec_bl(const T& x)
     {
       const T _result = x - 1;
-      const T results[2] = { _result, konst<T>::MIN };
-      return results[x == konst<T>::MIN];
+      const T results[2] = { _result, Konst<T>::MIN };
+      return results[x == Konst<T>::MIN];
     }
 
     template<typename T>
     constexpr if_integral_t<T> inc(const T& x)
     {
       const T result = x + 1;
-      if( x == konst<T>::MAX ) {
-        return konst<T>::MAX;
+      if( x == Konst<T>::MAX ) {
+        return Konst<T>::MAX;
       }
       return result;
     }
@@ -258,8 +258,8 @@ namespace cs {
     constexpr if_integral_t<T> inc_bl(const T& x)
     {
       const T _result = x + 1;
-      const T results[2] = { _result, konst<T>::MAX };
-      return results[x == konst<T>::MAX];
+      const T results[2] = { _result, Konst<T>::MAX };
+      return results[x == Konst<T>::MAX];
     }
 
   } // namespace saturate

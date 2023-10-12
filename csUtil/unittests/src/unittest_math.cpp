@@ -13,7 +13,7 @@ namespace test_decomposition {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
     using value_type = TestType;
-    using m = cs::math<value_type>;
+    using m = cs::Math<value_type>;
 
     const value_type x1 = 128.75;
 
@@ -35,8 +35,8 @@ namespace test_exponentiation {
 
     using value_type = TestType;
     using cmp = cs::cmp<value_type>;
-    using   k = cs::real_konst<value_type>;
-    using   m = cs::math<value_type>;
+    using   k = cs::RealKonst<value_type>;
+    using   m = cs::Math<value_type>;
 
     constexpr value_type TOL = k::micro;
 
@@ -57,7 +57,7 @@ namespace test_rounding {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
     using value_type = TestType;
-    using m = cs::math<value_type>;
+    using m = cs::Math<value_type>;
 
     const value_type x1 = 1.0;
     const value_type x2 = 1.25;
@@ -87,9 +87,9 @@ namespace test_saturate {
   template<typename T, typename TestFunc, typename RefFunc>
   inline void test_run(TestFunc test_func, RefFunc ref_func)
   {
-    constexpr T             MIN = cs::konst<T>::MIN;
-    constexpr T             MAX = cs::konst<T>::MAX;
-    constexpr std::size_t RANGE = cs::konst<std::size_t>::ONE << cs::NUM_BITS<T>;
+    constexpr T             MIN = cs::Konst<T>::MIN;
+    constexpr T             MAX = cs::Konst<T>::MAX;
+    constexpr std::size_t RANGE = cs::Konst<std::size_t>::ONE << cs::NUM_BITS<T>;
 
     T a = 0;
     for(std::size_t i = 0; i < RANGE; i++, a++) {
@@ -103,9 +103,9 @@ namespace test_saturate {
   template<typename T, typename TestFunc, typename RefFunc>
   inline void test_run_1D(TestFunc test_func, RefFunc ref_func)
   {
-    constexpr T             MIN = cs::konst<T>::MIN;
-    constexpr T             MAX = cs::konst<T>::MAX;
-    constexpr std::size_t RANGE = cs::konst<std::size_t>::ONE << cs::NUM_BITS<T>;
+    constexpr T             MIN = cs::Konst<T>::MIN;
+    constexpr T             MAX = cs::Konst<T>::MAX;
+    constexpr std::size_t RANGE = cs::Konst<std::size_t>::ONE << cs::NUM_BITS<T>;
 
     T x = 0;
     for(std::size_t i = 0; i < RANGE; i++) {
