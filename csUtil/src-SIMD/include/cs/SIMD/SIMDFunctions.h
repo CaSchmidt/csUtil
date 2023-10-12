@@ -83,6 +83,14 @@ namespace cs {
     // Relations /////////////////////////////////////////////////////////////
 
     template<typename SIMD>
+    typename SIMD::block_type clamp(const typename SIMD::block_type& x,
+                                    const typename SIMD::block_type& lo,
+                                    const typename SIMD::block_type& hi)
+    {
+      return SIMD::max(lo, SIMD::min(x, hi));
+    }
+
+    template<typename SIMD>
     typename SIMD::block_type cmov(const typename SIMD::block_type& cond_a,
                                    const typename SIMD::block_type& a,
                                    const typename SIMD::block_type& b)

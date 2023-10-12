@@ -175,7 +175,7 @@ namespace cs {
     inline static block_type clamp(const block_type& x,
                                    const block_type& lo, const block_type& hi)
     {
-      return max(lo, min(x, hi));
+      return simd::clamp<SIMD128Impl>(x, lo, hi);
     }
 
     inline static block_type cmov(const block_type& cond_a,
