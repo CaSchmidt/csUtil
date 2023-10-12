@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include <N4/TypeTraits.h>
+#include <N4/N4Traits.h>
 
 namespace n4 {
 

@@ -32,8 +32,8 @@
 #pragma once
 
 #include <N4/ExprBase.h>
+#include <N4/N4Traits.h>
 #include <N4/SIMD.h>
-#include <N4/TypeTraits.h>
 
 namespace n4 {
 

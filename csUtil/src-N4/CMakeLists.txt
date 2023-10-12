@@ -9,10 +9,10 @@ list(APPEND N4_HEADERS
   include/N4/Math.h
   include/N4/Matrix4f.h
   include/N4/N4.h
+  include/N4/N4Traits.h
   include/N4/Normal3f.h
   include/N4/Optics.h
   include/N4/SIMD.h
-  include/N4/TypeTraits.h
   include/N4/UnaryOperators.h
   include/N4/Util.h
   include/N4/Vector4f.h
