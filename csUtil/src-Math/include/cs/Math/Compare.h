@@ -45,7 +45,7 @@
 
 namespace cs {
 
-  template<typename T> requires IsReal<T>
+  template<typename T> requires is_real_v<T>
   struct cmp {
     using value_type = T;
 

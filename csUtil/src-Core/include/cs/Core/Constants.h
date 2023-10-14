@@ -35,7 +35,7 @@
 
 namespace cs {
 
-  template<typename T> requires IsArithmetic<T>
+  template<typename T> requires is_arithmetic_v<T>
   struct Konst {
     using value_type = T;
 
@@ -88,7 +88,7 @@ namespace cs {
     static constexpr value_type micro = 0x1.0p-20;
   };
 
-  template<typename T> requires IsReal<T>
+  template<typename T> requires is_real_v<T>
   using RealKonst = RealKonstImpl<sizeof(T)>;
 
 } // namespace cs

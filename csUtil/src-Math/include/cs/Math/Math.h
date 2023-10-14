@@ -284,7 +284,7 @@ namespace cs {
     }
   };
 
-  template<typename T> requires IsReal<T>
+  template<typename T> requires is_real_v<T>
   using Math = MathImpl<sizeof(T)>;
 
 } // namespace cs
