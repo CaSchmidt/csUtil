@@ -1,0 +1,1 @@
+ugrep -r -P -f <pattern-file> <file>
