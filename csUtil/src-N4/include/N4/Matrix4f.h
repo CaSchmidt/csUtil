@@ -34,7 +34,9 @@
 #include <algorithm>
 #include <initializer_list>
 
-#include <N4/Math.h>
+#include <cs/Math/Math.h>
+
+#include <N4/N4Traits.h>
 #include <N4/SIMD.h>
 
 namespace n4 {
@@ -262,32 +264,38 @@ namespace n4 {
 
   inline Matrix4f rotateX(const real_t radians)
   {
-    return impl::rotateX(cos(radians), sin(radians));
+    using m = cs::Math<real_t>;
+    return impl::rotateX(m::cos(radians), m::sin(radians));
   }
 
   inline Matrix4f rotateXbyPI2(const signed int i)
   {
-    return impl::rotateX(cosPI2(i), sinPI2(i));
+    using m = cs::Math<real_t>;
+    return impl::rotateX(m::cosPI2(i), m::sinPI2(i));
   }
 
   inline Matrix4f rotateY(const real_t radians)
   {
-    return impl::rotateY(cos(radians), sin(radians));
+    using m = cs::Math<real_t>;
+    return impl::rotateY(m::cos(radians), m::sin(radians));
   }
 
   inline Matrix4f rotateYbyPI2(const signed int i)
   {
-    return impl::rotateY(cosPI2(i), sinPI2(i));
+    using m = cs::Math<real_t>;
+    return impl::rotateY(m::cosPI2(i), m::sinPI2(i));
   }
 
   inline Matrix4f rotateZ(const real_t radians)
   {
-    return impl::rotateZ(cos(radians), sin(radians));
+    using m = cs::Math<real_t>;
+    return impl::rotateZ(m::cos(radians), m::sin(radians));
   }
 
   inline Matrix4f rotateZbyPI2(const signed int i)
   {
-    return impl::rotateZ(cosPI2(i), sinPI2(i));
+    using m = cs::Math<real_t>;
+    return impl::rotateZ(m::cosPI2(i), m::sinPI2(i));
   }
 
   inline Matrix4f scale(const real_t sx, const real_t sy, const real_t sz)

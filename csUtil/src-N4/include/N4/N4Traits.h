@@ -31,31 +31,19 @@
 
 #pragma once
 
-#include <cstddef>
-#include <cstdint>
-
-#include <type_traits>
+#include <cs/Core/TypeTraits.h>
 
 namespace n4 {
 
-  ////// Type Traits /////////////////////////////////////////////////////////
-
-  template<typename T>
-  using is_real = std::bool_constant<std::is_floating_point_v<T>  &&  sizeof(T) == 4>;
-
-  template<typename T>
-  using if_real_t = std::enable_if_t<is_real<T>::value,T>;
-
   ////// Types ///////////////////////////////////////////////////////////////
 
-  using real_t = if_real_t<float>;
+  using real_t = cs::real32_t;
 
   using std::size_t;
 
   ////// Constants ///////////////////////////////////////////////////////////
 
   inline constexpr real_t EPSILON0_PCT    = 0x1p-7;  // ca. 0.01
-  inline constexpr real_t EPSILON0_SCALAR = 0x1p-20; // ca. 0.000001
   inline constexpr real_t EPSILON0_VECTOR = 0x1p-13; // ca. 0.0001
 
   ////// Assign W Component //////////////////////////////////////////////////

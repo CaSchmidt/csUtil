@@ -44,10 +44,12 @@ namespace n4 {
       template<typename VecT>
       inline size_t absMinAt(const VecT& v)
       {
-        size_t at = n4::abs(v(0)) <= n4::abs(v(1))
+        using m = cs::Math<real_t>;
+
+        size_t at = m::abs(v(0)) <= m::abs(v(1))
             ? 0
             : 1;
-        if( n4::abs(v(2)) < n4::abs(v(at)) ) {
+        if( m::abs(v(2)) < m::abs(v(at)) ) {
           at = 2;
         }
         return at;

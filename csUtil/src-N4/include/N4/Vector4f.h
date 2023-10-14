@@ -34,14 +34,15 @@
 #include <algorithm>
 #include <initializer_list>
 
+#include <cs/Math/Math.h>
+
 #include <N4/ExprBase.h>
 #include <N4/Manipulator.h>
-#include <N4/Math.h>
 #include <N4/SIMD.h>
 
 namespace n4 {
 
-  static_assert(is_real<simd::real_t>::value);
+  static_assert( cs::is_real_v<simd::real_t> );
 
   template<typename traits_T, typename manip_T = NoManipulator>
   class Vector4f
@@ -221,9 +222,9 @@ namespace n4 {
     inline bool isNaN() const
     {
       return
-          n4::isNaN(_data[0])  ||
-          n4::isNaN(_data[1])  ||
-          n4::isNaN(_data[2]);
+          m::isNaN(_data[0])  ||
+          m::isNaN(_data[1])  ||
+          m::isNaN(_data[2]);
     }
 
     inline bool isZero(const real_t epsilon0 = EPSILON0_VECTOR) const
@@ -244,6 +245,8 @@ namespace n4 {
     }
 
   private:
+    using m = cs::Math<real_t>;
+
     template<typename EXPR>
     void assign(const ExprBase<traits_type,EXPR>& expr)
     {

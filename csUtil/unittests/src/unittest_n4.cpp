@@ -16,13 +16,15 @@ constexpr real_t W0 = Vec4f::traits_type::have_w ? 1 : 0;
 
 using Mat4f = n4::Matrix4f;
 
+using m = cs::Math<real_t>;
+
 ////// Output ////////////////////////////////////////////////////////////////
 
 namespace test_print {
 
   inline void do_print(const real_t x)
   {
-    if( n4::abs(x) == real_t(0) ) {
+    if( m::abs(x) == real_t(0) ) {
       printf("%8.3f", 0.0);
     } else {
       printf("%8.3f", x);
@@ -90,7 +92,7 @@ namespace test_equal {
   bool equals(const real_t a, const real_t b,
               const real_t epsilon0 = test_konst::epsilon0)
   {
-    return n4::isZero(a - b, epsilon0);
+    return m::isZero(a - b, epsilon0);
   }
 
   bool equals(const Vec4f& v, const std::initializer_list<real_t>& list,
@@ -471,7 +473,7 @@ namespace test_optics {
   Direction make_I()
   {
     const real_t y = -0.5;
-    const real_t x = n4::sqrt(std::max<real_t>(0, n4::optics::ONE - y*y));
+    const real_t x = m::sqrt(std::max<real_t>(0, n4::optics::ONE - y*y));
     return Direction{x, y, 0};
   }
 
