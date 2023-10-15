@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include <cs/IO/FileIO.h>
+#include <cs/Text/TextIO.h>
 #include <cs/Unicode/TextConverter.h>
 
 void print(const std::string& s)

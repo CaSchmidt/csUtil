@@ -118,7 +118,7 @@ namespace plot {
     }
 
   private:
-    using k = cs::konst<value_type>;
+    using k = cs::Konst<value_type>;
 
     inline qreal getX(const int i) const
     {

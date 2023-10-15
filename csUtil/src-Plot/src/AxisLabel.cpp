@@ -36,8 +36,8 @@
 
 #include "cs/Core/Constants.h"
 #include "cs/Core/Container.h"
-#include "cs/Core/StringUtil.h"
 #include "cs/Math/Math.h"
+#include "cs/Text/StringUtil.h"
 
 namespace plot {
 
@@ -67,8 +67,8 @@ namespace plot {
   {
     using  size_type = typename AxisLabelValues::size_type;
     using value_type = typename AxisLabelValues::value_type;
-    using          k = cs::real_konst<value_type>;
-    using          m = cs::math<value_type>;
+    using          k = cs::RealKonst<value_type>;
+    using          m = cs::Math<value_type>;
 
     // (0) Sanity Check //////////////////////////////////////////////////////
 

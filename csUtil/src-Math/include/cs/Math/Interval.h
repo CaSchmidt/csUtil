@@ -80,7 +80,7 @@ namespace cs {
 
     // Fixes /////////////////////////////////////////////////////////////////
 
-    inline void adjust(const value_type& range = konst<value_type>::ONE)
+    inline void adjust(const value_type& range = Konst<value_type>::ONE)
     {
       const value_type hrange = range/k::TWO;
       if( begin == end ) {
@@ -107,7 +107,7 @@ namespace cs {
      * then clamping the normalized interval to [0,1].
      */
     inline Interval subset(const Interval& other,
-                           const value_type& norm = konst<value_type>::ONE)
+                           const value_type& norm = Konst<value_type>::ONE)
     {
       if( !isValid()  ||  !other.isValid()  ||  norm <= k::ZERO ) {
         return Interval{};
@@ -160,7 +160,7 @@ namespace cs {
     // Private ///////////////////////////////////////////////////////////////
 
   private:
-    using k = konst<value_type>;
+    using k = Konst<value_type>;
   };
 
   // Intersection ////////////////////////////////////////////////////////////
@@ -182,7 +182,7 @@ namespace cs {
 
   template<typename T, bool SANITY_CHECK = true>
   inline bool intersects(const Interval<T>& a, const Interval<T>& b,
-                         const T& tol = konst<T>::ZERO)
+                         const T& tol = Konst<T>::ZERO)
   {
     if constexpr( SANITY_CHECK ) {
       if( !a.isValid()  ||  !b.isValid() ) {
@@ -193,7 +193,7 @@ namespace cs {
     const T begin = std::max(a.begin, b.begin);
     const T   end = std::min(a.end, b.end);
 
-    return cmp<T>::less_equal(begin, end, tol);
+    return Compare<T>::less_equal(begin, end, tol);
   }
 
   // Union ///////////////////////////////////////////////////////////////////

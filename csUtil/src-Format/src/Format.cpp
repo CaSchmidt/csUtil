@@ -35,7 +35,7 @@
 #include "cs/Format/Format.h"
 
 #include "cs/CharConv/CharConv.h"
-#include "cs/Core/StringUtil.h"
+#include "cs/Text/StringUtil.h"
 
 namespace cs {
 
@@ -98,7 +98,7 @@ namespace cs {
       void arg(const CharT *s,
                const int width, const CharT fill)
       {
-        const size_type len = length(s);
+        const size_type len = strlen(s);
         replace_index(s, s + len, width, fill);
       }
 
@@ -113,7 +113,7 @@ namespace cs {
         if( res.ec != std::errc() ) {
           return;
         }
-        const size_type len = lengthDiff(_temp.data(), res.ptr);
+        const size_type len = strlen(_temp.data(), res.ptr);
         replace_index(_temp.data(), _temp.data() + len, width, fill);
       }
 
@@ -136,7 +136,7 @@ namespace cs {
         if( res.ec != std::errc() ) {
           return;
         }
-        const size_type len = lengthDiff(_temp.data(), res.ptr);
+        const size_type len = strlen(_temp.data(), res.ptr);
         replace_index(_temp.data(), _temp.data() + len, width, fill);
       }
 
@@ -335,7 +335,7 @@ namespace cs {
     : impl()
   {
     try {
-      impl = std::make_unique<Formatter>(s, s + length(s));
+      impl = std::make_unique<Formatter>(s, s + strlen(s));
     } catch(...) {
       impl.reset(nullptr);
     }

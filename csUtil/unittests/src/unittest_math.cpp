@@ -34,7 +34,7 @@ namespace test_exponentiation {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
     using value_type = TestType;
-    using cmp = cs::cmp<value_type>;
+    using cmp = cs::Compare<value_type>;
     using   k = cs::RealKonst<value_type>;
     using   m = cs::Math<value_type>;
 

@@ -46,7 +46,7 @@
 namespace cs {
 
   template<typename T> requires is_real_v<T>
-  struct cmp {
+  struct Compare {
     using value_type = T;
 
     static constexpr value_type DEFAULT_TOL = RealKonst<value_type>::milli;
