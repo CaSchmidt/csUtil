@@ -71,11 +71,21 @@ namespace cs {
 
     template<typename SIMD, std::size_t NUM_ELEM>
     using is_simd_elem = std::bool_constant<
-    SIMD::NUM_ELEM == NUM_ELEM
+    sizeof(typename SIMD::block_type)/sizeof(typename SIMD::value_type) == NUM_ELEM
     >;
 
     template<typename SIMD, std::size_t NUM_ELEM>
     inline constexpr bool is_simd_elem_v = is_simd_elem<SIMD,NUM_ELEM>::value;
+
+    // SIMD128 4x 32bit Real /////////////////////////////////////////////////
+
+    template<typename SIMD>
+    using is_simd128x4f = std::bool_constant<
+    is_simd_real_v<SIMD>  &&  is_simd_elem_v<SIMD,4>
+    >;
+
+    template<typename SIMD>
+    inline constexpr bool is_simd128x4f_v = is_simd128x4f<SIMD>::value;
 
   } // namespace simd
 

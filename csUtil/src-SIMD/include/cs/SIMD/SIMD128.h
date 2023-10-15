@@ -40,6 +40,6 @@
 namespace cs {
 
   template<typename T> requires is_arithmetic_v<T>
-  using SIMD128 = SIMD128Impl<T>;
+  using SIMD128 = SIMD128Impl<sizeof(T),is_real_v<T>>;
 
 } // namespace cs

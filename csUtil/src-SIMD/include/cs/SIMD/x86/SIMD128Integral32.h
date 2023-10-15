@@ -40,10 +40,10 @@
 namespace cs {
 
   template<>
-  struct SIMD128Impl<int32_t> {
+  struct SIMD128Impl<4,SIMD128_IS_INTEGRAL> {
     using block_type = __m128i;
     using  size_type = std::size_t;
-    using value_type = int32_t;
+    using value_type = IntegralOfSize<4>::signed_type;
 
     static constexpr size_type NUM_ELEM = sizeof(block_type)/sizeof(value_type);
 
