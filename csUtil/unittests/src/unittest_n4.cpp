@@ -274,9 +274,9 @@ namespace test_n4 {
     REQUIRE( !a.isZero(2) );
     REQUIRE( a.isZero(3) );
     REQUIRE( a.isZero(4) );
-    REQUIRE( simd::compareLEQ(a.eval(), b.eval()) );
-    REQUIRE( simd::compareLEQ(a.eval(), a.eval()) );
-    REQUIRE( !simd::compareLEQ(b.eval(), a.eval()) );
+    REQUIRE( n4::simd::compareLEQ(a.eval(), b.eval()) );
+    REQUIRE( n4::simd::compareLEQ(a.eval(), a.eval()) );
+    REQUIRE( !n4::simd::compareLEQ(b.eval(), a.eval()) );
   }
 
   TEST_CASE("N4 Vector4f manipulators.", "[Vector4f][manipulator]") {
@@ -374,13 +374,13 @@ namespace test_intersect {
   bool test_intersect(const Vec4f& min, const Vec4f& max,
                       const Vec4f& org, const Vec4f& dir, const real_t tMax)
   {
-    return simd::intersectRayAABBox(min.eval(), max.eval(), org.eval(), dir.eval(), tMax);
+    return n4::simd::intersectRayAABBox(min.eval(), max.eval(), org.eval(), dir.eval(), tMax);
   }
 
   bool test_intersect(const Vec4f& min, const Vec4f& max,
                       const Vec4f& org, const Vec4f& dir)
   {
-    return simd::intersectRayAABBox(min.eval(), max.eval(), org.eval(), dir.eval());
+    return n4::simd::intersectRayAABBox(min.eval(), max.eval(), org.eval(), dir.eval());
   }
 
   TEST_CASE("Ray/Box intersection.", "[intersect]") {
