@@ -43,7 +43,6 @@ namespace n4 {
 
   ////// Constants ///////////////////////////////////////////////////////////
 
-  inline constexpr real_t EPSILON0_PCT    = 0x1p-7;  // ca. 0.01
   inline constexpr real_t EPSILON0_VECTOR = 0x1p-13; // ca. 0.0001
 
   ////// Assign W Component //////////////////////////////////////////////////

@@ -52,6 +52,10 @@ namespace n4 {
 
   using rgb_t = if_rgb_t<uint8_t>;
 
+  ////// Constants ///////////////////////////////////////////////////////////
+
+  inline constexpr real_t EPSILON0_PCT = 0x1p-7; // ca. 0.01
+
   ////// Color Property //////////////////////////////////////////////////////
 
   template<size_t index>
