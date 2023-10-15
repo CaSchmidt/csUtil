@@ -3,7 +3,6 @@ list(APPEND csCore_HEADERS
   include/cs/Core/Buffer.h
   include/cs/Core/ByteArray.h
   include/cs/Core/CharUtil.h
-  include/cs/Core/Concepts.h
   include/cs/Core/Constants.h
   include/cs/Core/Container.h
   include/cs/Core/CRC.h
