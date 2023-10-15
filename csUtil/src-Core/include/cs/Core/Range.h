@@ -43,7 +43,7 @@ namespace cs {
   namespace impl_range {
 
     template<typename T>
-    requires IsArithmetic<T>  ||  IsCharacter<T>
+    requires is_arithmetic_v<T>  ||  is_char_v<T>
     inline std::size_t size(const T *first, const T *last)
     {
       static_assert( sizeof(std::size_t) >= sizeof(std::ptrdiff_t) );
@@ -55,7 +55,7 @@ namespace cs {
     }
 
     template<typename T>
-    requires IsCharacter<T>
+    requires is_char_v<T>
     inline std::size_t strlen(const T *first, const T *last)
     {
       return size(first, std::ranges::find(first, last, glyph<T>::null));
@@ -66,7 +66,7 @@ namespace cs {
   ////// Public //////////////////////////////////////////////////////////////
 
   template<typename T>
-  requires IsArithmetic<T>  ||  IsCharacter<T>
+  requires is_arithmetic_v<T>  ||  is_char_v<T>
   inline std::size_t size(const T *first, const T *last)
   {
     return Pointer::isValidRange(first, last)
@@ -75,7 +75,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsArithmetic<T>  ||  IsCharacter<T>
+  requires is_arithmetic_v<T>  ||  is_char_v<T>
   inline std::size_t size(const T *ptr, const std::size_t siz)
   {
     return Pointer::isValidRange(ptr, siz)
@@ -83,7 +83,7 @@ namespace cs {
         : 0;
   }
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   inline std::size_t strlen(const T *first, const T *last)
   {
     return Pointer::isValidRange(first, last)
@@ -91,7 +91,7 @@ namespace cs {
         : 0;
   }
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   inline std::size_t strlen(const T *str, const std::size_t siz = MAX_SIZE_T)
   {
     return siz == MAX_SIZE_T

@@ -41,7 +41,7 @@
 
 namespace cs {
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   using KeyValuePair = std::pair<std::basic_string<T>,std::basic_string<T>>;
 
   template<typename T>
@@ -49,7 +49,7 @@ namespace cs {
 
   namespace impl_keyvalue {
 
-    template<typename T> requires IsCharacter<T>
+    template<typename T> requires is_char_v<T>
     inline KeyValuePairs<T> makeKeyValuePairs(const T *first, const T *last)
     {
       constexpr T SEP_PAIR  = glyph<T>::comma;
@@ -78,7 +78,7 @@ namespace cs {
 
   } // namespace impl_keyvalue
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   inline KeyValuePairs<T> makeKeyValuePairs(const T *first, const T *last)
   {
     return Pointer::isValidRange(first, last)
@@ -86,7 +86,7 @@ namespace cs {
         : KeyValuePairs<T>{};
   }
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   inline KeyValuePairs<T> makeKeyValuePairs(const T *str, const std::size_t len = MAX_SIZE_T)
   {
     const std::size_t max = strlen(str, len);
@@ -95,13 +95,13 @@ namespace cs {
         : KeyValuePairs<T>{};
   }
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   inline KeyValuePairs<T> makeKeyValuePairs(const std::basic_string<T>& str)
   {
     return makeKeyValuePairs(str.data(), str.size());
   }
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   inline KeyValuePairs<T> makeKeyValuePairs(const std::basic_string_view<T>& view)
   {
     return makeKeyValuePairs(view.data(), view.size());

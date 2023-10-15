@@ -40,36 +40,36 @@ namespace cs {
 
   ////// Types ///////////////////////////////////////////////////////////////
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   using String = std::basic_string<T>;
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   using StringIter = typename String<T>::iterator;
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   using ConstStringIter = typename String<T>::const_iterator;
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   using StringList = std::list<String<T>>;
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   using StringListIter = typename StringList<T>::iterator;
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   using ConstStringListIter = typename StringList<T>::const_iterator;
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   using StringView = std::basic_string_view<T>;
 
   ////// Constants ///////////////////////////////////////////////////////////
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   inline constexpr typename String<T>::size_type NPOS = String<T>::npos;
 
   ////// Length Functions ////////////////////////////////////////////////////
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline std::size_t strlen(const String<T>& str)
   {
     return strlen(str.data(), str.size());
@@ -78,7 +78,7 @@ namespace cs {
   ////// String contains character... ////////////////////////////////////////
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool contains(const String<T>& str, const T& pat)
   {
     return contains(str.data(), str.size(), pat);
@@ -87,7 +87,7 @@ namespace cs {
   ////// String contains predicate... ////////////////////////////////////////
 
   template<typename T, typename PredFunc>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool contains(const String<T>& str, PredFunc func)
   {
     return contains<T,PredFunc>(str.data(), str.size(), func);
@@ -96,7 +96,7 @@ namespace cs {
   ////// String contains pattern... //////////////////////////////////////////
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool contains(const String<T>& str, const String<T>& pat,
                        const bool ignoreCase = false)
   {
@@ -104,7 +104,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool contains(const String<T>& str, const T *pat,
                        const bool ignoreCase = false)
   {
@@ -114,21 +114,21 @@ namespace cs {
   ////// String ends with pattern... /////////////////////////////////////////
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool endsWith(const String<T>& str, const T *pat, const bool ignoreCase = false)
   {
     return endsWith(str.data(), str.size(), pat, MAX_SIZE_T, ignoreCase);
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool endsWith(const T *str, const String<T>& pat, const bool ignoreCase = false)
   {
     return endsWith(str, MAX_SIZE_T, pat.data(), pat.size(), ignoreCase);
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool endsWith(const String<T>& str, const String<T>& pat, const bool ignoreCase = false)
   {
     return endsWith(str.data(), str.size(), pat.data(), pat.size(), ignoreCase);
@@ -137,21 +137,21 @@ namespace cs {
   ////// Strings are equal... ////////////////////////////////////////////////
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool equals(const String<T>& a, const T *b, const bool ignoreCase = false)
   {
     return equals(a.data(), a.size(), b, MAX_SIZE_T, ignoreCase);
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool equals(const T *a, const String<T>& b, const bool ignoreCase = false)
   {
     return equals(a, MAX_SIZE_T, b.data(), b.size(), ignoreCase);
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool equals(const String<T>& a, const String<T>& b, const bool ignoreCase = false)
   {
     return equals(a.data(), a.size(), b.data(), b.size(), ignoreCase);
@@ -159,7 +159,7 @@ namespace cs {
 
   ////// String is hexadecimal string... /////////////////////////////////////
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   inline bool isHexString(const String<T>& str)
   {
     return isHexString(str.data(), str.size());
@@ -168,7 +168,7 @@ namespace cs {
   ////// String is C-style identifier... /////////////////////////////////////
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool isIdent(const String<T>& str)
   {
     return isIdent(str.data(), str.size());
@@ -177,7 +177,7 @@ namespace cs {
   ////// String contains only whitespace... //////////////////////////////////
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool isSpace(const String<T>& str)
   {
     return isSpace(str.data(), str.size());
@@ -186,7 +186,7 @@ namespace cs {
   ////// Remove pattern from string... ///////////////////////////////////////
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void removeAll(T *str, const std::size_t lenstr,
                         const String<T>& pat)
   {
@@ -194,7 +194,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void removeAll(T *str,
                         const String<T>& pat)
   {
@@ -202,7 +202,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void removeAll(String<T> *str,
                         const T *pat, const std::size_t lenpat = MAX_SIZE_T)
   {
@@ -211,7 +211,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void removeAll(String<T> *str,
                         const String<T>& pat)
   {
@@ -220,7 +220,7 @@ namespace cs {
 
   ////// Remove character from string... /////////////////////////////////////
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   inline void removeAll(String<T> *str, const T& pat)
   {
     removeAll(str->data(), str->size(), pat);
@@ -230,7 +230,7 @@ namespace cs {
   ////// Remove character matching predicate from string... //////////////////
 
   template<typename T, typename PredFunc>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void removeAll(String<T> *str, PredFunc func)
   {
     removeAll<T,PredFunc>(str->data(), str->size(), func);
@@ -240,7 +240,7 @@ namespace cs {
   ////// Remove Trailing Zeros from Fixed-Notation Floating-Point String /////
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void removeTrailingZeros(String<T> *str, const bool removeDot = true)
   {
     removeTrailingZeros(str->data(), str->size(), removeDot);
@@ -252,7 +252,7 @@ namespace cs {
   namespace impl_string {
 
     template<typename T>
-    requires IsCharacter<T>
+    requires is_char_v<T>
     inline void replaceAll(String<T> *str,
                            const T *pat, const std::size_t maxpat,
                            const T *txt, const std::size_t maxtxt)
@@ -267,7 +267,7 @@ namespace cs {
   } // namespace impl_string
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void replaceAll(String<T> *str,
                          const T *pat, const std::size_t lenpat,
                          const T *txt, const std::size_t lentxt = MAX_SIZE_T)
@@ -280,42 +280,42 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void replaceAll(String<T> *str, const T *pat, const T *txt)
   {
     replaceAll(str, pat, MAX_SIZE_T, txt, MAX_SIZE_T);
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void replaceAll(String<T> *str, const String<T>& pat, const T *txt)
   {
     replaceAll(str, pat.data(), pat.size(), txt, MAX_SIZE_T);
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void replaceAll(String<T> *str, const T *pat, const String<T>& txt)
   {
     replaceAll(str, pat, MAX_SIZE_T, txt.data(), txt.size());
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void replaceAll(String<T> *str, const String<T>& pat, const String<T>& txt)
   {
     replaceAll(str, pat.data(), pat.size(), txt.data(), txt.size());
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void replaceAll(String<T> *str, const T& pat, const T *txt)
   {
     replaceAll(str, &pat, 1, txt, MAX_SIZE_T);
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void replaceAll(String<T> *str, const T& pat, const String<T>& txt)
   {
     replaceAll(str, &pat, 1, txt.data(), txt.size());
@@ -324,7 +324,7 @@ namespace cs {
   ////// Replace character in string... //////////////////////////////////////
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   void replaceAll(String<T> *str, const T& pat, const T& txt)
   {
     replaceAll(str->data(), str->size(), pat, txt);
@@ -333,7 +333,7 @@ namespace cs {
   ////// Replace character matching predicate in string... ///////////////////
 
   template<typename T, typename PredFunc>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   void replaceAll(String<T> *str, PredFunc func, const T& txt)
   {
     replaceAll<T,PredFunc>(str->data(), str->size(), func, txt);
@@ -342,7 +342,7 @@ namespace cs {
   ////// Reclaim memory... ///////////////////////////////////////////////////
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void shrink(String<T> *str)
   {
     str->resize(strlen(*str));
@@ -352,7 +352,7 @@ namespace cs {
   ////// Remove whitespace from begin & end... ///////////////////////////////
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void trim(String<T> *str)
   {
     trim(str->data(), str->size());
@@ -360,7 +360,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline String<T> trimmed(String<T> str)
   {
     trim(&str);
@@ -368,7 +368,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline String<T> trimmed(const StringView<T>& view)
   {
     return trimmed(String<T>{view.data(), view.size()});
@@ -377,7 +377,7 @@ namespace cs {
   ////// Replace consecutive whitespace with single space... /////////////////
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void simplify(String<T> *str)
   {
     simplify(str->data(), str->size());
@@ -385,7 +385,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline String<T> simplified(String<T> str)
   {
     simplify(&str);
@@ -393,7 +393,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline String<T> simplified(const StringView<T>& view)
   {
     return simplified(String<T>{view.data(), view.size()});
@@ -404,7 +404,7 @@ namespace cs {
   namespace impl_string {
 
     template<typename T>
-    requires IsCharacter<T>
+    requires is_char_v<T>
     inline void extract(StringList<T> *result,
                         const T *first, const T *last,
                         const bool skipEmpty, const bool doTrim)
@@ -426,7 +426,7 @@ namespace cs {
     }
 
     template<typename T>
-    requires IsCharacter<T>
+    requires is_char_v<T>
     inline StringList<T> split(const T *first, const T *last,
                                const T *pat, const std::size_t maxpat,
                                const bool skipEmpty, const bool doTrim)
@@ -447,7 +447,7 @@ namespace cs {
   } // namespace impl_string
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline StringList<T> split(const T *first, const T *last,
                              const T *pat, const std::size_t lenpat = MAX_SIZE_T,
                              const bool skipEmpty = false, const bool doTrim = false)
@@ -460,7 +460,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline StringList<T> split(const T *str, const std::size_t lenstr,
                              const T *pat, const std::size_t lenpat,
                              const bool skipEmpty = false, const bool doTrim = false)
@@ -473,7 +473,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline StringList<T> split(const T *str,
                              const T *pat,
                              const bool skipEmpty = false, const bool doTrim = false)
@@ -482,7 +482,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline StringList<T> split(const String<T>& str,
                              const T *pat,
                              const bool skipEmpty = false, const bool doTrim = false)
@@ -495,7 +495,7 @@ namespace cs {
   namespace impl_string {
 
     template<typename T>
-    requires IsCharacter<T>
+    requires is_char_v<T>
     inline StringList<T> split(const T *first, const T *last,
                                const T& pat,
                                const bool skipEmpty, const bool doTrim)
@@ -516,7 +516,7 @@ namespace cs {
   } // namespace impl_string
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline StringList<T> split(const T *first, const T *last,
                              const T& pat,
                              const bool skipEmpty = false, const bool doTrim = false)
@@ -527,7 +527,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline StringList<T> split(const T *str, const std::size_t len,
                              const T& pat,
                              const bool skipEmpty = false, const bool doTrim = false)
@@ -539,7 +539,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline StringList<T> split(const T *str,
                              const T& pat,
                              const bool skipEmpty = false, const bool doTrim = false)
@@ -548,7 +548,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline StringList<T> split(const String<T>& str,
                              const T& pat,
                              const bool skipEmpty = false, const bool doTrim = false)
@@ -559,21 +559,21 @@ namespace cs {
   ////// String starts with pattern... ///////////////////////////////////////
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool startsWith(const String<T>& str, const T *pat, const bool ignoreCase = false)
   {
     return startsWith(str.data(), str.size(), pat, MAX_SIZE_T, ignoreCase);
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool startsWith(const T *str, const String<T>& pat, const bool ignoreCase = false)
   {
     return startsWith(str, MAX_SIZE_T, pat.data(), pat.size(), ignoreCase);
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool startsWith(const String<T>& str, const String<T>& pat, const bool ignoreCase = false)
   {
     return startsWith(str.data(), str.size(), pat.data(), pat.size(), ignoreCase);
@@ -582,13 +582,13 @@ namespace cs {
   ////// Case conversion... //////////////////////////////////////////////////
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void toLower(String<T> *str)
   {
     toLower(str->data(), str->size());
   }
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   inline String<T> toLower(String<T> str)
   {
     toLower(&str);
@@ -596,13 +596,13 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void toUpper(String<T> *str)
   {
     toUpper(str->data(), str->size());
   }
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   inline String<T> toUpper(String<T> str)
   {
     toUpper(&str);

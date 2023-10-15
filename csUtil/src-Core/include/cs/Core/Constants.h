@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include <cs/Core/Concepts.h>
+#include <cs/Core/TypeTraits.h>
 
 namespace cs {
 

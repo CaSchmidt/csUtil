@@ -35,7 +35,7 @@
 
 namespace cs {
 
-  template<typename T, T BASE = 10> requires IsIntegral<T>
+  template<typename T, T BASE = 10> requires is_integral_v<T>
   inline std::size_t countDigits(T x)
   {
     static_assert( 2 <= BASE  &&  BASE <= 36 );
@@ -50,7 +50,7 @@ namespace cs {
     return cnt;
   }
 
-  template<typename T> requires IsIntegral<T>
+  template<typename T> requires is_integral_v<T>
   constexpr bool isEven(const T& x)
   {
     constexpr T  ONE = 1;
@@ -59,7 +59,7 @@ namespace cs {
     return (x & ONE) == ZERO;
   }
 
-  template<typename T> requires IsIntegral<T>
+  template<typename T> requires is_integral_v<T>
   constexpr bool isOdd(const T& x)
   {
     constexpr T  ONE = 1;

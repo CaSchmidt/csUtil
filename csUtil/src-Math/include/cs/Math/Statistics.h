@@ -42,7 +42,7 @@ namespace cs {
 
   namespace impl_statistics {
 
-    template<typename T> requires IsReal<T>
+    template<typename T> requires is_real_v<T>
     inline bool isCount(const std::size_t count)
     {
       using k = Konst<std::size_t>;
@@ -57,7 +57,7 @@ namespace cs {
 
   } // namespace impl_statistics
 
-  template<typename T> requires IsReal<T>
+  template<typename T> requires is_real_v<T>
   inline T mean(const T *x, const std::size_t count)
   {
     if( x == nullptr  ||  !impl_statistics::isCount<T>(count) ) {
@@ -71,7 +71,7 @@ namespace cs {
     return sum/N;
   }
 
-  template<typename T> requires IsReal<T>
+  template<typename T> requires is_real_v<T>
   inline T cov(const T *x, const T *y, const std::size_t count,
                const T _meanX = RealKonst<T>::INVALID_RESULT,
                const T _meanY = RealKonst<T>::INVALID_RESULT)
@@ -95,7 +95,7 @@ namespace cs {
     return (sum - N*meanX*meanY)/(N - k::ONE);
   }
 
-  template<typename T> requires IsReal<T>
+  template<typename T> requires is_real_v<T>
   inline T var(const T *x, const std::size_t count,
                const T _meanX = RealKonst<T>::INVALID_RESULT)
   {
@@ -115,7 +115,7 @@ namespace cs {
     return (sum - N*meanX*meanX)/(N - k::ONE);
   }
 
-  template<typename T> requires IsReal<T>
+  template<typename T> requires is_real_v<T>
   inline T stddev(const T *x, const std::size_t count,
                   const T _meanX = RealKonst<T>::INVALID_RESULT)
   {

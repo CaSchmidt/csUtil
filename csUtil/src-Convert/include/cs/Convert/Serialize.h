@@ -39,7 +39,7 @@
 
 namespace cs {
 
-  template<typename T> requires IsIntegral<T>
+  template<typename T> requires is_integral_v<T>
   void toBytesBE(void *data, const std::size_t sizData,
                  T value)
   {
@@ -62,7 +62,7 @@ namespace cs {
     }
   }
 
-  template<typename T> requires IsIntegral<T>
+  template<typename T> requires is_integral_v<T>
   void toBytesLE(void *data, const std::size_t sizData,
                  T value)
   {

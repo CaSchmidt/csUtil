@@ -61,7 +61,7 @@ namespace cs {
     inline constexpr std::size_t BUF_SIZE = 128;
 
     template<typename CharT>
-    requires IsCharacter<CharT>
+    requires is_char_v<CharT>
     inline void output(std::basic_ostream<CharT> *stream,
                        const char *str, const std::size_t lenstr,
                        const std::size_t width, const CharT fill,
@@ -93,7 +93,7 @@ namespace cs {
     ////// Integral Types ////////////////////////////////////////////////////
 
     template<typename T, typename CharT>
-    requires IsIntegral<T>  &&  IsCharacter<CharT>
+    requires is_integral_v<T>  &&  is_char_v<CharT>
     class FormatIntegral {
     public:
       using stream_type = std::basic_ostream<CharT>;
@@ -160,7 +160,7 @@ namespace cs {
     ////// Real Types ////////////////////////////////////////////////////////
 
     template<typename T, typename CharT>
-    requires IsReal<T>  &&  IsCharacter<CharT>
+    requires is_real_v<T>  &&  is_char_v<CharT>
     class FormatReal {
     public:
       using stream_type = std::basic_ostream<CharT>;
@@ -245,12 +245,12 @@ namespace cs {
   ////// User Interface - Integral ///////////////////////////////////////////
 
   inline constexpr std::size_t DEFINT_WIDTH = 0;
-  template<typename CharT> requires IsCharacter<CharT>
+  template<typename CharT> requires is_char_v<CharT>
   inline constexpr CharT       DEFINT_FILL  = glyph<CharT>::space;
   inline constexpr FormatFlag  DEFINT_FLAGS = FormatFlag::None;
 
   template<typename T, typename CharT = char>
-  requires IsIntegral<T>  &&  IsCharacter<CharT>
+  requires is_integral_v<T>  &&  is_char_v<CharT>
   inline auto format(const T value, const int base,
                      const std::size_t width = DEFINT_WIDTH,
                      const CharT fill = DEFINT_FILL<CharT>,
@@ -260,7 +260,7 @@ namespace cs {
   }
 
   template<typename T, typename CharT = char>
-  requires IsIntegral<T>  &&  IsCharacter<CharT>
+  requires is_integral_v<T>  &&  is_char_v<CharT>
   inline auto binf(const T value, const bool fill_digits = false)
   {
     const std::size_t width = fill_digits
@@ -270,14 +270,14 @@ namespace cs {
   }
 
   template<typename T, typename CharT = char>
-  requires IsIntegral<T>  &&  IsCharacter<CharT>
+  requires is_integral_v<T>  &&  is_char_v<CharT>
   inline auto decf(const T value, const std::size_t width, const CharT fill = DEFINT_FILL<CharT>)
   {
     return format<T,CharT>(value, 10, width, fill);
   }
 
   template<typename T, typename CharT = char>
-  requires IsIntegral<T>  &&  IsCharacter<CharT>
+  requires is_integral_v<T>  &&  is_char_v<CharT>
   inline auto hexf(const T value, const bool fill_digits = false)
   {
     const std::size_t width = fill_digits
@@ -290,12 +290,12 @@ namespace cs {
 
   inline constexpr int         DEFREAL_PRECISION = 6;
   inline constexpr std::size_t DEFREAL_WIDTH     = 0;
-  template<typename CharT> requires IsCharacter<CharT>
+  template<typename CharT> requires is_char_v<CharT>
   inline constexpr CharT       DEFREAL_FILL      = glyph<CharT>::space;
   inline constexpr FormatFlag  DEFREAL_FLAGS     = FormatFlag::None;
 
   template<typename T, typename CharT = char>
-  requires IsReal<T>  &&  IsCharacter<CharT>
+  requires is_real_v<T>  &&  is_char_v<CharT>
   inline auto format(const T value, const std::chars_format format,
                      const int precision = DEFREAL_PRECISION,
                      const std::size_t width = DEFREAL_WIDTH,
@@ -306,28 +306,28 @@ namespace cs {
   }
 
   template<typename T, typename CharT = char>
-  requires IsReal<T>  &&  IsCharacter<CharT>
+  requires is_real_v<T>  &&  is_char_v<CharT>
   inline auto fixedf(const T value, const int precision = DEFREAL_PRECISION)
   {
     return format<T,CharT>(value, std::chars_format::fixed, precision);
   }
 
   template<typename T, typename CharT = char>
-  requires IsReal<T>  &&  IsCharacter<CharT>
+  requires is_real_v<T>  &&  is_char_v<CharT>
   inline auto generalf(const T value, const int precision = DEFREAL_PRECISION)
   {
     return format<T,CharT>(value, std::chars_format::general, precision);
   }
 
   template<typename T, typename CharT = char>
-  requires IsReal<T>  &&  IsCharacter<CharT>
+  requires is_real_v<T>  &&  is_char_v<CharT>
   inline auto hexf(const T value, const int precision = DEFREAL_PRECISION)
   {
     return format<T,CharT>(value, std::chars_format::hex, precision);
   }
 
   template<typename T, typename CharT = char>
-  requires IsReal<T>  &&  IsCharacter<CharT>
+  requires is_real_v<T>  &&  is_char_v<CharT>
   inline auto scientificf(const T value, const int precision = DEFREAL_PRECISION)
   {
     return format<T,CharT>(value, std::chars_format::scientific, precision);

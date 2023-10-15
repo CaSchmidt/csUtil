@@ -41,7 +41,7 @@ namespace cs {
   namespace impl_print {
 
     template<typename CharT>
-    requires IsCharacter<CharT>
+    requires is_char_v<CharT>
     void print(std::basic_ostream<CharT> *stream, const CharT *first, const CharT *last)
     {
       if( !Pointer::isValidRange(first, last) ) {
@@ -51,7 +51,7 @@ namespace cs {
     }
 
     template<typename CharT, typename T, typename ...Args>
-    requires IsCharacter<CharT>
+    requires is_char_v<CharT>
     void print(std::basic_ostream<CharT> *stream, const CharT *first, const CharT *last,
                T value, Args&&... args)
     {
@@ -71,14 +71,14 @@ namespace cs {
   ////// User Interface //////////////////////////////////////////////////////
 
   template<typename CharT, typename ...Args>
-  requires IsCharacter<CharT>
+  requires is_char_v<CharT>
   void print(std::basic_ostream<CharT> *stream, const CharT *fmt, Args&&... args)
   {
     impl_print::print(stream, fmt, fmt + strlen(fmt), std::forward<Args>(args)...);
   }
 
   template<typename CharT, typename ...Args>
-  requires IsCharacter<CharT>
+  requires is_char_v<CharT>
   void println(std::basic_ostream<CharT> *stream, const CharT *fmt, Args&&... args)
   {
     print(stream, fmt, std::forward<Args>(args)...);

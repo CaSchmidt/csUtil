@@ -31,27 +31,27 @@
 
 #pragma once
 
-#include <cs/Core/Concepts.h>
+#include <cs/Core/TypeTraits.h>
 
 namespace cs {
 
   struct Pointer {
     using value_type = typename IntegralOfSize<sizeof(void*)>::unsigned_type;
 
-    template<typename T> requires IsPointer<T>
+    template<typename T> requires std::is_pointer_v<T>
     inline static T top()
     {
       return reinterpret_cast<T>(TOP);
     }
 
-    template<typename T> requires IsPow2Size<T>
+    template<typename T> requires is_pow2size_v<T>
     inline static bool isAlignedTo(const void *ptr)
     {
       constexpr value_type MASK = sizeof(T) - 1;
       return (to_value(ptr) & MASK) == ZERO;
     }
 
-    template<typename T> requires IsPow2Size<T>
+    template<typename T> requires is_pow2size_v<T>
     inline static void *alignTo(const void *ptr)
     {
       constexpr value_type MASK = sizeof(T) - 1;

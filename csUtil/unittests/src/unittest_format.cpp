@@ -21,7 +21,7 @@ namespace util {
    * unsigned max: .11111111
    */
   template<typename T>
-  requires cs::IsIntegral<T>
+  requires cs::is_integral_v<T>
   std::string make_binstring(const T value,
                              const size_type width, const char fill,
                              const cs::FormatFlags& flags)
@@ -96,7 +96,7 @@ namespace util {
    * unsigned max: .ffff
    */
   template<typename T>
-  requires cs::IsIntegral<T>
+  requires cs::is_integral_v<T>
   std::string make_hexstring(const T value,
                              const size_type width, const char fill,
                              const cs::FormatFlags& flags)
@@ -183,7 +183,7 @@ namespace util {
 namespace test_integral {
 
   template<typename T>
-  requires cs::IsIntegral<T>
+  requires cs::is_integral_v<T>
   util::TwoStrings make_binint(const T value, const cs::FormatFlags& flags)
   {
     constexpr size_type WIDTH = sizeof(T)*8 + 3;
@@ -198,7 +198,7 @@ namespace test_integral {
   }
 
   template<typename T>
-  requires cs::IsIntegral<T>
+  requires cs::is_integral_v<T>
   util::TwoStrings make_hexint(const T value, const cs::FormatFlags& flags)
   {
     constexpr size_type WIDTH = sizeof(T)*2 + 3;
@@ -316,7 +316,7 @@ namespace test_integral {
 namespace test_hex {
 
   template<typename T>
-  requires cs::IsIntegral<T>
+  requires cs::is_integral_v<T>
   util::TwoStrings make_hex(const T value, const bool fill_digits)
   {
     const size_type width = fill_digits
@@ -373,7 +373,7 @@ namespace test_hex {
 namespace test_bin {
 
   template<typename T>
-  requires cs::IsIntegral<T>
+  requires cs::is_integral_v<T>
   util::TwoStrings make_bin(const T value, const bool fill_digits)
   {
     const size_type width = fill_digits

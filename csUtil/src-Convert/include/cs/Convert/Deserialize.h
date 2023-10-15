@@ -39,7 +39,7 @@
 
 namespace cs {
 
-  template<typename T> requires IsIntegral<T>
+  template<typename T> requires is_integral_v<T>
   inline T toIntegralFromBE(const void *data, const std::size_t sizData,
                             const bool sign_extend = false)
   {
@@ -69,7 +69,7 @@ namespace cs {
     return value;
   }
 
-  template<typename T> requires IsIntegral<T>
+  template<typename T> requires is_integral_v<T>
   inline T toIntegralFromLE(const void *data, const std::size_t sizData,
                             const bool sign_extend = false)
   {

@@ -33,13 +33,11 @@
 
 #include <vector>
 
-#include <cs/Core/Concepts.h>
-
 #include <Plot/IPlotSeriesData.h>
 
 namespace plot {
 
-  template<typename T> requires cs::IsReal<T>
+  template<typename T> requires cs::is_real_v<T>
   class VectorData : public IPlotSeriesData {
   private:
     struct ctor_tag {

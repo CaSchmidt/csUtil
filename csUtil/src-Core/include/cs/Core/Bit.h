@@ -37,10 +37,10 @@ namespace cs {
 
   ////// Constants ///////////////////////////////////////////////////////////
 
-  template<typename T> requires IsIntegral<T>
+  template<typename T> requires is_integral_v<T>
   inline constexpr std::size_t NUM_BITS = sizeof(T)*8;
 
-  template<typename T> requires IsIntegral<T>
+  template<typename T> requires is_integral_v<T>
   inline constexpr std::size_t MAX_BIT = NUM_BITS<T> - 1;
 
   ////// Move Single Bit /////////////////////////////////////////////////////
@@ -63,7 +63,7 @@ namespace cs {
 
   namespace impl_bit {
 
-    template<typename T> requires IsIntegral<T>
+    template<typename T> requires is_integral_v<T>
     constexpr T makeBitMaskImpl(const std::size_t bit)
     {
       using k = Konst<T>;
@@ -74,7 +74,7 @@ namespace cs {
 
   } // namespace impl_bit
 
-  template<typename T> requires IsIntegral<T>
+  template<typename T> requires is_integral_v<T>
   constexpr T makeBitMask(const std::size_t bits)
   {
     return std::size_t{0} < bits  &&  bits <= NUM_BITS<T>
@@ -84,7 +84,7 @@ namespace cs {
 
   ////// Test Single Bit of Integral Value ///////////////////////////////////
 
-  template<typename T> requires IsIntegral<T>
+  template<typename T> requires is_integral_v<T>
   constexpr bool testBit(const T in, const std::size_t bit)
   {
     using k = Konst<T>;
@@ -93,7 +93,7 @@ namespace cs {
 
   ////// Reflect Bits of Integral Value //////////////////////////////////////
 
-  template<typename T> requires IsIntegral<T>
+  template<typename T> requires is_integral_v<T>
   constexpr T reflectBit(const T in, const std::size_t bit)
   {
     using k = Konst<T>;
@@ -106,7 +106,7 @@ namespace cs {
 
   namespace impl_bit {
 
-    template<typename T> requires IsIntegral<T>
+    template<typename T> requires is_integral_v<T>
     constexpr T reverseBitsImpl(const T in, const std::size_t bit)
     {
       return bit <= std::size_t{0}
@@ -116,7 +116,7 @@ namespace cs {
 
   } // namespace impl_bit
 
-  template<typename T> requires IsIntegral<T>
+  template<typename T> requires is_integral_v<T>
   constexpr T reverseBits(const T in)
   {
     return impl_bit::reverseBitsImpl(in, MAX_BIT<T>);
@@ -124,7 +124,7 @@ namespace cs {
 
   ////// Sign Extension of Integral Value ////////////////////////////////////
 
-  template<typename T> requires IsSigned<T>
+  template<typename T> requires is_signed_v<T>
   constexpr T signExtend(const T value, const std::size_t numBytes)
   {
     return 0 < numBytes  &&  numBytes < sizeof(T)  &&  testBit(value, numBytes*8 - 1)

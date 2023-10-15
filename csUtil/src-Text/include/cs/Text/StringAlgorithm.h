@@ -40,7 +40,7 @@ namespace cs {
   namespace impl_string {
 
     template<typename T>
-    requires IsCharacter<T>
+    requires is_char_v<T>
     inline bool contains(const T *first, const T *last, const T& pat)
     {
       return std::find(first, last, pat) != last;
@@ -49,7 +49,7 @@ namespace cs {
   } // namespace impl_string
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool contains(const T *first, const T *last, const T& pat)
   {
     return Pointer::isValidRange(first, last)
@@ -58,7 +58,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool contains(const T *str, const std::size_t len, const T& pat)
   {
     const std::size_t max = strlen(str, len);
@@ -68,7 +68,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool contains(const T *str, const T& pat)
   {
     return contains(str, MAX_SIZE_T, pat);
@@ -79,7 +79,7 @@ namespace cs {
   namespace impl_string {
 
     template<typename T, typename PredFunc>
-    requires IsCharacter<T>
+    requires is_char_v<T>
     inline bool contains(const T *first, const T *last, PredFunc func)
     {
       return std::find_if(first, last, func) != last;
@@ -88,7 +88,7 @@ namespace cs {
   } // namespace impl_string
 
   template<typename T, typename PredFunc>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool contains(const T *first, const T *last, PredFunc func)
   {
     return Pointer::isValidRange(first, last)
@@ -97,7 +97,7 @@ namespace cs {
   }
 
   template<typename T, typename PredFunc>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool contains(const T *str, const std::size_t len, PredFunc func)
   {
     const std::size_t max = strlen(str, len);
@@ -107,7 +107,7 @@ namespace cs {
   }
 
   template<typename T, typename PredFunc>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool contains(const T *str, PredFunc func)
   {
     return contains<T,PredFunc>(str, MAX_SIZE_T, func);
@@ -118,7 +118,7 @@ namespace cs {
   namespace impl_string {
 
     template<typename T>
-    requires IsCharacter<T>
+    requires is_char_v<T>
     inline bool contains(const T *strfirst, const T *strlast,
                          const T *patfirst, const T *patlast,
                          const bool ignoreCase)
@@ -132,7 +132,7 @@ namespace cs {
   } // namespace impl_string
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool contains(const T *strfirst, const T *strlast,
                        const T *patfirst, const T *patlast,
                        const bool ignoreCase = false)
@@ -145,7 +145,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool contains(const T *str, const std::size_t lenstr,
                        const T *pat, const std::size_t lenpat,
                        const bool ignoreCase = false)
@@ -158,7 +158,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool contains(const T *str,
                        const T *pat,
                        const bool ignoreCase = false)
@@ -169,7 +169,7 @@ namespace cs {
   ////// String ends with pattern... /////////////////////////////////////////
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool endsWith(const T *str, const std::size_t lenstr,
                        const T *pat, const std::size_t lenpat,
                        const bool ignoreCase = false)
@@ -187,7 +187,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool endsWith(const T *str, const T *pat, const bool ignoreCase = false)
   {
     return endsWith(str, MAX_SIZE_T, pat, MAX_SIZE_T, ignoreCase);
@@ -196,7 +196,7 @@ namespace cs {
   ////// Strings are equal in the first N characters... //////////////////////
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool equalsN(const T *a, const T *b, const std::size_t len,
                       const bool ignoreCase = false)
   {
@@ -212,7 +212,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool equalsN(const T *a, const T *b, const bool ignoreCase = false)
   {
     return equalsN(a, b, MAX_SIZE_T, ignoreCase);
@@ -221,7 +221,7 @@ namespace cs {
   ////// String are equal... /////////////////////////////////////////////////
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool equals(const T *a, const std::size_t lena,
                      const T *b, const std::size_t lenb,
                      const bool ignoreCase = false)
@@ -239,7 +239,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool equals(const T *a, const T *b, const bool ignoreCase = false)
   {
     return equals(a, MAX_SIZE_T, b, MAX_SIZE_T, ignoreCase);
@@ -250,7 +250,7 @@ namespace cs {
   namespace impl_string {
 
     template<typename T>
-    requires IsCharacter<T>
+    requires is_char_v<T>
     inline bool isHexString(const T *first, const T *last)
     {
       return std::all_of(first, last, lambda_is_hex<T>());
@@ -259,7 +259,7 @@ namespace cs {
   } // namespace impl_string
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool isHexString(const T *first, const T *last)
   {
     return Pointer::isValidRange(first, last)
@@ -268,7 +268,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool isHexString(const T *str, const std::size_t len = MAX_SIZE_T)
   {
     const std::size_t max = strlen(str, len);
@@ -282,7 +282,7 @@ namespace cs {
   namespace impl_string {
 
     template<typename T>
-    requires IsCharacter<T>
+    requires is_char_v<T>
     inline bool isIdent(const T *first, const T *last)
     {
       return isIdentFirst(*first)  &&
@@ -292,7 +292,7 @@ namespace cs {
   } // namespace impl_string
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool isIdent(const T *first, const T *last)
   {
     return Pointer::isValidRange(first, last)
@@ -301,7 +301,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool isIdent(const T *str, const std::size_t len = MAX_SIZE_T)
   {
     const std::size_t max = strlen(str, len);
@@ -315,7 +315,7 @@ namespace cs {
   namespace impl_string {
 
     template<typename T>
-    requires IsCharacter<T>
+    requires is_char_v<T>
     inline bool isSpace(const T *first, const T *last)
     {
       return std::all_of(first, last, lambda_is_space<T>());
@@ -324,7 +324,7 @@ namespace cs {
   } // namespace impl_string
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool isSpace(const T *first, const T *last)
   {
     return Pointer::isValidRange(first, last)
@@ -333,7 +333,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool isSpace(const T *str, const std::size_t len = MAX_SIZE_T)
   {
     const std::size_t max = strlen(str, len);
@@ -347,7 +347,7 @@ namespace cs {
   namespace impl_string {
 
     template<typename T>
-    requires IsCharacter<T>
+    requires is_char_v<T>
     inline void removeAll(T *first, T* last,
                           const T *pat, const std::size_t maxpat)
     {
@@ -363,7 +363,7 @@ namespace cs {
   } // namespace impl_string
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void removeAll(T *first, T* last,
                         const T *pat, const std::size_t lenpat = MAX_SIZE_T)
   {
@@ -375,7 +375,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void removeAll(T *str, const std::size_t lenstr,
                         const T *pat, const std::size_t lenpat = MAX_SIZE_T)
   {
@@ -387,7 +387,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void removeAll(T *str,
                         const T *pat, const std::size_t lenpat = MAX_SIZE_T)
   {
@@ -399,7 +399,7 @@ namespace cs {
   namespace impl_string {
 
     template<typename T>
-    requires IsCharacter<T>
+    requires is_char_v<T>
     inline void removeAll(T *first, T *last, const T& pat)
     {
       T *end = std::remove(first, last, pat);
@@ -409,7 +409,7 @@ namespace cs {
   } // namespace impl_string
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void removeAll(T *first, T *last, const T& pat)
   {
     if( Pointer::isValidRange(first, last) ) {
@@ -418,7 +418,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void removeAll(T *str, const std::size_t len, const T& pat)
   {
     const std::size_t max = strlen(str, len);
@@ -428,7 +428,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void removeAll(T *str, const T& pat)
   {
     removeAll(str, MAX_SIZE_T, pat);
@@ -439,7 +439,7 @@ namespace cs {
   namespace impl_string {
 
     template<typename T, typename PredFunc>
-    requires IsCharacter<T>
+    requires is_char_v<T>
     inline void removeAll(T *first, T *last, PredFunc func)
     {
       T *end = std::remove_if(first, last, func);
@@ -449,7 +449,7 @@ namespace cs {
   } // namespace impl_string
 
   template<typename T, typename PredFunc>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void removeAll(T *first, T *last, PredFunc func)
   {
     if( Pointer::isValidRange(first, last) ) {
@@ -458,7 +458,7 @@ namespace cs {
   }
 
   template<typename T, typename PredFunc>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void removeAll(T *str, const std::size_t len, PredFunc func)
   {
     const std::size_t max = strlen(str, len);
@@ -468,7 +468,7 @@ namespace cs {
   }
 
   template<typename T, typename PredFunc>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void removeAll(T *str, PredFunc func)
   {
     removeAll<T,PredFunc>(str, MAX_SIZE_T, func);
@@ -479,7 +479,7 @@ namespace cs {
   namespace impl_string {
 
     template<typename T>
-    requires IsCharacter<T>
+    requires is_char_v<T>
     inline void removeTrailingZeros(T *first, T *last, const bool removeDot)
     {
       using RevIter = std::reverse_iterator<T*>;
@@ -517,7 +517,7 @@ namespace cs {
   } // namespace impl_string
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void removeTrailingZeros(T *first, T *last,
                                   const bool removeDot = true)
   {
@@ -527,7 +527,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void removeTrailingZeros(T *str, const std::size_t len,
                                   const bool removeDot = true)
   {
@@ -538,7 +538,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void removeTrailingZeros(T *str,
                                   const bool removeDot = true)
   {
@@ -550,7 +550,7 @@ namespace cs {
   namespace impl_string {
 
     template<typename T>
-    requires IsCharacter<T>
+    requires is_char_v<T>
     inline void replaceAll(T *first, T *last, const T& pat, const T& txt)
     {
       std::replace(first, last, pat, txt);
@@ -559,7 +559,7 @@ namespace cs {
   } // namespace impl_string
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void replaceAll(T *first, T *last, const T& pat, const T& txt)
   {
     if( Pointer::isValidRange(first, last, pat, txt) ) {
@@ -568,7 +568,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void replaceAll(T *str, const std::size_t len,
                          const T& pat, const T& txt)
   {
@@ -579,7 +579,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void replaceAll(T *str,
                          const T& pat, const T& txt)
   {
@@ -591,7 +591,7 @@ namespace cs {
   namespace impl_string {
 
     template<typename T, typename PredFunc>
-    requires IsCharacter<T>
+    requires is_char_v<T>
     inline void replaceAll(T *first, T *last, PredFunc func, const T& txt)
     {
       std::replace_if(first, last, func, txt);
@@ -600,7 +600,7 @@ namespace cs {
   } // namespace impl_string
 
   template<typename T, typename PredFunc>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void replaceAll(T *first, T *last, PredFunc func, const T& txt)
   {
     if( Pointer::isValidRange(first, last) ) {
@@ -609,7 +609,7 @@ namespace cs {
   }
 
   template<typename T, typename PredFunc>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void replaceAll(T *str, const std::size_t len,
                          PredFunc func, const T& txt)
   {
@@ -620,7 +620,7 @@ namespace cs {
   }
 
   template<typename T, typename PredFunc>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void replaceAll(T *str,
                          PredFunc func, const T& txt)
   {
@@ -632,7 +632,7 @@ namespace cs {
   namespace impl_string {
 
     template<typename T>
-    requires IsCharacter<T>
+    requires is_char_v<T>
     inline void trim(T *first, T *last)
     {
       using RevIter = std::reverse_iterator<T*>;
@@ -652,7 +652,7 @@ namespace cs {
   } // namespace impl_string
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void trim(T *first, T *last)
   {
     if( Pointer::isValidRange(first, last) ) {
@@ -661,7 +661,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void trim(T *str, const std::size_t len = MAX_SIZE_T)
   {
     const std::size_t max = strlen(str, len);
@@ -675,7 +675,7 @@ namespace cs {
   namespace impl_string {
 
     template<typename T>
-    requires IsCharacter<T>
+    requires is_char_v<T>
     inline void simplify(T *first, T *last)
     {
       constexpr auto lambda_adjacent_space = [](const T& a, const T& b) -> bool {
@@ -695,7 +695,7 @@ namespace cs {
   } // namespace impl_string
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void simplify(T *first, T *last)
   {
     if( Pointer::isValidRange(first, last) ) {
@@ -704,7 +704,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void simplify(T *str, const std::size_t len = MAX_SIZE_T)
   {
     const std::size_t max = strlen(str, len);
@@ -716,7 +716,7 @@ namespace cs {
   ////// String starts with pattern... ///////////////////////////////////////
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool startsWith(const T *str, const std::size_t lenstr, // haystack
                          const T *pat, const std::size_t lenpat, // needle
                          const bool ignoreCase = false)
@@ -734,7 +734,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline bool startsWith(const T *str, const T *pat, const bool ignoreCase = false)
   {
     return startsWith(str, MAX_SIZE_T, pat, MAX_SIZE_T, ignoreCase);
@@ -745,7 +745,7 @@ namespace cs {
   namespace impl_string {
 
     template<typename T>
-    requires IsCharacter<T>
+    requires is_char_v<T>
     inline void toLower(T *first, T *last)
     {
       std::for_each(first, last, lambda_to_lower<T>());
@@ -754,7 +754,7 @@ namespace cs {
   } // namespace impl_string
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void toLower(T *first, T *last)
   {
     if( Pointer::isValidRange(first, last) ) {
@@ -763,7 +763,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void toLower(T *str, const std::size_t len = MAX_SIZE_T)
   {
     const std::size_t max = strlen(str, len);
@@ -777,7 +777,7 @@ namespace cs {
   namespace impl_string {
 
     template<typename T>
-    requires IsCharacter<T>
+    requires is_char_v<T>
     inline void toUpper(T *first, T *last)
     {
       std::for_each(first, last, lambda_to_upper<T>());
@@ -786,7 +786,7 @@ namespace cs {
   } // namespace impl_string
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void toUpper(T *first, T *last)
   {
     if( Pointer::isValidRange(first, last) ) {
@@ -795,7 +795,7 @@ namespace cs {
   }
 
   template<typename T>
-  requires IsCharacter<T>
+  requires is_char_v<T>
   inline void toUpper(T *str, const std::size_t len = MAX_SIZE_T)
   {
     const std::size_t max = strlen(str, len);
@@ -809,7 +809,7 @@ namespace cs {
   namespace impl_string {
 
     template<typename WCharT, typename NCharT>
-    requires IsWideCharacter<WCharT>  &&  IsNarrowCharacter<NCharT>
+    requires is_widechar_v<WCharT>  &&  is_narrowchar_v<NCharT>
     inline void widen(WCharT *dest, const NCharT *first, const NCharT *last)
     {
       constexpr auto lambda_widen = [](const NCharT& c) -> WCharT {
@@ -822,7 +822,7 @@ namespace cs {
   } // namespace impl_string
 
   template<typename WCharT, typename NCharT>
-  requires IsWideCharacter<WCharT>  &&  IsNarrowCharacter<NCharT>
+  requires is_widechar_v<WCharT>  &&  is_narrowchar_v<NCharT>
   inline void widen(WCharT *dest, const NCharT *first, const NCharT *last)
   {
     if( dest != nullptr  &&  Pointer::isValidRange(first, last) ) {
@@ -831,7 +831,7 @@ namespace cs {
   }
 
   template<typename WCharT, typename NCharT>
-  requires IsWideCharacter<WCharT>  &&  IsNarrowCharacter<NCharT>
+  requires is_widechar_v<WCharT>  &&  is_narrowchar_v<NCharT>
   inline void widen(WCharT *dest, const NCharT *str, const std::size_t len = MAX_SIZE_T)
   {
     const std::size_t max = strlen(str, len);

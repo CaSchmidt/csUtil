@@ -31,13 +31,13 @@
 
 #pragma once
 
-#include <cs/Core/Concepts.h>
+#include <cs/Core/TypeTraits.h>
 
 namespace cs {
 
   ////// Glyphs //////////////////////////////////////////////////////////////
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   struct glyph {
     static constexpr auto null = static_cast<T>('\0');
 
@@ -71,13 +71,13 @@ namespace cs {
 
   ////// Classification //////////////////////////////////////////////////////
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   constexpr bool isDigit(const T& c)
   {
     return glyph<T>::zero <= c  &&  c <= glyph<T>::nine;
   }
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   inline bool isHexDigit(const T& c)
   {
     const bool is_0to9 = glyph<T>::zero <= c  &&  c <= glyph<T>::nine;
@@ -86,26 +86,26 @@ namespace cs {
     return is_0to9  ||  is_atof  ||  is_AtoF;
   }
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   constexpr bool isLower(const T& c)
   {
     return glyph<T>::a <= c  &&  c <= glyph<T>::z;
   }
 
-  template<typename T, bool OR_SPACE = false> requires IsCharacter<T>
+  template<typename T, bool OR_SPACE = false> requires is_char_v<T>
   constexpr bool isPrintable(const T& c)
   {
     using g = glyph<T>;
     return (g::space < c  &&  c < g::del)  ||  (OR_SPACE  &&  c == g::space);
   }
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   constexpr bool isPrintableOrSpace(const T& c)
   {
     return isPrintable<T,true>(c);
   }
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   constexpr bool isSpace(const T& c)
   {
     return
@@ -117,19 +117,19 @@ namespace cs {
         c == glyph<T>::vt;
   }
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   constexpr bool isUpper(const T& c)
   {
     return glyph<T>::A <= c  &&  c <= glyph<T>::Z;
   }
 
-  template<typename T, bool IS_FIRST = false> requires IsCharacter<T>
+  template<typename T, bool IS_FIRST = false> requires is_char_v<T>
   constexpr bool isIdent(const T& c)
   {
     return isLower(c)  ||  isUpper(c)  ||  (!IS_FIRST  &&  isDigit(c))  ||  c == glyph<T>::under;
   }
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   constexpr bool isIdentFirst(const T& c)
   {
     return isIdent<T,true>(c);
@@ -137,7 +137,7 @@ namespace cs {
 
   ////// Case Conversion /////////////////////////////////////////////////////
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   constexpr T toLower(const T& c)
   {
     return isUpper(c)
@@ -145,7 +145,7 @@ namespace cs {
         : c;
   }
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   constexpr T toUpper(const T& c)
   {
     return isLower(c)
@@ -155,7 +155,7 @@ namespace cs {
 
   ////// Hex Conversion //////////////////////////////////////////////////////
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   constexpr byte_t fromHexChar(const T c)
   {
     using g = glyph<T>;
@@ -169,7 +169,7 @@ namespace cs {
     return std::numeric_limits<byte_t>::max();
   }
 
-  template<typename T, bool UPPER = false> requires IsCharacter<T>
+  template<typename T, bool UPPER = false> requires is_char_v<T>
   constexpr T toHexChar(const byte_t in, const bool hi_nibble = false)
   {
     constexpr T hex10 = UPPER
@@ -185,7 +185,7 @@ namespace cs {
 
   ////// Lambdas /////////////////////////////////////////////////////////////
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   constexpr auto lambda_eqI()
   {
     return [](const T& a, const T& b) -> bool {
@@ -193,7 +193,7 @@ namespace cs {
     };
   }
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   constexpr auto lambda_is_hex()
   {
     return [](const T& c) -> bool {
@@ -201,7 +201,7 @@ namespace cs {
     };
   }
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   constexpr auto lambda_is_ident()
   {
     return [](const T& c) -> bool {
@@ -209,7 +209,7 @@ namespace cs {
     };
   }
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   constexpr auto lambda_is_printable()
   {
     return [](const T& c) -> bool {
@@ -217,7 +217,7 @@ namespace cs {
     };
   }
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   constexpr auto lambda_is_printable_or_space()
   {
     return [](const T& c) -> bool {
@@ -225,7 +225,7 @@ namespace cs {
     };
   }
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   constexpr auto lambda_is_space()
   {
     return [](const T& c) -> bool {
@@ -233,7 +233,7 @@ namespace cs {
     };
   }
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   constexpr auto lambda_is_zero()
   {
     return [](const T& c) -> bool {
@@ -241,7 +241,7 @@ namespace cs {
     };
   }
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   constexpr auto lambda_set_null()
   {
     return [](T& c) -> void {
@@ -249,7 +249,7 @@ namespace cs {
     };
   }
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   constexpr auto lambda_to_lower()
   {
     return [](T& c) -> void {
@@ -257,7 +257,7 @@ namespace cs {
     };
   }
 
-  template<typename T> requires IsCharacter<T>
+  template<typename T> requires is_char_v<T>
   constexpr auto lambda_to_upper()
   {
     return [](T& c) -> void {

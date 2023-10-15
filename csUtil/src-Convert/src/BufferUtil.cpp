@@ -43,7 +43,7 @@ namespace cs {
 
   namespace impl_bytearray {
 
-    template<bool UPPER, typename T> requires IsCharacter<T>
+    template<bool UPPER, typename T> requires is_char_v<T>
     inline void toString(T *dest, const byte_t *src, const std::size_t lenSrc,
                          const std::size_t dpos)
     {
