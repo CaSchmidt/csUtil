@@ -39,63 +39,63 @@ namespace cs {
 
     // Arithmetic ////////////////////////////////////////////////////////////
 
-    template<typename SIMD>
-    typename SIMD::block_type hadd(const typename SIMD::block_type& x,
-                                   const std::enable_if_t<is_simd_elem_v<SIMD,2>> * = nullptr)
+    template<typename S>
+    inline typename S::block_type hadd(const typename S::block_type& x,
+                                       const std::enable_if_t<is_simd_elem_v<S,2>> * = nullptr)
     {
-      return SIMD::add(x, SIMD::template swizzle<1,0>(x));
+      return S::add(x, S::template swizzle<1,0>(x));
     }
 
-    template<typename SIMD>
-    typename SIMD::block_type hadd(const typename SIMD::block_type& x,
-                                   const std::enable_if_t<is_simd_elem_v<SIMD,4>> * = nullptr)
+    template<typename S>
+    inline typename S::block_type hadd(const typename S::block_type& x,
+                                       const std::enable_if_t<is_simd_elem_v<S,4>> * = nullptr)
     {
-      const typename SIMD::block_type y = SIMD::add(x, SIMD::template swizzle<1,0,3,2>(x));
-      return                              SIMD::add(y, SIMD::template swizzle<3,2,1,0>(y));
+      const typename S::block_type y = S::add(x, S::template swizzle<1,0,3,2>(x));
+      return                           S::add(y, S::template swizzle<3,2,1,0>(y));
     }
 
     // Bit Operations ////////////////////////////////////////////////////////
 
-    template<typename SIMD>
-    typename SIMD::block_type one()
+    template<typename S>
+    inline typename S::block_type one()
     {
-      return SIMD::cmp_eq(SIMD::zero(), SIMD::zero());
+      return S::cmp_eq(S::zero(), S::zero());
     }
 
     // Math //////////////////////////////////////////////////////////////////
 
-    template<typename SIMD>
-    typename SIMD::block_type abs(const typename SIMD::block_type& x,
-                                  const std::enable_if_t<is_simd_integral_v<SIMD>> * = nullptr)
+    template<typename S>
+    inline typename S::block_type abs(const typename S::block_type& x,
+                                      const std::enable_if_t<is_simd_integral_v<S>> * = nullptr)
     {
-      const typename SIMD::block_type cmpl2 = // Two's Complement
-          SIMD::add(SIMD::bit_xor(x, SIMD::one()), SIMD::template shiftr<31>(SIMD::one()));
-      return SIMD::cmov(SIMD::cmp_gt(cmpl2, x), cmpl2, x);
+      const typename S::block_type cmpl2 = // Two's Complement
+          S::add(S::bit_xor(x, S::one()), S::template shiftr<31>(S::one()));
+      return S::cmov(S::cmp_gt(cmpl2, x), cmpl2, x);
     }
 
-    template<typename SIMD>
-    typename SIMD::block_type abs(const typename SIMD::block_type& x,
-                                  const std::enable_if_t<is_simd_real_v<SIMD>> * = nullptr)
+    template<typename S>
+    inline typename S::block_type abs(const typename S::block_type& x,
+                                      const std::enable_if_t<is_simd_real_v<S>> * = nullptr)
     {
-      return SIMD::bit_and(x, SIMD::template shiftr<1>(SIMD::one()));
+      return S::bit_and(x, S::template shiftr<1>(S::one()));
     }
 
     // Relations /////////////////////////////////////////////////////////////
 
-    template<typename SIMD>
-    typename SIMD::block_type clamp(const typename SIMD::block_type& x,
-                                    const typename SIMD::block_type& lo,
-                                    const typename SIMD::block_type& hi)
+    template<typename S>
+    inline typename S::block_type clamp(const typename S::block_type& x,
+                                        const typename S::block_type& lo,
+                                        const typename S::block_type& hi)
     {
-      return SIMD::max(lo, SIMD::min(x, hi));
+      return S::max(lo, S::min(x, hi));
     }
 
-    template<typename SIMD>
-    typename SIMD::block_type cmov(const typename SIMD::block_type& cond_a,
-                                   const typename SIMD::block_type& a,
-                                   const typename SIMD::block_type& b)
+    template<typename S>
+    inline typename S::block_type cmov(const typename S::block_type& cond_a,
+                                       const typename S::block_type& a,
+                                       const typename S::block_type& b)
     {
-      return SIMD::bit_or(SIMD::bit_and(cond_a, a), SIMD::bit_andnot(cond_a, b));
+      return S::bit_or(S::bit_and(cond_a, a), S::bit_andnot(cond_a, b));
     }
 
   } // namespace simd
