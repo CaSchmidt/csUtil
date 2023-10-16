@@ -41,30 +41,30 @@ namespace n4 {
   namespace impl {
 
     struct BinAdd {
-      inline static simd_t eval(const simd_t& a, const simd_t& b)
+      inline static block_t eval(const block_t& a, const block_t& b)
       {
-        return simd::add(a, b);
+        return simd::SIMD128::add(a, b);
       }
     };
 
     struct BinDiv {
-      inline static simd_t eval(const simd_t& a, const simd_t& b)
+      inline static block_t eval(const block_t& a, const block_t& b)
       {
-        return simd::div(a, b);
+        return simd::SIMD128::div(a, b);
       }
     };
 
     struct BinMul {
-      inline static simd_t eval(const simd_t& a, const simd_t& b)
+      inline static block_t eval(const block_t& a, const block_t& b)
       {
-        return simd::mul(a, b);
+        return simd::SIMD128::mul(a, b);
       }
     };
 
     struct BinSub {
-      inline static simd_t eval(const simd_t& a, const simd_t& b)
+      inline static block_t eval(const block_t& a, const block_t& b)
       {
-        return simd::sub(a, b);
+        return simd::SIMD128::sub(a, b);
       }
     };
 
@@ -77,16 +77,17 @@ namespace n4 {
       {
       }
 
-      inline simd::simd_t eval() const
+      inline block_t eval() const
       {
+        using S = simd::SIMD128;
         using namespace simd;
-        const simd_t v = _rhs.eval();
+        const block_t v = _rhs.eval();
         // NOTE: y = M*v
-        simd_t y = mul(SIMD_SWIZZLE(v, 0, 0, 0, 0), load(_lhs.data() + 0));
-        y = add(y, mul(SIMD_SWIZZLE(v, 1, 1, 1, 1), load(_lhs.data() + 4)));
-        y = add(y, mul(SIMD_SWIZZLE(v, 2, 2, 2, 2), load(_lhs.data() + 8)));
+        block_t   y = S::mul(S::swizzle<0,0,0,0>(v), S::load(_lhs.data() + 0));
+        y = S::add(y, S::mul(S::swizzle<1,1,1,1>(v), S::load(_lhs.data() + 4)));
+        y = S::add(y, S::mul(S::swizzle<2,2,2,2>(v), S::load(_lhs.data() + 8)));
         if constexpr( traits_T::have_w ) {
-          y = add(y, load(_lhs.data() + 12)); // NOTE: v.w == 1
+          y = S::add(y, S::load(_lhs.data() + 12)); // NOTE: v.w := 1
         }
         return y;
       }

@@ -165,6 +165,9 @@ namespace test_n4 {
   TEST_CASE("N4 global constants.", "[N4][global]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
+    std::cout << "sizeof(Mat4f) = " << sizeof(Mat4f) << std::endl;
+    std::cout << "sizeof(Vec4f) = " << sizeof(Vec4f) << std::endl;
+
     PRINTexpr(a);
     PRINTexpr(b);
     PRINTreal(W0);

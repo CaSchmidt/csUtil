@@ -39,7 +39,7 @@ namespace n4 {
 
   namespace impl {
 
-    using simd::simd_t;
+    using simd::block_t;
 
     ////// Dispatch 1 Argument ///////////////////////////////////////////////
     ///
@@ -53,7 +53,7 @@ namespace n4 {
       {
       }
 
-      inline simd_t eval() const
+      inline block_t eval() const
       {
         return OP::eval(_arg1.eval());
       }
@@ -75,9 +75,9 @@ namespace n4 {
       {
       }
 
-      inline simd_t eval() const
+      inline block_t eval() const
       {
-        return OP::eval(simd::set(_arg1), _arg2.eval());
+        return OP::eval(simd::SIMD128::set(_arg1), _arg2.eval());
       }
 
     private:
@@ -94,9 +94,9 @@ namespace n4 {
       {
       }
 
-      inline simd_t eval() const
+      inline block_t eval() const
       {
-        return OP::eval(_arg1.eval(), simd::set(_arg2));
+        return OP::eval(_arg1.eval(), simd::SIMD128::set(_arg2));
       }
 
     private:
@@ -113,7 +113,7 @@ namespace n4 {
       {
       }
 
-      inline simd_t eval() const
+      inline block_t eval() const
       {
         return OP::eval(_arg1.eval(), _arg2.eval());
       }
@@ -137,9 +137,9 @@ namespace n4 {
       {
       }
 
-      inline simd_t eval() const
+      inline block_t eval() const
       {
-        return OP::eval(_arg1.eval(), simd::set(_arg2), simd::set(_arg3));
+        return OP::eval(_arg1.eval(), simd::SIMD128::set(_arg2), simd::SIMD128::set(_arg3));
       }
 
     private:

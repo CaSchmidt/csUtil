@@ -151,12 +151,12 @@ namespace n4 {
 
     inline bool isZero(const real_t epsilon0 = EPSILON0_VECTOR) const
     {
-      const simd::simd_t _epsilon0 = simd::set(epsilon0);
+      const simd::block_t _epsilon0 = S::set(epsilon0);
       return
-          simd::isZero(simd::load(_data +  0), _epsilon0)  &&
-          simd::isZero(simd::load(_data +  4), _epsilon0)  &&
-          simd::isZero(simd::load(_data +  8), _epsilon0)  &&
-          simd::isZero(simd::load(_data + 12), _epsilon0);
+          simd::isZero(S::load(_data +  0), _epsilon0)  &&
+          simd::isZero(S::load(_data +  4), _epsilon0)  &&
+          simd::isZero(S::load(_data +  8), _epsilon0)  &&
+          simd::isZero(S::load(_data + 12), _epsilon0);
     }
 
     inline Matrix4f transpose() const
@@ -167,12 +167,14 @@ namespace n4 {
     }
 
   private:
+    using S = simd::SIMD128;
+
     inline void copy(const Matrix4f& other)
     {
-      simd::store(_data +  0, simd::load(other._data +  0));
-      simd::store(_data +  4, simd::load(other._data +  4));
-      simd::store(_data +  8, simd::load(other._data +  8));
-      simd::store(_data + 12, simd::load(other._data + 12));
+      S::store(_data +  0, S::load(other._data +  0));
+      S::store(_data +  4, S::load(other._data +  4));
+      S::store(_data +  8, S::load(other._data +  8));
+      S::store(_data + 12, S::load(other._data + 12));
     }
 
     inline void initialize(const std::initializer_list<real_t>& list)
@@ -189,30 +191,31 @@ namespace n4 {
 
     inline void set(const real_t val)
     {
-      const simd::simd_t col = simd::set(val);
-      simd::store(_data +  0, col);
-      simd::store(_data +  4, col);
-      simd::store(_data +  8, col);
-      simd::store(_data + 12, col);
+      const simd::block_t col = S::set(val);
+      S::store(_data +  0, col);
+      S::store(_data +  4, col);
+      S::store(_data +  8, col);
+      S::store(_data + 12, col);
     }
 
-    alignas(sizeof(simd::simd_t)) real_t _data[16];
+    alignas(sizeof(S::block_type)) real_t _data[16];
   };
 
   ////// 4x4 Matrix - Binary Operators ///////////////////////////////////////
 
   inline Matrix4f operator*(const Matrix4f& lhs, const Matrix4f& rhs)
   {
+    using S = simd::SIMD128;
     using namespace simd;
     Matrix4f M;
-    const simd_t col0 = load(lhs.data() +  0);
-    const simd_t col1 = load(lhs.data() +  4);
-    const simd_t col2 = load(lhs.data() +  8);
-    const simd_t col3 = load(lhs.data() + 12);
-    store(M.data() +  0, transform(col0, col1, col2, col3, load(rhs.data() +  0)));
-    store(M.data() +  4, transform(col0, col1, col2, col3, load(rhs.data() +  4)));
-    store(M.data() +  8, transform(col0, col1, col2, col3, load(rhs.data() +  8)));
-    store(M.data() + 12, transform(col0, col1, col2, col3, load(rhs.data() + 12)));
+    const block_t col0 = S::load(lhs.data() +  0);
+    const block_t col1 = S::load(lhs.data() +  4);
+    const block_t col2 = S::load(lhs.data() +  8);
+    const block_t col3 = S::load(lhs.data() + 12);
+    S::store(M.data() +  0, transform(col0, col1, col2, col3, S::load(rhs.data() +  0)));
+    S::store(M.data() +  4, transform(col0, col1, col2, col3, S::load(rhs.data() +  4)));
+    S::store(M.data() +  8, transform(col0, col1, col2, col3, S::load(rhs.data() +  8)));
+    S::store(M.data() + 12, transform(col0, col1, col2, col3, S::load(rhs.data() + 12)));
     return M;
   }
 

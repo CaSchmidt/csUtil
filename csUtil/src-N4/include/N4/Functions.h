@@ -40,52 +40,52 @@ namespace n4 {
   namespace impl {
 
     struct Abs {
-      inline static simd_t eval(const simd_t& x)
+      inline static block_t eval(const block_t& x)
       {
-        return simd::abs(x);
+        return simd::SIMD128::abs(x);
       }
     };
 
     struct Clamp {
-      inline static simd_t eval(const simd_t& x, const simd_t& lo, const simd_t& hi)
+      inline static block_t eval(const block_t& x, const block_t& lo, const block_t& hi)
       {
-        return simd::clamp(x, lo, hi);
+        return simd::SIMD128::clamp(x, lo, hi);
       }
     };
 
     struct Cross {
-      inline static simd_t eval(const simd_t& a, const simd_t& b)
+      inline static block_t eval(const block_t& a, const block_t& b)
       {
         return simd::cross(a, b);
       }
     };
 
     struct Direction {
-      inline static simd_t eval(const simd_t& from, const simd_t& to)
+      inline static block_t eval(const block_t& from, const block_t& to)
       {
-        const simd_t x = simd::sub(to, from);
-        return simd::div(x, simd::sqrt(simd::dot3(x, x)));
+        const block_t x = simd::SIMD128::sub(to, from);
+        return simd::SIMD128::div(x, simd::SIMD128::sqrt(simd::dot3(x, x)));
       }
     };
 
     struct Max {
-      inline static simd_t eval(const simd_t& a, const simd_t& b)
+      inline static block_t eval(const block_t& a, const block_t& b)
       {
-        return simd::max(a, b);
+        return simd::SIMD128::max(a, b);
       }
     };
 
     struct Min {
-      inline static simd_t eval(const simd_t& a, const simd_t& b)
+      inline static block_t eval(const block_t& a, const block_t& b)
       {
-        return simd::min(a, b);
+        return simd::SIMD128::min(a, b);
       }
     };
 
     struct Normalize {
-      inline static simd_t eval(const simd_t& x)
+      inline static block_t eval(const block_t& x)
       {
-        return simd::div(x, simd::sqrt(simd::dot3(x, x)));
+        return simd::SIMD128::div(x, simd::SIMD128::sqrt(simd::dot3(x, x)));
       }
     };
 
@@ -120,21 +120,21 @@ namespace n4 {
   template<typename traits_T, typename FROM, typename TO>
   inline real_t distance(const ExprBase<traits_T,FROM>& from, const ExprBase<traits_T,TO>& to)
   {
-    const simd::simd_t delta = simd::sub(to.as_derived().eval(), from.as_derived().eval());
-    return simd::to_real(simd::sqrt(simd::dot3(delta, delta)));
+    const simd::block_t delta = simd::SIMD128::sub(to.as_derived().eval(), from.as_derived().eval());
+    return simd::SIMD128::to_value(simd::SIMD128::sqrt(simd::dot3(delta, delta)));
   }
 
   template<typename traits_T, typename ARG1, typename ARG2>
   inline real_t dot(const ExprBase<traits_T,ARG1>& arg1, const ExprBase<traits_T,ARG2>& arg2)
   {
-    return simd::to_real(simd::dot3(arg1.as_derived().eval(), arg2.as_derived().eval()));
+    return simd::SIMD128::to_value(simd::dot3(arg1.as_derived().eval(), arg2.as_derived().eval()));
   }
 
   template<typename traits_T, typename ARG>
   inline real_t length(const ExprBase<traits_T,ARG>& arg)
   {
-    const simd::simd_t x = arg.as_derived().eval();
-    return simd::to_real(simd::sqrt(simd::dot3(x, x)));
+    const simd::block_t x = arg.as_derived().eval();
+    return simd::SIMD128::to_value(simd::SIMD128::sqrt(simd::dot3(x, x)));
   }
 
   template<typename traits_T, typename ARG1>

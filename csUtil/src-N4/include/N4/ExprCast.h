@@ -48,7 +48,7 @@ namespace n4 {
       {
       }
 
-      inline simd::simd_t eval() const
+      inline simd::block_t eval() const
       {
         return _expr.eval();
       }

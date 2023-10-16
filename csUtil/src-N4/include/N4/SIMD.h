@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include <emmintrin.h> // SSE2
+#include <cs/SIMD/SIMD128.h>
 
 #include <N4/N4Traits.h>
 
@@ -41,190 +41,21 @@ namespace n4 {
 
     ////// Types /////////////////////////////////////////////////////////////
 
-    using simd_t = __m128;
+    using SIMD128 = cs::SIMD128<real_t>;
+    using block_t = SIMD128::block_type;
 
-    ////// Macros ////////////////////////////////////////////////////////////
+    ////// Assertions ////////////////////////////////////////////////////////
 
-#define SIMD_SHIFTR(vec,bits) \
-  _mm_castsi128_ps(_mm_srli_epi32(_mm_castps_si128(vec), bits))
-
-#define SIMD_SHIFTLx8(vec,bytes) \
-  _mm_castsi128_ps(_mm_slli_si128(_mm_castps_si128(vec), bytes))
-
-#define SIMD_SHIFTRx8(vec,bytes) \
-  _mm_castsi128_ps(_mm_srli_si128(_mm_castps_si128(vec), bytes))
-
-#define SIMD_SHUFFLE(a,b,a1,a2,b1,b2) \
-  _mm_shuffle_ps(a, b, _MM_SHUFFLE((b2), (b1), (a2), (a1)))
-
-#define SIMD_SWIZZLE(vec,x,y,z,w) \
-  _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(vec), _MM_SHUFFLE((w), (z), (y), (x))))
+    static_assert( cs::simd::is_simd128x4f_v<SIMD128> );
 
     ////// Elementary Functions //////////////////////////////////////////////
 
-    inline simd_t abs_mask()
+    inline block_t zero_w(const block_t& x)
     {
-      const simd_t zero = _mm_setzero_ps();
-      return SIMD_SHIFTR(_mm_cmpeq_ps(zero, zero), 1);
-    }
-
-    inline simd_t abs(const simd_t& x)
-    {
-      return _mm_and_ps(x, abs_mask());
-    }
-
-    inline simd_t add(const simd_t& a, const simd_t& b)
-    {
-      return _mm_add_ps(a, b);
-    }
-
-    inline simd_t bit_and(const simd_t& a, const simd_t& b)
-    {
-      return _mm_and_ps(a, b);
-    }
-
-    inline simd_t bit_andnot(const simd_t& a, const simd_t& b)
-    {
-      return _mm_andnot_ps(a, b); // NOTE: ~a & b
-    }
-
-    inline simd_t bit_or(const simd_t& a, const simd_t& b)
-    {
-      return _mm_or_ps(a, b);
-    }
-
-    inline simd_t bit_xor(const simd_t& a, const simd_t& b)
-    {
-      return _mm_xor_ps(a, b);
-    }
-
-    inline simd_t clamp(const simd_t& x, const simd_t& lo, const simd_t& hi)
-    {
-      return _mm_max_ps(lo, _mm_min_ps(x, hi));
-    }
-
-    inline simd_t cmpEQ(const simd_t& a, const simd_t& b)
-    {
-      return _mm_cmpeq_ps(a, b);
-    }
-
-    inline simd_t cmpGEQ(const simd_t& a, const simd_t& b)
-    {
-      return _mm_cmpge_ps(a, b);
-    }
-
-    inline simd_t cmpGT(const simd_t& a, const simd_t& b)
-    {
-      return _mm_cmpgt_ps(a, b);
-    }
-
-    inline simd_t cmpLEQ(const simd_t& a, const simd_t& b)
-    {
-      return _mm_cmple_ps(a, b);
-    }
-
-    inline simd_t cmpLT(const simd_t& a, const simd_t& b)
-    {
-      return _mm_cmplt_ps(a, b);
-    }
-
-    inline int cmpMask(const simd_t& x)
-    {
-      return _mm_movemask_ps(x);
-    }
-
-    inline simd_t cmpNEQ(const simd_t& a, const simd_t& b)
-    {
-      return _mm_cmpneq_ps(a, b);
-    }
-
-    inline simd_t div(const simd_t& a, const simd_t& b)
-    {
-      return _mm_div_ps(a, b);
-    }
-
-    inline simd_t hadd(const simd_t& x)
-    {
-      const simd_t y = _mm_add_ps(x, SIMD_SWIZZLE(x, 1, 0, 3, 2));
-      return           _mm_add_ps(y, SIMD_SWIZZLE(y, 3, 2, 1, 0));
-    }
-
-    inline simd_t load(const real_t *ptr)
-    {
-      return _mm_load_ps(ptr);
-    }
-
-    inline simd_t max(const simd_t& a, const simd_t& b)
-    {
-      return _mm_max_ps(a, b);
-    }
-
-    inline simd_t min(const simd_t& a, const simd_t& b)
-    {
-      return _mm_min_ps(a, b);
-    }
-
-    inline simd_t mul(const simd_t& a, const simd_t& b)
-    {
-      return _mm_mul_ps(a, b);
-    }
-
-    inline simd_t set(const real_t val)
-    {
-      return _mm_set1_ps(val);
-    }
-
-    inline simd_t set(const real_t x, const real_t y, const real_t z, const real_t w)
-    {
-      return _mm_set_ps(w, z, y, x);
-    }
-
-    inline simd_t sqrt(const simd_t& x)
-    {
-      return _mm_sqrt_ps(x);
-    }
-
-    inline void store(real_t *ptr, const simd_t& x)
-    {
-      _mm_store_ps(ptr, x);
-    }
-
-    inline simd_t sub(const simd_t& a, const simd_t& b)
-    {
-      return _mm_sub_ps(a, b);
-    }
-
-    inline real_t to_real(const simd_t& x)
-    {
-      return _mm_cvtss_f32(x);
-    }
-
-    inline simd_t intrlvhi(const simd_t& a, const simd_t& b)
-    {
-      return _mm_unpackhi_ps(a, b);
-    }
-
-    inline simd_t intrlvlo(const simd_t& a, const simd_t& b)
-    {
-      return _mm_unpacklo_ps(a, b);
-    }
-
-    inline simd_t zero()
-    {
-      return _mm_setzero_ps();
-    }
-
-    inline simd_t zero_w(const simd_t& x)
-    {
-      return SIMD_SHIFTRx8(SIMD_SHIFTLx8(x, 4), 4);
+      return SIMD128::shiftr8<4>(SIMD128::shiftl8<4>(x));
     }
 
     ////// Relations /////////////////////////////////////////////////////////
-
-    inline simd_t cmov(const simd_t& condA, const simd_t& a, const simd_t& b)
-    {
-      return bit_or(bit_and(condA, a), bit_andnot(condA, b));
-    }
 
     namespace impl {
 
@@ -239,10 +70,10 @@ namespace n4 {
     } // namespace impl
 
     template<bool CMP_W = true>
-    inline bool compareLEQ(const simd_t& a, const simd_t& b)
+    inline bool compareLEQ(const block_t& a, const block_t& b)
     {
       constexpr int MASK = impl::CMP_MASK<CMP_W>();
-      return (cmpMask(cmpLEQ(a, b)) & MASK) == MASK;
+      return (SIMD128::cmp_mask(SIMD128::cmp_leq(a, b)) & MASK) == MASK;
     }
 
     ////// 3x1 Vector Functions //////////////////////////////////////////////
@@ -252,32 +83,32 @@ namespace n4 {
      * a X b = a1 X b1 = a2*b0 - a0*b2
      *         a2   b2   a0*b1 - a1*b0
      */
-    inline simd_t cross(const simd_t& a, const simd_t& b)
+    inline block_t cross(const block_t& a, const block_t& b)
     {
-      const simd_t prod1 = mul(SIMD_SWIZZLE(a, 1, 2, 0, 3),
-                               SIMD_SWIZZLE(b, 2, 0, 1, 3));
-      const simd_t prod2 = mul(SIMD_SWIZZLE(a, 2, 0, 1, 3),
-                               SIMD_SWIZZLE(b, 1, 2, 0, 3));
-      return sub(prod1, prod2);
+      const block_t prod1 = SIMD128::mul(SIMD128::swizzle<1,2,0,3>(a),
+                                         SIMD128::swizzle<2,0,1,3>(b));
+      const block_t prod2 = SIMD128::mul(SIMD128::swizzle<2,0,1,3>(a),
+                                         SIMD128::swizzle<1,2,0,3>(b));
+      return SIMD128::sub(prod1, prod2);
     }
 
-    inline simd_t dot3(const simd_t& a, const simd_t& b)
+    inline block_t dot3(const block_t& a, const block_t& b)
     {
-      return hadd(zero_w(mul(a, b)));
+      return SIMD128::hadd(zero_w(SIMD128::mul(a, b)));
     }
 
     ////// 4x1 Vector Functions //////////////////////////////////////////////
 
     template<bool CMP_W = true>
-    inline bool isZero(const simd_t& x, const simd_t& epsilon0)
+    inline bool isZero(const block_t& x, const block_t& epsilon0)
     {
-      return compareLEQ<CMP_W>(abs(x), epsilon0);
+      return compareLEQ<CMP_W>(SIMD128::abs(x), epsilon0);
     }
 
     template<bool CMP_W = true>
-    inline bool isZero(const simd_t& x, const real_t epsilon0)
+    inline bool isZero(const block_t& x, const real_t epsilon0)
     {
-      return isZero<CMP_W>(x, set(epsilon0));
+      return isZero<CMP_W>(x, SIMD128::set(epsilon0));
     }
 
     ////// 4x4 Matrix Functions //////////////////////////////////////////////
@@ -287,36 +118,40 @@ namespace n4 {
       /*
        * Compute A * B
        */
-      inline simd_t mul2x2(const simd_t& a, const simd_t& b)
+      inline block_t mul2x2(const block_t& a, const block_t& b)
       {
-        return add(mul(             a,              SIMD_SWIZZLE(b, 0, 3, 0, 3)),
-                   mul(SIMD_SWIZZLE(a, 1, 0, 3, 2), SIMD_SWIZZLE(b, 2, 1, 2, 1)));
+        using S = SIMD128;
+        return S::add(S::mul(                    a,  S::swizzle<0,3,0,3>(b)),
+                      S::mul(S::swizzle<1,0,3,2>(a), S::swizzle<2,1,2,1>(b)));
       }
 
       /*
        * Compute A# * B
        */
-      inline simd_t adjMul2x2(const simd_t& a, const simd_t& b)
+      inline block_t adjMul2x2(const block_t& a, const block_t& b)
       {
-        return sub(mul(SIMD_SWIZZLE(a, 3, 3, 0, 0),              b),
-                   mul(SIMD_SWIZZLE(a, 1, 1, 2, 2), SIMD_SWIZZLE(b, 2, 3, 0, 1)));
+        using S = SIMD128;
+        return S::sub(S::mul(S::swizzle<3,3,0,0>(a),                     b),
+                      S::mul(S::swizzle<1,1,2,2>(a), S::swizzle<2,3,0,1>(b)));
       }
 
       /*
        * Compute A * B#
        */
-      inline simd_t mulAdj2x2(const simd_t& a, const simd_t& b)
+      inline block_t mulAdj2x2(const block_t& a, const block_t& b)
       {
-        return sub(mul(             a,              SIMD_SWIZZLE(b, 3, 0, 3, 0)),
-                   mul(SIMD_SWIZZLE(a, 1, 0, 3, 2), SIMD_SWIZZLE(b, 2, 1, 2, 1)));
+        using S = SIMD128;
+        return S::sub(S::mul(                    a,  S::swizzle<3,0,3,0>(b)),
+                      S::mul(S::swizzle<1,0,3,2>(a), S::swizzle<2,1,2,1>(b)));
       }
 
       /*
        * Compute the trace(A * B)
        */
-      inline simd_t traceMul2x2(const simd_t& a, const simd_t& b)
+      inline block_t traceMul2x2(const block_t& a, const block_t& b)
       {
-        return hadd(mul(a, SIMD_SWIZZLE(b, 0, 2, 1, 3)));
+        using S = SIMD128;
+        return S::hadd(S::mul(a, S::swizzle<0,2,1,3>(b)));
       }
 
     } // namespace impl
@@ -339,38 +174,40 @@ namespace n4 {
      */
     inline void inverse(real_t *dest, const real_t *src)
     {
-      const simd_t col0 = load(src +  0);
-      const simd_t col1 = load(src +  4);
-      const simd_t col2 = load(src +  8);
-      const simd_t col3 = load(src + 12);
+      using S = SIMD128;
 
-      const simd_t detACBD = sub(
-            mul(SIMD_SHUFFLE(col0, col2, 0, 2, 0, 2), SIMD_SHUFFLE(col1, col3, 1, 3, 1, 3)),
-            mul(SIMD_SHUFFLE(col0, col2, 1, 3, 1, 3), SIMD_SHUFFLE(col1, col3, 0, 2, 0, 2))
+      const block_t col0 = S::load(src +  0);
+      const block_t col1 = S::load(src +  4);
+      const block_t col2 = S::load(src +  8);
+      const block_t col3 = S::load(src + 12);
+
+      const block_t detACBD = S::sub(
+            S::mul(S::shuffle<0,2,0,2>(col0, col2), S::shuffle<1,3,1,3>(col1, col3)),
+            S::mul(S::shuffle<1,3,1,3>(col0, col2), S::shuffle<0,2,0,2>(col1, col3))
             );
 
-      const simd_t detA = SIMD_SWIZZLE(detACBD, 0, 0, 0, 0);
-      const simd_t detB = SIMD_SWIZZLE(detACBD, 2, 2, 2, 2);
-      const simd_t detC = SIMD_SWIZZLE(detACBD, 1, 1, 1, 1);
-      const simd_t detD = SIMD_SWIZZLE(detACBD, 3, 3, 3, 3);
+      const block_t detA = S::swizzle<0,0,0,0>(detACBD);
+      const block_t detB = S::swizzle<2,2,2,2>(detACBD);
+      const block_t detC = S::swizzle<1,1,1,1>(detACBD);
+      const block_t detD = S::swizzle<3,3,3,3>(detACBD);
 
-      const simd_t A = intrlvlo(col0, col1);
-      const simd_t B = intrlvlo(col2, col3);
-      const simd_t C = intrlvhi(col0, col1);
-      const simd_t D = intrlvhi(col2, col3);
+      const block_t A = S::intrlvlo(col0, col1);
+      const block_t B = S::intrlvlo(col2, col3);
+      const block_t C = S::intrlvhi(col0, col1);
+      const block_t D = S::intrlvhi(col2, col3);
 
-      const simd_t AadjB = impl::adjMul2x2(A, B);
-      const simd_t DadjC = impl::adjMul2x2(D, C);
+      const block_t AadjB = impl::adjMul2x2(A, B);
+      const block_t DadjC = impl::adjMul2x2(D, C);
 
       // NOTE: Combine adjugate's signs divided by detM.
-      const simd_t detM = div(set(1, -1, -1, 1),
-                              sub(add(mul(detA, detD), mul(detB, detC)),
-                                  impl::traceMul2x2(AadjB, DadjC)));
+      const block_t detM = S::div(S::set(1, -1, -1, 1),
+                                  S::sub(S::add(S::mul(detA, detD), S::mul(detB, detC)),
+                                         impl::traceMul2x2(AadjB, DadjC)));
 
-      const simd_t X = mul(detM, sub(mul(detD, A),    impl::mul2x2(B, DadjC)));
-      const simd_t Y = mul(detM, sub(mul(detB, C), impl::mulAdj2x2(D, AadjB)));
-      const simd_t Z = mul(detM, sub(mul(detC, B), impl::mulAdj2x2(A, DadjC)));
-      const simd_t W = mul(detM, sub(mul(detA, D),    impl::mul2x2(C, AadjB)));
+      const block_t X = S::mul(detM, S::sub(S::mul(detD, A),    impl::mul2x2(B, DadjC)));
+      const block_t Y = S::mul(detM, S::sub(S::mul(detB, C), impl::mulAdj2x2(D, AadjB)));
+      const block_t Z = S::mul(detM, S::sub(S::mul(detC, B), impl::mulAdj2x2(A, DadjC)));
+      const block_t W = S::mul(detM, S::sub(S::mul(detA, D),    impl::mul2x2(C, AadjB)));
 
       /*
        * NOTE: Account for the adjugate swapping elements along the main diagonal!
@@ -379,24 +216,25 @@ namespace n4 {
        *        [ z3 z1 w3 w1 ]
        *        [ z2 z0 w2 w0 ]
        */
-      store(dest +  0, SIMD_SHUFFLE(X, Z, 3, 2, 3, 2));
-      store(dest +  4, SIMD_SHUFFLE(X, Z, 1, 0, 1, 0));
-      store(dest +  8, SIMD_SHUFFLE(Y, W, 3, 2, 3, 2));
-      store(dest + 12, SIMD_SHUFFLE(Y, W, 1, 0, 1, 0));
+      S::store(dest +  0, S::shuffle<3,2,3,2>(X, Z));
+      S::store(dest +  4, S::shuffle<1,0,1,0>(X, Z));
+      S::store(dest +  8, S::shuffle<3,2,3,2>(Y, W));
+      S::store(dest + 12, S::shuffle<1,0,1,0>(Y, W));
     }
 
     /*
      * Linear Transformation of 4x1 Column Vector by 4x4 Column-Major Matrix.
      */
-    inline simd_t transform(const simd_t& col0, const simd_t& col1,
-                            const simd_t& col2, const simd_t& col3,
-                            const simd_t& x)
+    inline block_t transform(const block_t& col0, const block_t& col1,
+                             const block_t& col2, const block_t& col3,
+                             const block_t& x)
     {
+      using S = SIMD128;
       // NOTE: y = M*x
-      simd_t y = mul(SIMD_SWIZZLE(x, 0, 0, 0, 0), col0);
-      y = add(y, mul(SIMD_SWIZZLE(x, 1, 1, 1, 1), col1));
-      y = add(y, mul(SIMD_SWIZZLE(x, 2, 2, 2, 2), col2));
-      y = add(y, mul(SIMD_SWIZZLE(x, 3, 3, 3, 3), col3));
+      block_t   y = S::mul(S::swizzle<0,0,0,0>(x), col0);
+      y = S::add(y, S::mul(S::swizzle<1,1,1,1>(x), col1));
+      y = S::add(y, S::mul(S::swizzle<2,2,2,2>(x), col2));
+      y = S::add(y, S::mul(S::swizzle<3,3,3,3>(x), col3));
       return y;
     }
 
@@ -405,69 +243,75 @@ namespace n4 {
      */
     inline void transpose(real_t *dest, const real_t *src)
     {
-      simd::simd_t col0 = load(src +  0);
-      simd::simd_t col1 = load(src +  4);
-      simd::simd_t col2 = load(src +  8);
-      simd::simd_t col3 = load(src + 12);
+      block_t col0 = SIMD128::load(src +  0);
+      block_t col1 = SIMD128::load(src +  4);
+      block_t col2 = SIMD128::load(src +  8);
+      block_t col3 = SIMD128::load(src + 12);
 
-      const simd_t tmp0 = intrlvlo(col0, col2);
-      const simd_t tmp1 = intrlvhi(col0, col2);
-      const simd_t tmp2 = intrlvlo(col1, col3);
-      const simd_t tmp3 = intrlvhi(col1, col3);
-      col0 = intrlvlo(tmp0, tmp2);
-      col1 = intrlvhi(tmp0, tmp2);
-      col2 = intrlvlo(tmp1, tmp3);
-      col3 = intrlvhi(tmp1, tmp3);
+      const block_t tmp0 = SIMD128::intrlvlo(col0, col2);
+      const block_t tmp1 = SIMD128::intrlvhi(col0, col2);
+      const block_t tmp2 = SIMD128::intrlvlo(col1, col3);
+      const block_t tmp3 = SIMD128::intrlvhi(col1, col3);
+      col0 = SIMD128::intrlvlo(tmp0, tmp2);
+      col1 = SIMD128::intrlvhi(tmp0, tmp2);
+      col2 = SIMD128::intrlvlo(tmp1, tmp3);
+      col3 = SIMD128::intrlvhi(tmp1, tmp3);
 
-      simd::store(dest +  0, col0);
-      simd::store(dest +  4, col1);
-      simd::store(dest +  8, col2);
-      simd::store(dest + 12, col3);
+      SIMD128::store(dest +  0, col0);
+      SIMD128::store(dest +  4, col1);
+      SIMD128::store(dest +  8, col2);
+      SIMD128::store(dest + 12, col3);
     }
 
     ////// Ray Axis Aligned Bounding Box Intersection ////////////////////////
 
-    inline bool intersectRayAABBox(const simd_t& bbMin, const simd_t& bbMax,
-                                   const simd_t& rayOrg, const simd_t& rayDir,
+    inline bool intersectRayAABBox(const block_t& bbMin, const block_t& bbMax,
+                                   const block_t& rayOrg, const block_t& rayDir,
                                    const real_t rayMax)
     {
+      using S = SIMD128;
+
       constexpr int XYZ_MASK = impl::CMP_MASK<false>();
 
-      const int result_mask = cmpMask(cmpNEQ(rayDir, zero())) & XYZ_MASK;
+      const int result_mask = S::cmp_mask(S::cmp_neq(rayDir, S::zero())) & XYZ_MASK;
       if( result_mask == 0 ) {
         return false;
       }
 
-      const simd_t tMin = div(sub(bbMin, rayOrg), rayDir);
-      const simd_t tMax = div(sub(bbMax, rayOrg), rayDir);
+      const block_t tMin = S::div(S::sub(bbMin, rayOrg), rayDir);
+      const block_t tMax = S::div(S::sub(bbMax, rayOrg), rayDir);
 
-      const simd_t tRayMax = set(rayMax);
+      const block_t tRayMax = S::set(rayMax);
 
-      const simd_t condMin = bit_and(cmpLEQ(zero(), tMin), cmpLT(tMin, tRayMax));
-      const simd_t condMax = bit_and(cmpLEQ(zero(), tMax), cmpLT(tMax, tRayMax));
+      const block_t condMin = S::bit_and(S::cmp_leq(S::zero(), tMin),
+                                         S::cmp_lt(tMin, tRayMax));
+      const block_t condMax = S::bit_and(S::cmp_leq(S::zero(), tMax),
+                                         S::cmp_lt(tMax, tRayMax));
 
-      const int result = cmpMask(bit_or(condMin, condMax));
+      const int result = S::cmp_mask(S::bit_or(condMin, condMax));
 
       return (result & result_mask) == result_mask;
     }
 
-    inline bool intersectRayAABBox(const simd_t& bbMin, const simd_t& bbMax,
-                                   const simd_t& rayOrg, const simd_t& rayDir)
+    inline bool intersectRayAABBox(const block_t& bbMin, const block_t& bbMax,
+                                   const block_t& rayOrg, const block_t& rayDir)
     {
+      using S = SIMD128;
+
       constexpr int XYZ_MASK = impl::CMP_MASK<false>();
 
-      const int result_mask = cmpMask(cmpNEQ(rayDir, zero())) & XYZ_MASK;
+      const int result_mask = S::cmp_mask(S::cmp_neq(rayDir, S::zero())) & XYZ_MASK;
       if( result_mask == 0 ) {
         return false;
       }
 
-      const simd_t tMin = div(sub(bbMin, rayOrg), rayDir);
-      const simd_t tMax = div(sub(bbMax, rayOrg), rayDir);
+      const block_t tMin = S::div(S::sub(bbMin, rayOrg), rayDir);
+      const block_t tMax = S::div(S::sub(bbMax, rayOrg), rayDir);
 
-      const simd_t condMin = cmpLEQ(zero(), tMin);
-      const simd_t condMax = cmpLEQ(zero(), tMax);
+      const block_t condMin = S::cmp_leq(S::zero(), tMin);
+      const block_t condMax = S::cmp_leq(S::zero(), tMax);
 
-      const int result = cmpMask(bit_or(condMin, condMax));
+      const int result = S::cmp_mask(S::bit_or(condMin, condMax));
 
       return (result & result_mask) == result_mask;
     }
