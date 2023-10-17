@@ -38,33 +38,33 @@ namespace n4 {
 
   ////// Implementation //////////////////////////////////////////////////////
 
-  namespace impl {
+  namespace impl_dispatch {
 
     struct BinAdd {
       inline static block_t eval(const block_t& a, const block_t& b)
       {
-        return simd::SIMD128::add(a, b);
+        return SIMD128::add(a, b);
       }
     };
 
     struct BinDiv {
       inline static block_t eval(const block_t& a, const block_t& b)
       {
-        return simd::SIMD128::div(a, b);
+        return SIMD128::div(a, b);
       }
     };
 
     struct BinMul {
       inline static block_t eval(const block_t& a, const block_t& b)
       {
-        return simd::SIMD128::mul(a, b);
+        return SIMD128::mul(a, b);
       }
     };
 
     struct BinSub {
       inline static block_t eval(const block_t& a, const block_t& b)
       {
-        return simd::SIMD128::sub(a, b);
+        return SIMD128::sub(a, b);
       }
     };
 
@@ -79,8 +79,7 @@ namespace n4 {
 
       inline block_t eval() const
       {
-        using S = simd::SIMD128;
-        using namespace simd;
+        using S = SIMD128;
         const block_t v = _rhs.eval();
         // NOTE: y = M*v
         block_t   y = S::mul(S::swizzle<0,0,0,0>(v), S::load(_lhs.data() + 0));
@@ -97,7 +96,7 @@ namespace n4 {
       const RHS& _rhs;
     };
 
-  } // namespace impl
+  } // namespace impl_dispatch
 
   ////// User Interface //////////////////////////////////////////////////////
 
@@ -106,7 +105,8 @@ namespace n4 {
   template<typename traits_T, typename LHS, typename RHS>
   inline auto operator+(const ExprBase<traits_T,LHS>& lhs, const ExprBase<traits_T,RHS>& rhs)
   {
-    return impl::DispatchVV<impl::BinAdd,traits_T,LHS,RHS>(lhs.as_derived(), rhs.as_derived());
+    using namespace impl_dispatch;
+    return DispatchVV<BinAdd,traits_T,LHS,RHS>(lhs.as_derived(), rhs.as_derived());
   }
 
   // Subtraction /////////////////////////////////////////////////////////////
@@ -114,7 +114,8 @@ namespace n4 {
   template<typename traits_T, typename LHS, typename RHS>
   inline auto operator-(const ExprBase<traits_T,LHS>& lhs, const ExprBase<traits_T,RHS>& rhs)
   {
-    return impl::DispatchVV<impl::BinSub,traits_T,LHS,RHS>(lhs.as_derived(), rhs.as_derived());
+    using namespace impl_dispatch;
+    return DispatchVV<BinSub,traits_T,LHS,RHS>(lhs.as_derived(), rhs.as_derived());
   }
 
   // Multiplication //////////////////////////////////////////////////////////
@@ -122,25 +123,29 @@ namespace n4 {
   template<typename traits_T, typename LHS, typename RHS>
   inline auto operator*(const ExprBase<traits_T,LHS>& lhs, const ExprBase<traits_T,RHS>& rhs)
   {
-    return impl::DispatchVV<impl::BinMul,traits_T,LHS,RHS>(lhs.as_derived(), rhs.as_derived());
+    using namespace impl_dispatch;
+    return DispatchVV<BinMul,traits_T,LHS,RHS>(lhs.as_derived(), rhs.as_derived());
   }
 
   template<typename traits_T, typename LHS>
   inline auto operator*(const ExprBase<traits_T,LHS>& lhs, const real_t rhs)
   {
-    return impl::DispatchVS<impl::BinMul,traits_T,LHS>(lhs.as_derived(), rhs);
+    using namespace impl_dispatch;
+    return DispatchVS<BinMul,traits_T,LHS>(lhs.as_derived(), rhs);
   }
 
   template<typename traits_T, typename RHS>
   inline auto operator*(const real_t lhs, const ExprBase<traits_T,RHS>& rhs)
   {
-    return impl::DispatchSV<impl::BinMul,traits_T,RHS>(lhs, rhs.as_derived());
+    using namespace impl_dispatch;
+    return DispatchSV<BinMul,traits_T,RHS>(lhs, rhs.as_derived());
   }
 
   template<typename traits_T, typename RHS>
   inline auto operator*(const Matrix4f& lhs, const ExprBase<traits_T,RHS>& rhs)
   {
-    return impl::BinTransform<traits_T,RHS>(lhs, rhs.as_derived());
+    using namespace impl_dispatch;
+    return BinTransform<traits_T,RHS>(lhs, rhs.as_derived());
   }
 
   // Division ////////////////////////////////////////////////////////////////
@@ -148,19 +153,22 @@ namespace n4 {
   template<typename traits_T, typename LHS, typename RHS>
   inline auto operator/(const ExprBase<traits_T,LHS>& lhs, const ExprBase<traits_T,RHS>& rhs)
   {
-    return impl::DispatchVV<impl::BinDiv,traits_T,LHS,RHS>(lhs.as_derived(), rhs.as_derived());
+    using namespace impl_dispatch;
+    return DispatchVV<BinDiv,traits_T,LHS,RHS>(lhs.as_derived(), rhs.as_derived());
   }
 
   template<typename traits_T, typename RHS>
   inline auto operator/(const real_t lhs, const ExprBase<traits_T,RHS>& rhs)
   {
-    return impl::DispatchSV<impl::BinDiv,traits_T,RHS>(lhs, rhs.as_derived());
+    using namespace impl_dispatch;
+    return DispatchSV<BinDiv,traits_T,RHS>(lhs, rhs.as_derived());
   }
 
   template<typename traits_T, typename LHS>
   inline auto operator/(const ExprBase<traits_T,LHS>& lhs, const real_t rhs)
   {
-    return impl::DispatchVS<impl::BinDiv,traits_T,LHS>(lhs.as_derived(), rhs);
+    using namespace impl_dispatch;
+    return DispatchVS<BinDiv,traits_T,LHS>(lhs.as_derived(), rhs);
   }
 
 } // namespace n4

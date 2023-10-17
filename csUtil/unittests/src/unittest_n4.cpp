@@ -2,6 +2,8 @@
 
 #include <catch.hpp>
 
+#include <cs/SIMD/SIMD128Ray4f.h>
+
 #include <N4/N4.h>
 #include <N4/Optics.h>
 #include <N4/Util.h>

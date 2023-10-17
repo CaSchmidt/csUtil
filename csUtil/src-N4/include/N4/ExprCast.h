@@ -32,11 +32,11 @@
 #pragma once
 
 #include <N4/ExprBase.h>
-#include <N4/SIMD.h>
+#include <N4/N4Traits.h>
 
 namespace n4 {
 
-  namespace impl {
+  namespace impl_cast {
 
     template<typename cast_traits_T, typename EXPR, bool ASSIGN_W>
     class ExprCast : public ExprBase<cast_traits_T,ExprCast<cast_traits_T,EXPR,ASSIGN_W>> {
@@ -48,7 +48,7 @@ namespace n4 {
       {
       }
 
-      inline simd::block_t eval() const
+      inline block_t eval() const
       {
         return _expr.eval();
       }
@@ -57,24 +57,24 @@ namespace n4 {
       const EXPR& _expr;
     };
 
-  } // namespace impl
+  } // namespace impl_cast
 
   template<typename cast_traits_T, typename traits_T, typename EXPR>
   inline auto expr_cast(const ExprBase<traits_T,EXPR>& expr)
   {
-    return impl::ExprCast<cast_traits_T,EXPR,false>(expr.as_derived());
+    return impl_cast::ExprCast<cast_traits_T,EXPR,false>(expr.as_derived());
   }
 
   template<typename cast_traits_T, typename traits_T, typename EXPR>
   inline auto expr_cast_assign_w(const ExprBase<traits_T,EXPR>& expr)
   {
-    return impl::ExprCast<cast_traits_T,EXPR,true>(expr.as_derived());
+    return impl_cast::ExprCast<cast_traits_T,EXPR,true>(expr.as_derived());
   }
 
   template<typename traits_T, typename EXPR>
   inline auto assign_w(const ExprBase<traits_T,EXPR>& expr)
   {
-    return impl::ExprCast<traits_T,EXPR,true>(expr.as_derived());
+    return impl_cast::ExprCast<traits_T,EXPR,true>(expr.as_derived());
   }
 
 } // namespace n4

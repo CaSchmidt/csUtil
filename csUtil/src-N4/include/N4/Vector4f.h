@@ -35,10 +35,10 @@
 #include <initializer_list>
 
 #include <cs/Math/Math.h>
+#include <cs/SIMD/SIMD128Vec4f.h>
 
 #include <N4/ExprBase.h>
 #include <N4/Manipulator.h>
-#include <N4/SIMD.h>
 
 namespace n4 {
 
@@ -49,7 +49,7 @@ namespace n4 {
   public:
     ////// Assertions ////////////////////////////////////////////////////////
 
-    static_assert( cs::simd::is_simd128x4f_v<simd::SIMD128> );
+    static_assert( cs::simd::is_simd128x4f_v<SIMD128> );
 
     ////// Types /////////////////////////////////////////////////////////////
 
@@ -133,7 +133,7 @@ namespace n4 {
       return *this;
     }
 
-    inline simd::block_t eval() const
+    inline block_t eval() const
     {
       return S::load(_data);
     }
@@ -244,7 +244,7 @@ namespace n4 {
 
   private:
     using m = cs::Math<real_t>;
-    using S = simd::SIMD128;
+    using S = SIMD128;
 
     template<typename EXPR>
     void assign(const ExprBase<traits_type,EXPR>& expr)

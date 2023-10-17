@@ -37,12 +37,12 @@ namespace n4 {
 
   ////// Implementation //////////////////////////////////////////////////////
 
-  namespace impl {
+  namespace impl_dispatch {
 
     struct UnaMinus {
       inline static block_t eval(const block_t& x)
       {
-        return simd::SIMD128::sub(simd::SIMD128::zero(), x);
+        return SIMD128::sub(SIMD128::zero(), x);
       }
     };
 
@@ -53,20 +53,22 @@ namespace n4 {
       }
     };
 
-  } // namespace impl
+  } // namespace impl_dispatch
 
   ////// User Interface //////////////////////////////////////////////////////
 
   template<typename traits_T, typename OP>
   inline auto operator+(const ExprBase<traits_T,OP>& expr)
   {
-    return impl::DispatchV<impl::UnaPlus,traits_T,OP>(expr.as_derived());
+    using namespace impl_dispatch;
+    return DispatchV<UnaPlus,traits_T,OP>(expr.as_derived());
   }
 
   template<typename traits_T, typename OP>
   inline auto operator-(const ExprBase<traits_T,OP>& expr)
   {
-    return impl::DispatchV<impl::UnaMinus,traits_T,OP>(expr.as_derived());
+    using namespace impl_dispatch;
+    return DispatchV<UnaMinus,traits_T,OP>(expr.as_derived());
   }
 
 } // namespace n4

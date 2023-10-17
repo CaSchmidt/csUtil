@@ -33,14 +33,10 @@
 
 #include <N4/ExprBase.h>
 #include <N4/N4Traits.h>
-#include <N4/SIMD.h>
 
 namespace n4 {
 
-  namespace impl {
-
-    using simd::SIMD128;
-    using block_t = SIMD128::block_type;
+  namespace impl_dispatch {
 
     ////// Dispatch 1 Argument ///////////////////////////////////////////////
     ///
@@ -78,7 +74,7 @@ namespace n4 {
 
       inline block_t eval() const
       {
-        return OP::eval(simd::SIMD128::set(_arg1), _arg2.eval());
+        return OP::eval(SIMD128::set(_arg1), _arg2.eval());
       }
 
     private:
@@ -97,7 +93,7 @@ namespace n4 {
 
       inline block_t eval() const
       {
-        return OP::eval(_arg1.eval(), simd::SIMD128::set(_arg2));
+        return OP::eval(_arg1.eval(), SIMD128::set(_arg2));
       }
 
     private:
@@ -140,7 +136,7 @@ namespace n4 {
 
       inline block_t eval() const
       {
-        return OP::eval(_arg1.eval(), simd::SIMD128::set(_arg2), simd::SIMD128::set(_arg3));
+        return OP::eval(_arg1.eval(), SIMD128::set(_arg2), SIMD128::set(_arg3));
       }
 
     private:
@@ -149,6 +145,6 @@ namespace n4 {
       const real_t _arg3;
     };
 
-  } // namespace impl
+  } // namespace impl_dispatch
 
 } // namespace n4

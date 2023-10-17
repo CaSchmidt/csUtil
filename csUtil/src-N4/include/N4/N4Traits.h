@@ -32,14 +32,17 @@
 #pragma once
 
 #include <cs/Core/TypeTraits.h>
+#include <cs/SIMD/SIMD128.h>
 
 namespace n4 {
 
   ////// Types ///////////////////////////////////////////////////////////////
 
-  using real_t = cs::real32_t;
+  using SIMD128 = cs::SIMD128<cs::real32_t>;
 
-  using std::size_t;
+  using block_t = SIMD128::block_type;
+  using  real_t = SIMD128::value_type;
+  using  size_t = SIMD128::size_type;
 
   ////// Constants ///////////////////////////////////////////////////////////
 

@@ -35,9 +35,10 @@
 #include <initializer_list>
 
 #include <cs/Math/Math.h>
+#include <cs/SIMD/SIMD128Mat4f.h>
+#include <cs/SIMD/SIMD128Vec4f.h>
 
 #include <N4/N4Traits.h>
-#include <N4/SIMD.h>
 
 namespace n4 {
 
@@ -151,7 +152,7 @@ namespace n4 {
 
     inline bool isZero(const real_t epsilon0 = EPSILON0_VECTOR) const
     {
-      const simd::block_t _epsilon0 = S::set(epsilon0);
+      const block_t _epsilon0 = S::set(epsilon0);
       return
           cs::simd::isZero<S>(S::load(_data +  0), _epsilon0)  &&
           cs::simd::isZero<S>(S::load(_data +  4), _epsilon0)  &&
@@ -167,7 +168,7 @@ namespace n4 {
     }
 
   private:
-    using S = simd::SIMD128;
+    using S = SIMD128;
 
     inline void copy(const Matrix4f& other)
     {
@@ -191,7 +192,7 @@ namespace n4 {
 
     inline void set(const real_t val)
     {
-      const simd::block_t col = S::set(val);
+      const block_t col = S::set(val);
       S::store(_data +  0, col);
       S::store(_data +  4, col);
       S::store(_data +  8, col);
@@ -205,8 +206,7 @@ namespace n4 {
 
   inline Matrix4f operator*(const Matrix4f& lhs, const Matrix4f& rhs)
   {
-    using S = simd::SIMD128;
-    using namespace simd;
+    using S = SIMD128;
     Matrix4f M;
     const block_t col0 = S::load(lhs.data() +  0);
     const block_t col1 = S::load(lhs.data() +  4);

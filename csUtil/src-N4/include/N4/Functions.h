@@ -31,13 +31,15 @@
 
 #pragma once
 
+#include <cs/SIMD/SIMD128Vec4f.h>
+
 #include <N4/Dispatch.h>
 
 namespace n4 {
 
   ////// Implementation //////////////////////////////////////////////////////
 
-  namespace impl {
+  namespace impl_dispatch {
 
     struct Abs {
       inline static block_t eval(const block_t& x)
@@ -89,94 +91,105 @@ namespace n4 {
       }
     };
 
-  } // namespace impl
+  } // namespace impl_dispatch
 
   ////// User Interface //////////////////////////////////////////////////////
 
   template<typename traits_T, typename ARG>
   inline auto abs(const ExprBase<traits_T,ARG>& arg)
   {
-    return impl::DispatchV<impl::Abs,traits_T,ARG>(arg.as_derived());
+    using namespace impl_dispatch;
+    return DispatchV<Abs,traits_T,ARG>(arg.as_derived());
   }
 
   template<typename traits_T, typename ARG>
   inline auto clamp(const ExprBase<traits_T,ARG>& arg, const real_t lo, const real_t hi)
   {
-    return impl::DispatchVSS<impl::Clamp,traits_T,ARG>(arg.as_derived(), lo, hi);
+    using namespace impl_dispatch;
+    return DispatchVSS<Clamp,traits_T,ARG>(arg.as_derived(), lo, hi);
   }
 
   template<typename traits_T, typename ARG1, typename ARG2>
   inline auto cross(const ExprBase<traits_T,ARG1>& arg1, const ExprBase<traits_T,ARG2>& arg2)
   {
-    return impl::DispatchVV<impl::Cross,traits_T,ARG1,ARG2>(arg1.as_derived(), arg2.as_derived());
+    using namespace impl_dispatch;
+    return DispatchVV<Cross,traits_T,ARG1,ARG2>(arg1.as_derived(), arg2.as_derived());
   }
 
   template<typename traits_T, typename FROM, typename TO>
   inline auto direction(const ExprBase<traits_T,FROM>& from, const ExprBase<traits_T,TO>& to)
   {
-    return impl::DispatchVV<impl::Direction,traits_T,FROM,TO>(from.as_derived(), to.as_derived());
+    using namespace impl_dispatch;
+    return DispatchVV<Direction,traits_T,FROM,TO>(from.as_derived(), to.as_derived());
   }
 
   template<typename traits_T, typename FROM, typename TO>
   inline real_t distance(const ExprBase<traits_T,FROM>& from, const ExprBase<traits_T,TO>& to)
   {
-    const simd::block_t delta = simd::SIMD128::sub(to.as_derived().eval(), from.as_derived().eval());
-    return simd::SIMD128::to_value(simd::SIMD128::sqrt(cs::simd::dot3<simd::SIMD128>(delta, delta)));
+    const block_t delta = SIMD128::sub(to.as_derived().eval(), from.as_derived().eval());
+    return SIMD128::to_value(SIMD128::sqrt(cs::simd::dot3<SIMD128>(delta, delta)));
   }
 
   template<typename traits_T, typename ARG1, typename ARG2>
   inline real_t dot(const ExprBase<traits_T,ARG1>& arg1, const ExprBase<traits_T,ARG2>& arg2)
   {
-    return simd::SIMD128::to_value(cs::simd::dot3<simd::SIMD128>(arg1.as_derived().eval(), arg2.as_derived().eval()));
+    return SIMD128::to_value(cs::simd::dot3<SIMD128>(arg1.as_derived().eval(), arg2.as_derived().eval()));
   }
 
   template<typename traits_T, typename ARG>
   inline real_t length(const ExprBase<traits_T,ARG>& arg)
   {
-    const simd::block_t x = arg.as_derived().eval();
-    return simd::SIMD128::to_value(simd::SIMD128::sqrt(cs::simd::dot3<simd::SIMD128>(x, x)));
+    const block_t x = arg.as_derived().eval();
+    return SIMD128::to_value(SIMD128::sqrt(cs::simd::dot3<SIMD128>(x, x)));
   }
 
   template<typename traits_T, typename ARG1>
   inline auto max(const ExprBase<traits_T,ARG1>& arg1, const real_t arg2)
   {
-    return impl::DispatchVS<impl::Max,traits_T,ARG1>(arg1.as_derived(), arg2);
+    using namespace impl_dispatch;
+    return DispatchVS<Max,traits_T,ARG1>(arg1.as_derived(), arg2);
   }
 
   template<typename traits_T, typename ARG2>
   inline auto max(const real_t arg1, const ExprBase<traits_T,ARG2>& arg2)
   {
-    return impl::DispatchSV<impl::Max,traits_T,ARG2>(arg1, arg2.as_derived());
+    using namespace impl_dispatch;
+    return DispatchSV<Max,traits_T,ARG2>(arg1, arg2.as_derived());
   }
 
   template<typename traits_T, typename ARG1, typename ARG2>
   inline auto max(const ExprBase<traits_T,ARG1>& arg1, const ExprBase<traits_T,ARG2>& arg2)
   {
-    return impl::DispatchVV<impl::Max,traits_T,ARG1,ARG2>(arg1.as_derived(), arg2.as_derived());
+    using namespace impl_dispatch;
+    return DispatchVV<Max,traits_T,ARG1,ARG2>(arg1.as_derived(), arg2.as_derived());
   }
 
   template<typename traits_T, typename ARG1>
   inline auto min(const ExprBase<traits_T,ARG1>& arg1, const real_t arg2)
   {
-    return impl::DispatchVS<impl::Min,traits_T,ARG1>(arg1.as_derived(), arg2);
+    using namespace impl_dispatch;
+    return DispatchVS<Min,traits_T,ARG1>(arg1.as_derived(), arg2);
   }
 
   template<typename traits_T, typename ARG2>
   inline auto min(const real_t arg1, const ExprBase<traits_T,ARG2>& arg2)
   {
-    return impl::DispatchSV<impl::Min,traits_T,ARG2>(arg1, arg2.as_derived());
+    using namespace impl_dispatch;
+    return DispatchSV<Min,traits_T,ARG2>(arg1, arg2.as_derived());
   }
 
   template<typename traits_T, typename ARG1, typename ARG2>
   inline auto min(const ExprBase<traits_T,ARG1>& arg1, const ExprBase<traits_T,ARG2>& arg2)
   {
-    return impl::DispatchVV<impl::Min,traits_T,ARG1,ARG2>(arg1.as_derived(), arg2.as_derived());
+    using namespace impl_dispatch;
+    return DispatchVV<Min,traits_T,ARG1,ARG2>(arg1.as_derived(), arg2.as_derived());
   }
 
   template<typename traits_T, typename ARG>
   inline auto normalize(const ExprBase<traits_T,ARG>& arg)
   {
-    return impl::DispatchV<impl::Normalize,traits_T,ARG>(arg.as_derived());
+    using namespace impl_dispatch;
+    return DispatchV<Normalize,traits_T,ARG>(arg.as_derived());
   }
 
 } // namespace n4
