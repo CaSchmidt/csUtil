@@ -39,7 +39,8 @@ namespace n4 {
 
   namespace impl {
 
-    using simd::block_t;
+    using simd::SIMD128;
+    using block_t = SIMD128::block_type;
 
     ////// Dispatch 1 Argument ///////////////////////////////////////////////
     ///

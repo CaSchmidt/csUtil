@@ -3,6 +3,9 @@ list(APPEND csSIMD_HEADERS
   include/cs/SIMD/SIMD.h
   include/cs/SIMD/SIMD128.h
   include/cs/SIMD/SIMD128Impl.h
+  include/cs/SIMD/SIMD128Mat4f.h
+  include/cs/SIMD/SIMD128Ray4f.h
+  include/cs/SIMD/SIMD128Vec4f.h
   include/cs/SIMD/SIMDFunctions.h
   include/cs/SIMD/SIMDTraits.h
   include/cs/SIMD/impl/Reduce.h

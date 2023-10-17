@@ -32,6 +32,8 @@
 #pragma once
 
 #include <cs/SIMD/SIMD128.h>
+#include <cs/SIMD/SIMD128Mat4f.h>
+#include <cs/SIMD/SIMD128Ray4f.h>
 
 #include <N4/N4Traits.h>
 
@@ -48,6 +50,7 @@ namespace n4 {
 
     static_assert( cs::simd::is_simd128x4f_v<SIMD128> );
 
+#if 0
     ////// Elementary Functions //////////////////////////////////////////////
 
     inline block_t zero_w(const block_t& x)
@@ -110,7 +113,9 @@ namespace n4 {
     {
       return isZero<CMP_W>(x, SIMD128::set(epsilon0));
     }
+#endif
 
+#if 0
     ////// 4x4 Matrix Functions //////////////////////////////////////////////
 
     namespace impl {
@@ -262,7 +267,9 @@ namespace n4 {
       SIMD128::store(dest +  8, col2);
       SIMD128::store(dest + 12, col3);
     }
+#endif
 
+#if 0
     ////// Ray Axis Aligned Bounding Box Intersection ////////////////////////
 
     inline bool intersectRayAABBox(const block_t& bbMin, const block_t& bbMax,
@@ -271,7 +278,7 @@ namespace n4 {
     {
       using S = SIMD128;
 
-      constexpr int XYZ_MASK = impl::CMP_MASK<false>();
+      constexpr int XYZ_MASK = cs::simd::impl_vec4f::CMP_MASK<false>();
 
       const int result_mask = S::cmp_mask(S::cmp_neq(rayDir, S::zero())) & XYZ_MASK;
       if( result_mask == 0 ) {
@@ -298,7 +305,7 @@ namespace n4 {
     {
       using S = SIMD128;
 
-      constexpr int XYZ_MASK = impl::CMP_MASK<false>();
+      constexpr int XYZ_MASK = cs::simd::impl_vec4f::CMP_MASK<false>();
 
       const int result_mask = S::cmp_mask(S::cmp_neq(rayDir, S::zero())) & XYZ_MASK;
       if( result_mask == 0 ) {
@@ -315,6 +322,7 @@ namespace n4 {
 
       return (result & result_mask) == result_mask;
     }
+#endif
 
   } // namespace simd
 

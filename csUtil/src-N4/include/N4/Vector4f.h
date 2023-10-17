@@ -227,7 +227,7 @@ namespace n4 {
 
     inline bool isZero(const real_t epsilon0 = EPSILON0_VECTOR) const
     {
-      return simd::isZero<false>(S::load(_data), epsilon0);
+      return cs::simd::isZero<S,false>(S::load(_data), epsilon0);
     }
 
     inline real_t max() const

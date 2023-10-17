@@ -145,7 +145,7 @@ namespace n4 {
     inline Matrix4f inverse() const
     {
       Matrix4f result;
-      simd::inverse(result._data, _data);
+      cs::simd::inverse<S>(result._data, _data);
       return result;
     }
 
@@ -153,16 +153,16 @@ namespace n4 {
     {
       const simd::block_t _epsilon0 = S::set(epsilon0);
       return
-          simd::isZero(S::load(_data +  0), _epsilon0)  &&
-          simd::isZero(S::load(_data +  4), _epsilon0)  &&
-          simd::isZero(S::load(_data +  8), _epsilon0)  &&
-          simd::isZero(S::load(_data + 12), _epsilon0);
+          cs::simd::isZero<S>(S::load(_data +  0), _epsilon0)  &&
+          cs::simd::isZero<S>(S::load(_data +  4), _epsilon0)  &&
+          cs::simd::isZero<S>(S::load(_data +  8), _epsilon0)  &&
+          cs::simd::isZero<S>(S::load(_data + 12), _epsilon0);
     }
 
     inline Matrix4f transpose() const
     {
       Matrix4f result;
-      simd::transpose(result._data, _data);
+      cs::simd::transpose<S>(result._data, _data);
       return result;
     }
 
@@ -212,10 +212,10 @@ namespace n4 {
     const block_t col1 = S::load(lhs.data() +  4);
     const block_t col2 = S::load(lhs.data() +  8);
     const block_t col3 = S::load(lhs.data() + 12);
-    S::store(M.data() +  0, transform(col0, col1, col2, col3, S::load(rhs.data() +  0)));
-    S::store(M.data() +  4, transform(col0, col1, col2, col3, S::load(rhs.data() +  4)));
-    S::store(M.data() +  8, transform(col0, col1, col2, col3, S::load(rhs.data() +  8)));
-    S::store(M.data() + 12, transform(col0, col1, col2, col3, S::load(rhs.data() + 12)));
+    S::store(M.data() +  0, cs::simd::transform<S>(col0, col1, col2, col3, S::load(rhs.data() +  0)));
+    S::store(M.data() +  4, cs::simd::transform<S>(col0, col1, col2, col3, S::load(rhs.data() +  4)));
+    S::store(M.data() +  8, cs::simd::transform<S>(col0, col1, col2, col3, S::load(rhs.data() +  8)));
+    S::store(M.data() + 12, cs::simd::transform<S>(col0, col1, col2, col3, S::load(rhs.data() + 12)));
     return M;
   }
 

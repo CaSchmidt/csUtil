@@ -8,7 +8,9 @@
 
 ////// Global Types //////////////////////////////////////////////////////////
 
-using n4::real_t;
+using SIMD128 = cs::SIMD128<cs::real32_t>;
+
+using real_t = SIMD128::value_type;
 
 using Vec4f = n4::Vertex4f;
 
@@ -167,6 +169,7 @@ namespace test_n4 {
 
     std::cout << "sizeof(Mat4f) = " << sizeof(Mat4f) << std::endl;
     std::cout << "sizeof(Vec4f) = " << sizeof(Vec4f) << std::endl;
+    std::cout << std::endl;
 
     PRINTexpr(a);
     PRINTexpr(b);
@@ -277,9 +280,9 @@ namespace test_n4 {
     REQUIRE( !a.isZero(2) );
     REQUIRE( a.isZero(3) );
     REQUIRE( a.isZero(4) );
-    REQUIRE( n4::simd::compareLEQ(a.eval(), b.eval()) );
-    REQUIRE( n4::simd::compareLEQ(a.eval(), a.eval()) );
-    REQUIRE( !n4::simd::compareLEQ(b.eval(), a.eval()) );
+    REQUIRE( cs::simd::compareLEQ<SIMD128>(a.eval(), b.eval()) );
+    REQUIRE( cs::simd::compareLEQ<SIMD128>(a.eval(), a.eval()) );
+    REQUIRE( !cs::simd::compareLEQ<SIMD128>(b.eval(), a.eval()) );
   }
 
   TEST_CASE("N4 Vector4f manipulators.", "[Vector4f][manipulator]") {
@@ -377,13 +380,13 @@ namespace test_intersect {
   bool test_intersect(const Vec4f& min, const Vec4f& max,
                       const Vec4f& org, const Vec4f& dir, const real_t tMax)
   {
-    return n4::simd::intersectRayAABBox(min.eval(), max.eval(), org.eval(), dir.eval(), tMax);
+    return cs::simd::intersectRayAABBox<SIMD128>(min.eval(), max.eval(), org.eval(), dir.eval(), tMax);
   }
 
   bool test_intersect(const Vec4f& min, const Vec4f& max,
                       const Vec4f& org, const Vec4f& dir)
   {
-    return n4::simd::intersectRayAABBox(min.eval(), max.eval(), org.eval(), dir.eval());
+    return cs::simd::intersectRayAABBox<SIMD128>(min.eval(), max.eval(), org.eval(), dir.eval());
   }
 
   TEST_CASE("Ray/Box intersection.", "[intersect]") {
