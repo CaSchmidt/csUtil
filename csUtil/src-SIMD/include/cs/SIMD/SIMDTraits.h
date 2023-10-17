@@ -81,7 +81,7 @@ namespace cs {
 
     template<typename SIMD>
     using is_simd128x4f = std::bool_constant<
-    is_simd_real_v<SIMD>  &&  is_simd_elem_v<SIMD,4>
+    is_real32_v<typename SIMD::value_type>  &&  is_simd_elem_v<SIMD,4>
     >;
 
     template<typename SIMD>
