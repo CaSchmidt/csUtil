@@ -43,6 +43,7 @@
 namespace n4 {
 
   template<typename traits_T, typename data_T>
+  requires is_vector4fdata_v<data_T>
   class Vector4f
       : public ExprBase<traits_T,Vector4f<traits_T,data_T>>
       , public data_T {
@@ -50,7 +51,6 @@ namespace n4 {
     ////// Assertions ////////////////////////////////////////////////////////
 
     static_assert( cs::simd::is_simd128x4f_v<SIMD128> );
-    static_assert( sizeof(data_T) == sizeof(real_t)*4 );
 
     ////// Types /////////////////////////////////////////////////////////////
 

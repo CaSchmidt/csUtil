@@ -71,4 +71,26 @@ namespace n4 {
     return false;
   }
 
+  ////// Vector4f's Data Traits //////////////////////////////////////////////
+
+  namespace impl_traits {
+
+    template<typename DataArrayT>
+    using is_data_array = std::bool_constant<
+    std::is_array_v<DataArrayT>     &&
+    std::rank_v<DataArrayT> == 1    &&
+    std::extent_v<DataArrayT> == 4  &&
+    cs::is_real32_v<std::remove_all_extents_t<DataArrayT>>
+    >;
+
+  } // namespace impl_traits
+
+  template<typename DataT>
+  using is_vector4fdata = std::bool_constant<
+  impl_traits::is_data_array<decltype(std::declval<DataT>()._data)>::value
+  >;
+
+  template<typename T>
+  inline constexpr bool is_vector4fdata_v = is_vector4fdata<T>::value;
+
 } // namespace n4
