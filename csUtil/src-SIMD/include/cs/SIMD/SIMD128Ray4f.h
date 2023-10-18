@@ -37,6 +37,33 @@ namespace cs {
 
   namespace simd {
 
+    /*
+     * NOTE: Intersection of a ray with an axis-aligned bounding box.
+     *
+     * Definition: ray(t) = org + t*dir, t := [0, tRayMax)
+     *
+     * Computing the parameter value 't' of a ray intersecting a plane
+     * perpendicular to the elementary axes; e.g. the plane located at
+     * x := minX with the normal (1,0,0):
+     *
+     * minX = orgX + tMinX*dirX
+     *
+     * Solving for tMinX:
+     *
+     * tMinX = (minX - orgX)/dirX
+     *
+     * The ray intersects the plane if:
+     *
+     * 0 <= tMinX  AND  tMinX < tRayMax
+     *
+     * Similar equations can be derived for the remaining five planes;
+     * e.g. maxX, minY, maxY, ...
+     *
+     * Using SIMD instructions, tMin and tMax can be computed in parallel for
+     * all axes. The ray intersects an axis-aligned bounding box if ALL
+     * dimensions of tMin OR tMax satisfy the condition above.
+     */
+
     ////// Ray Axis Aligned Bounding Box Intersection ////////////////////////
 
     template<typename S> requires is_simd128x4f_v<S>
@@ -50,22 +77,32 @@ namespace cs {
 
       constexpr int XYZ_MASK = impl_vec4f::CMP_MASK<false>();
 
+      // (0) Sanity Check: Direction is not Zero /////////////////////////////
+
       const int result_mask = S::cmp_mask(S::cmp_neq(rayDir, S::zero())) & XYZ_MASK;
       if( result_mask == 0 ) {
         return false;
       }
+
+      // (1) Compute tMin/tMax ///////////////////////////////////////////////
 
       const block_t tMin = S::div(S::sub(bbMin, rayOrg), rayDir);
       const block_t tMax = S::div(S::sub(bbMax, rayOrg), rayDir);
 
       const block_t tRayMax = S::set(rayMax);
 
+      // (2) Intersection Condition; e.g. 0 <= tMin AND tMin < tRayMax ///////
+
       const block_t condMin = S::bit_and(S::cmp_leq(S::zero(), tMin),
                                          S::cmp_lt(tMin, tRayMax));
       const block_t condMax = S::bit_and(S::cmp_leq(S::zero(), tMax),
                                          S::cmp_lt(tMax, tRayMax));
 
+      // (3) Min OR Max Condition Intersects AABB ////////////////////////////
+
       const int result = S::cmp_mask(S::bit_or(condMin, condMax));
+
+      // (4) Align Conditions with Ray Direction /////////////////////////////
 
       return (result & result_mask) == result_mask;
     }
