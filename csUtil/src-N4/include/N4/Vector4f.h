@@ -130,7 +130,7 @@ namespace n4 {
 
     inline block_t eval() const
     {
-      return S::load(Vector4f::_data);
+      return load();
     }
 
     ////// Assignment ////////////////////////////////////////////////////////
@@ -138,7 +138,7 @@ namespace n4 {
     template<typename EXPR>
     inline Vector4f& operator+=(const ExprBase<traits_type,EXPR>& expr)
     {
-      S::store(Vector4f::_data, S::add(S::load(Vector4f::_data), expr.as_derived().eval()));
+      store(S::add(load(), expr.as_derived().eval()));
       reset_w();
       return *this;
     }
@@ -146,7 +146,7 @@ namespace n4 {
     template<typename EXPR>
     inline Vector4f& operator-=(const ExprBase<traits_type,EXPR>& expr)
     {
-      S::store(Vector4f::_data, S::sub(S::load(Vector4f::_data), expr.as_derived().eval()));
+      store(S::sub(load(), expr.as_derived().eval()));
       reset_w();
       return *this;
     }
@@ -154,14 +154,14 @@ namespace n4 {
     template<typename EXPR>
     inline Vector4f& operator*=(const ExprBase<traits_type,EXPR>& expr)
     {
-      S::store(Vector4f::_data, S::mul(S::load(Vector4f::_data), expr.as_derived().eval()));
+      store(S::mul(load(), expr.as_derived().eval()));
       reset_w();
       return *this;
     }
 
     inline Vector4f& operator*=(const real_t val)
     {
-      S::store(Vector4f::_data, S::mul(S::load(Vector4f::_data), S::set(val)));
+      store(S::mul(load(), S::set(val)));
       reset_w();
       return *this;
     }
@@ -169,14 +169,14 @@ namespace n4 {
     template<typename EXPR>
     inline Vector4f& operator/=(const ExprBase<traits_type,EXPR>& expr)
     {
-      S::store(Vector4f::_data, S::div(S::load(Vector4f::_data), expr.as_derived().eval()));
+      store(S::div(load(), expr.as_derived().eval()));
       reset_w();
       return *this;
     }
 
     inline Vector4f& operator/=(const real_t val)
     {
-      S::store(Vector4f::_data, S::div(S::load(Vector4f::_data), S::set(val)));
+      store(S::div(load(), S::set(val)));
       reset_w();
       return *this;
     }
@@ -222,7 +222,7 @@ namespace n4 {
 
     inline bool isZero(const real_t epsilon0 = EPSILON0_VECTOR) const
     {
-      return cs::simd::isZero<S,false>(S::load(Vector4f::_data), epsilon0);
+      return cs::simd::isZero<S,false>(load(), epsilon0);
     }
 
     inline real_t max() const
@@ -241,10 +241,12 @@ namespace n4 {
     using m = cs::Math<real_t>;
     using S = SIMD128;
 
+    static constexpr bool ALIGNED = true;
+
     template<typename EXPR>
     void assign(const ExprBase<traits_type,EXPR>& expr)
     {
-      S::store(Vector4f::_data, expr.as_derived().eval());
+      store(expr.as_derived().eval());
       if constexpr( !have_assign_w<EXPR>() ) {
         reset_w();
       }
@@ -252,7 +254,7 @@ namespace n4 {
 
     inline void copy(const Vector4f& src)
     {
-      S::store(Vector4f::_data, S::load(src._data));
+      store(src.load());
       reset_w();
     }
 
@@ -276,6 +278,11 @@ namespace n4 {
       reset_w();
     }
 
+    inline block_t load() const
+    {
+      return S::load<ALIGNED>(Vector4f::_data);
+    }
+
     inline void reset_w()
     {
       if constexpr( traits_type::have_w ) {
@@ -287,8 +294,13 @@ namespace n4 {
 
     inline void set(const real_t val)
     {
-      S::store(Vector4f::_data, S::set(val));
+      store(S::set(val));
       reset_w();
+    }
+
+    inline void store(const block_t& x)
+    {
+      S::store<ALIGNED>(Vector4f::_data, x);
     }
   };
 
