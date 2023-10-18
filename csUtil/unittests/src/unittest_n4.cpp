@@ -226,6 +226,44 @@ namespace test_n4 {
       v_move = std::move(b);
       REQUIRE( equals(v_move, {5, 7, 9, W0}, 0) );
     }
+
+    {
+      n4::Color3f c{1, 2, 3, 9};
+      REQUIRE( c.r == 1.0f );
+      REQUIRE( c.g == 2.0f );
+      REQUIRE( c.b == 3.0f );
+
+      c.r = 4;
+      c.g = 5;
+      c.b = 6;
+      REQUIRE( equals(n4::expr_cast_assign_w<Vec4f::traits_type>(c), {4, 5, 6, 0}, 0) );
+    }
+
+    {
+      n4::Normal3f n{1, 2, 3, 9};
+      REQUIRE( n.x == 1.0f );
+      REQUIRE( n.y == 2.0f );
+      REQUIRE( n.z == 3.0f );
+
+      n.x = 4;
+      n.y = 5;
+      n.z = 6;
+      REQUIRE( equals(n4::expr_cast_assign_w<Vec4f::traits_type>(n), {4, 5, 6, 0}, 0) );
+    }
+
+    {
+      n4::Vertex4f v{1, 2, 3, 9};
+      REQUIRE( v.x == 1.0f );
+      REQUIRE( v.y == 2.0f );
+      REQUIRE( v.z == 3.0f );
+      REQUIRE( v.w == 1.0f );
+
+      v.x = 4;
+      v.y = 5;
+      v.z = 6;
+      v.w = 9;
+      REQUIRE( equals(n4::expr_cast_assign_w<Vec4f::traits_type>(v), {4, 5, 6, 9}, 0) );
+    }
   }
 
   TEST_CASE("N4 Vector4f assignment.", "[Vector4f][assign]") {
