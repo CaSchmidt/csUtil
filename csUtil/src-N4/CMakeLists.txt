@@ -5,7 +5,6 @@ list(APPEND N4_HEADERS
   include/N4/ExprBase.h
   include/N4/ExprCast.h
   include/N4/Functions.h
-  include/N4/Manipulator.h
   include/N4/Matrix4f.h
   include/N4/N4.h
   include/N4/N4Traits.h

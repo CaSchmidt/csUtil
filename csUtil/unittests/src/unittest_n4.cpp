@@ -10,7 +10,7 @@
 
 ////// Global Types //////////////////////////////////////////////////////////
 
-using SIMD128 = cs::SIMD128<cs::real32_t>;
+using SIMD128 = n4::SIMD128;
 
 using real_t = SIMD128::value_type;
 
@@ -169,8 +169,15 @@ namespace test_n4 {
   TEST_CASE("N4 global constants.", "[N4][global]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
+    std::cout << "sizeof(real_t) = " << sizeof(real_t) << std::endl;
+    REQUIRE( sizeof(real_t) == 4 );
+
     std::cout << "sizeof(Mat4f) = " << sizeof(Mat4f) << std::endl;
+    REQUIRE( sizeof(Mat4f) == sizeof(real_t)*4*4 );
+
     std::cout << "sizeof(Vec4f) = " << sizeof(Vec4f) << std::endl;
+    REQUIRE( sizeof(Vec4f) == sizeof(real_t)*4 );
+
     std::cout << std::endl;
 
     PRINTexpr(a);
@@ -470,13 +477,13 @@ namespace test_optics {
     static constexpr bool have_w = false;
   };
 
-  using Direction = n4::Vector4f<DirectionTraits,n4::Normal3fManipulator>;
+  using Direction = n4::Vector4f<DirectionTraits,n4::Normal3fData>;
 
   struct NormalTraits {
     static constexpr bool have_w = false;
   };
 
-  using Normal = n4::Vector4f<NormalTraits,n4::Normal3fManipulator>;
+  using Normal = n4::Vector4f<NormalTraits,n4::Normal3fData>;
 
   Direction make_I()
   {

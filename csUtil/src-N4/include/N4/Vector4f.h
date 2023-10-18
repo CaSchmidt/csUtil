@@ -38,24 +38,24 @@
 #include <cs/SIMD/SIMD128Vec4f.h>
 
 #include <N4/ExprBase.h>
-#include <N4/Manipulator.h>
+#include <N4/N4Traits.h>
 
 namespace n4 {
 
-  template<typename traits_T, typename manip_T = NoManipulator>
+  template<typename traits_T, typename data_T>
   class Vector4f
-      : public ExprBase<traits_T,Vector4f<traits_T,manip_T>>
-      , public manip_T {
+      : public ExprBase<traits_T,Vector4f<traits_T,data_T>>
+      , public data_T {
   public:
     ////// Assertions ////////////////////////////////////////////////////////
 
     static_assert( cs::simd::is_simd128x4f_v<SIMD128> );
+    static_assert( sizeof(data_T) == sizeof(real_t)*4 );
 
     ////// Types /////////////////////////////////////////////////////////////
 
-    using manip_type = manip_T;
     using value_type = real_t;
-    using typename ExprBase<traits_T,Vector4f<traits_T,manip_T>>::traits_type;
+    using typename ExprBase<traits_T,Vector4f<traits_T,data_T>>::traits_type;
 
     ////// Destructor ////////////////////////////////////////////////////////
 
@@ -64,7 +64,6 @@ namespace n4 {
     ////// Constructor ///////////////////////////////////////////////////////
 
     Vector4f(const real_t val = 0) noexcept
-      : manip_type(_data)
     {
       set(val);
     }
@@ -78,7 +77,6 @@ namespace n4 {
     ////// Initialize ////////////////////////////////////////////////////////
 
     Vector4f(const std::initializer_list<real_t>& list) noexcept
-      : manip_type(_data)
     {
       initialize(list);
     }
@@ -92,7 +90,6 @@ namespace n4 {
     ////// Copy //////////////////////////////////////////////////////////////
 
     Vector4f(const Vector4f& other) noexcept
-      : manip_type(_data)
     {
       copy(other);
     }
@@ -106,7 +103,6 @@ namespace n4 {
     ////// Move //////////////////////////////////////////////////////////////
 
     Vector4f(Vector4f&& other) noexcept
-      : manip_type(_data)
     {
       copy(other);
     }
@@ -121,7 +117,6 @@ namespace n4 {
 
     template<typename EXPR>
     Vector4f(const ExprBase<traits_type,EXPR>& expr) noexcept
-      : manip_type(_data)
     {
       assign(expr);
     }
@@ -135,7 +130,7 @@ namespace n4 {
 
     inline block_t eval() const
     {
-      return S::load(_data);
+      return S::load(Vector4f::_data);
     }
 
     ////// Assignment ////////////////////////////////////////////////////////
@@ -143,7 +138,7 @@ namespace n4 {
     template<typename EXPR>
     inline Vector4f& operator+=(const ExprBase<traits_type,EXPR>& expr)
     {
-      S::store(_data, S::add(S::load(_data), expr.as_derived().eval()));
+      S::store(Vector4f::_data, S::add(S::load(Vector4f::_data), expr.as_derived().eval()));
       reset_w();
       return *this;
     }
@@ -151,7 +146,7 @@ namespace n4 {
     template<typename EXPR>
     inline Vector4f& operator-=(const ExprBase<traits_type,EXPR>& expr)
     {
-      S::store(_data, S::sub(S::load(_data), expr.as_derived().eval()));
+      S::store(Vector4f::_data, S::sub(S::load(Vector4f::_data), expr.as_derived().eval()));
       reset_w();
       return *this;
     }
@@ -159,14 +154,14 @@ namespace n4 {
     template<typename EXPR>
     inline Vector4f& operator*=(const ExprBase<traits_type,EXPR>& expr)
     {
-      S::store(_data, S::mul(S::load(_data), expr.as_derived().eval()));
+      S::store(Vector4f::_data, S::mul(S::load(Vector4f::_data), expr.as_derived().eval()));
       reset_w();
       return *this;
     }
 
     inline Vector4f& operator*=(const real_t val)
     {
-      S::store(_data, S::mul(S::load(_data), S::set(val)));
+      S::store(Vector4f::_data, S::mul(S::load(Vector4f::_data), S::set(val)));
       reset_w();
       return *this;
     }
@@ -174,14 +169,14 @@ namespace n4 {
     template<typename EXPR>
     inline Vector4f& operator/=(const ExprBase<traits_type,EXPR>& expr)
     {
-      S::store(_data, S::div(S::load(_data), expr.as_derived().eval()));
+      S::store(Vector4f::_data, S::div(S::load(Vector4f::_data), expr.as_derived().eval()));
       reset_w();
       return *this;
     }
 
     inline Vector4f& operator/=(const real_t val)
     {
-      S::store(_data, S::div(S::load(_data), S::set(val)));
+      S::store(Vector4f::_data, S::div(S::load(Vector4f::_data), S::set(val)));
       reset_w();
       return *this;
     }
@@ -190,12 +185,12 @@ namespace n4 {
 
     inline const real_t *data() const
     {
-      return _data;
+      return Vector4f::_data;
     }
 
     inline real_t *data()
     {
-      return _data;
+      return Vector4f::_data;
     }
 
     ////// Element Access ////////////////////////////////////////////////////
@@ -207,12 +202,12 @@ namespace n4 {
 
     inline real_t operator()(const size_t i) const
     {
-      return _data[i];
+      return Vector4f::_data[i];
     }
 
     inline real_t& operator()(const size_t i)
     {
-      return _data[i];
+      return Vector4f::_data[i];
     }
 
     ////// Functions /////////////////////////////////////////////////////////
@@ -220,26 +215,26 @@ namespace n4 {
     inline bool isNaN() const
     {
       return
-          m::isNaN(_data[0])  ||
-          m::isNaN(_data[1])  ||
-          m::isNaN(_data[2]);
+          m::isNaN(Vector4f::_data[0])  ||
+          m::isNaN(Vector4f::_data[1])  ||
+          m::isNaN(Vector4f::_data[2]);
     }
 
     inline bool isZero(const real_t epsilon0 = EPSILON0_VECTOR) const
     {
-      return cs::simd::isZero<S,false>(S::load(_data), epsilon0);
+      return cs::simd::isZero<S,false>(S::load(Vector4f::_data), epsilon0);
     }
 
     inline real_t max() const
     {
-      const real_t x = std::max<real_t>(_data[0], _data[1]);
-      return std::max<real_t>(x, _data[2]);
+      const real_t x = std::max<real_t>(Vector4f::_data[0], Vector4f::_data[1]);
+      return std::max<real_t>(x, Vector4f::_data[2]);
     }
 
     inline real_t min() const
     {
-      const real_t x = std::min<real_t>(_data[0], _data[1]);
-      return std::min<real_t>(x, _data[2]);
+      const real_t x = std::min<real_t>(Vector4f::_data[0], Vector4f::_data[1]);
+      return std::min<real_t>(x, Vector4f::_data[2]);
     }
 
   private:
@@ -249,7 +244,7 @@ namespace n4 {
     template<typename EXPR>
     void assign(const ExprBase<traits_type,EXPR>& expr)
     {
-      S::store(_data, expr.as_derived().eval());
+      S::store(Vector4f::_data, expr.as_derived().eval());
       if constexpr( !have_assign_w<EXPR>() ) {
         reset_w();
       }
@@ -257,26 +252,26 @@ namespace n4 {
 
     inline void copy(const Vector4f& src)
     {
-      S::store(_data, S::load(src._data));
+      S::store(Vector4f::_data, S::load(src._data));
       reset_w();
     }
 
     inline void initialize(const std::initializer_list<real_t>& list)
     {
       if /*constexpr*/( list.size() > 0 ) {
-        _data[0] = list.begin()[0];
+        Vector4f::_data[0] = list.begin()[0];
       } else {
-        _data[0] = 0;
+        Vector4f::_data[0] = 0;
       }
       if /*constexpr*/( list.size() > 1 ) {
-        _data[1] = list.begin()[1];
+        Vector4f::_data[1] = list.begin()[1];
       } else {
-        _data[1] = 0;
+        Vector4f::_data[1] = 0;
       }
       if /*constexpr*/( list.size() > 2 ) {
-        _data[2] = list.begin()[2];
+        Vector4f::_data[2] = list.begin()[2];
       } else {
-        _data[2] = 0;
+        Vector4f::_data[2] = 0;
       }
       reset_w();
     }
@@ -284,20 +279,17 @@ namespace n4 {
     inline void reset_w()
     {
       if constexpr( traits_type::have_w ) {
-        _data[3] = 1;
+        Vector4f::_data[3] = 1;
       } else {
-        _data[3] = 0;
+        Vector4f::_data[3] = 0;
       }
     }
 
     inline void set(const real_t val)
     {
-      S::store(_data, S::set(val));
+      S::store(Vector4f::_data, S::set(val));
       reset_w();
     }
-
-  private:
-    alignas(sizeof(S::block_type)) real_t _data[4];
   };
 
 } // namespace n4

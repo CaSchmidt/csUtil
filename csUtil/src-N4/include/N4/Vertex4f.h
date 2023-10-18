@@ -35,31 +35,19 @@
 
 namespace n4 {
 
-  class Vertex4fManipulator {
-  public:
-    Vertex4fManipulator(real_t *data) noexcept
-      : x(data)
-      , y(data)
-      , z(data)
-      , w(data)
-    {
-    }
-
-    ~Vertex4fManipulator() noexcept = default;
-
-    VectorProperty<0> x;
-    VectorProperty<1> y;
-    VectorProperty<2> z;
-    VectorProperty<3> w;
-
-  private:
-    Vertex4fManipulator() noexcept = delete;
+  struct Vertex4fData {
+    union {
+      real_t _data[4];
+      struct {
+        real_t x, y, z, w;
+      };
+    };
   };
 
   struct Vertex4fTraits {
     static constexpr bool have_w = true;
   };
 
-  using Vertex4f = Vector4f<Vertex4fTraits,Vertex4fManipulator>;
+  using Vertex4f = Vector4f<Vertex4fTraits,Vertex4fData>;
 
 } // namespace n4

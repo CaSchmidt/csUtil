@@ -31,108 +31,23 @@
 
 #pragma once
 
-#include <cstdint>
-
-#include <algorithm>
-#include <limits>
-
 #include <N4/Vector4f.h>
 
 namespace n4 {
 
-  ////// Type Traits /////////////////////////////////////////////////////////
-
-  template<typename T>
-  using is_rgb = std::bool_constant<std::is_integral_v<T>  &&  std::is_unsigned_v<T>  &&  sizeof(T) == 1>;
-
-  template<typename T>
-  using if_rgb_t = std::enable_if_t<is_rgb<T>::value,T>;
-
-  ////// Types ///////////////////////////////////////////////////////////////
-
-  using rgb_t = if_rgb_t<uint8_t>;
-
-  ////// Constants ///////////////////////////////////////////////////////////
-
-  inline constexpr real_t EPSILON0_PCT = 0x1p-7; // ca. 0.01
-
-  ////// Color Property //////////////////////////////////////////////////////
-
-  template<size_t index>
-  class ColorProperty {
-  public:
-    ColorProperty(real_t *base) noexcept
-      : _data(base + index)
-    {
-    }
-
-    ~ColorProperty() noexcept = default;
-
-    inline operator rgb_t() const
-    {
-      constexpr real_t MAX_RGB = static_cast<real_t>(256.0f - EPSILON0_PCT);
-      return static_cast<rgb_t>(std::clamp<real_t>(*_data, 0, 1)*MAX_RGB);
-    }
-
-    inline rgb_t operator=(const rgb_t c)
-    {
-      constexpr real_t MAX_RGB_T = static_cast<real_t>(std::numeric_limits<rgb_t>::max());
-      *_data = std::clamp<real_t>(static_cast<real_t>(c)/MAX_RGB_T, 0, 1);
-      return c;
-    }
-
-  private:
-    ColorProperty() noexcept = delete;
-
-    real_t *_data{nullptr};
+  struct Color3fData {
+    union {
+      real_t _data[4];
+      struct {
+        real_t r, g, b;
+      };
+    };
   };
-
-  ////// Color Manipulator ///////////////////////////////////////////////////
-
-  class Color3fManipulator {
-  public:
-    Color3fManipulator(real_t *data)
-      : r(data)
-      , g(data)
-      , b(data)
-      , r8(data)
-      , g8(data)
-      , b8(data)
-    {
-    }
-
-    ~Color3fManipulator() noexcept = default;
-
-    VectorProperty<0> r;
-    VectorProperty<1> g;
-    VectorProperty<2> b;
-
-    ColorProperty<0> r8;
-    ColorProperty<1> g8;
-    ColorProperty<2> b8;
-
-    inline real_t luminance() const
-    {
-      // NOTE 1: https://www.pbr-book.org/3ed-2018/Color_and_Radiometry/The_SampledSpectrum_Class
-      // NOTE 2: https://github.com/boksajak/referencePT/blob/master/shaders/brdf.h
-      constexpr real_t yr = 0.212671f;
-      constexpr real_t yg = 0.715160f;
-      constexpr real_t yb = 0.072169f;
-      return yr*r + yg*g + yb*b;
-    }
-
-  private:
-    Color3fManipulator() noexcept = delete;
-  };
-
-  ////// Color Traits ////////////////////////////////////////////////////////
 
   struct Color3fTraits {
     static constexpr bool have_w = false;
   };
 
-  ////// Color Type //////////////////////////////////////////////////////////
-
-  using Color3f = Vector4f<Color3fTraits,Color3fManipulator>;
+  using Color3f = Vector4f<Color3fTraits,Color3fData>;
 
 } // namespace n4
