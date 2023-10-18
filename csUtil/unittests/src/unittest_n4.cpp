@@ -237,6 +237,11 @@ namespace test_n4 {
       c.g = 5;
       c.b = 6;
       REQUIRE( equals(n4::expr_cast_assign_w<Vec4f::traits_type>(c), {4, 5, 6, 0}, 0) );
+
+      c = {-1, 0.5, 2};
+      REQUIRE( c.r8() == cs::byte_t{0x00} );
+      REQUIRE( c.g8() == cs::byte_t{0x7F} ); // NOTE: 0.5*255 = 127.5
+      REQUIRE( c.b8() == cs::byte_t{0xFF} );
     }
 
     {

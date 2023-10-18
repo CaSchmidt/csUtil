@@ -31,9 +31,22 @@
 
 #pragma once
 
+#include <algorithm>
+
 #include <N4/Vector4f.h>
 
 namespace n4 {
+
+  namespace impl_color3f {
+
+    constexpr cs::byte_t to_c8(const real_t c)
+    {
+      constexpr real_t MAX = 255;
+      constexpr real_t MIN = 0;
+      return static_cast<cs::byte_t>(std::clamp(c*MAX, MIN, MAX));
+    }
+
+  } // namespace impl_color3f
 
   struct Color3fData {
     union {
@@ -42,6 +55,21 @@ namespace n4 {
         real_t r, g, b;
       };
     };
+
+    cs::byte_t r8() const
+    {
+      return impl_color3f::to_c8(r);
+    }
+
+    cs::byte_t g8() const
+    {
+      return impl_color3f::to_c8(g);
+    }
+
+    cs::byte_t b8() const
+    {
+      return impl_color3f::to_c8(b);
+    }
   };
 
   struct Color3fTraits {
