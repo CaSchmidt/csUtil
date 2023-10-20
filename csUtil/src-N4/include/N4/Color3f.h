@@ -56,17 +56,27 @@ namespace n4 {
       };
     };
 
-    cs::byte_t r8() const
+    inline real_t luminance() const
+    {
+      // NOTE 1: https://www.pbr-book.org/3ed-2018/Color_and_Radiometry/The_SampledSpectrum_Class
+      // NOTE 2: https://github.com/boksajak/referencePT/blob/master/shaders/brdf.h
+      constexpr real_t yr = 0.212671f;
+      constexpr real_t yg = 0.715160f;
+      constexpr real_t yb = 0.072169f;
+      return yr*r + yg*g + yb*b;
+    }
+
+    inline cs::byte_t r8() const
     {
       return impl_color3f::to_c8(r);
     }
 
-    cs::byte_t g8() const
+    inline cs::byte_t g8() const
     {
       return impl_color3f::to_c8(g);
     }
 
-    cs::byte_t b8() const
+    inline cs::byte_t b8() const
     {
       return impl_color3f::to_c8(b);
     }
