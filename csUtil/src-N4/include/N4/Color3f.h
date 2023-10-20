@@ -88,4 +88,10 @@ namespace n4 {
 
   using Color3f = Vector4f<Color3fTraits,Color3fData>;
 
+  inline Color3f pow(const Color3f& c, const real_t expnt)
+  {
+    using m = cs::Math<real_t>;
+    return Color3f{m::pow(c.r, expnt), m::pow(c.g, expnt), m::pow(c.b, expnt)};
+  }
+
 } // namespace n4
