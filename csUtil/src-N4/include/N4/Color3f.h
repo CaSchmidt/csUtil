@@ -66,6 +66,14 @@ namespace n4 {
       return yr*r + yg*g + yb*b;
     }
 
+    inline void pow(const real_t exponent)
+    {
+      using m = cs::Math<real_t>;
+      r = m::pow(r, exponent);
+      g = m::pow(g, exponent);
+      b = m::pow(b, exponent);
+    }
+
     inline cs::byte_t r8() const
     {
       return impl_color3f::to_c8(r);
@@ -88,10 +96,11 @@ namespace n4 {
 
   using Color3f = Vector4f<Color3fTraits,Color3fData>;
 
-  inline Color3f pow(const Color3f& c, const real_t expnt)
+  inline Color3f pow(const Color3f& c, const real_t exponent)
   {
-    using m = cs::Math<real_t>;
-    return Color3f{m::pow(c.r, expnt), m::pow(c.g, expnt), m::pow(c.b, expnt)};
+    Color3f result(c);
+    result.pow(exponent);
+    return result;
   }
 
 } // namespace n4
