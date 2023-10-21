@@ -113,7 +113,7 @@ namespace cs {
     inline static bool isZero(const value_type& x,
                               const value_type& tol = RealKonst<value_type>::micro)
     {
-      return abs(x) <= tol;
+      return MathImpl::abs(x) <= tol;
     }
 
     inline static value_type log(const value_type& x)
@@ -234,7 +234,7 @@ namespace cs {
     inline static bool isZero(const value_type& x,
                               const value_type& tol = RealKonst<value_type>::micro)
     {
-      return abs(x) <= tol;
+      return MathImpl::abs(x) <= tol;
     }
 
     inline static value_type log(const value_type& x)
