@@ -44,7 +44,7 @@ namespace n4 {
 
   ////// 4x4 Column-Major Matrix - Implementation ////////////////////////////
 
-  class Matrix4f {
+  class alignas(SIMD128::block_type) Matrix4f {
   public:
     ////// Destructor ////////////////////////////////////////////////////////
 
@@ -199,7 +199,7 @@ namespace n4 {
       S::store(_data + 12, col);
     }
 
-    alignas(sizeof(S::block_type)) real_t _data[16];
+    real_t _data[16];
   };
 
   ////// 4x4 Matrix - Binary Operators ///////////////////////////////////////

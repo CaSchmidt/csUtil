@@ -44,7 +44,7 @@ namespace n4 {
 
   template<typename traits_T, typename data_T>
   requires is_vector4fdata_v<data_T>
-  class Vector4f
+  class alignas(SIMD128::block_type) Vector4f
       : public ExprBase<traits_T,Vector4f<traits_T,data_T>>
       , public data_T {
   public:

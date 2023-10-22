@@ -175,8 +175,14 @@ namespace test_n4 {
     std::cout << "sizeof(Mat4f) = " << sizeof(Mat4f) << std::endl;
     REQUIRE( sizeof(Mat4f) == sizeof(real_t)*4*4 );
 
+    std::cout << "alignof(Mat4f) = " << alignof(Mat4f) << std::endl;
+    REQUIRE( alignof(Mat4f) == alignof(SIMD128::block_type) );
+
     std::cout << "sizeof(Vec4f) = " << sizeof(Vec4f) << std::endl;
     REQUIRE( sizeof(Vec4f) == sizeof(real_t)*4 );
+
+    std::cout << "alignof(Vec4f) = " << alignof(Vec4f) << std::endl;
+    REQUIRE( alignof(Vec4f) == alignof(SIMD128::block_type) );
 
     std::cout << std::endl;
 
