@@ -60,7 +60,7 @@ namespace util {
     {
     }
 
-    void operator()(int& i)
+    void operator()(int& i) const
     {
       delay();
 
