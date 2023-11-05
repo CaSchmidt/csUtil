@@ -34,8 +34,8 @@
 #include <filesystem>
 #include <memory>
 
-#include <cs/Core/Buffer.h>
 #include <cs/Core/Flags.h>
+#include <cs/Crypto/Hash.h>
 #include <cs/IO/AbstractIODevice.h>
 
 namespace cs {
@@ -63,6 +63,8 @@ namespace cs {
 
     using OpenFlags = Flags<FileOpenFlag>;
 
+    static constexpr std::size_t SIZE_TEMP = 128*1024;
+
     File() noexcept;
     ~File() noexcept;
 
@@ -81,6 +83,8 @@ namespace cs {
     std::size_t write(const void *data, const std::size_t sizData) const;
 
     Buffer readAll() const;
+
+    Buffer sum(const Hash::Function func, const std::size_t sizTemp = SIZE_TEMP) const;
 
   private:
     FileImplPtr _impl{nullptr};
