@@ -62,12 +62,12 @@ namespace cs {
     using k = Konst<std::size_t>;
 
     if( !isHexString(str, lenStr) ) {
-      return Buffer{};
+      return Buffer();
     }
 
     Buffer result;
     if( !resize(&result, (lenStr + k::ONE)/k::TWO) ) {
-      return Buffer{};
+      return Buffer();
     }
 
     const std::size_t i0 = result.size() != lenStr/k::TWO
@@ -93,7 +93,7 @@ namespace cs {
     using k = Konst<std::size_t>;
 
     if( !Pointer::isValidRange(data, sizData) ) {
-      return std::string{};
+      return std::string();
     }
 
     const std::size_t length = fill != '\0'
@@ -102,7 +102,7 @@ namespace cs {
 
     std::string result;
     if( !resize(&result, length, fill) ) {
-      return std::string{};
+      return std::string();
     }
 
     const std::size_t dpos = fill != '\0'
