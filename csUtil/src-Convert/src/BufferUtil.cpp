@@ -47,9 +47,9 @@ namespace cs {
     inline void toString(T *dest, const byte_t *src, const std::size_t lenSrc,
                          const std::size_t dpos)
     {
-      for(std::size_t i = 0, pos = 0; i < lenSrc; i++, pos += dpos) {
-        dest[pos + 0] = toHexChar<T,UPPER>(src[i], true);
-        dest[pos + 1] = toHexChar<T,UPPER>(src[i]);
+      for(std::size_t inpos = 0, outpos = 0; inpos < lenSrc; inpos++, outpos += dpos) {
+        dest[outpos + 0] = toHexChar<T,UPPER>(src[inpos], true);
+        dest[outpos + 1] = toHexChar<T,UPPER>(src[inpos]);
       }
     }
 
@@ -88,7 +88,7 @@ namespace cs {
   }
 
   CS_UTIL_EXPORT std::string toString(const void *data, const std::size_t sizData,
-                                      const char fill, const bool is_upper)
+                                      const char sep, const bool is_upper)
   {
     using k = Konst<std::size_t>;
 
@@ -96,16 +96,18 @@ namespace cs {
       return std::string();
     }
 
-    const std::size_t length = fill != '\0'
+    // Reserve output length, including separator.
+    const std::size_t length = sep != '\0'
         ? sizData*k::THREE - k::ONE // sizeData*2 + (sizeData - 1)
         : sizData*k::TWO;
 
     std::string result;
-    if( !resize(&result, length, fill) ) {
+    if( !resize(&result, length, sep) ) {
       return std::string();
     }
 
-    const std::size_t dpos = fill != '\0'
+    // Adjust output position according to separator.
+    const std::size_t dpos = sep != '\0'
         ? 3
         : 2;
 

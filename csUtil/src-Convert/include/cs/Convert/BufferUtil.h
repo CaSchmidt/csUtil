@@ -12,7 +12,7 @@ namespace cs {
   CS_UTIL_EXPORT Buffer toBuffer(const char *str, const std::size_t lenStr);
 
   CS_UTIL_EXPORT std::string toString(const void *data, const std::size_t sizData,
-                                      const char fill = '\0', const bool is_upper = false);
+                                      const char sep = '\0', const bool is_upper = false);
 
   ////// Helper //////////////////////////////////////////////////////////////
 
@@ -33,9 +33,9 @@ namespace cs {
   }
 
   inline std::string toString(const Buffer& buffer,
-                              const char fill = '\0', const bool is_upper = false)
+                              const char sep = '\0', const bool is_upper = false)
   {
-    return toString(buffer.data(), buffer.size(), fill, is_upper);
+    return toString(buffer.data(), buffer.size(), sep, is_upper);
   }
 
   inline std::string toString(const Buffer& buffer,
