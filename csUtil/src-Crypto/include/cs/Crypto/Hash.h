@@ -46,7 +46,8 @@ namespace cs {
   class CS_UTIL_EXPORT Hash {
   public:
     enum Function : unsigned int {
-      CRC32 = 0,
+      Invalid = 0,
+      CRC32,
       MD5,
       SHA1,
       // SHA-2
@@ -71,6 +72,8 @@ namespace cs {
     ~Hash() noexcept;
 
     bool isNull() const;
+
+    Function id() const;
 
     std::size_t digestSize() const;
     void reset();

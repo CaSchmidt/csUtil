@@ -54,6 +54,8 @@ namespace cs {
     {
     }
 
+    virtual Hash::Function id() const = 0;
+
     virtual void copyResult(void *data) const = 0;
     virtual std::size_t digestSize() const = 0;
     virtual void reset() = 0;
@@ -73,6 +75,11 @@ namespace cs {
 
     ~HashCrc32() noexcept
     {
+    }
+
+    Hash::Function id() const
+    {
+      return Hash::CRC32;
     }
 
     void copyResult(void *data) const
@@ -114,6 +121,11 @@ namespace cs {
 
     ~HashMd5() noexcept
     {
+    }
+
+    Hash::Function id() const
+    {
+      return Hash::MD5;
     }
 
     void copyResult(void *data) const
@@ -158,6 +170,11 @@ namespace cs {
     {
     }
 
+    Hash::Function id() const
+    {
+      return Hash::SHA1;
+    }
+
     void copyResult(void *data) const
     {
       SHA1Result(const_cast<SHA1Context*>(&_ctx),
@@ -198,6 +215,11 @@ namespace cs {
 
     ~HashSha2_224() noexcept
     {
+    }
+
+    Hash::Function id() const
+    {
+      return Hash::SHA224;
     }
 
     void copyResult(void *data) const
@@ -242,6 +264,11 @@ namespace cs {
     {
     }
 
+    Hash::Function id() const
+    {
+      return Hash::SHA256;
+    }
+
     void copyResult(void *data) const
     {
       SHA256Result(const_cast<SHA256Context*>(&_ctx),
@@ -284,6 +311,11 @@ namespace cs {
     {
     }
 
+    Hash::Function id() const
+    {
+      return Hash::SHA384;
+    }
+
     void copyResult(void *data) const
     {
       SHA384Result(const_cast<SHA384Context*>(&_ctx),
@@ -324,6 +356,11 @@ namespace cs {
 
     ~HashSha2_512() noexcept
     {
+    }
+
+    Hash::Function id() const
+    {
+      return Hash::SHA512;
     }
 
     void copyResult(void *data) const
@@ -395,6 +432,13 @@ namespace cs {
   bool Hash::isNull() const
   {
     return !_impl;
+  }
+
+  Hash::Function Hash::id() const
+  {
+    return _impl
+        ? _impl->id()
+        : Invalid;
   }
 
   std::size_t Hash::digestSize() const
