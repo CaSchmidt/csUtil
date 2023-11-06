@@ -29,69 +29,29 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#pragma once
+#include "cs/Crypto/CryptoUtil.h"
 
-#include <memory>
-
-#include <cs/Core/csutil_config.h>
-
-#include <cs/Core/Buffer.h>
+#include "cs/Core/Container.h"
 
 namespace cs {
 
-  class HashImpl;
+  Buffer sum(const File& file, const Hash::Function func,
+             const std::size_t sizTemp)
+  {
+    constexpr std::size_t ZERO = 0;
 
-  using HashImplPtr = std::unique_ptr<HashImpl>;
-
-  class CS_UTIL_EXPORT Hash {
-  public:
-    enum Function : unsigned int {
-      Invalid = 0,
-      CRC32,
-      MD5,
-      SHA1,
-      // SHA-2
-      SHA224,
-      SHA256,
-      SHA384,
-      SHA512
-    };
-
-    enum DigestSize : std::size_t {
-      Size_CRC32 = 4,
-      Size_MD5 = 16,
-      Size_SHA1 = 20,
-      // SHA-2
-      Size_SHA224 = 28,
-      Size_SHA256 = 32,
-      Size_SHA384 = 48,
-      Size_SHA512 = 64
-    };
-
-    Hash(const Function func) noexcept;
-    ~Hash() noexcept;
-
-    Function id() const;
-
-    inline bool isInvalid() const
-    {
-      return id() == Invalid;
+    Buffer buffer;
+    Hash   hash(func);
+    if( !file.isOpen()  ||  !resize(&buffer, sizTemp)  ||  hash.isInvalid() ) {
+      return Buffer();
     }
 
-    std::size_t digestSize() const;
-    void reset();
-    Buffer result() const;
-    bool update(const void *data, const std::size_t sizData);
-
-    inline bool operator()(const void *data, const std::size_t sizData)
-    {
-      return update(data, sizData);
+    for(std::size_t numRead = 0;
+        (numRead = file.read(buffer.data(), buffer.size())) > ZERO; ) {
+      hash(buffer.data(), numRead);
     }
 
-  private:
-    Hash() noexcept = delete;
-
-    HashImplPtr _impl{nullptr};
-  };
+    return hash.result();
+  }
 
 } // namespace cs
