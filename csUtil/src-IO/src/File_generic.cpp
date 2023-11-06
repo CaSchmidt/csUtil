@@ -62,21 +62,4 @@ namespace cs {
     return buffer;
   }
 
-  Buffer File::sum(const Hash::Function func, const std::size_t sizTemp) const
-  {
-    Hash hash(func);
-
-    Buffer buffer;
-    if( !isOpen()  ||  !resize(&buffer, sizTemp)  ||  hash.isNull() ) {
-      return Buffer();
-    }
-
-    seek(0);
-    for(std::size_t numRead = 0; (numRead = read(buffer.data(), buffer.size())) > 0; ) {
-      hash(buffer.data(), numRead);
-    }
-
-    return hash.result();
-  }
-
 } // namespace cs
