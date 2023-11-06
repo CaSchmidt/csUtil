@@ -812,11 +812,7 @@ namespace cs {
     requires is_widechar_v<WCharT>  &&  is_narrowchar_v<NCharT>
     inline void widen(WCharT *dest, const NCharT *first, const NCharT *last)
     {
-      constexpr auto lambda_widen = [](const NCharT& c) -> WCharT {
-        return static_cast<WCharT>(c);
-      };
-
-      std::transform(first, last, dest, lambda_widen);
+      std::transform(first, last, dest, lambda_widen<WCharT,NCharT>());
     }
 
   } // namespace impl_string

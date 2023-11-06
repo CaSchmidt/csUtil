@@ -41,6 +41,8 @@ namespace cs {
   struct glyph {
     static constexpr auto null = static_cast<T>('\0');
 
+    static constexpr auto sub = static_cast<T>(0x1A); // substitute
+
     static constexpr auto space = static_cast<T>(' ');  // space
     static constexpr auto    ff = static_cast<T>('\f'); // form feed
     static constexpr auto    lf = static_cast<T>('\n'); // line feed
@@ -156,7 +158,7 @@ namespace cs {
   ////// Hex Conversion //////////////////////////////////////////////////////
 
   template<typename T> requires is_char_v<T>
-  constexpr byte_t fromHexChar(const T c)
+  constexpr byte_t fromHexChar(const T& c)
   {
     using g = glyph<T>;
     if(        g::a    <= c  &&  c <= g::f    ) {
@@ -170,7 +172,7 @@ namespace cs {
   }
 
   template<typename T, bool UPPER = false> requires is_char_v<T>
-  constexpr T toHexChar(const byte_t in, const bool hi_nibble = false)
+  constexpr T toHexChar(const byte_t& in, const bool hi_nibble = false)
   {
     constexpr T hex10 = UPPER
         ? glyph<T>::A
@@ -181,6 +183,24 @@ namespace cs {
     return nibble >= 10
         ? nibble - 10 + hex10
         : nibble + glyph<T>::zero;
+  }
+
+  ////// Widen Character /////////////////////////////////////////////////////
+
+  template<typename WCharT, typename NCharT>
+  requires is_widechar_v<WCharT>  &&  is_narrowchar_v<NCharT>
+  constexpr WCharT widen(const NCharT& in)
+  {
+    constexpr NCharT ZERO = 0;
+    constexpr NCharT  ONE = 1;
+
+    constexpr std::size_t MAX_BIT  = sizeof(NCharT)*8 - 1;
+    constexpr NCharT       HI_BIT  = ONE << MAX_BIT;
+    constexpr WCharT     REPL_CHAR = 0xFFFD;
+
+    return (in & HI_BIT) != ZERO
+        ? REPL_CHAR
+        : static_cast<WCharT>(in);
   }
 
   ////// Lambdas /////////////////////////////////////////////////////////////
@@ -262,6 +282,15 @@ namespace cs {
   {
     return [](T& c) -> void {
       c = toUpper(c);
+    };
+  }
+
+  template<typename WCharT, typename NCharT>
+  requires is_widechar_v<WCharT>  &&  is_narrowchar_v<NCharT>
+  constexpr auto lambda_widen()
+  {
+    return [](const NCharT& c) -> WCharT {
+      return widen<WCharT,NCharT>(c);
     };
   }
 
