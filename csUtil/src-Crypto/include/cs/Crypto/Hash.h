@@ -71,8 +71,6 @@ namespace cs {
     Hash(const Function func) noexcept;
     ~Hash() noexcept;
 
-    bool isNull() const;
-
     Function id() const;
 
     std::size_t digestSize() const;

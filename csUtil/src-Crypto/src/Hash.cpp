@@ -429,11 +429,6 @@ namespace cs {
   {
   }
 
-  bool Hash::isNull() const
-  {
-    return !_impl;
-  }
-
   Hash::Function Hash::id() const
   {
     return _impl
