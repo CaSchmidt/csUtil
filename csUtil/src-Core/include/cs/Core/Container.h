@@ -39,9 +39,11 @@ namespace cs {
   inline bool resize(C *container,
                      const typename C::size_type count)
   {
+    constexpr typename C::size_type ONE = 1;
+
     container->clear();
 
-    if( count <= 0 ) {
+    if( count < ONE ) {
       return false;
     }
 
@@ -59,9 +61,11 @@ namespace cs {
                      const typename C::size_type count,
                      const typename C::value_type& value)
   {
+    constexpr typename C::size_type ONE = 1;
+
     container->clear();
 
-    if( count <= 0 ) {
+    if( count < ONE ) {
       return false;
     }
 
