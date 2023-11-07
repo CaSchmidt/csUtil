@@ -41,8 +41,6 @@ namespace cs {
   struct glyph {
     static constexpr auto null = static_cast<T>('\0');
 
-    static constexpr auto sub = static_cast<T>(0x1A); // substitute
-
     static constexpr auto space = static_cast<T>(' ');  // space
     static constexpr auto    ff = static_cast<T>('\f'); // form feed
     static constexpr auto    lf = static_cast<T>('\n'); // line feed
@@ -185,7 +183,19 @@ namespace cs {
         : nibble + glyph<T>::zero;
   }
 
-  ////// Widen Character /////////////////////////////////////////////////////
+  ////// Narrow/Widen Character //////////////////////////////////////////////
+
+  template<typename NCharT, typename WCharT>
+  requires is_narrowchar_v<NCharT>  &&  is_widechar_v<WCharT>
+  constexpr NCharT narrow(const WCharT& in)
+  {
+    constexpr WCharT MAX_ASCII = 0x7F;
+    constexpr NCharT       SUB = 0x1A;
+
+    return in > MAX_ASCII
+        ? SUB
+        : static_cast<NCharT>(in);
+  }
 
   template<typename WCharT, typename NCharT>
   requires is_widechar_v<WCharT>  &&  is_narrowchar_v<NCharT>
@@ -282,6 +292,15 @@ namespace cs {
   {
     return [](T& c) -> void {
       c = toUpper(c);
+    };
+  }
+
+  template<typename NCharT, typename WCharT>
+  requires is_narrowchar_v<NCharT>  &&  is_widechar_v<WCharT>
+  constexpr auto lambda_narrow()
+  {
+    return [](const WCharT& c) -> NCharT {
+      return narrow<NCharT,WCharT>(c);
     };
   }
 
