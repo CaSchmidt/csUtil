@@ -93,6 +93,20 @@ namespace cs {
                                 std::forward<ReduceFunc>(reduce), std::plus<void>{});
   }
 
+  template<typename T, typename ForwardIt, typename MapToFunc, typename ReduceFunc, typename FoldFunc>
+  [[nodiscard]] std::future<T> mapReduce(const std::size_t numThreads,
+                                         ForwardIt first, ForwardIt last,
+                                         MapToFunc&& mapTo, const std::chrono::milliseconds wait_ms,
+                                         ReduceFunc&& reduce, FoldFunc&& fold)
+  {
+    using namespace impl_mapreduce;
+
+    return std::async(ASYNC, blockingMapReduce<T,ForwardIt,MapToFunc,ReduceFunc,FoldFunc>,
+                      numThreads, first, last,
+                      std::forward<MapToFunc>(mapTo), wait_ms,
+                      std::forward<ReduceFunc>(reduce), std::forward<FoldFunc>(fold));
+  }
+
   template<typename T, typename ForwardIt, typename MapToFunc, typename ReduceFunc>
   [[nodiscard]] std::future<T> mapReduce(const std::size_t numThreads,
                                          ForwardIt first, ForwardIt last, MapToFunc&& mapTo,
