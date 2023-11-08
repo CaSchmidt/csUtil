@@ -35,8 +35,8 @@
 
 namespace cs {
 
-  Buffer sum(const File& file, const Hash::Function func,
-             const std::size_t sizTemp)
+  CS_UTIL_EXPORT Buffer sum(const File& file, const Hash::Function func,
+                            const std::size_t sizTemp)
   {
     constexpr std::size_t ZERO = 0;
 
