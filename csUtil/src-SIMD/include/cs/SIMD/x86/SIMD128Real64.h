@@ -85,6 +85,12 @@ namespace cs {
           : _mm_loadu_pd(src);
     }
 
+    template<bool ALIGNED = true>
+    inline static block_type load(const void *src)
+    {
+      return load<ALIGNED>(reinterpret_cast<const value_type*>(src));
+    }
+
     inline static block_type set(const value_type val)
     {
       return _mm_set1_pd(val);
@@ -101,6 +107,12 @@ namespace cs {
       return ALIGNED
           ? _mm_store_pd(dest, x)
           : _mm_storeu_pd(dest, x);
+    }
+
+    template<bool ALIGNED = true>
+    inline static void store(void *dest, const block_type& x)
+    {
+      store<ALIGNED>(reinterpret_cast<value_type*>(dest), x);
     }
 
     inline static value_type to_value(const block_type& x)
