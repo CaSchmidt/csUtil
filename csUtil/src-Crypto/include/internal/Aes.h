@@ -31,23 +31,11 @@
 
 #pragma once
 
-#include <wmmintrin.h>
-
-#include <cs/SIMD/SIMD128.h>
+#include "cs/Core/TypeTraits.h"
 
 namespace cs {
 
   namespace impl_aes {
-
-    ////// AES-NI SIMD Support ///////////////////////////////////////////////
-
-    struct AESNI : public SIMD128<int32_t> {
-      template<int RCON>
-      inline static block_type aeskeygenassist(const block_type& w)
-      {
-        return _mm_aeskeygenassist_si128(w, RCON);
-      }
-    };
 
     ////// AES Constants /////////////////////////////////////////////////////
 
@@ -115,65 +103,6 @@ namespace cs {
       static constexpr std::size_t Nr = AesNr<BITS>::value;
 
       static constexpr std::size_t NUM_KEYEXP = Nb*(Nr + ONE) - Nk;
-    };
-
-    ////// AES Key Expansion /////////////////////////////////////////////////
-
-    template<int BITS, std::size_t COUNTER>
-    struct KeyExpander {
-      using Traits = AesTraits<BITS>;
-
-      static_assert( 0 < COUNTER  &&  COUNTER <= Traits::NUM_KEYEXP );
-
-      template<std::size_t I>
-      inline static void eval(uint32_t *w)
-      {
-        using S = AESNI;
-
-        constexpr std::size_t ZERO = 0;
-        constexpr std::size_t  ONE = 1;
-        constexpr std::size_t FOUR = 4;
-
-        uint32_t temp = w[I - ONE];
-
-        if constexpr( I%Traits::Nk == ZERO ) {
-          constexpr int RCON = AesRCON<I/Traits::Nk>::value;
-          const S::block_type TEMP =
-              S::aeskeygenassist<RCON>(S::load<false>(&w[I - FOUR]));
-          temp = static_cast<uint32_t>(S::to_value(S::swizzle<3,3,3,3>(TEMP)));
-        }
-
-        w[I] = w[I - Traits::Nk] ^ temp;
-      }
-
-      inline static void loop(uint32_t *w)
-      {
-        constexpr std::size_t I = Traits::NUM_KEYEXP - COUNTER + Traits::Nk;
-
-        eval<I>(w);
-
-        KeyExpander<BITS,COUNTER-1>::loop(w);
-      }
-    };
-
-    template<int BITS>
-    struct KeyExpander<BITS,0> {
-      using Traits = AesTraits<BITS>;
-
-      inline static void loop(uint32_t *)
-      {
-      }
-
-      inline static void start(uint32_t *w, const byte_t *key)
-      {
-        constexpr std::size_t FOUR = 4;
-
-        for(std::size_t i = 0; i < Traits::Nk; i++) {
-          w[i] = *reinterpret_cast<const uint32_t*>(&key[i*FOUR]);
-        }
-
-        KeyExpander<BITS,Traits::NUM_KEYEXP>::loop(w);
-      }
     };
 
   } // namespace impl_aes

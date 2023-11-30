@@ -1,6 +1,8 @@
 list(APPEND csCrypto_HEADERS
   include/cs/Crypto/CryptoUtil.h
   include/cs/Crypto/Hash.h
+  include/internal/Aes.h
+  include/internal/AesNi.h
 )
 
 list(APPEND csCrypto_SOURCES
