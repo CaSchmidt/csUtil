@@ -40,7 +40,7 @@ namespace test_aeskeyexp {
       };
 
       schedule.fill(0);
-      cs::impl_aes::KeyExpansion<128,0>::start(schedule.data(), key128.data());
+      cs::impl_aes::KeyExpansion<128,0>::run(schedule.data(), key128.data());
 
       REQUIRE( cmp_key( 0, schedule.data(), "2b7e151628aed2a6abf7158809cf4f3c") );
       REQUIRE( cmp_key( 1, schedule.data(), "a0fafe1788542cb123a339392a6c7605") );
@@ -66,7 +66,7 @@ namespace test_aeskeyexp {
       };
 
       schedule.fill(0);
-      cs::impl_aes::KeyExpansion<192,0>::start(schedule.data(), key192.data());
+      cs::impl_aes::KeyExpansion<192,0>::run(schedule.data(), key192.data());
 
       REQUIRE( cmp_key( 0, schedule.data(), "8e73b0f7da0e6452c810f32b809079e5") );
       REQUIRE( cmp_key( 1, schedule.data(), "62f8ead2522c6b7bfe0c91f72402f5a5") );
@@ -80,7 +80,39 @@ namespace test_aeskeyexp {
       REQUIRE( cmp_key( 9, schedule.data(), "40beeb282f18a2596747d26b458c553e") );
       REQUIRE( cmp_key(10, schedule.data(), "a7e1466c9411f1df821f750aad07d753") );
       REQUIRE( cmp_key(11, schedule.data(), "ca4005388fcc5006282d166abc3ce7b5") );
-      // REQUIRE( cmp_key(12, schedule.data(), "") );
+      REQUIRE( cmp_key(12, schedule.data(), "e98ba06f448c773c8ecc720401002202") );
+    }
+
+    {
+      const std::array<cs::byte_t,32> key256 = {
+        0x60, 0x3d, 0xeb, 0x10,
+        0x15, 0xca, 0x71, 0xbe,
+        0x2b, 0x73, 0xae, 0xf0,
+        0x85, 0x7d, 0x77, 0x81,
+        0x1f, 0x35, 0x2c, 0x07,
+        0x3b, 0x61, 0x08, 0xd7,
+        0x2d, 0x98, 0x10, 0xa3,
+        0x09, 0x14, 0xdf, 0xf4
+      };
+
+      schedule.fill(0);
+      cs::impl_aes::KeyExpansion<256,0>::run(schedule.data(), key256.data());
+
+      REQUIRE( cmp_key( 0, schedule.data(), "603deb1015ca71be2b73aef0857d7781") );
+      REQUIRE( cmp_key( 1, schedule.data(), "1f352c073b6108d72d9810a30914dff4") );
+      REQUIRE( cmp_key( 2, schedule.data(), "9ba354118e6925afa51a8b5f2067fcde") );
+      REQUIRE( cmp_key( 3, schedule.data(), "a8b09c1a93d194cdbe49846eb75d5b9a") );
+      REQUIRE( cmp_key( 4, schedule.data(), "d59aecb85bf3c917fee94248de8ebe96") );
+      REQUIRE( cmp_key( 5, schedule.data(), "b5a9328a2678a647983122292f6c79b3") );
+      REQUIRE( cmp_key( 6, schedule.data(), "812c81addadf48ba24360af2fab8b464") );
+      REQUIRE( cmp_key( 7, schedule.data(), "98c5bfc9bebd198e268c3ba709e04214") );
+      REQUIRE( cmp_key( 8, schedule.data(), "68007bacb2df331696e939e46c518d80") );
+      REQUIRE( cmp_key( 9, schedule.data(), "c814e20476a9fb8a5025c02d59c58239") );
+      REQUIRE( cmp_key(10, schedule.data(), "de1369676ccc5a71fa2563959674ee15") );
+      REQUIRE( cmp_key(11, schedule.data(), "5886ca5d2e2f31d77e0af1fa27cf73c3") );
+      REQUIRE( cmp_key(12, schedule.data(), "749c47ab18501ddae2757e4f7401905a") );
+      REQUIRE( cmp_key(13, schedule.data(), "cafaaae3e4d59b349adf6acebd10190d") );
+      REQUIRE( cmp_key(14, schedule.data(), "fe4890d1e6188d0b046df344706c631e") );
     }
   }
 

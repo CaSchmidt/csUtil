@@ -62,22 +62,35 @@ namespace cs {
       template<std::size_t I>
       inline static void eval(uint32_t *w)
       {
-        using S = AESNI;
-
         constexpr std::size_t ZERO = 0;
         constexpr std::size_t  ONE = 1;
         constexpr std::size_t FOUR = 4;
+        constexpr std::size_t  SIX = 6;
 
         uint32_t temp = w[I - ONE];
 
         if constexpr( I%Traits::Nk == ZERO ) {
-          constexpr int RCON = AesRCON<I/Traits::Nk>::value;
-          const S::block_type TEMP =
-              S::aeskeygenassist<RCON>(S::load<false>(&w[I - FOUR]));
-          temp = static_cast<uint32_t>(S::to_value(S::swizzle<3,3,3,3>(TEMP)));
+          temp = keygenassist<I,3>(w);
+        } else if constexpr( Traits::Nk > SIX  &&  I%Traits::Nk == FOUR ) {
+          temp = keygenassist<I,2>(w);
         }
 
         w[I] = w[I - Traits::Nk] ^ temp;
+      }
+
+      template<std::size_t I, int SEL>
+      inline static uint32_t keygenassist(const uint32_t *w)
+      {
+        using S = AESNI;
+
+        constexpr std::size_t FOUR = 4;
+
+        constexpr int RCON = AesRCON<I/Traits::Nk>::value;
+
+        const S::block_type  in = S::load<false>(&w[I - FOUR]);
+        const S::block_type out = S::aeskeygenassist<RCON>(in);
+
+        return static_cast<uint32_t>(S::to_value(S::swizzle<SEL,SEL,SEL,SEL>(out)));
       }
 
       inline static void loop(uint32_t *w)
@@ -98,7 +111,7 @@ namespace cs {
       {
       }
 
-      inline static void start(uint32_t *w, const byte_t *key)
+      inline static void run(uint32_t *w, const byte_t *key)
       {
         constexpr std::size_t FOUR = 4;
 
