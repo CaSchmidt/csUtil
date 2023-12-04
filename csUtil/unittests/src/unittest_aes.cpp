@@ -32,6 +32,8 @@ namespace test_aeskeyexp {
     std::array<uint32_t,60> schedule;
 
     {
+      using Traits = cs::impl_aes::AesTraits<128>;
+
       const std::array<cs::byte_t,16> key128 = {
         0x2b, 0x7e, 0x15, 0x16,
         0x28, 0xae, 0xd2, 0xa6,
@@ -40,7 +42,7 @@ namespace test_aeskeyexp {
       };
 
       schedule.fill(0);
-      cs::impl_aes::KeyExpansion<128,0>::run(schedule.data(), key128.data());
+      cs::impl_aes::KeyExpansion<Traits,0>::run(schedule.data(), key128.data());
 
       REQUIRE( cmp_key( 0, schedule.data(), "2b7e151628aed2a6abf7158809cf4f3c") );
       REQUIRE( cmp_key( 1, schedule.data(), "a0fafe1788542cb123a339392a6c7605") );
@@ -56,6 +58,8 @@ namespace test_aeskeyexp {
     }
 
     {
+      using Traits = cs::impl_aes::AesTraits<192>;
+
       const std::array<cs::byte_t,24> key192 = {
         0x8e, 0x73, 0xb0, 0xf7,
         0xda, 0x0e, 0x64, 0x52,
@@ -66,7 +70,7 @@ namespace test_aeskeyexp {
       };
 
       schedule.fill(0);
-      cs::impl_aes::KeyExpansion<192,0>::run(schedule.data(), key192.data());
+      cs::impl_aes::KeyExpansion<Traits,0>::run(schedule.data(), key192.data());
 
       REQUIRE( cmp_key( 0, schedule.data(), "8e73b0f7da0e6452c810f32b809079e5") );
       REQUIRE( cmp_key( 1, schedule.data(), "62f8ead2522c6b7bfe0c91f72402f5a5") );
@@ -84,6 +88,8 @@ namespace test_aeskeyexp {
     }
 
     {
+      using Traits = cs::impl_aes::AesTraits<256>;
+
       const std::array<cs::byte_t,32> key256 = {
         0x60, 0x3d, 0xeb, 0x10,
         0x15, 0xca, 0x71, 0xbe,
@@ -96,7 +102,7 @@ namespace test_aeskeyexp {
       };
 
       schedule.fill(0);
-      cs::impl_aes::KeyExpansion<256,0>::run(schedule.data(), key256.data());
+      cs::impl_aes::KeyExpansion<Traits,0>::run(schedule.data(), key256.data());
 
       REQUIRE( cmp_key( 0, schedule.data(), "603deb1015ca71be2b73aef0857d7781") );
       REQUIRE( cmp_key( 1, schedule.data(), "1f352c073b6108d72d9810a30914dff4") );

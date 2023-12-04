@@ -39,8 +39,10 @@ namespace cs {
 
     ////// AES Constants /////////////////////////////////////////////////////
 
-    template<std::size_t VALUE>
-    using aes_constant = std::integral_constant<std::size_t,VALUE>;
+    template<size_t VALUE>
+    using aes_constant = std::integral_constant<size_t,VALUE>;
+
+    using AESword = uint32_t;
 
     template<int BITS>
     struct AesNb { /* SFINAE */ };
@@ -69,40 +71,49 @@ namespace cs {
     template<>
     struct AesNr<256> : public aes_constant<14> {};
 
-    template<std::size_t I>
+    template<size_t I>
     struct AesRCON { /* SFINAE */ };
     template<>
-    struct AesRCON< 1> : public std::integral_constant<int,0x01> {};
+    struct AesRCON< 1> : public std::integral_constant<AESword,0x01> {};
     template<>
-    struct AesRCON< 2> : public std::integral_constant<int,0x02> {};
+    struct AesRCON< 2> : public std::integral_constant<AESword,0x02> {};
     template<>
-    struct AesRCON< 3> : public std::integral_constant<int,0x04> {};
+    struct AesRCON< 3> : public std::integral_constant<AESword,0x04> {};
     template<>
-    struct AesRCON< 4> : public std::integral_constant<int,0x08> {};
+    struct AesRCON< 4> : public std::integral_constant<AESword,0x08> {};
     template<>
-    struct AesRCON< 5> : public std::integral_constant<int,0x10> {};
+    struct AesRCON< 5> : public std::integral_constant<AESword,0x10> {};
     template<>
-    struct AesRCON< 6> : public std::integral_constant<int,0x20> {};
+    struct AesRCON< 6> : public std::integral_constant<AESword,0x20> {};
     template<>
-    struct AesRCON< 7> : public std::integral_constant<int,0x40> {};
+    struct AesRCON< 7> : public std::integral_constant<AESword,0x40> {};
     template<>
-    struct AesRCON< 8> : public std::integral_constant<int,0x80> {};
+    struct AesRCON< 8> : public std::integral_constant<AESword,0x80> {};
     template<>
-    struct AesRCON< 9> : public std::integral_constant<int,0x1B> {};
+    struct AesRCON< 9> : public std::integral_constant<AESword,0x1B> {};
     template<>
-    struct AesRCON<10> : public std::integral_constant<int,0x36> {};
+    struct AesRCON<10> : public std::integral_constant<AESword,0x36> {};
 
     ////// AES Implementation Traits /////////////////////////////////////////
 
     template<int BITS>
     struct AesTraits {
-      static constexpr std::size_t ONE = 1;
+      using word_t = AESword;
 
-      static constexpr std::size_t Nb = AesNb<BITS>::value;
-      static constexpr std::size_t Nk = AesNk<BITS>::value;
-      static constexpr std::size_t Nr = AesNr<BITS>::value;
+      static constexpr size_t  ONE = 1;
 
-      static constexpr std::size_t NUM_KEYEXP = Nb*(Nr + ONE) - Nk;
+      static constexpr size_t Nb = AesNb<BITS>::value;
+      static constexpr size_t Nk = AesNk<BITS>::value;
+      static constexpr size_t Nr = AesNr<BITS>::value;
+
+      static constexpr size_t NUM_ROUNDS = Nr + ONE;
+
+      static constexpr size_t NUM_KEYEXPITER = Nb*NUM_ROUNDS - Nk;
+
+      static constexpr size_t NUM_KEYWORDS = Nb*NUM_ROUNDS;
+
+      static constexpr size_t SIZ_BLOCK = Nb*sizeof(word_t);
+      static constexpr size_t SIZ_KEY   = Nk*sizeof(word_t);
     };
 
   } // namespace impl_aes

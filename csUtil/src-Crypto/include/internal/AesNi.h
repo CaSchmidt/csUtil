@@ -44,6 +44,31 @@ namespace cs {
     ////// AES-NI SIMD Support ///////////////////////////////////////////////
 
     struct AESNI : public SIMD128<int32_t> {
+      inline static block_type aesdec(const block_type& cipher, const block_type& key)
+      {
+        return _mm_aesdec_si128(cipher, key);
+      }
+
+      inline static block_type aesdeclast(const block_type& cipher, const block_type& key)
+      {
+        return _mm_aesdeclast_si128(cipher, key);
+      }
+
+      inline static block_type aesenc(const block_type& plain, const block_type& key)
+      {
+        return _mm_aesenc_si128(plain, key);
+      }
+
+      inline static block_type aesenclast(const block_type& plain, const block_type& key)
+      {
+        return _mm_aesenclast_si128(plain, key);
+      }
+
+      inline static block_type aesimc(const block_type& w)
+      {
+        return _mm_aesimc_si128(w);
+      }
+
       template<int RCON>
       inline static block_type aeskeygenassist(const block_type& w)
       {
@@ -53,21 +78,19 @@ namespace cs {
 
     ////// AES Key Expansion /////////////////////////////////////////////////
 
-    template<int BITS, std::size_t COUNTER>
+    template<typename Traits, size_t COUNTER>
     struct KeyExpansion {
-      using Traits = AesTraits<BITS>;
+      static_assert( 0 < COUNTER  &&  COUNTER <= Traits::NUM_KEYEXPITER );
 
-      static_assert( 0 < COUNTER  &&  COUNTER <= Traits::NUM_KEYEXP );
-
-      template<std::size_t I>
-      inline static void eval(uint32_t *w)
+      template<size_t I>
+      inline static void eval(AESword *w)
       {
-        constexpr std::size_t ZERO = 0;
-        constexpr std::size_t  ONE = 1;
-        constexpr std::size_t FOUR = 4;
-        constexpr std::size_t  SIX = 6;
+        constexpr size_t ZERO = 0;
+        constexpr size_t  ONE = 1;
+        constexpr size_t FOUR = 4;
+        constexpr size_t  SIX = 6;
 
-        uint32_t temp = w[I - ONE];
+        AESword temp = w[I - ONE];
 
         if constexpr( I%Traits::Nk == ZERO ) {
           temp = keygenassist<I,3>(w);
@@ -78,48 +101,46 @@ namespace cs {
         w[I] = w[I - Traits::Nk] ^ temp;
       }
 
-      template<std::size_t I, int SEL>
-      inline static uint32_t keygenassist(const uint32_t *w)
+      template<size_t I, int SEL>
+      inline static AESword keygenassist(const AESword *w)
       {
         using S = AESNI;
 
-        constexpr std::size_t FOUR = 4;
+        constexpr size_t FOUR = 4;
 
         constexpr int RCON = AesRCON<I/Traits::Nk>::value;
 
         const S::block_type  in = S::load<false>(&w[I - FOUR]);
         const S::block_type out = S::aeskeygenassist<RCON>(in);
 
-        return static_cast<uint32_t>(S::to_value(S::swizzle<SEL,SEL,SEL,SEL>(out)));
+        return static_cast<AESword>(S::to_value(S::swizzle<SEL,SEL,SEL,SEL>(out)));
       }
 
-      inline static void loop(uint32_t *w)
+      inline static void loop(AESword *w)
       {
-        constexpr std::size_t I = Traits::NUM_KEYEXP - COUNTER + Traits::Nk;
+        constexpr size_t I = Traits::NUM_KEYEXPITER - COUNTER + Traits::Nk;
 
         eval<I>(w);
 
-        KeyExpansion<BITS,COUNTER-1>::loop(w);
+        KeyExpansion<Traits,COUNTER-1>::loop(w);
       }
     };
 
-    template<int BITS>
-    struct KeyExpansion<BITS,0> {
-      using Traits = AesTraits<BITS>;
-
-      inline static void loop(uint32_t *)
+    template<typename Traits>
+    struct KeyExpansion<Traits,0> {
+      inline static void loop(AESword *)
       {
       }
 
-      inline static void run(uint32_t *w, const byte_t *key)
+      inline static void run(AESword *w, const byte_t *key)
       {
-        constexpr std::size_t FOUR = 4;
+        constexpr size_t FOUR = 4;
 
-        for(std::size_t i = 0; i < Traits::Nk; i++) {
-          w[i] = *reinterpret_cast<const uint32_t*>(&key[i*FOUR]);
+        for(size_t i = 0; i < Traits::Nk; i++) {
+          w[i] = *reinterpret_cast<const AESword*>(&key[i*FOUR]);
         }
 
-        KeyExpansion<BITS,Traits::NUM_KEYEXP>::loop(w);
+        KeyExpansion<Traits,Traits::NUM_KEYEXPITER>::loop(w);
       }
     };
 
