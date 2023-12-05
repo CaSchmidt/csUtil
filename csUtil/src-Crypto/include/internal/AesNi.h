@@ -144,6 +144,27 @@ namespace cs {
       }
     };
 
+    ////// AES Decrypt Keys //////////////////////////////////////////////////
+
+    template<typename Traits>
+    void setDecryptKeys(typename Traits::word_t *dec,
+                        const typename Traits::word_t *enc)
+    {
+      using S = AESNI;
+
+      constexpr size_t Nb = Traits::Nb;
+      constexpr size_t Nr = Traits::Nr;
+
+      constexpr size_t ZERO = 0;
+      constexpr size_t  ONE = 1;
+
+      S::store(&dec[ZERO*Nb], S::load(&enc[Nr*Nb]));
+      for(size_t i = ONE; i < Nr; i++) {
+        S::store(&dec[i*Nb], S::aesimc(S::load(&enc[(Nr - i)*Nb])));
+      }
+      S::store(&dec[Nr*Nb], S::load(&enc[ZERO*Nb]));
+    }
+
   } // namespace impl_aes
 
 } // namespace cs

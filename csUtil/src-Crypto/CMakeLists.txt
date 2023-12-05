@@ -1,4 +1,6 @@
 list(APPEND csCrypto_HEADERS
+  include/internal/AesNi128.h
+  include/cs/Crypto/BlockCipher.h
   include/cs/Crypto/CryptoUtil.h
   include/cs/Crypto/Hash.h
   include/internal/Aes.h
@@ -6,6 +8,8 @@ list(APPEND csCrypto_HEADERS
 )
 
 list(APPEND csCrypto_SOURCES
+  src/AesNi128.cpp
+  src/BlockCipher.cpp
   src/CryptoUtil.cpp
   src/Hash.cpp
   src/main_crypto.cpp

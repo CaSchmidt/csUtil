@@ -6,6 +6,11 @@
 #include <catch.hpp>
 
 #include <cs/Convert/BufferUtil.h>
+#include <cs/Core/Container.h>
+#include <cs/Crypto/BlockCipher.h>
+#include <cs/Text/StringUtil.h>
+#include <cs/Text/TextIO.h>
+#include <cs/Text/PrintUtil.h>
 #include "internal/AesNi.h"
 
 /*
@@ -17,6 +22,93 @@
 
 constexpr std::size_t AES_BLKSIZE = 16;
 constexpr std::size_t AES_Nb = 4;
+
+namespace test_util {
+
+  bool is_cavp_data(const cs::BlockCipherPtr& algo, const cs::Buffer& key,
+                    const cs::Buffer& cipher, const cs::Buffer& plain)
+  {
+    return
+        algo                                &&
+        algo->keySize()   == key.size()     &&
+        algo->blockSize() == cipher.size()  &&
+        algo->blockSize() == plain.size();
+  }
+
+  bool test_cavp(const cs::BlockCipher::Algorithm algoid,
+                 const std::filesystem::path& filename)
+  {
+    cs::BlockCipherPtr algo = cs::BlockCipher::make(algoid);
+    cs::Buffer temp;
+
+    const std::list<std::string> lines = cs::readLines(filename, true, true);
+    if( lines.empty()  ||  !algo  ||  !cs::resize(&temp, algo->blockSize()) ) {
+      return false;
+    }
+
+    cs::size_t cntDecrypt = 0, cntDecryptOK = 0;
+    cs::size_t cntEncrypt = 0, cntEncryptOK = 0;
+    cs::Buffer key, cipher, plain;
+    int mode = 0;
+    for(const std::string& line : lines) {
+      const char *prefix_COUNT = "COUNT = ";
+      const char *prefix_KEY = "KEY = ";
+      const char *prefix_PLAIN = "PLAINTEXT = ";
+      const char *prefix_CIPHER = "CIPHERTEXT = ";
+
+      if(        line == "[ENCRYPT]" ) {
+        mode = 1;
+        continue;
+      } else if( line == "[DECRYPT]" ) {
+        mode = 2;
+        continue;
+      }
+
+      if( cs::startsWith(line, prefix_COUNT) ) {
+        if(        mode == 1 ) { // encrypt
+          cntEncrypt++;
+        } else if( mode == 2 ) { // decrypt
+          cntDecrypt++;
+        }
+        key.clear();
+        cipher.clear();
+        plain.clear();
+        continue;
+      } else if( cs::startsWith(line, prefix_KEY) ) {
+        key = cs::toBuffer(line.substr(cs::strlen(prefix_KEY)));
+      } else if( cs::startsWith(line, prefix_PLAIN) ) {
+        plain = cs::toBuffer(line.substr(cs::strlen(prefix_PLAIN)));
+      } else if( cs::startsWith(line, prefix_CIPHER) ) {
+        cipher = cs::toBuffer(line.substr(cs::strlen(prefix_CIPHER)));
+      } else {
+        continue;
+      }
+
+      if( is_cavp_data(algo, key, cipher, plain) ) {
+        algo->setKey(key.data());
+        if(        mode == 1 ) { // encrypt
+          algo->encryptBlock(temp.data(), plain.data());
+          if( temp == cipher ) {
+            cntEncryptOK++;
+          }
+
+        } else if( mode == 2 ) { // decrypt
+          algo->decryptBlock(temp.data(), cipher.data());
+          if( temp == plain ) {
+            cntDecryptOK++;
+          }
+        }
+      } // Valid Data
+    } // For Each Line
+
+    cs::println("AES-%: %", algo->keySize()*8, filename.filename());
+    cs::println("decrypt: %/%", cntDecryptOK, cntDecrypt);
+    cs::println("encrypt: %/%", cntEncryptOK, cntEncrypt);
+
+    return cntDecrypt == cntDecryptOK  &&  cntEncrypt ==  cntEncryptOK;
+  }
+
+} // namespace test_util
 
 namespace test_aeskeyexp {
 
@@ -31,7 +123,7 @@ namespace test_aeskeyexp {
 
     std::array<uint32_t,60> schedule;
 
-    {
+    { // AES-128 /////////////////////////////////////////////////////////////
       using Traits = cs::impl_aes::AesTraits<128>;
 
       const std::array<cs::byte_t,16> key128 = {
@@ -57,7 +149,7 @@ namespace test_aeskeyexp {
       REQUIRE( cmp_key(10, schedule.data(), "d014f9a8c9ee2589e13f0cc8b6630ca6") );
     }
 
-    {
+    { // AES-192 /////////////////////////////////////////////////////////////
       using Traits = cs::impl_aes::AesTraits<192>;
 
       const std::array<cs::byte_t,24> key192 = {
@@ -87,7 +179,7 @@ namespace test_aeskeyexp {
       REQUIRE( cmp_key(12, schedule.data(), "e98ba06f448c773c8ecc720401002202") );
     }
 
-    {
+    { // AES-256 /////////////////////////////////////////////////////////////
       using Traits = cs::impl_aes::AesTraits<256>;
 
       const std::array<cs::byte_t,32> key256 = {
@@ -123,3 +215,14 @@ namespace test_aeskeyexp {
   }
 
 } // namespace test_aeskeyexp
+
+namespace test_aescrypt {
+
+  TEST_CASE("AES de-/encryption.", "[aescrypt]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    REQUIRE( test_util::test_cavp(cs::BlockCipher::AES128, "./testdata/ECBVarKey128.rsp") );
+    REQUIRE( test_util::test_cavp(cs::BlockCipher::AES128, "./testdata/ECBVarTxt128.rsp") );
+  }
+
+} // namespace test_aescrypt
