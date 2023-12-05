@@ -22,9 +22,12 @@ endmacro()
 ### Unit Tests ###############################################################
 
 file(COPY
-  ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/CAVP/AES/ECBMCT128.rsp
-  ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/CAVP/AES/ECBMCT192.rsp
-  ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/CAVP/AES/ECBMCT256.rsp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/CAVP/AES/ECBVarKey128.rsp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/CAVP/AES/ECBVarKey192.rsp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/CAVP/AES/ECBVarKey256.rsp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/CAVP/AES/ECBVarTxt128.rsp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/CAVP/AES/ECBVarTxt192.rsp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/CAVP/AES/ECBVarTxt256.rsp
   DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/testdata
 )
 
