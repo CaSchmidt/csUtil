@@ -223,6 +223,10 @@ namespace test_aescrypt {
 
     REQUIRE( test_util::test_cavp(cs::BlockCipher::AES128, "./testdata/ECBVarKey128.rsp") );
     REQUIRE( test_util::test_cavp(cs::BlockCipher::AES128, "./testdata/ECBVarTxt128.rsp") );
+    REQUIRE( test_util::test_cavp(cs::BlockCipher::AES192, "./testdata/ECBVarKey192.rsp") );
+    REQUIRE( test_util::test_cavp(cs::BlockCipher::AES192, "./testdata/ECBVarTxt192.rsp") );
+    REQUIRE( test_util::test_cavp(cs::BlockCipher::AES256, "./testdata/ECBVarKey256.rsp") );
+    REQUIRE( test_util::test_cavp(cs::BlockCipher::AES256, "./testdata/ECBVarTxt256.rsp") );
   }
 
 } // namespace test_aescrypt

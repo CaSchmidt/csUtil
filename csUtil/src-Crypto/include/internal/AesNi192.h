@@ -29,42 +29,37 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include "cs/Crypto/BlockCipher.h"
+#pragma once
 
-#include "internal/AesNi128.h"
-#include "internal/AesNi192.h"
-#include "internal/AesNi256.h"
+#include <array>
+
+#include "cs/Crypto/BlockCipher.h"
+#include "internal/AesNi.h"
 
 namespace cs {
 
-  ////// public //////////////////////////////////////////////////////////////
+  class AesNi192 : public BlockCipher {
+  public:
+    AesNi192() noexcept;
+    ~AesNi192() noexcept;
 
-  BlockCipher::BlockCipher(const Algorithm id) noexcept
-    : _id{id}
-  {
-  }
+    size_t blockSize() const;
+    size_t keySize() const;
 
-  BlockCipher::~BlockCipher() noexcept
-  {
-  }
+    void clearKey();
+    void setKey(const byte_t *key);
 
-  BlockCipher::Algorithm BlockCipher::id() const
-  {
-    return _id;
-  }
+    void decryptBlock(byte_t *plain, const byte_t *cipher) const;
+    void encryptBlock(byte_t *cipher, const byte_t *plain) const;
 
-  ////// public static ///////////////////////////////////////////////////////
+  private:
+    using Traits = impl_aes::AesTraits<192>;
+    using KeySchedule = std::array<Traits::word_t,Traits::NUM_KEYWORDS>;
 
-  BlockCipherPtr BlockCipher::make(const Algorithm id)
-  {
-    if(        id == AES128 ) {
-      return std::make_unique<AesNi128>();
-    } else if( id == AES192 ) {
-      return std::make_unique<AesNi192>();
-    } else if( id == AES256 ) {
-      return std::make_unique<AesNi256>();
-    }
-    return BlockCipherPtr();
-  }
+    void clear();
+
+    alignas(impl_aes::AESNI::block_type) KeySchedule _decKeys;
+    alignas(impl_aes::AESNI::block_type) KeySchedule _encKeys;
+  };
 
 } // namespace cs
