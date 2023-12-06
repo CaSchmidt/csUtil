@@ -92,13 +92,13 @@ namespace cs {
 
         AESword temp = w[I - ONE];
 
-        if constexpr( I%Traits::Nk == ZERO ) {
+        if constexpr( I%Nk == ZERO ) {
           temp = keygenassist<I,3>(w);
-        } else if constexpr( Traits::Nk > SIX  &&  I%Traits::Nk == FOUR ) {
+        } else if constexpr( Nk > SIX  &&  I%Nk == FOUR ) {
           temp = keygenassist<I,2>(w);
         }
 
-        w[I] = w[I - Traits::Nk] ^ temp;
+        w[I] = w[I - Nk] ^ temp;
       }
 
       template<size_t I, int SEL>
@@ -108,7 +108,7 @@ namespace cs {
 
         constexpr size_t FOUR = 4;
 
-        constexpr int RCON = AesRCON<I/Traits::Nk>::value;
+        constexpr int RCON = AesRCON<I/Nk>::value;
 
         const S::block_type  in = S::load<false>(&w[I - FOUR]);
         const S::block_type out = S::aeskeygenassist<RCON>(in);
@@ -118,12 +118,15 @@ namespace cs {
 
       inline static void loop(AESword *w)
       {
-        constexpr size_t I = Traits::NUM_KEYEXPITER - COUNTER + Traits::Nk;
+        constexpr size_t I = Traits::NUM_KEYEXPITER - COUNTER + Nk;
 
         eval<I>(w);
 
         KeyExpansion<Traits,COUNTER-1>::loop(w);
       }
+
+    private:
+      static constexpr size_t Nk = Traits::Nk;
     };
 
     template<typename Traits>
@@ -136,12 +139,15 @@ namespace cs {
       {
         constexpr size_t FOUR = 4;
 
-        for(size_t i = 0; i < Traits::Nk; i++) {
+        for(size_t i = 0; i < Nk; i++) {
           w[i] = *reinterpret_cast<const AESword*>(&key[i*FOUR]);
         }
 
         KeyExpansion<Traits,Traits::NUM_KEYEXPITER>::loop(w);
       }
+
+    private:
+      static constexpr size_t Nk = Traits::Nk;
     };
 
     ////// AES Decrypt Keys //////////////////////////////////////////////////
