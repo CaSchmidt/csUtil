@@ -38,28 +38,78 @@
 
 namespace cs {
 
-  class AesNi256 : public BlockCipher {
+  namespace impl_aes {
+
+    template<int BITS>
+    struct AesAlg { /* SFINAE */ };
+    template<>
+    struct AesAlg<128> : std::integral_constant<BlockCipher::Algorithm,BlockCipher::AES128> {};
+    template<>
+    struct AesAlg<192> : std::integral_constant<BlockCipher::Algorithm,BlockCipher::AES192> {};
+    template<>
+    struct AesAlg<256> : std::integral_constant<BlockCipher::Algorithm,BlockCipher::AES256> {};
+
+  } // namespace impl_aes
+
+  template<int BITS>
+  class AesNiImpl : public BlockCipher {
   public:
-    AesNi256() noexcept;
-    ~AesNi256() noexcept;
+    AesNiImpl() noexcept
+      : BlockCipher(impl_aes::AesAlg<BITS>::value)
+    {
+    }
 
-    size_t blockSize() const;
-    size_t keySize() const;
+    virtual ~AesNiImpl() noexcept
+    {
+      clear();
+    }
 
-    void clearKey();
-    void setKey(const byte_t *key);
+    inline size_t blockSize() const
+    {
+      return Traits::SIZ_BLOCK;
+    }
 
-    void decryptBlock(byte_t *plain, const byte_t *cipher) const;
-    void encryptBlock(byte_t *cipher, const byte_t *plain) const;
+    inline size_t keySize() const
+    {
+      return Traits::SIZ_KEY;
+    }
+
+    inline void clearKey()
+    {
+      clear();
+    }
+
+    inline void setKey(const byte_t *key)
+    {
+      clear();
+      impl_aes::KeyExpansion<Traits,0>::run(_encKeys.data(), key);
+      impl_aes::setDecryptKeys<Traits>(_decKeys.data(), _encKeys.data());
+    }
+
+    inline void decryptBlock(byte_t *plain, const byte_t *cipher) const
+    {
+      impl_aes::Decrypt<Traits,0>::run(plain, cipher, _decKeys.data());
+    }
+
+    inline void encryptBlock(byte_t *cipher, const byte_t *plain) const
+    {
+      impl_aes::Encrypt<Traits,0>::run(cipher, plain, _encKeys.data());
+    }
 
   private:
-    using Traits = impl_aes::AesTraits<256>;
-    using KeySchedule = std::array<Traits::word_t,Traits::NUM_KEYWORDS>;
+    using S = impl_aes::AESNI;
+    using Traits = impl_aes::AesTraits<BITS>;
+    using word_t = typename Traits::word_t;
+    using KeySchedule = std::array<word_t,Traits::NUM_KEYWORDS>;
 
-    void clear();
+    inline void clear()
+    {
+      _decKeys.fill(0);
+      _encKeys.fill(0);
+    }
 
-    alignas(impl_aes::AESNI::block_type) KeySchedule _decKeys;
-    alignas(impl_aes::AESNI::block_type) KeySchedule _encKeys;
+    alignas(S::block_type) KeySchedule _decKeys;
+    alignas(S::block_type) KeySchedule _encKeys;
   };
 
 } // namespace cs

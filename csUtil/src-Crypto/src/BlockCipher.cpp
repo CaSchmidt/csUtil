@@ -31,9 +31,7 @@
 
 #include "cs/Crypto/BlockCipher.h"
 
-#include "internal/AesNi128.h"
-#include "internal/AesNi192.h"
-#include "internal/AesNi256.h"
+#include "internal/AesNiImpl.h"
 
 namespace cs {
 
@@ -58,11 +56,11 @@ namespace cs {
   BlockCipherPtr BlockCipher::make(const Algorithm id)
   {
     if(        id == AES128 ) {
-      return std::make_unique<AesNi128>();
+      return std::make_unique<AesNiImpl<128>>();
     } else if( id == AES192 ) {
-      return std::make_unique<AesNi192>();
+      return std::make_unique<AesNiImpl<192>>();
     } else if( id == AES256 ) {
-      return std::make_unique<AesNi256>();
+      return std::make_unique<AesNiImpl<256>>();
     }
     return BlockCipherPtr();
   }
