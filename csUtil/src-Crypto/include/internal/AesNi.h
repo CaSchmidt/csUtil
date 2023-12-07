@@ -82,15 +82,12 @@ namespace cs {
     struct KeyExpansion {
       static_assert( 0 < COUNTER  &&  COUNTER <= Traits::NUM_KEYEXPITER );
 
-      template<size_t I>
-      inline static void eval(AESword *w)
-      {
-        constexpr size_t ZERO = 0;
-        constexpr size_t  ONE = 1;
-        constexpr size_t FOUR = 4;
-        constexpr size_t  SIX = 6;
+      using word_t = typename Traits::word_t;
 
-        AESword temp = w[I - ONE];
+      template<size_t I>
+      inline static void eval(word_t *w)
+      {
+        word_t temp = w[I - ONE];
 
         if constexpr( I%Nk == ZERO ) {
           temp = keygenassist<I,3>(w);
@@ -102,21 +99,17 @@ namespace cs {
       }
 
       template<size_t I, int SEL>
-      inline static AESword keygenassist(const AESword *w)
+      inline static word_t keygenassist(const word_t *w)
       {
-        using S = AESNI;
-
-        constexpr size_t FOUR = 4;
-
         constexpr int RCON = AesRCON<I/Nk>::value;
 
         const S::block_type  in = S::load<false>(&w[I - FOUR]);
         const S::block_type out = S::aeskeygenassist<RCON>(in);
 
-        return static_cast<AESword>(S::to_value(S::swizzle<SEL,SEL,SEL,SEL>(out)));
+        return static_cast<word_t>(S::to_value(S::swizzle<SEL,SEL,SEL,SEL>(out)));
       }
 
-      inline static void loop(AESword *w)
+      inline static void loop(word_t *w)
       {
         constexpr size_t I = Traits::NUM_KEYEXPITER - COUNTER + Nk;
 
@@ -126,21 +119,30 @@ namespace cs {
       }
 
     private:
+      using S = AESNI;
+
       static constexpr size_t Nk = Traits::Nk;
+
+      static constexpr size_t ZERO = 0;
+      static constexpr size_t  ONE = 1;
+      static constexpr size_t FOUR = 4;
+      static constexpr size_t  SIX = 6;
     };
 
     template<typename Traits>
     struct KeyExpansion<Traits,0> {
-      inline static void loop(AESword *)
+      using word_t = typename Traits::word_t;
+
+      inline static void loop(word_t *)
       {
       }
 
-      inline static void run(AESword *w, const byte_t *key)
+      inline static void run(word_t *w, const byte_t *key)
       {
         constexpr size_t FOUR = 4;
 
         for(size_t i = 0; i < Nk; i++) {
-          w[i] = *reinterpret_cast<const AESword*>(&key[i*FOUR]);
+          w[i] = *reinterpret_cast<const word_t*>(&key[i*FOUR]);
         }
 
         KeyExpansion<Traits,Traits::NUM_KEYEXPITER>::loop(w);
@@ -153,8 +155,8 @@ namespace cs {
     ////// AES Decrypt Keys //////////////////////////////////////////////////
 
     template<typename Traits>
-    void setDecryptKeys(typename Traits::word_t *dec,
-                        const typename Traits::word_t *enc)
+    inline void setDecryptKeys(typename Traits::word_t *dec,
+                               const typename Traits::word_t *enc)
     {
       using S = AESNI;
 
