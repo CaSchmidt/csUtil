@@ -173,6 +173,106 @@ namespace cs {
       S::store(&dec[Nr*Nb], S::load(&enc[ZERO*Nb]));
     }
 
+    ////// AES Decryption ////////////////////////////////////////////////////
+
+    template<typename Traits, size_t COUNTER>
+    struct Decrypt {
+      static_assert( 0 < COUNTER  &&  COUNTER < Traits::Nr );
+
+      using S = AESNI;
+      using word_t = typename Traits::word_t;
+
+      inline static S::block_type loop(const S::block_type& oldstate,
+                                       const word_t *keys)
+      {
+        constexpr size_t I = Nr - COUNTER;
+
+        const S::block_type state = S::aesdec(oldstate, S::load(&keys[I*Nb]));
+
+        return Decrypt<Traits,COUNTER-1>::loop(state, keys);
+      }
+
+    private:
+      static constexpr size_t Nb = Traits::Nb;
+      static constexpr size_t Nr = Traits::Nr;
+    };
+
+    template<typename Traits>
+    struct Decrypt<Traits,0> {
+      using S = AESNI;
+      using word_t = typename Traits::word_t;
+
+      inline static S::block_type loop(const S::block_type& oldstate,
+                                       const word_t *keys)
+      {
+        return S::aesdeclast(oldstate, S::load(&keys[Nr*Nb]));
+      }
+
+      inline static void run(byte_t *plain, const byte_t *cipher,
+                             const word_t *keys)
+      {
+        const S::block_type state = S::bit_xor(S::load<false>(cipher),
+                                               S::load(&keys[ZERO*Nb]));
+        S::store<false>(plain, Decrypt<Traits,Nr-1>::loop(state, keys));
+      }
+
+    private:
+      static constexpr size_t Nb = Traits::Nb;
+      static constexpr size_t Nr = Traits::Nr;
+
+      static const size_t ZERO = 0;
+    };
+
+    ////// AES Encrypt ///////////////////////////////////////////////////////
+
+    template<typename Traits, size_t COUNTER>
+    struct Encrypt {
+      static_assert( 0 < COUNTER  &&  COUNTER < Traits::Nr );
+
+      using S = AESNI;
+      using word_t = typename Traits::word_t;
+
+      inline static S::block_type loop(const S::block_type& oldstate,
+                                       const word_t *keys)
+      {
+        constexpr size_t I = Nr - COUNTER;
+
+        const S::block_type state = S::aesenc(oldstate, S::load(&keys[I*Nb]));
+
+        return Encrypt<Traits,COUNTER-1>::loop(state, keys);
+      }
+
+    private:
+      static constexpr size_t Nb = Traits::Nb;
+      static constexpr size_t Nr = Traits::Nr;
+    };
+
+    template<typename Traits>
+    struct Encrypt<Traits,0> {
+      using S = AESNI;
+      using word_t = typename Traits::word_t;
+
+      inline static S::block_type loop(const S::block_type& oldstate,
+                                       const word_t *keys)
+      {
+        return S::aesenclast(oldstate, S::load(&keys[Nr*Nb]));
+      }
+
+      inline static void run(byte_t *cipher, const byte_t *plain,
+                             const word_t *keys)
+      {
+        const S::block_type state = S::bit_xor(S::load<false>(plain),
+                                               S::load(&keys[ZERO*Nb]));
+        S::store<false>(cipher, Encrypt<Traits,Nr-1>::loop(state, keys));
+      }
+
+    private:
+      static constexpr size_t Nb = Traits::Nb;
+      static constexpr size_t Nr = Traits::Nr;
+
+      static const size_t ZERO = 0;
+    };
+
   } // namespace impl_aes
 
 } // namespace cs

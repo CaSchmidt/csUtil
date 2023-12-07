@@ -69,52 +69,12 @@ namespace cs {
 
   void AesNi256::decryptBlock(byte_t *plain, const byte_t *cipher) const
   {
-    using S = impl_aes::AESNI;
-
-    const S::block_type cipher0 = S::load<false>(cipher);
-
-    const S::block_type round0  = S::bit_xor(   cipher0, S::load(&_decKeys[ 0]));
-    const S::block_type round1  = S::aesdec(    round0,  S::load(&_decKeys[ 4]));
-    const S::block_type round2  = S::aesdec(    round1,  S::load(&_decKeys[ 8]));
-    const S::block_type round3  = S::aesdec(    round2,  S::load(&_decKeys[12]));
-    const S::block_type round4  = S::aesdec(    round3,  S::load(&_decKeys[16]));
-    const S::block_type round5  = S::aesdec(    round4,  S::load(&_decKeys[20]));
-    const S::block_type round6  = S::aesdec(    round5,  S::load(&_decKeys[24]));
-    const S::block_type round7  = S::aesdec(    round6,  S::load(&_decKeys[28]));
-    const S::block_type round8  = S::aesdec(    round7,  S::load(&_decKeys[32]));
-    const S::block_type round9  = S::aesdec(    round8,  S::load(&_decKeys[36]));
-    const S::block_type round10 = S::aesdec(    round9,  S::load(&_decKeys[40]));
-    const S::block_type round11 = S::aesdec(    round10, S::load(&_decKeys[44]));
-    const S::block_type round12 = S::aesdec(    round11, S::load(&_decKeys[48]));
-    const S::block_type round13 = S::aesdec(    round12, S::load(&_decKeys[52]));
-    const S::block_type round14 = S::aesdeclast(round13, S::load(&_decKeys[56]));
-
-    S::store<false>(plain, round14);
+    impl_aes::Decrypt<Traits,0>::run(plain, cipher, _decKeys.data());
   }
 
   void AesNi256::encryptBlock(byte_t *cipher, const byte_t *plain) const
   {
-    using S = impl_aes::AESNI;
-
-    const S::block_type plain0 = S::load<false>(plain);
-
-    const S::block_type round0  = S::bit_xor(   plain0,  S::load(&_encKeys[ 0]));
-    const S::block_type round1  = S::aesenc(    round0,  S::load(&_encKeys[ 4]));
-    const S::block_type round2  = S::aesenc(    round1,  S::load(&_encKeys[ 8]));
-    const S::block_type round3  = S::aesenc(    round2,  S::load(&_encKeys[12]));
-    const S::block_type round4  = S::aesenc(    round3,  S::load(&_encKeys[16]));
-    const S::block_type round5  = S::aesenc(    round4,  S::load(&_encKeys[20]));
-    const S::block_type round6  = S::aesenc(    round5,  S::load(&_encKeys[24]));
-    const S::block_type round7  = S::aesenc(    round6,  S::load(&_encKeys[28]));
-    const S::block_type round8  = S::aesenc(    round7,  S::load(&_encKeys[32]));
-    const S::block_type round9  = S::aesenc(    round8,  S::load(&_encKeys[36]));
-    const S::block_type round10 = S::aesenc(    round9,  S::load(&_encKeys[40]));
-    const S::block_type round11 = S::aesenc(    round10, S::load(&_encKeys[44]));
-    const S::block_type round12 = S::aesenc(    round11, S::load(&_encKeys[48]));
-    const S::block_type round13 = S::aesenc(    round12, S::load(&_encKeys[52]));
-    const S::block_type round14 = S::aesenclast(round13, S::load(&_encKeys[56]));
-
-    S::store<false>(cipher, round14);
+    impl_aes::Encrypt<Traits,0>::run(cipher, plain, _encKeys.data());
   }
 
   ////// private /////////////////////////////////////////////////////////////
