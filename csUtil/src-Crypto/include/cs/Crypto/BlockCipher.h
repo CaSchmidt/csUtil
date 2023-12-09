@@ -42,7 +42,7 @@ namespace cs {
 
   class CS_UTIL_EXPORT BlockCipher {
   public:
-    enum Algorithm {
+    enum Algorithm : unsigned int {
       AES128 = 0,
       AES192,
       AES256
