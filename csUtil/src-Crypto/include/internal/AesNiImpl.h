@@ -79,19 +79,19 @@ namespace cs {
       clear();
     }
 
-    inline void setKey(const byte_t *key)
+    inline void setKey(const void *key)
     {
       clear();
       impl_aes::KeyExpansion<Traits,0>::run(_encKeys.data(), key);
       impl_aes::setDecryptKeys<Traits>(_decKeys.data(), _encKeys.data());
     }
 
-    inline void decryptBlock(byte_t *plain, const byte_t *cipher) const
+    inline void decryptBlock(void *plain, const void *cipher) const
     {
       impl_aes::Decrypt<Traits,0>::run(plain, cipher, _decKeys.data());
     }
 
-    inline void encryptBlock(byte_t *cipher, const byte_t *plain) const
+    inline void encryptBlock(void *cipher, const void *plain) const
     {
       impl_aes::Encrypt<Traits,0>::run(cipher, plain, _encKeys.data());
     }

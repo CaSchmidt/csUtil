@@ -69,10 +69,10 @@ namespace cs {
     virtual size_t keySize() const = 0;
 
     virtual void clearKey() = 0;
-    virtual void setKey(const byte_t *key) = 0;
+    virtual void setKey(const void *key) = 0;
 
-    virtual void decryptBlock(byte_t *plain, const byte_t *cipher) const = 0;
-    virtual void encryptBlock(byte_t *cipher, const byte_t *plain) const = 0;
+    virtual void decryptBlock(void *plain, const void *cipher) const = 0;
+    virtual void encryptBlock(void *cipher, const void *plain) const = 0;
 
     static BlockCipherPtr make(const Algorithm id);
 

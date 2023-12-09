@@ -137,12 +137,13 @@ namespace cs {
       {
       }
 
-      inline static void run(word_t *w, const byte_t *key)
+      inline static void run(word_t *w, const void *key)
       {
         constexpr size_t FOUR = 4;
 
+        const byte_t *keyBytes = reinterpret_cast<const byte_t*>(key);
         for(size_t i = 0; i < Nk; i++) {
-          w[i] = *reinterpret_cast<const word_t*>(&key[i*FOUR]);
+          w[i] = *reinterpret_cast<const word_t*>(&keyBytes[i*FOUR]);
         }
 
         KeyExpansion<Traits,Traits::NUM_KEYEXPITER>::loop(w);
@@ -208,7 +209,7 @@ namespace cs {
         return S::aesdeclast(oldstate, S::load(&keys[Nr*Nb]));
       }
 
-      inline static void run(byte_t *plain, const byte_t *cipher,
+      inline static void run(void *plain, const void *cipher,
                              const word_t *keys)
       {
         const S::block_type state = S::bit_xor(S::load<false>(cipher),
@@ -258,7 +259,7 @@ namespace cs {
         return S::aesenclast(oldstate, S::load(&keys[Nr*Nb]));
       }
 
-      inline static void run(byte_t *cipher, const byte_t *plain,
+      inline static void run(void *cipher, const void *plain,
                              const word_t *keys)
       {
         const S::block_type state = S::bit_xor(S::load<false>(plain),
