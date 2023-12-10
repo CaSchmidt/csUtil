@@ -32,6 +32,7 @@ file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/../testdata/test äuml.txt"
 )
 
 cs_test(test_crc src/test_crc.cpp)
+cs_test(test_dbhdecrypt src/test_dbhdecrypt.cpp)
 cs_test(test_dot src/test_dot.cpp)
 cs_test(test_endian src/test_endian.cpp)
 cs_test(test_excd src/test_excd.cpp)
