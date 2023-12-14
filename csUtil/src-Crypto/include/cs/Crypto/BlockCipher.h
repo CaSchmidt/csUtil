@@ -43,21 +43,10 @@ namespace cs {
   class CS_UTIL_EXPORT BlockCipher {
   public:
     enum Algorithm : unsigned int {
-      AES128 = 0,
+      Invalid = 0,
+      AES128,
       AES192,
       AES256
-    };
-
-    enum class KeySize : size_t {
-      AES128 = 16,
-      AES192 = 24,
-      AES256 = 32
-    };
-
-    enum class BlockSize : size_t {
-      AES128 = 16,
-      AES192 = 16,
-      AES256 = 16
     };
 
     BlockCipher(const Algorithm id) noexcept;
@@ -79,7 +68,7 @@ namespace cs {
   private:
     BlockCipher() noexcept = delete;
 
-    Algorithm _id{};
+    Algorithm _id{Invalid};
   };
 
 } // namespace cs
