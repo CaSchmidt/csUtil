@@ -5,7 +5,6 @@
 #include <catch.hpp>
 
 #include <cs/Convert/BufferUtil.h>
-#include <cs/Core/ByteArray.h>
 #include <cs/Core/Container.h>
 #include <cs/Crypto/Hash.h>
 #include <cs/Text/PrintUtil.h>
@@ -28,14 +27,27 @@ namespace test_util {
                    const cs::Hash::Function func)
   {
     cs::HashPtr hash = cs::Hash::make(func);
-    if( !hash ) {
+    /*
+     * NOTE: Discarding messages with zero length won't enable
+     *       us to compute the digest of empty messages!
+     */
+    if( !hash  ||  hash->digestSize() != refDigest.size() ) {
       return false;
     }
 
-    hash->update(message.data(), message.size());
+    if( hash->update(message.data(), message.size()) != message.size() ) {
+      return false;
+    }
     const cs::Buffer result = hash->digest();
 
     return std::equal(result.begin(), result.end(), refDigest.begin());
+  }
+
+  bool test_digest(const cs::Buffer& buffer, const cs::Buffer& refDigest,
+                   const cs::Hash::Function func)
+  {
+    return test_digest(std::string(reinterpret_cast<const char*>(buffer.data()), buffer.size()),
+                       refDigest, func);
   }
 
   bool test_cavp(const std::filesystem::path& path,
@@ -90,11 +102,12 @@ namespace test_util {
           continue;
         }
 
-        hash->update(message.data(), length);
-        const cs::Buffer digest = hash->digest();
+        if( hash->update(message.data(), length) == length ) {
+          const cs::Buffer digest = hash->digest();
 
-        if( digest == refDigest ) {
-          cntDigestsOK++;
+          if( digest == refDigest ) {
+            cntDigestsOK++;
+          }
         }
 
         length = cs::MAX_SIZE_T;
@@ -135,54 +148,44 @@ namespace test_util {
 
 namespace test_crc32 {
 
-  template<std::size_t N>
-  bool test_digest(const cs::ByteArray<N>& message, const cs::Buffer& refDigest)
-  {
-    cs::HashPtr hash = cs::Hash::make(cs::Hash::CRC32);
-    if( !hash ) {
-      return false;
-    }
+  using namespace test_util;
 
-    hash->update(message.data(), message.size());
-    const cs::Buffer digest = hash->digest();
-
-    return std::equal(digest.begin(), digest.end(), refDigest.begin());
-  }
+  constexpr cs::Hash::Function FUNC = cs::Hash::CRC32;
 
   TEST_CASE("Compute CRC-32 message digests.", "[crc32]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
     const cs::Buffer digest_No1{0xCB, 0xF4, 0x39, 0x26};
-    REQUIRE( test_digest(cs::ByteArray<9>{'1', '2', '3', '4', '5', '6', '7', '8', '9'},
-                         digest_No1) );
+    REQUIRE( test_digest(cs::Buffer{'1', '2', '3', '4', '5', '6', '7', '8', '9'},
+                         digest_No1, FUNC) );
 
     const cs::Buffer digest_No2{0x21, 0x44, 0xDF, 0x1C};
-    REQUIRE( test_digest(cs::ByteArray<4>{0x00, 0x00, 0x00, 0x00},
-                         digest_No2) );
+    REQUIRE( test_digest(cs::Buffer{0x00, 0x00, 0x00, 0x00},
+                         digest_No2, FUNC) );
 
     const cs::Buffer digest_No3{0x24, 0xAB, 0x9D, 0x77};
-    REQUIRE( test_digest(cs::ByteArray<3>{0xF2, 0x01, 0x83},
-                         digest_No3) );
+    REQUIRE( test_digest(cs::Buffer{0xF2, 0x01, 0x83},
+                         digest_No3, FUNC) );
 
     const cs::Buffer digest_No4{0xB6, 0xC9, 0xB2, 0x87};
-    REQUIRE( test_digest(cs::ByteArray<4>{0x0F, 0xAA, 0x00, 0x55},
-                         digest_No4) );
+    REQUIRE( test_digest(cs::Buffer{0x0F, 0xAA, 0x00, 0x55},
+                         digest_No4, FUNC) );
 
     const cs::Buffer digest_No5{0x32, 0xA0, 0x62, 0x12};
-    REQUIRE( test_digest(cs::ByteArray<4>{0x00, 0xFF, 0x55, 0x11},
-                         digest_No5) );
+    REQUIRE( test_digest(cs::Buffer{0x00, 0xFF, 0x55, 0x11},
+                         digest_No5, FUNC) );
 
     const cs::Buffer digest_No6{0xB0, 0xAE, 0x86, 0x3D};
-    REQUIRE( test_digest(cs::ByteArray<9>{0x33, 0x22, 0x55, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF},
-                         digest_No6) );
+    REQUIRE( test_digest(cs::Buffer{0x33, 0x22, 0x55, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF},
+                         digest_No6, FUNC) );
 
     const cs::Buffer digest_No7{0x9C, 0xDE, 0xA2, 0x9B};
-    REQUIRE( test_digest(cs::ByteArray<3>{0x92, 0x6B, 0x55},
-                         digest_No7) );
+    REQUIRE( test_digest(cs::Buffer{0x92, 0x6B, 0x55},
+                         digest_No7, FUNC) );
 
     const cs::Buffer digest_No8{0xFF, 0xFF, 0xFF, 0xFF};
-    REQUIRE( test_digest(cs::ByteArray<4>{0xFF, 0xFF, 0xFF, 0xFF},
-                         digest_No8) );
+    REQUIRE( test_digest(cs::Buffer{0xFF, 0xFF, 0xFF, 0xFF},
+                         digest_No8, FUNC) );
   }
 
 } // namespace test_crc32

@@ -100,10 +100,10 @@ namespace cs {
         _sum = CRC32::makeInit();
       }
 
-      bool update(const void *data, const size_t sizData)
+      size_t update(const void *data, const size_t sizData)
       {
         _sum = _crc32(data, sizData, _sum);
-        return true;
+        return sizData;
       }
 
     private:
@@ -150,15 +150,21 @@ namespace cs {
         MD5Init(&_ctx);
       }
 
-      bool update(const void *data, const size_t sizData)
+      size_t update(const void *data, const size_t sizData)
       {
+        constexpr size_t MAX_SIZE = maxab_v<size_t,MD5size>;
+
+        const size_t sizUpdate = std::min(sizData, MAX_SIZE);
         MD5Update(&_ctx,
                   reinterpret_cast<const unsigned char*>(data),
-                  static_cast<unsigned int>(sizData));
-        return true;
+                  static_cast<MD5size>(sizUpdate));
+
+        return sizUpdate;
       }
 
     private:
+      using MD5size = unsigned int;
+
       MD5_CTX _ctx;
     };
 
@@ -201,14 +207,23 @@ namespace cs {
         SHA1Reset(&_ctx);
       }
 
-      bool update(const void *data, const size_t sizData)
+      size_t update(const void *data, const size_t sizData)
       {
-        return SHA1Input(&_ctx,
-                         reinterpret_cast<const uint8_t*>(data),
-                         static_cast<unsigned int>(sizData)) == shaSuccess;
+        constexpr size_t MAX_SIZE = maxab_v<size_t,SHAsize>;
+
+        const size_t sizUpdate = std::min(sizData, MAX_SIZE);
+        if( SHA1Input(&_ctx,
+                      reinterpret_cast<const uint8_t*>(data),
+                      static_cast<SHAsize>(sizUpdate)) != shaSuccess ) {
+          return 0;
+        }
+
+        return sizUpdate;
       }
 
     private:
+      using SHAsize = unsigned int;
+
       SHA1Context _ctx;
     };
 
@@ -251,14 +266,23 @@ namespace cs {
         SHA224Reset(&_ctx);
       }
 
-      bool update(const void *data, const size_t sizData)
+      size_t update(const void *data, const size_t sizData)
       {
-        return SHA224Input(&_ctx,
-                           reinterpret_cast<const uint8_t*>(data),
-                           static_cast<unsigned int>(sizData)) == shaSuccess;
+        constexpr size_t MAX_SIZE = maxab_v<size_t,SHAsize>;
+
+        const size_t sizUpdate = std::min(sizData, MAX_SIZE);
+        if( SHA224Input(&_ctx,
+                        reinterpret_cast<const uint8_t*>(data),
+                        static_cast<SHAsize>(sizUpdate)) != shaSuccess ) {
+          return 0;
+        }
+
+        return sizUpdate;
       }
 
     private:
+      using SHAsize = unsigned int;
+
       SHA224Context _ctx;
     };
 
@@ -301,14 +325,23 @@ namespace cs {
         SHA256Reset(&_ctx);
       }
 
-      bool update(const void *data, const size_t sizData)
+      size_t update(const void *data, const size_t sizData)
       {
-        return SHA256Input(&_ctx,
-                           reinterpret_cast<const uint8_t*>(data),
-                           static_cast<unsigned int>(sizData)) == shaSuccess;
+        constexpr size_t MAX_SIZE = maxab_v<size_t,SHAsize>;
+
+        const size_t sizUpdate = std::min(sizData, MAX_SIZE);
+        if( SHA256Input(&_ctx,
+                        reinterpret_cast<const uint8_t*>(data),
+                        static_cast<SHAsize>(sizUpdate)) != shaSuccess ) {
+          return 0;
+        }
+
+        return sizUpdate;
       }
 
     private:
+      using SHAsize = unsigned int;
+
       SHA256Context _ctx;
     };
 
@@ -351,14 +384,23 @@ namespace cs {
         SHA384Reset(&_ctx);
       }
 
-      bool update(const void *data, const size_t sizData)
+      size_t update(const void *data, const size_t sizData)
       {
-        return SHA384Input(&_ctx,
-                           reinterpret_cast<const uint8_t*>(data),
-                           static_cast<unsigned int>(sizData)) == shaSuccess;
+        constexpr size_t MAX_SIZE = maxab_v<size_t,SHAsize>;
+
+        const size_t sizUpdate = std::min(sizData, MAX_SIZE);
+        if( SHA384Input(&_ctx,
+                        reinterpret_cast<const uint8_t*>(data),
+                        static_cast<SHAsize>(sizUpdate)) != shaSuccess ) {
+          return 0;
+        }
+
+        return sizUpdate;
       }
 
     private:
+      using SHAsize = unsigned int;
+
       SHA384Context _ctx;
     };
 
@@ -401,14 +443,23 @@ namespace cs {
         SHA512Reset(&_ctx);
       }
 
-      bool update(const void *data, const size_t sizData)
+      size_t update(const void *data, const size_t sizData)
       {
-        return SHA512Input(&_ctx,
-                           reinterpret_cast<const uint8_t*>(data),
-                           static_cast<unsigned int>(sizData)) == shaSuccess;
+        constexpr size_t MAX_SIZE = maxab_v<size_t,SHAsize>;
+
+        const size_t sizUpdate = std::min(sizData, MAX_SIZE);
+        if( SHA512Input(&_ctx,
+                        reinterpret_cast<const uint8_t*>(data),
+                        static_cast<SHAsize>(sizUpdate)) != shaSuccess ) {
+          return 0;
+        }
+
+        return sizUpdate;
       }
 
     private:
+      using SHAsize = unsigned int;
+
       SHA512Context _ctx;
     };
 

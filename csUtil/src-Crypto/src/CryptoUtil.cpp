@@ -36,9 +36,9 @@
 namespace cs {
 
   CS_UTIL_EXPORT Buffer sum(const File& file, const Hash::Function func,
-                            const std::size_t sizTemp)
+                            const size_t sizTemp)
   {
-    constexpr std::size_t ZERO = 0;
+    constexpr size_t ZERO = 0;
 
     Buffer buffer;
     HashPtr  hash = Hash::make(func);
@@ -46,9 +46,11 @@ namespace cs {
       return Buffer();
     }
 
-    for(std::size_t numRead = 0;
+    for(size_t numRead = 0;
         (numRead = file.read(buffer.data(), buffer.size())) > ZERO; ) {
-      hash->update(buffer.data(), numRead);
+      if( hash->update(buffer.data(), numRead) != numRead ) {
+        return Buffer();
+      }
     }
 
     return hash->digest();
