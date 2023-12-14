@@ -146,6 +146,15 @@ namespace cs {
     }
 
     template<std::size_t N, typename T>
+    inline T dot(const T *a, const T *b, T sum = T())
+    {
+      return accumulate<T,N>(std::move(sum),
+                             [](T sum, const std::size_t I, const T *a, const T *b) -> T {
+        return sum + a[I]*b[I];
+      }, a, b);
+    }
+
+    template<std::size_t N, typename T>
     inline void fill(T *dest, const T& value = T())
     {
       for_each<N>([](const std::size_t I, T *dest, const T& value) -> void {

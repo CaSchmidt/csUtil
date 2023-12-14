@@ -129,19 +129,25 @@ namespace test_foreach {
 
 namespace test_algorithm {
 
-  TEMPLATE_TEST_CASE("Standard algorithms.", "[algorithm]", int) {
+  TEMPLATE_TEST_CASE("Standard algorithms.", "[algorithm]", int, float) {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
     using value_type = TestType;
+
+    constexpr value_type ONE = 1;
 
     constexpr std::size_t    N = 3;
     constexpr value_type VALUE = -7;
 
     const value_type a[N] = {1, 2, 3};
+    const value_type b[N] = {2, 3, 4};
     value_type x[N];
 
     cs::meta::copy<N>(x, a);
     REQUIRE( std::equal(a, a + N, x) );
+
+    constexpr value_type DOT = 20; // cf. a[], b[]
+    REQUIRE( cs::meta::dot<N>(a, b, ONE) == DOT + ONE );
 
     cs::meta::fill<N>(x, VALUE);
     REQUIRE( std::count(x, x + N, VALUE) == N );
