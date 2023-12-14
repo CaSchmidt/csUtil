@@ -54,6 +54,7 @@ namespace cs {
       requires IsAccumulate<T,Call,Args...>
       inline T InvokeAccumulate(T init, Call call, Args&&... args)
       {
+        // Syntax: T call(T init, const size_t I, ...)
         return std::invoke(call, std::move(init), I, std::forward<Args>(args)...);
       }
 
@@ -91,6 +92,7 @@ namespace cs {
       requires IsForEach<Call,Args...>
       inline void InvokeForEach(Call call, Args&&... args)
       {
+        // Syntax: void call(const size_t I, ...)
         std::invoke(call, I, std::forward<Args>(args)...);
       }
 
