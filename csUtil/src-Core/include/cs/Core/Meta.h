@@ -43,39 +43,41 @@ namespace cs {
 
     namespace impl_meta {
 
+      using size_t = std::size_t;
+
       // accumulate() ////////////////////////////////////////////////////////
 
       template<typename Ret, typename Call, typename ...Args>
-      concept IsAccumulate = std::is_invocable_r_v<Ret,Call,Ret,std::size_t,Args...>;
+      concept IsAccumulate = std::is_invocable_r_v<Ret,Call,Ret,size_t,Args...>;
 
-      template<typename T, std::size_t I, typename Call, typename ...Args>
+      template<typename T, size_t I, typename Call, typename ...Args>
       requires IsAccumulate<T,Call,Args...>
       inline T InvokeAccumulate(T init, Call call, Args&&... args)
       {
         return std::invoke(call, std::move(init), I, std::forward<Args>(args)...);
       }
 
-      template<typename T, std::size_t N, std::size_t CNT>
+      template<typename T, size_t N, size_t CNT>
       struct Accumulate {
         static_assert(N > 0  &&  0 < CNT  &&  CNT < N);
 
         template<typename Call, typename ...Args>
         inline static T run(T init, Call call, Args&&... args)
         {
-          constexpr std::size_t I = N - 1 - CNT;
+          constexpr size_t I = N - 1 - CNT;
           init = InvokeAccumulate<T,I>(std::move(init), call, std::forward<Args>(args)...);
           return Accumulate<T,N,CNT-1>::run(std::move(init), call, std::forward<Args>(args)...);
         }
       };
 
-      template<typename T, std::size_t N>
+      template<typename T, size_t N>
       struct Accumulate<T,N,0> {
         static_assert(N > 0);
 
         template<typename Call, typename ...Args>
         inline static T run(T init, Call call, Args&&... args)
         {
-          constexpr std::size_t I = N - 1;
+          constexpr size_t I = N - 1;
           return InvokeAccumulate<T,I>(std::move(init), call, std::forward<Args>(args)...);
         }
       };
@@ -83,36 +85,36 @@ namespace cs {
       // for_each() //////////////////////////////////////////////////////////
 
       template<typename Call, typename ...Args>
-      concept IsForEach = std::is_invocable_v<Call,std::size_t,Args...>;
+      concept IsForEach = std::is_invocable_v<Call,size_t,Args...>;
 
-      template<std::size_t I, typename Call, typename ...Args>
+      template<size_t I, typename Call, typename ...Args>
       requires IsForEach<Call,Args...>
       inline void InvokeForEach(Call call, Args&&... args)
       {
         std::invoke(call, I, std::forward<Args>(args)...);
       }
 
-      template<std::size_t N, std::size_t CNT>
+      template<size_t N, size_t CNT>
       struct ForEach {
         static_assert(N > 0  &&  0 < CNT  &&  CNT < N);
 
         template<typename Call, typename ...Args>
         inline static void run(Call call, Args&&... args)
         {
-          constexpr std::size_t I = N - 1 - CNT;
+          constexpr size_t I = N - 1 - CNT;
           InvokeForEach<I>(call, std::forward<Args>(args)...);
           ForEach<N,CNT-1>::run(call, std::forward<Args>(args)...);
         }
       };
 
-      template<std::size_t N>
+      template<size_t N>
       struct ForEach<N,0> {
         static_assert(N > 0);
 
         template<typename Call, typename ...Args>
         inline static void run(Call call, Args&&... args)
         {
-          constexpr std::size_t I = N - 1;
+          constexpr size_t I = N - 1;
           InvokeForEach<I>(call, std::forward<Args>(args)...);
         }
       };
@@ -144,7 +146,7 @@ namespace cs {
     }
 
     template<std::size_t N, typename T>
-    inline void fill(T *dest, const T& value = T{})
+    inline void fill(T *dest, const T& value = T())
     {
       for_each<N>([](const std::size_t I, T *dest, const T& value) -> void {
         dest[I] = value;
