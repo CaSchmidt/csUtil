@@ -130,10 +130,10 @@ std::string fileModificationTime(const fs::path& p)
 
 std::string md5hexhash(const std::string& s)
 {
-  cs::Hash md5(cs::Hash::MD5);
+  cs::HashPtr md5 = cs::Hash::make(cs::Hash::MD5);
 
-  md5(s.data(), s.size());
-  const cs::Buffer digest = md5.result();
+  md5->update(s.data(), s.size());
+  const cs::Buffer digest = md5->digest();
 
   return cs::toString(digest);
 }

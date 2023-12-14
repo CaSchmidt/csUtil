@@ -39,9 +39,7 @@
 
 namespace cs {
 
-  class HashImpl;
-
-  using HashImplPtr = std::unique_ptr<HashImpl>;
+  using HashPtr = std::unique_ptr<class Hash>;
 
   class CS_UTIL_EXPORT Hash {
   public:
@@ -57,41 +55,22 @@ namespace cs {
       SHA512
     };
 
-    enum DigestSize : std::size_t {
-      Size_CRC32 = 4,
-      Size_MD5 = 16,
-      Size_SHA1 = 20,
-      // SHA-2
-      Size_SHA224 = 28,
-      Size_SHA256 = 32,
-      Size_SHA384 = 48,
-      Size_SHA512 = 64
-    };
-
-    Hash(const Function func) noexcept;
+    Hash(const Function id) noexcept;
     ~Hash() noexcept;
 
     Function id() const;
 
-    inline bool isInvalid() const
-    {
-      return id() == Invalid;
-    }
+    virtual Buffer digest() const = 0;
+    virtual size_t digestSize() const = 0;
+    virtual void reset() = 0;
+    virtual bool update(const void *data, const size_t sizData) = 0;
 
-    std::size_t digestSize() const;
-    void reset();
-    Buffer result() const;
-    bool update(const void *data, const std::size_t sizData);
-
-    inline bool operator()(const void *data, const std::size_t sizData)
-    {
-      return update(data, sizData);
-    }
+    static HashPtr make(const Function id);
 
   private:
     Hash() noexcept = delete;
 
-    HashImplPtr _impl{nullptr};
+    Function _id{Invalid};
   };
 
 } // namespace cs

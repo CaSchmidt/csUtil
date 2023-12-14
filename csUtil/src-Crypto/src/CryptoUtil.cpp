@@ -41,17 +41,17 @@ namespace cs {
     constexpr std::size_t ZERO = 0;
 
     Buffer buffer;
-    Hash   hash(func);
-    if( !file.isOpen()  ||  !resize(&buffer, sizTemp)  ||  hash.isInvalid() ) {
+    HashPtr  hash = Hash::make(func);
+    if( !file.isOpen()  ||  !resize(&buffer, sizTemp)  ||  !hash ) {
       return Buffer();
     }
 
     for(std::size_t numRead = 0;
         (numRead = file.read(buffer.data(), buffer.size())) > ZERO; ) {
-      hash(buffer.data(), numRead);
+      hash->update(buffer.data(), numRead);
     }
 
-    return hash.result();
+    return hash->digest();
   }
 
 } // namespace cs
