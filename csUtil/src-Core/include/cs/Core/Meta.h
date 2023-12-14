@@ -60,12 +60,12 @@ namespace cs {
 
       template<typename T, size_t N, size_t CNT>
       struct Accumulate {
-        static_assert(N > 0  &&  0 < CNT  &&  CNT < N);
+        static_assert(N > 0  &&  0 < CNT  &&  CNT <= N);
 
         template<typename Call, typename ...Args>
         inline static T run(T init, Call call, Args&&... args)
         {
-          constexpr size_t I = N - 1 - CNT;
+          constexpr size_t I = N - CNT; // CNT := [N, ..., 1]
           init = InvokeAccumulate<T,I>(std::move(init), call, std::forward<Args>(args)...);
           return Accumulate<T,N,CNT-1>::run(std::move(init), call, std::forward<Args>(args)...);
         }
@@ -76,10 +76,9 @@ namespace cs {
         static_assert(N > 0);
 
         template<typename Call, typename ...Args>
-        inline static T run(T init, Call call, Args&&... args)
+        inline static T run(T init, Call /*call*/, Args&&... /*args*/)
         {
-          constexpr size_t I = N - 1;
-          return InvokeAccumulate<T,I>(std::move(init), call, std::forward<Args>(args)...);
+          return init;
         }
       };
 
@@ -98,12 +97,12 @@ namespace cs {
 
       template<size_t N, size_t CNT>
       struct ForEach {
-        static_assert(N > 0  &&  0 < CNT  &&  CNT < N);
+        static_assert(N > 0  &&  0 < CNT  &&  CNT <= N);
 
         template<typename Call, typename ...Args>
         inline static void run(Call call, Args&&... args)
         {
-          constexpr size_t I = N - 1 - CNT;
+          constexpr size_t I = N - CNT; // CNT := [N, ..., 1]
           InvokeForEach<I>(call, std::forward<Args>(args)...);
           ForEach<N,CNT-1>::run(call, std::forward<Args>(args)...);
         }
@@ -114,10 +113,8 @@ namespace cs {
         static_assert(N > 0);
 
         template<typename Call, typename ...Args>
-        inline static void run(Call call, Args&&... args)
+        inline static void run(Call /*call*/, Args&&... /*args*/)
         {
-          constexpr size_t I = N - 1;
-          InvokeForEach<I>(call, std::forward<Args>(args)...);
         }
       };
 
@@ -128,13 +125,13 @@ namespace cs {
     template<typename T, std::size_t N, typename Call, typename ...Args>
     inline T accumulate(T init, Call call, Args&&... args)
     {
-      return impl_meta::Accumulate<T,N,N-1>::run(std::move(init), call, std::forward<Args>(args)...);
+      return impl_meta::Accumulate<T,N,N>::run(std::move(init), call, std::forward<Args>(args)...);
     }
 
     template<std::size_t N, typename Call, typename ...Args>
     inline void for_each(Call call, Args&&... args)
     {
-      impl_meta::ForEach<N,N-1>::run(call, std::forward<Args>(args)...);
+      impl_meta::ForEach<N,N>::run(call, std::forward<Args>(args)...);
     }
 
     ////// Algorithms ////////////////////////////////////////////////////////
