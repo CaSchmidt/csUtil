@@ -6,7 +6,8 @@
 
 #include <cs/Convert/BufferUtil.h>
 #include <cs/Core/Container.h>
-#include <cs/Crypto/Hash.h>
+#include <cs/Crypto/CryptoUtil.h>
+#include <cs/IO/File.h>
 #include <cs/Text/PrintUtil.h>
 #include <cs/Text/StringUtil.h>
 #include <cs/Text/TextIO.h>
@@ -144,6 +145,54 @@ namespace test_util {
   }
 #endif
 
+  bool test_file_1M(const cs::Buffer& refDigest, const cs::Hash::Function func)
+  {
+    constexpr cs::size_t SIZ_TEMP = 333;
+
+    const std::filesystem::path filename = "./test_1M.txt";
+
+    cs::println("Compute message digest of file %.", filename.filename());
+
+    // (1) Create Message ////////////////////////////////////////////////////
+
+    const std::string message = makeMessage1M();
+    if( message.empty() ) {
+      cs::println(&std::cerr, "ERROR: Unable to create message!");
+      return false;
+    }
+
+    // (2) Write Message to File /////////////////////////////////////////////
+
+    {
+      cs::File output;
+      if( !output.open(filename, cs::FileOpenFlag::Write) ) {
+        cs::println(&std::cerr, "ERROR: Unable to create file %!", filename);
+        return false;
+      }
+
+      if( output.write(message.data(), message.size()) != message.size() ) {
+        cs::println(&std::cerr, "ERROR: Unable to write file %!", filename);
+        return false;
+      }
+    }
+
+    // (3) Open File as Input ////////////////////////////////////////////////
+
+    cs::File input;
+    if( !input.open(filename) ) {
+      cs::println(&std::cerr, "ERROR: Unable to open file %!", filename.filename());
+      return false;
+    }
+
+    const cs::Buffer digest = cs::sum(input, func, SIZ_TEMP);
+    if( digest.empty() ) {
+      cs::println(&std::cerr, "ERROR: Unable to hash file %!", filename.filename());
+      return false;
+    }
+
+    return digest == refDigest;
+  }
+
 } // namespace test_util
 
 namespace test_crc32 {
@@ -270,6 +319,7 @@ namespace test_sha1 {
 
     REQUIRE( test_cavp("./testdata/SHA1ShortMsg.rsp", FUNC) );
     REQUIRE( test_cavp("./testdata/SHA1LongMsg.rsp", FUNC) );
+    REQUIRE( test_file_1M(digest_No5, FUNC) );
   }
 
 } // namespace test_sha1
@@ -314,6 +364,7 @@ namespace test_sha224 {
 
     REQUIRE( test_cavp("./testdata/SHA224ShortMsg.rsp", FUNC) );
     REQUIRE( test_cavp("./testdata/SHA224LongMsg.rsp", FUNC) );
+    REQUIRE( test_file_1M(digest_No5, FUNC) );
   }
 
 } // namespace test_sha224
@@ -358,6 +409,7 @@ namespace test_sha256 {
 
     REQUIRE( test_cavp("./testdata/SHA256ShortMsg.rsp", FUNC) );
     REQUIRE( test_cavp("./testdata/SHA256LongMsg.rsp", FUNC) );
+    REQUIRE( test_file_1M(digest_No5, FUNC) );
   }
 
 } // namespace test_sha256
@@ -402,6 +454,7 @@ namespace test_sha384 {
 
     REQUIRE( test_cavp("./testdata/SHA384ShortMsg.rsp", FUNC) );
     REQUIRE( test_cavp("./testdata/SHA384LongMsg.rsp", FUNC) );
+    REQUIRE( test_file_1M(digest_No5, FUNC) );
   }
 
 } // namespace test_sha384
@@ -446,6 +499,7 @@ namespace sha512 {
 
     REQUIRE( test_cavp("./testdata/SHA512ShortMsg.rsp", FUNC) );
     REQUIRE( test_cavp("./testdata/SHA512LongMsg.rsp", FUNC) );
+    REQUIRE( test_file_1M(digest_No5, FUNC) );
   }
 
 } // namespace sha512
