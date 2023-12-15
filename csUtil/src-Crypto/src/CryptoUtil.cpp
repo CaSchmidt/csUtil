@@ -46,6 +46,8 @@ namespace cs {
       return Buffer();
     }
 
+    file.seek(0);
+
     for(size_t numRead = 0;
         (numRead = file.read(buffer.data(), buffer.size())) > ZERO; ) {
       if( hash->update(buffer.data(), numRead) != numRead ) {
