@@ -21,7 +21,7 @@ namespace stringutil {
   const char *STR_ABC  = "ABC";
   const char *STR_BCD  = "BCD";
 
-  const char *STR_tainted = "abc\0d";
+  const char *STR_tainted = "abc\0e";
 
   TEST_CASE("Length of a string.", "[length]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
@@ -107,11 +107,6 @@ namespace stringutil {
   TEST_CASE("Two strings are equal.", "[equals]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
-    REQUIRE(  cs::equalsN(STR_abc, STR_abcd) );
-    REQUIRE( !cs::equalsN(STR_abc, STR_ABCD) );
-    REQUIRE(  cs::equalsN(STR_abc, STR_ABCD, true) );
-    REQUIRE(  cs::equalsN(STR_ABC, STR_abcd, true) );
-
     REQUIRE(  cs::equals(STR_abc, STR_abc) );
     REQUIRE( !cs::equals(STR_abc, STR_ABC) );
     REQUIRE(  cs::equals(STR_abc, STR_ABC, true) );
@@ -139,7 +134,7 @@ namespace stringutil {
 
     {
       String str(STR_input3);
-      cs::removeAll(str.data(), str.data() + str.size(), cs::lambda_is_space<char>());
+      cs::removeAll(str.data(), str.size(), cs::lambda_is_space<char>());
       cs::shrink(&str);
       REQUIRE( str == STR_abc );
     }

@@ -34,7 +34,8 @@
 #include <list>
 #include <string>
 
-#include <cs/Text/StringAlgorithm.h>
+#include <cs/Text/StringReplaceImpl.h>
+#include <cs/Text/StringSplitImpl.h>
 
 namespace cs {
 
@@ -61,551 +62,295 @@ namespace cs {
   template<typename T> requires is_char_v<T>
   using StringView = std::basic_string_view<T>;
 
-  ////// Constants ///////////////////////////////////////////////////////////
-
-  template<typename T> requires is_char_v<T>
-  inline constexpr typename String<T>::size_type NPOS = String<T>::npos;
-
   ////// Length Functions ////////////////////////////////////////////////////
 
-  template<typename T>
-  requires is_char_v<T>
-  inline std::size_t strlen(const String<T>& str)
+  inline void shrink(std::string *str, const bool reclaim = false)
+  {
+    str->resize(strlen(str->data(), str->size()));
+    if( reclaim ) {
+      str->shrink_to_fit();
+    }
+  }
+
+  inline std::size_t strlen(const std::string_view& str)
   {
     return strlen(str.data(), str.size());
   }
 
   ////// String contains character... ////////////////////////////////////////
 
-  template<typename T>
-  requires is_char_v<T>
-  inline bool contains(const String<T>& str, const T& pat)
+  inline bool contains(const std::string_view& str,
+                       const char& pat)
   {
-    return contains(str.data(), str.size(), pat);
+    return !str.empty()  &&  contains(str.data(), str.size(),
+                                      pat);
   }
 
   ////// String contains predicate... ////////////////////////////////////////
 
-  template<typename T, typename PredFunc>
-  requires is_char_v<T>
-  inline bool contains(const String<T>& str, PredFunc func)
+  template<typename PredFunc>
+  inline bool contains(const std::string_view& str,
+                       PredFunc func,
+                       if_char_predicate_t<PredFunc,char> * = nullptr)
   {
-    return contains<T,PredFunc>(str.data(), str.size(), func);
+    return !str.empty()  &&  contains(str.data(), str.size(),
+                                      func);
   }
 
   ////// String contains pattern... //////////////////////////////////////////
 
-  template<typename T>
-  requires is_char_v<T>
-  inline bool contains(const String<T>& str, const String<T>& pat,
+  inline bool contains(const std::string_view& str,
+                       const std::string_view& pat,
                        const bool ignoreCase = false)
   {
-    return contains(str.data(), str.size(), pat.data(), pat.size(), ignoreCase);
-  }
-
-  template<typename T>
-  requires is_char_v<T>
-  inline bool contains(const String<T>& str, const T *pat,
-                       const bool ignoreCase = false)
-  {
-    return contains(str.data(), str.size(), pat, MAX_SIZE_T, ignoreCase);
+    return !str.empty()  &&  str.size() >= pat.size()  &&  contains(str.data(), str.size(),
+                                                                    pat.data(), pat.size(),
+                                                                    ignoreCase);
   }
 
   ////// String ends with pattern... /////////////////////////////////////////
 
-  template<typename T>
-  requires is_char_v<T>
-  inline bool endsWith(const String<T>& str, const T *pat, const bool ignoreCase = false)
+  inline bool endsWith(const std::string_view& str,
+                       const std::string_view& pat,
+                       const bool ignoreCase = false)
   {
-    return endsWith(str.data(), str.size(), pat, MAX_SIZE_T, ignoreCase);
-  }
-
-  template<typename T>
-  requires is_char_v<T>
-  inline bool endsWith(const T *str, const String<T>& pat, const bool ignoreCase = false)
-  {
-    return endsWith(str, MAX_SIZE_T, pat.data(), pat.size(), ignoreCase);
-  }
-
-  template<typename T>
-  requires is_char_v<T>
-  inline bool endsWith(const String<T>& str, const String<T>& pat, const bool ignoreCase = false)
-  {
-    return endsWith(str.data(), str.size(), pat.data(), pat.size(), ignoreCase);
+    return !str.empty()  &&  str.size() >= pat.size()  &&  endsWith(str.data(), str.size(),
+                                                                    pat.data(), pat.size(),
+                                                                    ignoreCase);
   }
 
   ////// Strings are equal... ////////////////////////////////////////////////
 
-  template<typename T>
-  requires is_char_v<T>
-  inline bool equals(const String<T>& a, const T *b, const bool ignoreCase = false)
+  inline bool equals(const std::string_view& a,
+                     const std::string_view& b,
+                     const bool ignoreCase = false)
   {
-    return equals(a.data(), a.size(), b, MAX_SIZE_T, ignoreCase);
-  }
-
-  template<typename T>
-  requires is_char_v<T>
-  inline bool equals(const T *a, const String<T>& b, const bool ignoreCase = false)
-  {
-    return equals(a, MAX_SIZE_T, b.data(), b.size(), ignoreCase);
-  }
-
-  template<typename T>
-  requires is_char_v<T>
-  inline bool equals(const String<T>& a, const String<T>& b, const bool ignoreCase = false)
-  {
-    return equals(a.data(), a.size(), b.data(), b.size(), ignoreCase);
+    return !a.empty()  &&  !b.empty()  &&  equals(a.data(), a.size(),
+                                                  b.data(), b.size(),
+                                                  ignoreCase);
   }
 
   ////// String is hexadecimal string... /////////////////////////////////////
 
-  template<typename T> requires is_char_v<T>
-  inline bool isHexString(const String<T>& str)
+  inline bool isHexString(const std::string_view& str)
   {
-    return isHexString(str.data(), str.size());
+    return !str.empty()  &&  isHexString(str.data(), str.size());
   }
 
   ////// String is C-style identifier... /////////////////////////////////////
 
-  template<typename T>
-  requires is_char_v<T>
-  inline bool isIdent(const String<T>& str)
+  inline bool isIdent(const std::string_view& str)
   {
-    return isIdent(str.data(), str.size());
+    return !str.empty()  &&  isIdent(str.data(), str.size());
   }
 
   ////// String contains only whitespace... //////////////////////////////////
 
-  template<typename T>
-  requires is_char_v<T>
-  inline bool isSpace(const String<T>& str)
+  inline bool isSpace(const std::string_view& str)
   {
-    return isSpace(str.data(), str.size());
+    return !str.empty()  &&  isSpace(str.data(), str.size());
   }
 
   ////// Remove pattern from string... ///////////////////////////////////////
 
-  template<typename T>
-  requires is_char_v<T>
-  inline void removeAll(T *str, const std::size_t lenstr,
-                        const String<T>& pat)
+  inline void removeAll(std::string *str,
+                        const std::string_view& pat)
   {
-    removeAll(str, lenstr, pat.data(), pat.size());
-  }
-
-  template<typename T>
-  requires is_char_v<T>
-  inline void removeAll(T *str,
-                        const String<T>& pat)
-  {
-    removeAll(str, MAX_SIZE_T, pat);
-  }
-
-  template<typename T>
-  requires is_char_v<T>
-  inline void removeAll(String<T> *str,
-                        const T *pat, const std::size_t lenpat = MAX_SIZE_T)
-  {
-    removeAll(str->data(), str->size(), pat, lenpat);
-    str->resize(strlen(*str));
-  }
-
-  template<typename T>
-  requires is_char_v<T>
-  inline void removeAll(String<T> *str,
-                        const String<T>& pat)
-  {
-    removeAll(str, pat.data(), pat.size());
+    if( str != nullptr  &&  !str->empty()  &&  str->size() >= pat.size() ) {
+      removeAll(str->data(), str->size(),
+                pat.data(), pat.size());
+      shrink(str);
+    }
   }
 
   ////// Remove character from string... /////////////////////////////////////
 
-  template<typename T> requires is_char_v<T>
-  inline void removeAll(String<T> *str, const T& pat)
+  inline void removeAll(std::string *str,
+                        const char& pat)
   {
-    removeAll(str->data(), str->size(), pat);
-    str->resize(strlen(*str));
+    if( str != nullptr  &&  !str->empty() ) {
+      removeAll(str->data(), str->size(),
+                pat);
+      shrink(str);
+    }
   }
 
   ////// Remove character matching predicate from string... //////////////////
 
-  template<typename T, typename PredFunc>
-  requires is_char_v<T>
-  inline void removeAll(String<T> *str, PredFunc func)
+  template<typename PredFunc>
+  inline void removeAll(std::string *str,
+                        PredFunc func,
+                        if_char_predicate_t<PredFunc,char> * = nullptr)
   {
-    removeAll<T,PredFunc>(str->data(), str->size(), func);
-    str->resize(strlen(*str));
+    if( str != nullptr  &&  !str->empty() ) {
+      removeAll(str->data(), str->size(),
+                func);
+      shrink(str);
+    }
   }
 
   ////// Remove Trailing Zeros from Fixed-Notation Floating-Point String /////
 
-  template<typename T>
-  requires is_char_v<T>
-  inline void removeTrailingZeros(String<T> *str, const bool removeDot = true)
+  inline void removeTrailingZeros(std::string *str,
+                                  const bool removeDot = true)
   {
-    removeTrailingZeros(str->data(), str->size(), removeDot);
-    str->resize(strlen(*str));
+    if( str != nullptr  &&  !str->empty() ) {
+      removeTrailingZeros(str->data(), str->size(),
+                          removeDot);
+      shrink(str);
+    }
   }
 
   ////// Replace pattern in string... ////////////////////////////////////////
 
-  namespace impl_string {
-
-    template<typename T>
-    requires is_char_v<T>
-    inline void replaceAll(String<T> *str,
-                           const T *pat, const std::size_t maxpat,
-                           const T *txt, const std::size_t maxtxt)
-    {
-      for(std::size_t pos = 0;
-          (pos = str->find(pat, pos, maxpat)) != NPOS<T>;
-          pos += maxtxt) {
-        str->replace(pos, maxpat, txt, maxtxt);
-      }
-    }
-
-  } // namespace impl_string
-
-  template<typename T>
-  requires is_char_v<T>
-  inline void replaceAll(String<T> *str,
-                         const T *pat, const std::size_t lenpat,
-                         const T *txt, const std::size_t lentxt = MAX_SIZE_T)
+  inline void replaceAll(std::string *str,
+                         const char& pat,
+                         const std::string_view& txt)
   {
-    const std::size_t maxpat = strlen(pat, lenpat);
-    const std::size_t maxtxt = strlen(txt, lentxt);
-    if( str->size() > 0  &&  maxpat > 0  &&  maxtxt > 0  &&  str->size() >= maxpat ) {
-      impl_string::replaceAll(str, pat, maxpat, txt, maxtxt);
+    if( str != nullptr  &&  !str->empty()  &&
+        !txt.empty() ) {
+      impl_string::replaceAll(str,
+                              &pat, 1,
+                              txt.data(), txt.size());
     }
   }
 
-  template<typename T>
-  requires is_char_v<T>
-  inline void replaceAll(String<T> *str, const T *pat, const T *txt)
+  inline void replaceAll(std::string *str,
+                         const std::string_view& pat,
+                         const std::string_view& txt)
   {
-    replaceAll(str, pat, MAX_SIZE_T, txt, MAX_SIZE_T);
-  }
-
-  template<typename T>
-  requires is_char_v<T>
-  inline void replaceAll(String<T> *str, const String<T>& pat, const T *txt)
-  {
-    replaceAll(str, pat.data(), pat.size(), txt, MAX_SIZE_T);
-  }
-
-  template<typename T>
-  requires is_char_v<T>
-  inline void replaceAll(String<T> *str, const T *pat, const String<T>& txt)
-  {
-    replaceAll(str, pat, MAX_SIZE_T, txt.data(), txt.size());
-  }
-
-  template<typename T>
-  requires is_char_v<T>
-  inline void replaceAll(String<T> *str, const String<T>& pat, const String<T>& txt)
-  {
-    replaceAll(str, pat.data(), pat.size(), txt.data(), txt.size());
-  }
-
-  template<typename T>
-  requires is_char_v<T>
-  inline void replaceAll(String<T> *str, const T& pat, const T *txt)
-  {
-    replaceAll(str, &pat, 1, txt, MAX_SIZE_T);
-  }
-
-  template<typename T>
-  requires is_char_v<T>
-  inline void replaceAll(String<T> *str, const T& pat, const String<T>& txt)
-  {
-    replaceAll(str, &pat, 1, txt.data(), txt.size());
+    if( str != nullptr  &&  !str->empty()  &&
+        str->size() >= pat.size()  &&  !txt.empty() ) {
+      impl_string::replaceAll(str,
+                              pat.data(), pat.size(),
+                              txt.data(), txt.size());
+    }
   }
 
   ////// Replace character in string... //////////////////////////////////////
 
-  template<typename T>
-  requires is_char_v<T>
-  void replaceAll(String<T> *str, const T& pat, const T& txt)
+  inline void replaceAll(std::string *str,
+                         const char& pat,
+                         const char& txt)
   {
-    replaceAll(str->data(), str->size(), pat, txt);
+    if( str != nullptr  &&  !str->empty() ) {
+      replaceAll(str->data(), str->size(),
+                 pat,
+                 txt);
+    }
   }
 
   ////// Replace character matching predicate in string... ///////////////////
 
-  template<typename T, typename PredFunc>
-  requires is_char_v<T>
-  void replaceAll(String<T> *str, PredFunc func, const T& txt)
+  template<typename PredFunc>
+  inline void replaceAll(std::string *str,
+                         PredFunc func,
+                         const char& txt,
+                         if_char_predicate_t<PredFunc,char> * = nullptr)
   {
-    replaceAll<T,PredFunc>(str->data(), str->size(), func, txt);
-  }
-
-  ////// Reclaim memory... ///////////////////////////////////////////////////
-
-  template<typename T>
-  requires is_char_v<T>
-  inline void shrink(String<T> *str)
-  {
-    str->resize(strlen(*str));
-    str->shrink_to_fit();
-  }
-
-  ////// Remove whitespace from begin & end... ///////////////////////////////
-
-  template<typename T>
-  requires is_char_v<T>
-  inline void trim(String<T> *str)
-  {
-    trim(str->data(), str->size());
-    str->resize(strlen(*str));
-  }
-
-  template<typename T>
-  requires is_char_v<T>
-  inline String<T> trimmed(String<T> str)
-  {
-    trim(&str);
-    return str;
-  }
-
-  template<typename T>
-  requires is_char_v<T>
-  inline String<T> trimmed(const StringView<T>& view)
-  {
-    return trimmed(String<T>{view.data(), view.size()});
+    if( str != nullptr  &&  !str->empty() ) {
+      replaceAll(str->data(), str->size(),
+                 func,
+                 txt);
+    }
   }
 
   ////// Replace consecutive whitespace with single space... /////////////////
 
-  template<typename T>
-  requires is_char_v<T>
-  inline void simplify(String<T> *str)
+  inline void simplify(std::string *str)
   {
-    simplify(str->data(), str->size());
-    str->resize(strlen(*str));
+    if( str != nullptr  &&  !str->empty() ) {
+      simplify(str->data(), str->size());
+      shrink(str);
+    }
   }
 
-  template<typename T>
-  requires is_char_v<T>
-  inline String<T> simplified(String<T> str)
+  inline std::string simplified(std::string str)
   {
     simplify(&str);
     return str;
   }
 
-  template<typename T>
-  requires is_char_v<T>
-  inline String<T> simplified(const StringView<T>& view)
-  {
-    return simplified(String<T>{view.data(), view.size()});
-  }
-
   ////// Split string at pattern... //////////////////////////////////////////
 
-  namespace impl_string {
-
-    template<typename T>
-    requires is_char_v<T>
-    inline void extract(StringList<T> *result,
-                        const T *first, const T *last,
-                        const bool skipEmpty, const bool doTrim)
-    {
-      const std::size_t len = strlen(first, last);
-      String<T> part = len > 0
-          ? String<T>{first, len}
-          : String<T>{};
-
-      if( skipEmpty  &&  part.empty() ) {
-        return;
-      }
-
-      if( doTrim ) {
-        ::cs::trim(&part);
-      }
-
-      result->push_back(std::move(part));
+  inline StringList<char> split(const std::string_view& str,
+                                const std::string_view& pat,
+                                const bool skipEmpty = false, const bool doTrim = false)
+  {
+    if( !str.empty()  &&  str.size() >= pat.size() ) {
+      return impl_string::split(str.data(), str.data() + str.size(),
+                                pat.data(), pat.size(),
+                                skipEmpty, doTrim);
     }
-
-    template<typename T>
-    requires is_char_v<T>
-    inline StringList<T> split(const T *first, const T *last,
-                               const T *pat, const std::size_t maxpat,
-                               const bool skipEmpty, const bool doTrim)
-    {
-      StringList<T> result;
-
-      const T *from = first;
-      for(const T *hit = nullptr;
-          (hit = std::search(from, last, pat, pat + maxpat)) != last;
-          from = hit + maxpat) {
-        extract(&result, from, hit, skipEmpty, doTrim);
-      }
-      extract(&result, from, last, skipEmpty, doTrim);
-
-      return result;
-    }
-
-  } // namespace impl_string
-
-  template<typename T>
-  requires is_char_v<T>
-  inline StringList<T> split(const T *first, const T *last,
-                             const T *pat, const std::size_t lenpat = MAX_SIZE_T,
-                             const bool skipEmpty = false, const bool doTrim = false)
-  {
-    const std::size_t maxstr = strlen(first, last);
-    const std::size_t maxpat = strlen(pat, lenpat);
-    return maxstr > 0  &&  maxpat > 0  &&  maxstr >= maxpat
-        ? impl_string::split(first, last, pat, maxpat, skipEmpty, doTrim)
-        : StringList<T>{};
-  }
-
-  template<typename T>
-  requires is_char_v<T>
-  inline StringList<T> split(const T *str, const std::size_t lenstr,
-                             const T *pat, const std::size_t lenpat,
-                             const bool skipEmpty = false, const bool doTrim = false)
-  {
-    const std::size_t maxstr = strlen(str, lenstr);
-    const std::size_t maxpat = strlen(pat, lenpat);
-    return maxstr > 0  &&  maxpat > 0  &&  maxstr >= maxpat
-        ? impl_string::split(str, str + maxstr, pat, maxpat, skipEmpty, doTrim)
-        : StringList<T>{};
-  }
-
-  template<typename T>
-  requires is_char_v<T>
-  inline StringList<T> split(const T *str,
-                             const T *pat,
-                             const bool skipEmpty = false, const bool doTrim = false)
-  {
-    return split(str, MAX_SIZE_T, pat, MAX_SIZE_T, skipEmpty, doTrim);
-  }
-
-  template<typename T>
-  requires is_char_v<T>
-  inline StringList<T> split(const String<T>& str,
-                             const T *pat,
-                             const bool skipEmpty = false, const bool doTrim = false)
-  {
-    return split(str.data(), str.size(), pat, MAX_SIZE_T, skipEmpty, doTrim);
+    return StringList<char>();
   }
 
   ////// Split string at character... ////////////////////////////////////////
 
-  namespace impl_string {
-
-    template<typename T>
-    requires is_char_v<T>
-    inline StringList<T> split(const T *first, const T *last,
-                               const T& pat,
-                               const bool skipEmpty, const bool doTrim)
-    {
-      StringList<T> result;
-
-      const T *from = first;
-      for(const T *hit = nullptr;
-          (hit = std::find(from, last, pat)) != last;
-          from = hit + 1) {
-        extract(&result, from, hit, skipEmpty, doTrim);
-      }
-      extract(&result, from, last, skipEmpty, doTrim);
-
-      return result;
+  inline StringList<char> split(const std::string_view& str,
+                                const char& pat,
+                                const bool skipEmpty = false, const bool doTrim = false)
+  {
+    if( !str.empty() ) {
+      return impl_string::split(str.data(), str.data() + str.size(),
+                                pat,
+                                skipEmpty, doTrim);
     }
-
-  } // namespace impl_string
-
-  template<typename T>
-  requires is_char_v<T>
-  inline StringList<T> split(const T *first, const T *last,
-                             const T& pat,
-                             const bool skipEmpty = false, const bool doTrim = false)
-  {
-    return Pointer::isValidRange(first, last)
-        ? impl_string::split(first, last, pat, skipEmpty, doTrim)
-        : StringList<T>{};
-  }
-
-  template<typename T>
-  requires is_char_v<T>
-  inline StringList<T> split(const T *str, const std::size_t len,
-                             const T& pat,
-                             const bool skipEmpty = false, const bool doTrim = false)
-  {
-    const std::size_t max = strlen(str, len);
-    return max > 0
-        ? impl_string::split(str, str + max, pat, skipEmpty, doTrim)
-        : StringList<T>{};
-  }
-
-  template<typename T>
-  requires is_char_v<T>
-  inline StringList<T> split(const T *str,
-                             const T& pat,
-                             const bool skipEmpty = false, const bool doTrim = false)
-  {
-    return split(str, MAX_SIZE_T, pat, skipEmpty, doTrim);
-  }
-
-  template<typename T>
-  requires is_char_v<T>
-  inline StringList<T> split(const String<T>& str,
-                             const T& pat,
-                             const bool skipEmpty = false, const bool doTrim = false)
-  {
-    return split(str.data(), str.size(), pat, skipEmpty, doTrim);
+    return StringList<char>();
   }
 
   ////// String starts with pattern... ///////////////////////////////////////
 
-  template<typename T>
-  requires is_char_v<T>
-  inline bool startsWith(const String<T>& str, const T *pat, const bool ignoreCase = false)
+  inline bool startsWith(const std::string_view& a,
+                         const std::string_view& b,
+                         const bool ignoreCase = false)
   {
-    return startsWith(str.data(), str.size(), pat, MAX_SIZE_T, ignoreCase);
-  }
-
-  template<typename T>
-  requires is_char_v<T>
-  inline bool startsWith(const T *str, const String<T>& pat, const bool ignoreCase = false)
-  {
-    return startsWith(str, MAX_SIZE_T, pat.data(), pat.size(), ignoreCase);
-  }
-
-  template<typename T>
-  requires is_char_v<T>
-  inline bool startsWith(const String<T>& str, const String<T>& pat, const bool ignoreCase = false)
-  {
-    return startsWith(str.data(), str.size(), pat.data(), pat.size(), ignoreCase);
+    return !a.empty()  &&  !b.empty()  &&  equals(a.data(), a.size(),
+                                                  b.data(), b.size(),
+                                                  ignoreCase);
   }
 
   ////// Case conversion... //////////////////////////////////////////////////
 
-  template<typename T>
-  requires is_char_v<T>
-  inline void toLower(String<T> *str)
+  inline void toLower(std::string *str)
   {
-    toLower(str->data(), str->size());
+    if( str != nullptr  &&  !str->empty() ) {
+      toLower(str->data(), str->size());
+    }
   }
 
-  template<typename T> requires is_char_v<T>
-  inline String<T> toLower(String<T> str)
+  inline std::string toLower(std::string str)
   {
     toLower(&str);
     return str;
   }
 
-  template<typename T>
-  requires is_char_v<T>
-  inline void toUpper(String<T> *str)
+  inline void toUpper(std::string *str)
   {
-    toUpper(str->data(), str->size());
+    if( str != nullptr  &&  !str->empty() ) {
+      toUpper(str->data(), str->size());
+    }
   }
 
-  template<typename T> requires is_char_v<T>
-  inline String<T> toUpper(String<T> str)
+  inline std::string toUpper(std::string str)
   {
     toUpper(&str);
+    return str;
+  }
+
+  ////// Remove whitespace from begin & end... ///////////////////////////////
+
+  inline void trim(std::string *str)
+  {
+    if( str != nullptr  &&  !str->empty() ) {
+      trim(str->data(), str->size());
+      shrink(str);
+    }
+  }
+
+  inline std::string trimmed(std::string str)
+  {
+    trim(&str);
     return str;
   }
 
@@ -614,15 +359,15 @@ namespace cs {
   inline std::string toString(const std::u8string& str)
   {
     return !str.empty()
-        ? std::string{CSTR(str.data()), str.size()}
-        : std::string{};
+        ? std::string(CSTR(str.data()), str.size())
+        : std::string();
   }
 
   inline std::u8string toUtf8String(const std::string& str)
   {
     return !str.empty()
-        ? std::u8string{UTF8(str.data()), str.size()}
-        : std::u8string{};
+        ? std::u8string(UTF8(str.data()), str.size())
+        : std::u8string();
   }
 
 } // namespace cs

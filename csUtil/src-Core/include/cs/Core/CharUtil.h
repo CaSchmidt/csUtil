@@ -35,6 +35,19 @@
 
 namespace cs {
 
+  ////// Traits //////////////////////////////////////////////////////////////
+
+  template<typename PredFunc, typename T>
+  using is_char_predicate = std::bool_constant<
+  is_char_v<T>  &&  std::is_invocable_r_v<T,PredFunc,const T&>
+  >;
+
+  template<typename PredFunc, typename T>
+  inline constexpr bool is_char_predicate_v = is_char_predicate<PredFunc,T>::value;
+
+  template<typename PredFunc, typename T, typename ResultT = T>
+  using if_char_predicate_t = std::enable_if_t<is_char_predicate_v<PredFunc,T>,ResultT>;
+
   ////// Glyphs //////////////////////////////////////////////////////////////
 
   template<typename T> requires is_char_v<T>

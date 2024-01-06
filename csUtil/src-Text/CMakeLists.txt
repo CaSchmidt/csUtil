@@ -4,6 +4,8 @@ list(APPEND csText_HEADERS
   include/cs/Text/PrintFormat.h
   include/cs/Text/PrintUtil.h
   include/cs/Text/StringAlgorithm.h
+  include/cs/Text/StringReplaceImpl.h
+  include/cs/Text/StringSplitImpl.h
   include/cs/Text/StringUtil.h
   include/cs/Text/TextIO.h
 )

@@ -77,8 +77,8 @@ namespace cs {
 
       if constexpr( is_widechar_v<CharT> ) {
         std::array<CharT,BUF_SIZE> wdata;
-        widen(wdata.data(), str, lenstr);
-        stream->write(wdata.data(), lenstr);
+        const std::size_t numWiden = widen_s(wdata.data(), wdata.size(), str, lenstr);
+        stream->write(wdata.data(), numWiden);
       } else {
         stream->write(str, lenstr);
       }
@@ -130,7 +130,7 @@ namespace cs {
         // (2) (Optionally) Convert string to upper case /////////////////////
 
         if( _flags.testAny(FormatFlag::Upper) ) {
-          toUpper(ndata.data(), result.ptr);
+          toUpper_s(ndata.data(), result.ptr);
         }
 
         // (3) Get string's bounds ///////////////////////////////////////////
@@ -198,7 +198,7 @@ namespace cs {
         // (2) (Optionally) Convert string to upper case /////////////////////
 
         if( _flags.testAny(FormatFlag::Upper) ) {
-          toUpper(ndata.data(), result.ptr);
+          toUpper_s(ndata.data(), result.ptr);
         }
 
         // (3) Get string's bounds ///////////////////////////////////////////

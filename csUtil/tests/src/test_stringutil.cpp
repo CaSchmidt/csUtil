@@ -57,7 +57,7 @@ void test_replaceAll(const char *old, const char needle, const char *text)
 void test_replaceAll(const char *old, const char *needle, const char *text)
 {
   std::string s(old);
-  cs::replaceAll(&s, needle, cs::MAX_SIZE_T, text);
+  cs::replaceAll(&s, needle, text);
   printf("replaceAll(\"%s\", \"%s\", \"%s\") -> \"%s\"\n",
          old, needle, text, s.data());
 }

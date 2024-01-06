@@ -34,6 +34,7 @@
 #include <ostream>
 #include <utility>
 
+#include <cs/Core/CharUtil.h>
 #include <cs/Core/Range.h>
 
 namespace cs {
@@ -44,10 +45,10 @@ namespace cs {
     requires is_char_v<CharT>
     void print(std::basic_ostream<CharT> *stream, const CharT *first, const CharT *last)
     {
-      if( !Pointer::isValidRange(first, last) ) {
-        return;
+      const std::size_t max = strlen(first, last);
+      if( max > 0 ) {
+        stream->write(first, max);
       }
-      stream->write(first, strlen(first, last));
     }
 
     template<typename CharT, typename T, typename ...Args>

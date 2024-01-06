@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2023, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2024, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -31,74 +31,28 @@
 
 #pragma once
 
+#include <string>
+
 #include <cs/Core/TypeTraits.h>
 
 namespace cs {
 
-  ////// Implementation //////////////////////////////////////////////////////
-
-  namespace impl_range {
+  namespace impl_string {
 
     template<typename T> requires is_char_v<T>
-    constexpr T NUL = '\0'; // ASCII 'NUL'
-
-    template<typename T> requires is_char_v<T>
-    inline const T *find(const T *first, const T *last, const T& value)
+    inline void replaceAll(std::basic_string<T> *str,
+                           const T *pat, const std::size_t maxpat,
+                           const T *txt, const std::size_t maxtxt)
     {
-      // cf. https://en.cppreference.com/w/cpp/algorithm/find
-      for(; first != last; ++first) {
-        if( *first == value ) {
-          return first;
-        }
+      constexpr auto NPOS = std::basic_string<T>::npos;
+
+      for(std::size_t pos = 0;
+          (pos = str->find(pat, pos, maxpat)) != NPOS;
+          pos += maxtxt) {
+        str->replace(pos, maxpat, txt, maxtxt);
       }
-      return last;
     }
 
-    template<typename T> requires is_char_v<T>
-    constexpr std::size_t strlen(const T *str)
-    {
-      constexpr std::size_t ONE = 1;
-
-      return *str == NUL<T>
-          ? 0
-          : ONE + strlen(++str);
-    }
-
-    template<typename T> requires is_char_v<T>
-    inline std::size_t strlen(const T *first, const T *last)
-    {
-      static_assert( sizeof(std::size_t) >= sizeof(std::ptrdiff_t) );
-
-      const std::ptrdiff_t len = find(first, last, NUL<T>) - first;
-      return len > 0
-          ? len
-          : 0;
-    }
-
-  } // namespace impl_range
-
-  ////// Public //////////////////////////////////////////////////////////////
-
-  template<typename T> requires is_char_v<T>
-  constexpr std::size_t strlen(const T *str)
-  {
-    return str == nullptr
-        ? 0
-        : impl_range::strlen(str);
-  }
-
-  template<typename T> requires is_char_v<T>
-  inline std::size_t strlen(const T *first, const T *last)
-  {
-    return first != nullptr  &&  first < last
-        ? impl_range::strlen(first, last)
-        : 0;
-  }
-
-  template<typename T> requires is_char_v<T>
-  inline std::size_t strlen(const T *str, const std::size_t siz)
-  {
-    return strlen(str, str + siz);
-  }
+  } // namespace impl_string
 
 } // namespace cs
