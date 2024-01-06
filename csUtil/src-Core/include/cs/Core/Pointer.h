@@ -38,12 +38,6 @@ namespace cs {
   struct Pointer {
     using value_type = typename IntegralOfSize<sizeof(void*)>::unsigned_type;
 
-    template<typename T> requires std::is_pointer_v<T>
-    inline static T top()
-    {
-      return reinterpret_cast<T>(TOP);
-    }
-
     template<typename T> requires is_pow2size_v<T>
     inline static bool isAlignedTo(const void *ptr)
     {
