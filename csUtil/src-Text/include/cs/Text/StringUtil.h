@@ -31,9 +31,6 @@
 
 #pragma once
 
-#include <list>
-#include <string>
-
 #include <cs/Text/StringReplaceImpl.h>
 #include <cs/Text/StringSplitImpl.h>
 
@@ -72,12 +69,7 @@ namespace cs {
     }
   }
 
-  inline std::size_t strlen(const std::string_view& str)
-  {
-    return strlen(str.data(), str.size());
-  }
-
-  ////// String contains character... ////////////////////////////////////////
+  ////// String contains character/pattern/predicate... //////////////////////
 
   inline bool contains(const std::string_view& str,
                        const char& pat)
@@ -86,7 +78,14 @@ namespace cs {
                                       pat);
   }
 
-  ////// String contains predicate... ////////////////////////////////////////
+  inline bool contains(const std::string_view& str,
+                       const std::string_view& pat,
+                       const bool ignoreCase = false)
+  {
+    return !str.empty()  &&  contains(str.data(), str.size(),
+                                      pat.data(), pat.size(),
+                                      ignoreCase);
+  }
 
   template<typename PredFunc>
   inline bool contains(const std::string_view& str,
@@ -97,26 +96,15 @@ namespace cs {
                                       func);
   }
 
-  ////// String contains pattern... //////////////////////////////////////////
-
-  inline bool contains(const std::string_view& str,
-                       const std::string_view& pat,
-                       const bool ignoreCase = false)
-  {
-    return !str.empty()  &&  str.size() >= pat.size()  &&  contains(str.data(), str.size(),
-                                                                    pat.data(), pat.size(),
-                                                                    ignoreCase);
-  }
-
   ////// String ends with pattern... /////////////////////////////////////////
 
   inline bool endsWith(const std::string_view& str,
                        const std::string_view& pat,
                        const bool ignoreCase = false)
   {
-    return !str.empty()  &&  str.size() >= pat.size()  &&  endsWith(str.data(), str.size(),
-                                                                    pat.data(), pat.size(),
-                                                                    ignoreCase);
+    return !str.empty()  &&  endsWith(str.data(), str.size(),
+                                      pat.data(), pat.size(),
+                                      ignoreCase);
   }
 
   ////// Strings are equal... ////////////////////////////////////////////////
@@ -125,45 +113,29 @@ namespace cs {
                      const std::string_view& b,
                      const bool ignoreCase = false)
   {
-    return !a.empty()  &&  !b.empty()  &&  equals(a.data(), a.size(),
-                                                  b.data(), b.size(),
-                                                  ignoreCase);
+    return !a.empty()  &&  equals(a.data(), a.size(),
+                                  b.data(), b.size(),
+                                  ignoreCase);
   }
 
-  ////// String is hexadecimal string... /////////////////////////////////////
+  ////// String classification... ////////////////////////////////////////////
 
   inline bool isHexString(const std::string_view& str)
   {
     return !str.empty()  &&  isHexString(str.data(), str.size());
   }
 
-  ////// String is C-style identifier... /////////////////////////////////////
-
   inline bool isIdent(const std::string_view& str)
   {
     return !str.empty()  &&  isIdent(str.data(), str.size());
   }
-
-  ////// String contains only whitespace... //////////////////////////////////
 
   inline bool isSpace(const std::string_view& str)
   {
     return !str.empty()  &&  isSpace(str.data(), str.size());
   }
 
-  ////// Remove pattern from string... ///////////////////////////////////////
-
-  inline void removeAll(std::string *str,
-                        const std::string_view& pat)
-  {
-    if( str != nullptr  &&  !str->empty()  &&  str->size() >= pat.size() ) {
-      removeAll(str->data(), str->size(),
-                pat.data(), pat.size());
-      shrink(str);
-    }
-  }
-
-  ////// Remove character from string... /////////////////////////////////////
+  ////// Remove character/pattern/predicate from string... ///////////////////
 
   inline void removeAll(std::string *str,
                         const char& pat)
@@ -175,7 +147,15 @@ namespace cs {
     }
   }
 
-  ////// Remove character matching predicate from string... //////////////////
+  inline void removeAll(std::string *str,
+                        const std::string_view& pat)
+  {
+    if( str != nullptr  &&  !str->empty() ) {
+      removeAll(str->data(), str->size(),
+                pat.data(), pat.size());
+      shrink(str);
+    }
+  }
 
   template<typename PredFunc>
   inline void removeAll(std::string *str,
@@ -189,7 +169,7 @@ namespace cs {
     }
   }
 
-  ////// Remove Trailing Zeros from Fixed-Notation Floating-Point String /////
+  ////// Remove Trailing Zeros from Fixed-Notation Floating-Point String... //
 
   inline void removeTrailingZeros(std::string *str,
                                   const bool removeDot = true)
@@ -201,7 +181,33 @@ namespace cs {
     }
   }
 
-  ////// Replace pattern in string... ////////////////////////////////////////
+  ////// Replace character/predicate with character... ///////////////////////
+
+  inline void replaceAll(std::string *str,
+                         const char& pat,
+                         const char& txt)
+  {
+    if( str != nullptr  &&  !str->empty() ) {
+      replaceAll(str->data(), str->size(),
+                 pat,
+                 txt);
+    }
+  }
+
+  template<typename PredFunc>
+  inline void replaceAll(std::string *str,
+                         PredFunc func,
+                         const char& txt,
+                         if_char_predicate_t<PredFunc,char> * = nullptr)
+  {
+    if( str != nullptr  &&  !str->empty() ) {
+      replaceAll(str->data(), str->size(),
+                 func,
+                 txt);
+    }
+  }
+
+  ////// Replace character/pattern with text... //////////////////////////////
 
   inline void replaceAll(std::string *str,
                          const char& pat,
@@ -227,34 +233,6 @@ namespace cs {
     }
   }
 
-  ////// Replace character in string... //////////////////////////////////////
-
-  inline void replaceAll(std::string *str,
-                         const char& pat,
-                         const char& txt)
-  {
-    if( str != nullptr  &&  !str->empty() ) {
-      replaceAll(str->data(), str->size(),
-                 pat,
-                 txt);
-    }
-  }
-
-  ////// Replace character matching predicate in string... ///////////////////
-
-  template<typename PredFunc>
-  inline void replaceAll(std::string *str,
-                         PredFunc func,
-                         const char& txt,
-                         if_char_predicate_t<PredFunc,char> * = nullptr)
-  {
-    if( str != nullptr  &&  !str->empty() ) {
-      replaceAll(str->data(), str->size(),
-                 func,
-                 txt);
-    }
-  }
-
   ////// Replace consecutive whitespace with single space... /////////////////
 
   inline void simplify(std::string *str)
@@ -271,43 +249,41 @@ namespace cs {
     return str;
   }
 
-  ////// Split string at pattern... //////////////////////////////////////////
+  ////// Split string at character/pattern... ////////////////////////////////
 
-  inline StringList<char> split(const std::string_view& str,
-                                const std::string_view& pat,
-                                const bool skipEmpty = false, const bool doTrim = false)
-  {
-    if( !str.empty()  &&  str.size() >= pat.size() ) {
-      return impl_string::split(str.data(), str.data() + str.size(),
-                                pat.data(), pat.size(),
-                                skipEmpty, doTrim);
-    }
-    return StringList<char>();
-  }
-
-  ////// Split string at character... ////////////////////////////////////////
-
-  inline StringList<char> split(const std::string_view& str,
-                                const char& pat,
-                                const bool skipEmpty = false, const bool doTrim = false)
+  inline std::list<std::string> split(const std::string_view& str,
+                                      const char& pat,
+                                      const bool skipEmpty = false, const bool doTrim = false)
   {
     if( !str.empty() ) {
       return impl_string::split(str.data(), str.data() + str.size(),
                                 pat,
                                 skipEmpty, doTrim);
     }
-    return StringList<char>();
+    return std::list<std::string>();
+  }
+
+  inline std::list<std::string> split(const std::string_view& str,
+                                      const std::string_view& pat,
+                                      const bool skipEmpty = false, const bool doTrim = false)
+  {
+    if( !str.empty()  &&  str.size() >= pat.size() ) {
+      return impl_string::split(str.data(), str.data() + str.size(),
+                                pat.data(), pat.size(),
+                                skipEmpty, doTrim);
+    }
+    return std::list<std::string>();
   }
 
   ////// String starts with pattern... ///////////////////////////////////////
 
-  inline bool startsWith(const std::string_view& a,
-                         const std::string_view& b,
+  inline bool startsWith(const std::string_view& str,
+                         const std::string_view& pat,
                          const bool ignoreCase = false)
   {
-    return !a.empty()  &&  !b.empty()  &&  equals(a.data(), a.size(),
-                                                  b.data(), b.size(),
-                                                  ignoreCase);
+    return !str.empty()  &&  startsWith(str.data(), str.size(),
+                                        pat.data(), pat.size(),
+                                        ignoreCase);
   }
 
   ////// Case conversion... //////////////////////////////////////////////////
