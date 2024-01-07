@@ -137,7 +137,7 @@ namespace cs {
     }
 
     TrieMatch find(const std::size_t idxStr, const String& str,
-                       const std::size_t baseIndex) const
+                   const std::size_t baseIndex) const
     {
       std::size_t i = baseIndex;
       do {
