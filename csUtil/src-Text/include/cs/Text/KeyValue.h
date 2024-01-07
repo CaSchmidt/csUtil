@@ -36,7 +36,6 @@
 
 #include <cs/Core/CharUtil.h>
 #include <cs/Core/Iterator.h>
-#include <cs/Core/Pointer.h>
 #include <cs/Core/Range.h>
 
 namespace cs {
@@ -79,32 +78,25 @@ namespace cs {
   } // namespace impl_keyvalue
 
   template<typename T> requires is_char_v<T>
-  inline KeyValuePairs<T> makeKeyValuePairs(const T *first, const T *last)
-  {
-    return Pointer::isValidRange(first, last)
-        ? impl_keyvalue::makeKeyValuePairs(first, last)
-        : KeyValuePairs<T>{};
-  }
-
-  template<typename T> requires is_char_v<T>
-  inline KeyValuePairs<T> makeKeyValuePairs(const T *str, const std::size_t len = MAX_SIZE_T)
+  inline KeyValuePairs<T> makeKeyValuePairs_s(const T *str, const std::size_t len)
   {
     const std::size_t max = strlen(str, len);
     return max > 0
         ? impl_keyvalue::makeKeyValuePairs(str, str + max)
-        : KeyValuePairs<T>{};
+        : KeyValuePairs<T>();
   }
 
   template<typename T> requires is_char_v<T>
-  inline KeyValuePairs<T> makeKeyValuePairs(const std::basic_string<T>& str)
+  inline KeyValuePairs<T> makeKeyValuePairs(const T *str, const std::size_t len)
+  {
+    return len > 0
+        ? impl_keyvalue::makeKeyValuePairs(str, str + len)
+        : KeyValuePairs<T>();
+  }
+
+  inline KeyValuePairs<char> makeKeyValuePairs(const std::string_view& str)
   {
     return makeKeyValuePairs(str.data(), str.size());
-  }
-
-  template<typename T> requires is_char_v<T>
-  inline KeyValuePairs<T> makeKeyValuePairs(const std::basic_string_view<T>& view)
-  {
-    return makeKeyValuePairs(view.data(), view.size());
   }
 
 } // namespace cs
