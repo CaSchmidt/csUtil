@@ -17,6 +17,7 @@ macro(cs_unittest target)
     PRIVATE ${csUtil_SOURCE_DIR}/testutils/include
     )
   target_link_libraries(${target} csUtil)
+  add_test(NAME ${target} COMMAND ${target})
 endmacro()
 
 ### Unit Tests ###############################################################
