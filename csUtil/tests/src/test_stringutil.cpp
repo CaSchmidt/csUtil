@@ -35,7 +35,7 @@ void test_ends(const char *hay, const char *needle, const bool ignoreCase)
   printf("endsWith(\"%s\", \"%s\", %s) = %s\n",
          hay, needle,
          ignoreCase ? "true" : "false",
-         cs::endsWith(hay, cs::MAX_SIZE_T, needle, cs::MAX_SIZE_T, ignoreCase) ? "true" : "false");
+         cs::endsWith(hay, needle, ignoreCase) ? "true" : "false");
 }
 
 void test_starts(const char *hay, const char *needle, const bool ignoreCase)
@@ -43,7 +43,7 @@ void test_starts(const char *hay, const char *needle, const bool ignoreCase)
   printf("startsWith(\"%s\", \"%s\", %s) = %s\n",
          hay, needle,
          ignoreCase ? "true" : "false",
-         cs::startsWith(hay, cs::MAX_SIZE_T, needle, cs::MAX_SIZE_T, ignoreCase) ? "true" : "false");
+         cs::startsWith(hay, needle, ignoreCase) ? "true" : "false");
 }
 
 void test_replaceAll(const char *old, const char needle, const char *text)
