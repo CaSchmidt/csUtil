@@ -22,6 +22,8 @@ endmacro()
 
 ### Unit Tests ###############################################################
 
+enable_testing()
+
 file(COPY
   ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/CAVP/AES/ECBVarKey128.rsp
   ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/CAVP/AES/ECBVarKey192.rsp
