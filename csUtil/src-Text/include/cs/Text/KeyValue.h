@@ -89,14 +89,15 @@ namespace cs {
   template<typename T> requires is_char_v<T>
   inline KeyValuePairs<T> makeKeyValuePairs(const T *str, const std::size_t len)
   {
-    return len > 0
-        ? impl_keyvalue::makeKeyValuePairs(str, str + len)
-        : KeyValuePairs<T>();
+    return impl_keyvalue::makeKeyValuePairs(str, str + len);
   }
 
   inline KeyValuePairs<char> makeKeyValuePairs(const std::string_view& str)
   {
-    return makeKeyValuePairs(str.data(), str.size());
+    if( !str.empty() ) {
+      return makeKeyValuePairs(str.data(), str.size());
+    }
+    return KeyValuePairs<char>();
   }
 
 } // namespace cs
