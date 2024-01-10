@@ -1,11 +1,10 @@
-#include "cs/SIMD/SIMD128.h"
 #include <cstdio>
 #include <cstdlib>
-#include <ctime>
 
 #include <algorithm>
 #include <array>
 #include <filesystem>
+#include <format>
 #include <iostream>
 #include <list>
 
@@ -19,8 +18,8 @@
 
 #pragma warning (disable : 4996)
 
-namespace chrono = std::chrono;
-namespace fs = std::filesystem;
+namespace chrn = std::chrono;
+namespace fs   = std::filesystem;
 
 struct PlainInfo {
   PlainInfo(const std::string& key = std::string(),
@@ -104,28 +103,24 @@ PlainInfo decrypt(const std::string& keystr, const cs::Buffer& cipher)
 
 std::string fileModificationTime(const fs::path& p)
 {
-  using ToClock = chrono::system_clock;
-
   std::error_code ec;
   const fs::file_time_type file_time = fs::last_write_time(p, ec);
   if( ec ) {
     return std::string();
   }
 
-  const chrono::seconds dur_file_time_s =
-      chrono::duration_cast<chrono::seconds>(chrono::clock_cast<ToClock>(file_time).time_since_epoch());
-
-  // File's Modification Time since Epoch
-  const std::time_t mtime = static_cast<std::time_t>(dur_file_time_s.count());
-
-  const std::tm cal_mtime = *localtime(&mtime);
-
-  std::array<char,64> str_mtime;
-  str_mtime.fill('\0');
-  strftime(str_mtime.data(), str_mtime.size(),
-           "%d-%m-%Y %H:%M:%S", &cal_mtime);
-
-  return std::string(str_mtime.data());
+#ifdef __GNUG__
+  const auto file_time_sys = chrn::file_clock::to_sys(file_time);
+#else
+  const auto file_time_sys = chrn::clock_cast<chrn::system_clock>(file_time);
+#endif
+  const auto file_time_loc = chrn::current_zone()->to_local(file_time_sys);
+  std::string s = std::format("{0:%d}-{0:%m}-{0:%Y} {0:%H}:{0:%M}:{0:%S}", file_time_loc);
+  const std::size_t posDot = s.rfind('.');
+  if( posDot != std::string::npos ) {
+    s.resize(posDot);
+  }
+  return s;
 }
 
 std::string md5hexhash(const std::string& s)
