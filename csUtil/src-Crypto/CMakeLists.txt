@@ -38,3 +38,9 @@ target_include_directories(csUtil
 target_link_libraries(csUtil
   PRIVATE md5 sha
 )
+
+if(CMAKE_COMPILER_IS_GNUCXX)
+  target_compile_options(csUtil
+    PRIVATE -maes
+  )
+endif()

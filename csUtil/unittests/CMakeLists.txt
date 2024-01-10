@@ -79,3 +79,9 @@ cs_unittest(unittest_trie src/unittest_trie.cpp src/unittest_trie_main.cpp)
 if(ENABLE_UNICODE)
   cs_unittest(unittest_textconverter src/unittest_textconverter.cpp src/unittest_textconverter_main.cpp)
 endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX)
+  target_compile_options(unittest_aes
+    PRIVATE -maes
+  )
+endif()
