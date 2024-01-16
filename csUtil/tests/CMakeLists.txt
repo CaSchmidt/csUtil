@@ -34,7 +34,14 @@ file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/../testdata/test äuml.txt"
 cs_test(test_crc src/test_crc.cpp)
 cs_test(test_dbhdecrypt src/test_dbhdecrypt.cpp)
 cs_test(test_dot src/test_dot.cpp)
-cs_test(test_encode src/test_encode.cpp)
+cs_test(test_encode src/test_encode.cpp
+  include/Encode/Encode.h
+  include/Encode/Field.h
+  include/Encode/List.h
+  include/Encode/Literal.h
+  include/Encode/Store.h
+  include/Encode/Variable.h
+)
 cs_test(test_endian src/test_endian.cpp)
 cs_test(test_excd src/test_excd.cpp)
 cs_test(test_fileio src/test_fileio.cpp)
