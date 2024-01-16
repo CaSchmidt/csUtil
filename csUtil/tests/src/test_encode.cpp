@@ -35,6 +35,7 @@ void inputVariables(Encode::VariableStore<T> *store)
     if( input.empty() ) {
       continue;
     }
+    cs::toLower(&input);
 
     const T value = cs::startsWith(input, "0x", true)
         ? stringToUInt<T>(input.data() + 2, input.data() + input.size(), 16)
