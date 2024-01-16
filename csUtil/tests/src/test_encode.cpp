@@ -2,17 +2,47 @@
 #include <cstdlib>
 #include <cstddef>
 
-#include <list>
-#include <memory>
-#include <string>
-#include <unordered_map>
+#include <charconv>
 
-#include <cs/Core/Bit.h>
-#include <cs/Text/StringUtil.h>
 #include <cs/Text/PrintFormat.h>
 #include <cs/Text/PrintUtil.h>
 
 #include "Encode/Encode.h"
+
+template<typename T>
+inline T stringToUInt(const char *first, const char *last,
+                      const int base = 10, const T defValue = 0)
+{
+  T value = defValue;
+  const std::from_chars_result result =
+      std::from_chars(first, last, value, base);
+
+  return result.ec == std::errc()
+      ? value
+      : defValue;
+}
+
+template<typename T>
+void inputVariables(Encode::VariableStore<T> *store)
+{
+  using citer_t = typename Encode::VariableStore<T>::const_iterator;
+
+  for(citer_t it = store->cbegin(); it != store->end(); ++it) {
+    cs::print("% (== 0x%) := ", it->first, cs::hexf(it->second));
+
+    std::string input;
+    std::cin >> input;
+    if( input.empty() ) {
+      continue;
+    }
+
+    const T value = cs::startsWith(input, "0x", true)
+        ? stringToUInt<T>(input.data() + 2, input.data() + input.size(), 16)
+        : stringToUInt<T>(input.data(), input.data() + input.size());
+
+    (*store)[it->first] = value;
+  }
+}
 
 void encode32()
 {
@@ -21,6 +51,8 @@ void encode32()
   ctx::Store store;
   store["a"] = 0x1234;
   store["b"] = 0x03C0;
+
+  inputVariables(&store);
 
   ctx::List fields;
   fields.push_back(ctx::Literal::make(0x91, 0, 7, 24));
