@@ -38,6 +38,7 @@
 
 template<typename T>
 struct EncodeContext {
+  using  size_type = Encode::size_t;
   using value_type = T;
 
   static_assert( std::is_unsigned_v<value_type> );
@@ -51,5 +52,11 @@ struct EncodeContext {
   inline static value_type compose(const List& fields, const Store& store)
   {
     return Encode::compose(fields, store);
+  }
+
+  inline static size_type initialize(Store *store, const List& fields,
+                                     const value_type initValue = 0)
+  {
+    return Encode::initialize(store, fields, initValue);
   }
 };

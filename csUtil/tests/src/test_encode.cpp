@@ -49,12 +49,6 @@ void encode32()
 {
   using ctx = EncodeContext<uint32_t>;
 
-  ctx::Store store;
-  store["a"] = 0x1234;
-  store["b"] = 0x03C0;
-
-  inputVariables(&store);
-
   ctx::List fields;
   fields.push_back(ctx::Literal::make(0x91, 0, 7, 24));
   fields.push_back(ctx::Variable::make("a", 12, 15,  0));
@@ -62,6 +56,12 @@ void encode32()
   fields.push_back(ctx::Variable::make("a",  4,  7, 16));
   fields.push_back(ctx::Variable::make("a",  0,  3, 20));
   fields.push_back(ctx::Variable::make("b",  6,  9,  4));
+
+  ctx::Store store;
+  const auto count = ctx::initialize(&store, fields);
+  cs::println("Number of Variables = %", count);
+
+  inputVariables(&store);
 
   const auto value = ctx::compose(fields, store);
 

@@ -56,4 +56,26 @@ namespace Encode {
     return value;
   }
 
+  template<typename T>
+  inline size_t initialize(VariableStore<T> *store, const FieldList<T>& fields,
+                           const T initValue = 0)
+  {
+    size_t cntField = 0;
+    for(const FieldPtr<T>& field : fields) {
+      if( !field ) {
+        continue;
+      }
+
+      const std::string name = field->name();
+      if( name.empty()  ||  store->contains(name) ) {
+        continue;
+      }
+
+      (*store)[name] = initValue;
+      cntField++;
+    }
+
+    return cntField;
+  }
+
 } // namespace Encode
