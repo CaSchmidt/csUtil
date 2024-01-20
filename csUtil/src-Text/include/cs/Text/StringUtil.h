@@ -332,6 +332,21 @@ namespace cs {
 
   ////// Type conversion... //////////////////////////////////////////////////
 
+  inline const char *CSTR(const std::u8string& str)
+  {
+    return !str.empty()
+        ? CSTR(str.data())
+        : nullptr;
+  }
+
+  inline const wchar_t *WSTR(const std::u16string& str,
+                             std::enable_if_t<sizeof(wchar_t) == sizeof(char16_t)> * = nullptr)
+  {
+    return !str.empty()
+        ? WSTR(str.data())
+        : nullptr;
+  }
+
   inline std::string toString(const std::u8string& str)
   {
     return !str.empty()
@@ -344,6 +359,22 @@ namespace cs {
     return !str.empty()
         ? std::u8string(UTF8(str.data()), str.size())
         : std::u8string();
+  }
+
+  inline std::u16string toUtf16String(const std::wstring& str,
+                                      std::enable_if_t<sizeof(char16_t) == sizeof(wchar_t)> * = nullptr)
+  {
+    return !str.empty()
+        ? std::u16string(UTF16(str.data()), str.size())
+        : std::u16string();
+  }
+
+  inline std::wstring toWString(const std::u16string& str,
+                                std::enable_if_t<sizeof(wchar_t) == sizeof(char16_t)> * = nullptr)
+  {
+    return !str.empty()
+        ? std::wstring(WSTR(str.data()), str.size())
+        : std::wstring();
   }
 
 } // namespace cs
