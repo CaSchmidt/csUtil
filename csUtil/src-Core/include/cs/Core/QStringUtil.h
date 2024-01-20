@@ -40,6 +40,11 @@
 
 namespace cs {
 
+  inline QChar L1C(const char c)
+  {
+    return QChar::fromLatin1(c);
+  }
+
   inline QString toQString(const char8_t *s)
   {
     return s != nullptr
