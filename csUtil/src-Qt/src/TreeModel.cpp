@@ -65,7 +65,7 @@ namespace cs {
   int TreeModel::columnCount(const QModelIndex& parent) const
   {
     if( parent.isValid() ) {
-      return csTreeItem(parent)->columnCount();
+      return treeItem(parent)->columnCount();
     }
     return _root->columnCount();
   }
@@ -75,7 +75,7 @@ namespace cs {
     if( !index.isValid() ) {
       return QVariant();
     }
-    return csTreeItem(index)->data(index.column(), role);
+    return treeItem(index)->data(index.column(), role);
   }
 
   Qt::ItemFlags TreeModel::flags(const QModelIndex& index) const
@@ -103,7 +103,7 @@ namespace cs {
     }
 
     AbstractTreeItem *parentItem = parent.isValid()
-        ? csTreeItem(parent)
+        ? treeItem(parent)
         : _root.get();
 
     AbstractTreeItem *childItem = parentItem->childItem(row);
@@ -120,7 +120,7 @@ namespace cs {
       return QModelIndex();
     }
 
-    AbstractTreeItem  *childItem = csTreeItem(child);
+    AbstractTreeItem  *childItem = treeItem(child);
     AbstractTreeItem *parentItem = childItem->parentItem();
 
     if( parentItem == _root.get() ) {
@@ -137,7 +137,7 @@ namespace cs {
     }
 
     AbstractTreeItem *parentItem = parent.isValid()
-        ? csTreeItem(parent)
+        ? treeItem(parent)
         : _root.get();
 
     return parentItem->rowCount();
