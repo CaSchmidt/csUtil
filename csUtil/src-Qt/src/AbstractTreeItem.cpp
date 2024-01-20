@@ -37,7 +37,7 @@ namespace cs {
 
   ////// Public //////////////////////////////////////////////////////////////
 
-  CS_UTIL_EXPORT AbstractTreeItem *csTreeItem(const QModelIndex& index)
+  CS_UTIL_EXPORT AbstractTreeItem *treeItem(const QModelIndex& index)
   {
     return static_cast<AbstractTreeItem*>(index.internalPointer());
   }
