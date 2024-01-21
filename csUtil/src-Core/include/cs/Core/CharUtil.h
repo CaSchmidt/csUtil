@@ -52,14 +52,14 @@ namespace cs {
 
   template<typename T> requires is_char_v<T>
   struct glyph {
-    static constexpr auto null = static_cast<T>('\0');
+    static constexpr auto NUL = static_cast<T>('\0');
 
     static constexpr auto space = static_cast<T>(' ');  // space
-    static constexpr auto    ff = static_cast<T>('\f'); // form feed
-    static constexpr auto    lf = static_cast<T>('\n'); // line feed
-    static constexpr auto    cr = static_cast<T>('\r'); // carriage return
-    static constexpr auto    ht = static_cast<T>('\t'); // horizontal tab
-    static constexpr auto    vt = static_cast<T>('\v'); // vertical tab
+    static constexpr auto    FF = static_cast<T>('\f'); // form feed
+    static constexpr auto    LF = static_cast<T>('\n'); // line feed
+    static constexpr auto    CR = static_cast<T>('\r'); // carriage return
+    static constexpr auto    HT = static_cast<T>('\t'); // horizontal tab
+    static constexpr auto    VT = static_cast<T>('\v'); // vertical tab
 
     static constexpr auto zero = static_cast<T>('0');
     static constexpr auto nine = static_cast<T>('9');
@@ -76,10 +76,12 @@ namespace cs {
 
     static constexpr auto colon = static_cast<T>(':');
     static constexpr auto comma = static_cast<T>(',');
-    static constexpr auto   del = static_cast<T>(0x7F);
     static constexpr auto   dot = static_cast<T>('.');
     static constexpr auto   pct = static_cast<T>('%');
     static constexpr auto under = static_cast<T>('_');
+
+    static constexpr auto SUB = static_cast<T>(0x1A);
+    static constexpr auto DEL = static_cast<T>(0x7F);
   };
 
   ////// Classification //////////////////////////////////////////////////////
@@ -109,7 +111,7 @@ namespace cs {
   constexpr bool isPrintable(const T& c)
   {
     using g = glyph<T>;
-    return (g::space < c  &&  c < g::del)  ||  (OR_SPACE  &&  c == g::space);
+    return (g::space < c  &&  c < g::DEL)  ||  (OR_SPACE  &&  c == g::space);
   }
 
   template<typename T> requires is_char_v<T>
@@ -123,11 +125,11 @@ namespace cs {
   {
     return
         c == glyph<T>::space  ||
-        c == glyph<T>::ff     ||
-        c == glyph<T>::lf     ||
-        c == glyph<T>::cr     ||
-        c == glyph<T>::ht     ||
-        c == glyph<T>::vt;
+        c == glyph<T>::FF     ||
+        c == glyph<T>::LF     ||
+        c == glyph<T>::CR     ||
+        c == glyph<T>::HT     ||
+        c == glyph<T>::VT;
   }
 
   template<typename T> requires is_char_v<T>
@@ -203,10 +205,9 @@ namespace cs {
   constexpr NCharT narrow(const WCharT& in)
   {
     constexpr WCharT MAX_ASCII = 0x7F;
-    constexpr NCharT       SUB = 0x1A;
 
     return in > MAX_ASCII
-        ? SUB
+        ? glyph<NCharT>::SUB
         : static_cast<NCharT>(in);
   }
 
@@ -288,7 +289,7 @@ namespace cs {
   constexpr auto lambda_set_null()
   {
     return [](T& c) -> void {
-      c = glyph<T>::null;
+      c = glyph<T>::NUL;
     };
   }
 

@@ -569,7 +569,7 @@ namespace cs {
       std::for_each(end, last, lambda_set_null<T>());
 
       if( removeDot  &&  end == dot + 1 ) {
-        *dot = g::null;
+        *dot = g::NUL;
       }
     }
 
