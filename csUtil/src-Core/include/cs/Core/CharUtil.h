@@ -65,23 +65,34 @@ namespace cs {
     static constexpr auto nine = static_cast<T>('9');
 
     static constexpr auto a = static_cast<T>('a');
+    static constexpr auto b = static_cast<T>('b');
     static constexpr auto e = static_cast<T>('e');
     static constexpr auto f = static_cast<T>('f');
     static constexpr auto z = static_cast<T>('z');
+    static constexpr auto n = static_cast<T>('n');
+    static constexpr auto r = static_cast<T>('r');
+    static constexpr auto t = static_cast<T>('t');
+    static constexpr auto v = static_cast<T>('v');
 
     static constexpr auto A = static_cast<T>('A');
     static constexpr auto E = static_cast<T>('E');
     static constexpr auto F = static_cast<T>('F');
     static constexpr auto Z = static_cast<T>('Z');
 
-    static constexpr auto colon = static_cast<T>(':');
-    static constexpr auto comma = static_cast<T>(',');
-    static constexpr auto   dot = static_cast<T>('.');
-    static constexpr auto   pct = static_cast<T>('%');
-    static constexpr auto under = static_cast<T>('_');
+    static constexpr auto  bckslash = static_cast<T>('\\');
+    static constexpr auto     colon = static_cast<T>(':');
+    static constexpr auto     comma = static_cast<T>(',');
+    static constexpr auto  dblquote = static_cast<T>('"');
+    static constexpr auto       dot = static_cast<T>('.');
+    static constexpr auto       pct = static_cast<T>('%');
+    static constexpr auto  qstnmark = static_cast<T>('?');
+    static constexpr auto snglquote = static_cast<T>('\'');
+    static constexpr auto     under = static_cast<T>('_');
 
-    static constexpr auto SUB = static_cast<T>(0x1A);
-    static constexpr auto DEL = static_cast<T>(0x7F);
+    static constexpr auto BEL = static_cast<T>('\a'); // bell
+    static constexpr auto  BS = static_cast<T>('\b'); // backspace
+    static constexpr auto SUB = static_cast<T>(0x1A); // substitute
+    static constexpr auto DEL = static_cast<T>(0x7F); // delete
   };
 
   ////// Classification //////////////////////////////////////////////////////
