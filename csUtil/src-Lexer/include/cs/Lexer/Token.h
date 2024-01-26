@@ -159,7 +159,7 @@ namespace cs {
   template<typename T>
   inline T as_value(const TokenPtr& tok, const T defValue = T())
   {
-    return dynamic_cast<const ValueToken<T>*>(tok.get())
+    return dynamic_cast<const ValueToken<T>*>(tok.get()) != nullptr
         ? dynamic_cast<const ValueToken<T>*>(tok.get())->value()
         : defValue;
   }
