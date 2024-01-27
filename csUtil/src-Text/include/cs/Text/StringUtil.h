@@ -347,21 +347,21 @@ namespace cs {
         : nullptr;
   }
 
-  inline std::string toString(const std::u8string& str)
+  inline std::string toString(const std::u8string_view& str)
   {
     return !str.empty()
         ? std::string(CSTR(str.data()), str.size())
         : std::string();
   }
 
-  inline std::u8string toUtf8String(const std::string& str)
+  inline std::u8string toUtf8String(const std::string_view& str)
   {
     return !str.empty()
         ? std::u8string(UTF8(str.data()), str.size())
         : std::u8string();
   }
 
-  inline std::u16string toUtf16String(const std::wstring& str,
+  inline std::u16string toUtf16String(const std::wstring_view& str,
                                       std::enable_if_t<sizeof(char16_t) == sizeof(wchar_t)> * = nullptr)
   {
     return !str.empty()
@@ -369,7 +369,7 @@ namespace cs {
         : std::u16string();
   }
 
-  inline std::wstring toWString(const std::u16string& str,
+  inline std::wstring toWString(const std::u16string_view& str,
                                 std::enable_if_t<sizeof(wchar_t) == sizeof(char16_t)> * = nullptr)
   {
     return !str.empty()
