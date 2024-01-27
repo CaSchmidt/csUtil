@@ -51,7 +51,6 @@ set_target_properties(csUtil PROPERTIES
 
 target_compile_definitions(csUtil
   PRIVATE CS_BUILD_UTIL_LIB
-  PRIVATE HAVE_STD_FORMAT
   )
 
 if(ENABLE_QT)

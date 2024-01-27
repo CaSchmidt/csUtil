@@ -84,64 +84,6 @@ namespace cs {
     bool _logger_flush{false};
     const IProgress *_progress{nullptr};
     bool _progress_flush{false};
-
-#ifdef HAVE_STD_FORMAT
-  public:
-    template<typename... Args>
-    inline void logTextf(const char8_t *fmt, Args&&... args) const
-    {
-      if( _logger != nullptr ) {
-        _logger->logTextf(fmt, std::forward<Args>(args)...);
-        if( _logger_flush ) {
-          _logger->logFlush();
-        }
-      }
-    }
-
-    template<typename... Args>
-    inline void logWarningf(const char8_t *fmt, Args&&... args) const
-    {
-      if( _logger != nullptr ) {
-        _logger->logWarningf(fmt, std::forward<Args>(args)...);
-        if( _logger_flush ) {
-          _logger->logFlush();
-        }
-      }
-    }
-
-    template<typename... Args>
-    inline void logWarningf(const int lineno, const char8_t *fmt, Args&&... args) const
-    {
-      if( _logger != nullptr ) {
-        _logger->logWarningf(lineno, fmt, std::forward<Args>(args)...);
-        if( _logger_flush ) {
-          _logger->logFlush();
-        }
-      }
-    }
-
-    template<typename... Args>
-    inline void logErrorf(const char8_t *fmt, Args&&... args) const
-    {
-      if( _logger != nullptr ) {
-        _logger->logErrorf(fmt, std::forward<Args>(args)...);
-        if( _logger_flush ) {
-          _logger->logFlush();
-        }
-      }
-    }
-
-    template<typename... Args>
-    inline void logErrorf(const int lineno, const char8_t *fmt, Args&&... args) const
-    {
-      if( _logger != nullptr ) {
-        _logger->logErrorf(lineno, fmt, std::forward<Args>(args)...);
-        if( _logger_flush ) {
-          _logger->logFlush();
-        }
-      }
-    }
-#endif
   };
 
 } // namespace cs

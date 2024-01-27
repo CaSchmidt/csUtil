@@ -31,17 +31,9 @@
 
 #pragma once
 
-#ifdef HAVE_STD_FORMAT
-# include <format>
-# include <utility>
-#endif
 #include <string>
 
 #include <cs/Core/csutil_config.h>
-
-#ifdef HAVE_STD_FORMAT
-# include <cs/Core/TypeTraits.h>
-#endif
 
 namespace cs {
 
@@ -70,51 +62,6 @@ namespace cs {
     ILogger& operator=(const ILogger&) noexcept = delete;
     ILogger(ILogger&&) noexcept = delete;
     ILogger& operator=(ILogger&&) noexcept = delete;
-
-#ifdef HAVE_STD_FORMAT
-  public:
-    template<typename... Args>
-    inline void logTextf(const char8_t *fmt, Args&&... args) const
-    {
-      const std::string msg = vformat(fmt, std::forward<Args>(args)...);
-      logText(UTF8(msg.data()));
-    }
-
-    template<typename... Args>
-    inline void logWarningf(const char8_t *fmt, Args&&... args) const
-    {
-      const std::string msg = vformat(fmt, std::forward<Args>(args)...);
-      logWarning(UTF8(msg.data()));
-    }
-
-    template<typename... Args>
-    inline void logWarningf(const int lineno, const char8_t *fmt, Args&&... args) const
-    {
-      const std::string msg = vformat(fmt, std::forward<Args>(args)...);
-      logWarning(lineno, UTF8(msg.data()));
-    }
-
-    template<typename... Args>
-    inline void logErrorf(const char8_t *fmt, Args&&... args) const
-    {
-      const std::string msg = vformat(fmt, std::forward<Args>(args)...);
-      logError(UTF8(msg.data()));
-    }
-
-    template<typename... Args>
-    inline void logErrorf(const int lineno, const char8_t *fmt, Args&&... args) const
-    {
-      const std::string msg = vformat(fmt, std::forward<Args>(args)...);
-      logError(lineno, UTF8(msg.data()));
-    }
-
-  private:
-    template<typename... Args>
-    inline static std::string vformat(const char8_t *fmt, Args&&... args)
-    {
-      return std::vformat(CSTR(fmt), std::make_format_args(std::forward<Args>(args)...));
-    }
-#endif
   };
 
 } // namespace cs
