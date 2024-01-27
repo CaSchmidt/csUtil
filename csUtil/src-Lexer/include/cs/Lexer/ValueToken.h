@@ -31,86 +31,59 @@
 
 #pragma once
 
-#include <memory>
-#include <string>
-
-#include <cs/Core/csutil_config.h>
-
-#include <cs/Core/CharUtil.h>
+#include <cs/Lexer/Token.h>
 
 namespace cs {
 
-  ////// Type Traits /////////////////////////////////////////////////////////
+  ////// Value Token Implementation //////////////////////////////////////////
 
   template<typename T>
-  using is_typeid_type = std::bool_constant<
-  std::is_unsigned_v<T>  &&  (sizeof(T) > 2)
-  >;
-
-  template<typename T>
-  inline constexpr bool is_typeid_type_v = is_typeid_type<T>::value;
-
-  ////// Types ///////////////////////////////////////////////////////////////
-
-  template<typename T>
-  using declare_tokenid_type = std::enable_if_t<is_typeid_type_v<T>,T>;
-
-  using tokenid_t = declare_tokenid_type<unsigned>;
-
-  ////// Token IDs ///////////////////////////////////////////////////////////
-
-  enum TokenId : tokenid_t {
-    TOK_EndOfInput = 0x0,
-    TOK_Unknown    = 0xFFFF, // <not a character>; cf. https://www.unicode.org/charts/PDF/UFFF0.pdf
-    TOK_User       = 0x10000
-  };
-
-  constexpr tokenid_t make_tokenid(const tokenid_t user)
-  {
-    return static_cast<tokenid_t>(TOK_User) + user;
-  }
-
-  ////// Base Token Implementation ///////////////////////////////////////////
-
-  using TokenPtr = std::unique_ptr<class BaseToken>;
-
-  class CS_UTIL_EXPORT BaseToken {
+  class ValueToken : public BaseToken {
   protected:
     struct ctor_tag {
       ctor_tag() noexcept = default;
     };
 
   public:
-    BaseToken(const tokenid_t id, const size_t size,
-              const ctor_tag& = ctor_tag()) noexcept;
-    virtual ~BaseToken() noexcept;
+    using value_type = T;
 
-    tokenid_t id() const;
+    ValueToken(const tokenid_t id, const value_type& value, const size_t size,
+               const ctor_tag& = ctor_tag()) noexcept
+      : BaseToken(id, size)
+      , _value(value)
+    {
+    }
 
-    size_t column() const;
-    size_t line() const;
+    ~ValueToken() noexcept
+    {
+    }
 
-    void setLocation(const size_t line, const size_t column);
+    value_type value() const
+    {
+      return _value;
+    }
 
-    size_t size() const;
-
-    static TokenPtr make(const tokenid_t id, const size_t size);
+    static TokenPtr make(const tokenid_t id, const value_type& value, const size_t size)
+    {
+      return std::make_unique<ValueToken<value_type>>(id, value, size);
+    }
 
   private:
-    BaseToken() noexcept = delete;
+    ValueToken() noexcept = delete;
 
-    size_t    _column{0};
-    tokenid_t _id{};
-    size_t    _line{0};
-    size_t    _size{0};
+    value_type _value;
   };
 
   ////// Utilities ///////////////////////////////////////////////////////////
 
-  template<typename CharT>
-  inline bool is_literal(const TokenPtr& tok, const CharT ch)
+  template<typename T>
+  inline T as_value(const TokenPtr& tok, const T defValue = T())
   {
-    return tok  &&  tok->id() == static_cast<tokenid_t>(ch);
+    using VT = ValueToken<T>;
+
+    return dynamic_cast<const VT*>(tok.get()) != nullptr
+        ? dynamic_cast<const VT*>(tok.get())->value()
+        : defValue;
   }
 
 } // namespace cs

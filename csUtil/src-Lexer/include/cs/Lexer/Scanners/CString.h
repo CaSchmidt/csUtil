@@ -32,6 +32,7 @@
 #pragma once
 
 #include <cs/Lexer/Scanner.h>
+#include <cs/Lexer/ValueToken.h>
 
 namespace cs {
 
