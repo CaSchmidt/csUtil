@@ -45,6 +45,7 @@ cs_test(test_encode src/test_encode.cpp
 cs_test(test_endian src/test_endian.cpp)
 cs_test(test_excd src/test_excd.cpp)
 cs_test(test_fileio src/test_fileio.cpp)
+cs_test(test_lexer src/test_lexer.cpp)
 cs_test(test_properties src/test_properties.cpp)
 cs_test(test_rawconverter src/test_rawconverter.cpp)
 cs_test(test_simdbench src/test_simdbench.cpp)
