@@ -52,7 +52,10 @@ namespace cs {
       SHA224,
       SHA256,
       SHA384,
-      SHA512
+      SHA512,
+      // SipHash
+      SipHash_2_4_64,
+      SipHash_2_4_128
     };
 
     Hash(const Function id) noexcept;
@@ -62,11 +65,11 @@ namespace cs {
 
     virtual Buffer digest() const = 0;
     virtual size_t digestSize() const = 0;
-    virtual void reset() = 0;
+    virtual void reset();
     virtual size_t update(const void *data, const size_t sizData) = 0;
 
     virtual size_t keySize() const;
-    virtual bool setKey(const void *data, const size_t sizData) const;
+    virtual bool setKey(const void *data, const size_t sizData);
 
     static HashPtr make(const Function id);
 

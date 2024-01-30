@@ -31,10 +31,12 @@
 
 #include <md5.h>
 #include <sha.h>
+#include <siphash.h>
 
 #include "cs/Crypto/Hash.h"
 
 #include "cs/Convert/Serialize.h"
+#include "cs/Core/ByteArray.h"
 #include "cs/Core/Container.h"
 #include "cs/Core/CRC.h"
 
@@ -48,19 +50,23 @@ namespace cs {
     template<Hash::Function FUNC>
     struct DigestSize { /* SFINAE */ };
     template<>
-    struct DigestSize<Hash::CRC32>  : public digest_constant< 4> {};
+    struct DigestSize<Hash::CRC32>           : public digest_constant< 4> {};
     template<>
-    struct DigestSize<Hash::MD5>    : public digest_constant<16> {};
+    struct DigestSize<Hash::MD5>             : public digest_constant<16> {};
     template<>
-    struct DigestSize<Hash::SHA1>   : public digest_constant<20> {};
+    struct DigestSize<Hash::SHA1>            : public digest_constant<20> {};
     template<>
-    struct DigestSize<Hash::SHA224> : public digest_constant<28> {};
+    struct DigestSize<Hash::SHA224>          : public digest_constant<28> {};
     template<>
-    struct DigestSize<Hash::SHA256> : public digest_constant<32> {};
+    struct DigestSize<Hash::SHA256>          : public digest_constant<32> {};
     template<>
-    struct DigestSize<Hash::SHA384> : public digest_constant<48> {};
+    struct DigestSize<Hash::SHA384>          : public digest_constant<48> {};
     template<>
-    struct DigestSize<Hash::SHA512> : public digest_constant<64> {};
+    struct DigestSize<Hash::SHA512>          : public digest_constant<64> {};
+    template<>
+    struct DigestSize<Hash::SipHash_2_4_64>  : public digest_constant< 8> {};
+    template<>
+    struct DigestSize<Hash::SipHash_2_4_128> : public digest_constant<16> {};
 
     /************************************************************************
      * CRC32 Implementation *************************************************
@@ -463,6 +469,71 @@ namespace cs {
       SHA512Context _ctx;
     };
 
+    /************************************************************************
+     * SipHash-2-4-X ********************************************************
+     ************************************************************************/
+
+    template<Hash::Function ID>
+    class HashSipHash_2_4_X : public Hash {
+    public:
+      static_assert( ID == Hash::SipHash_2_4_64  ||  ID == Hash::SipHash_2_4_128 );
+
+      HashSipHash_2_4_X() noexcept
+        : Hash(ID)
+      {
+      }
+
+      ~HashSipHash_2_4_X() noexcept
+      {
+      }
+
+      Buffer digest() const
+      {
+        return Buffer(_result.begin(), _result.end());
+      }
+
+      size_t digestSize() const
+      {
+        return _result.size();
+      }
+
+      size_t update(const void *data, const size_t sizData)
+      {
+        siphash(data, sizData,
+                _key.data(),
+                _result.data(), _result.size(),
+                2, 4);
+
+        return sizData;
+      }
+
+      size_t keySize() const
+      {
+        return _key.size();
+      }
+
+      bool setKey(const void *data, const size_t sizData)
+      {
+        _key.fill(0);
+        if( sizData != _key.size() ) {
+          return false;
+        }
+
+        const byte_t *k = reinterpret_cast<const byte_t*>(data);
+        for(size_t i = 0; i < _key.size(); i++) {
+          _key[i] = k[i];
+        }
+
+        return true;
+      }
+
+    private:
+      static constexpr size_t DIGEST_SIZE = DigestSize<ID>::value;
+
+      ByteArray<16>          _key;
+      ByteArray<DIGEST_SIZE> _result;
+    };
+
   } // namespace impl_hash
 
   /**************************************************************************
@@ -485,12 +556,16 @@ namespace cs {
     return _id;
   }
 
+  void Hash::reset()
+  {
+  }
+
   size_t Hash::keySize() const
   {
     return 0;
   }
 
-  bool Hash::setKey(const void */*data*/, const size_t /*sizData*/) const
+  bool Hash::setKey(const void */*data*/, const size_t /*sizData*/)
   {
     return false;
   }
@@ -514,6 +589,10 @@ namespace cs {
       result = std::make_unique<impl_hash::HashSha2_384>();
     } else if( id == SHA512 ) {
       result = std::make_unique<impl_hash::HashSha2_512>();
+    } else if( id == SipHash_2_4_64 ) {
+      result = std::make_unique<impl_hash::HashSipHash_2_4_X<SipHash_2_4_64>>();
+    } else if( id == SipHash_2_4_128 ) {
+      result = std::make_unique<impl_hash::HashSipHash_2_4_X<SipHash_2_4_128>>();
     }
     if( result ) {
       result->reset();
