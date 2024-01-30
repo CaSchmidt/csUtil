@@ -24,6 +24,10 @@ add_subdirectory(${csUtil_SOURCE_DIR}/3rdparty/sha
   ${csUtil_BINARY_DIR}/3rdparty/sha
 )
 
+add_subdirectory(${csUtil_SOURCE_DIR}/3rdparty/siphash
+  ${csUtil_BINARY_DIR}/3rdparty/siphash
+)
+
 ### csUtil ###################################################################
 
 target_sources(csUtil
@@ -36,7 +40,7 @@ target_include_directories(csUtil
 )
 
 target_link_libraries(csUtil
-  PRIVATE md5 sha
+  PRIVATE md5 sha siphash
 )
 
 if(CMAKE_COMPILER_IS_GNUCXX)
