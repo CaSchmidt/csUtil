@@ -37,7 +37,7 @@
 
 namespace cs {
 
-  template<std::size_t N>
+  template<size_t N>
   using ByteArray = std::array<byte_t,N>;
 
 } // namespace cs
