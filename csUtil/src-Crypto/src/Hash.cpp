@@ -485,6 +485,16 @@ namespace cs {
     return _id;
   }
 
+  size_t Hash::keySize() const
+  {
+    return 0;
+  }
+
+  bool Hash::setKey(const void */*data*/, const size_t /*sizData*/) const
+  {
+    return false;
+  }
+
   ////// public static ///////////////////////////////////////////////////////
 
   HashPtr Hash::make(const Function id)

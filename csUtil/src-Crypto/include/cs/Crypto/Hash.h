@@ -43,7 +43,7 @@ namespace cs {
 
   class CS_UTIL_EXPORT Hash {
   public:
-    enum Function : unsigned int {
+    enum Function : unsigned {
       Invalid = 0,
       CRC32,
       MD5,
@@ -64,6 +64,9 @@ namespace cs {
     virtual size_t digestSize() const = 0;
     virtual void reset() = 0;
     virtual size_t update(const void *data, const size_t sizData) = 0;
+
+    virtual size_t keySize() const;
+    virtual bool setKey(const void *data, const size_t sizData) const;
 
     static HashPtr make(const Function id);
 
