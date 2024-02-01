@@ -36,12 +36,12 @@ int main(int argc, char **argv)
       cs::println("UNKNOWN(%,%): '%'",
                   tok->line(),
                   tok->column(),
-                  cs::as_value<char>(tok));
+                  cs::to_value<char>(tok));
     } else if( tok->id() == TOK_String ) {
       cs::println("STRING(%,%): \"%\"",
                   tok->line(),
                   tok->column(),
-                  cs::as_value<std::string>(tok));
+                  cs::to_value<std::string>(tok));
     }
   }
 

@@ -31,6 +31,8 @@
 
 #pragma once
 
+#include <string>
+
 #include <cs/Lexer/Token.h>
 
 namespace cs {

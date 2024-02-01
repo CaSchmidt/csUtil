@@ -77,7 +77,7 @@ namespace cs {
   ////// Utilities ///////////////////////////////////////////////////////////
 
   template<typename T>
-  inline T as_value(const TokenPtr& tok, const T defValue = T())
+  inline T to_value(const TokenPtr& tok, const T& defValue = T())
   {
     using VT = ValueToken<T>;
 

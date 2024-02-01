@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include <cs/Core/CharUtil.h>
 #include <cs/Lexer/Scanner.h>
 #include <cs/Lexer/ValueToken.h>
 
