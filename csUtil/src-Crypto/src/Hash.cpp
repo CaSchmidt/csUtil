@@ -485,16 +485,25 @@ namespace cs {
 
       ~HashSipHash_2_4_X() noexcept
       {
+        clear();
       }
 
       Buffer digest() const
       {
-        return Buffer(_result.begin(), _result.end());
+        const Buffer result(_result.begin(), _result.end());
+        const_cast<HashSipHash_2_4_X<ID>*>(this)->reset();
+
+        return result;
       }
 
       size_t digestSize() const
       {
         return _result.size();
+      }
+
+      void reset()
+      {
+        _result.fill(0);
       }
 
       size_t update(const void *data, const size_t sizData)
@@ -507,21 +516,21 @@ namespace cs {
         return sizData;
       }
 
+      void clearKey()
+      {
+        clear();
+      }
+
       size_t keySize() const
       {
         return _key.size();
       }
 
-      bool setKey(const void *data, const size_t sizData)
+      bool setKey(const void *key)
       {
-        _key.fill(0);
-        if( sizData != _key.size() ) {
-          return false;
-        }
-
-        const byte_t *k = reinterpret_cast<const byte_t*>(data);
+        clear();
         for(size_t i = 0; i < _key.size(); i++) {
-          _key[i] = k[i];
+          _key[i] = reinterpret_cast<const byte_t*>(key)[i];
         }
 
         return true;
@@ -529,6 +538,12 @@ namespace cs {
 
     private:
       static constexpr size_t DIGEST_SIZE = DigestSize<ID>::value;
+
+      inline void clear()
+      {
+        _key.fill(0);
+        _result.fill(0);
+      }
 
       ByteArray<16>          _key;
       ByteArray<DIGEST_SIZE> _result;
@@ -560,12 +575,16 @@ namespace cs {
   {
   }
 
+  void Hash::clearKey()
+  {
+  }
+
   size_t Hash::keySize() const
   {
     return 0;
   }
 
-  bool Hash::setKey(const void */*data*/, const size_t /*sizData*/)
+  bool Hash::setKey(const void */*key*/)
   {
     return false;
   }

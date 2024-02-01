@@ -68,8 +68,9 @@ namespace cs {
     virtual void reset();
     virtual size_t update(const void *data, const size_t sizData) = 0;
 
+    virtual void clearKey();
     virtual size_t keySize() const;
-    virtual bool setKey(const void *data, const size_t sizData);
+    virtual bool setKey(const void *key);
 
     static HashPtr make(const Function id);
 

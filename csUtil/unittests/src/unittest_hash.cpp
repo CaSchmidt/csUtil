@@ -668,7 +668,7 @@ namespace siphash {
     std::iota(key.begin(), key.end(), 0);
 
     const cs::HashPtr siphash = cs::Hash::make(cs::Hash::SipHash_2_4_64);
-    siphash->setKey(key.data(), key.size());
+    siphash->setKey(key.data());
 
     const TestVectors64 vectors = make_sip_2_4_64();
     for(cs::size_t i = 0; i < vectors.size(); i++) {
@@ -689,7 +689,7 @@ namespace siphash {
     std::iota(key.begin(), key.end(), 0);
 
     const cs::HashPtr siphash = cs::Hash::make(cs::Hash::SipHash_2_4_128);
-    siphash->setKey(key.data(), key.size());
+    siphash->setKey(key.data());
 
     const TestVectors128 vectors = make_sip_2_4_128();
     for(cs::size_t i = 0; i < vectors.size(); i++) {
