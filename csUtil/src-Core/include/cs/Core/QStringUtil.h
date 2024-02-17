@@ -40,6 +40,16 @@
 
 namespace cs {
 
+  namespace Qt {
+
+    using size_type = decltype(std::declval<QString>().size());
+
+    constexpr auto MAX_QT_SIZE = maxab_v<size_type,std::size_t>;
+
+    constexpr auto MAX_STD_SIZE = maxab_v<std::size_t,size_type>;
+
+  } // namespace Qt
+
   inline QChar L1C(const char c)
   {
     return QChar::fromLatin1(c);
@@ -52,9 +62,9 @@ namespace cs {
         : QString();
   }
 
-  inline QString toQString(const std::u8string& s)
+  inline QString toQString(const std::u8string_view& s)
   {
-    return !s.empty()
+    return !s.empty()  &&  s.size() <= Qt::MAX_STD_SIZE
         ? QString::fromUtf8(CSTR(s.data()), int(s.size()))
         : QString();
   }
@@ -66,9 +76,9 @@ namespace cs {
         : QString();
   }
 
-  inline QString toQString(const std::u16string& s)
+  inline QString toQString(const std::u16string_view& s)
   {
-    return !s.empty()
+    return !s.empty()  &&  s.size() <= Qt::MAX_STD_SIZE
         ? QString::fromUtf16(s.data(), int(s.size()))
         : QString();
   }
@@ -76,8 +86,9 @@ namespace cs {
   inline std::u8string toUtf8String(const QString& s)
   {
     using size_type = std::u8string::size_type;
+
     const QByteArray utf8 = s.toUtf8();
-    return !utf8.isEmpty()
+    return !utf8.isEmpty()  &&  utf8.size() <= Qt::MAX_QT_SIZE
         ? std::u8string(UTF8(utf8.constData()), size_type(utf8.size()))
         : std::u8string();
   }
@@ -92,7 +103,7 @@ namespace cs {
   // Path Conversion /////////////////////////////////////////////////////////
 
   inline std::filesystem::path toPath(const QString& s,
-                                      std::filesystem::path::format fmt = std::filesystem::path::auto_format)
+                                      const std::filesystem::path::format fmt = std::filesystem::path::auto_format)
   {
     return !s.isEmpty()
         ? std::filesystem::path(s.toStdU16String(), fmt)
