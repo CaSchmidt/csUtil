@@ -117,4 +117,63 @@ namespace cs {
         : QString();
   }
 
+  // Value Conversion ////////////////////////////////////////////////////////
+
+  template<typename T>
+  inline if_integral_t<T,QString> toQString(const T value,
+                                            const int base = 10)
+  {
+    return QString::number(value, base);
+  }
+
+  template<typename T>
+  inline if_real_t<T,QString> toQString(const T value,
+                                        const char fmt = 'g',
+                                        const int prec = 6)
+  {
+    return QString::number(value, fmt, prec);
+  }
+
+  template<typename T>
+  inline if_same_t<T,int> toValue(const QString& s,
+                                  bool *ok = nullptr, const int base = 10)
+  {
+    return s.toInt(ok, base);
+  }
+
+  template<typename T>
+  inline if_same_t<T,unsigned int> toValue(const QString& s,
+                                           bool *ok = nullptr, const int base = 10)
+  {
+    return s.toUInt(ok, base);
+  }
+
+  template<typename T>
+  inline if_same_t<T,long long> toValue(const QString& s,
+                                        bool *ok = nullptr, const int base = 10)
+  {
+    return s.toLongLong(ok, base);
+  }
+
+  template<typename T>
+  inline if_same_t<T,unsigned long long> toValue(const QString& s,
+                                                 bool *ok = nullptr, const int base = 10)
+  {
+    return s.toULongLong(ok, base);
+  }
+
+  template<typename T>
+  inline if_same_t<T,double> toValue(const QString& s,
+                                     bool *ok = nullptr, const int = 0)
+  {
+    return s.toDouble(ok);
+  }
+
+  template<typename T>
+  inline if_same_t<T,float> toValue(const QString& s,
+                                    bool *ok = nullptr, const int = 0)
+  {
+    return s.toFloat(ok);
+  }
+
 } // namespace cs

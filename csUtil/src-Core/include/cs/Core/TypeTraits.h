@@ -274,6 +274,11 @@ namespace cs {
   template<typename A, typename B>
   inline constexpr A maxab_v = maxab<A,B>::value;
 
+  ////// Same Types //////////////////////////////////////////////////////////
+
+  template<typename T, typename REF>
+  using if_same_t = std::enable_if_t<std::is_same_v<T,REF>,T>;
+
   ////// Pointer Conversions /////////////////////////////////////////////////
 
   inline const char *CSTR(const char8_t *s)
