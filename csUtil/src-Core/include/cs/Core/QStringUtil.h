@@ -40,7 +40,7 @@
 
 namespace cs {
 
-  namespace Qt {
+  namespace impl_qt {
 
     using size_type = decltype(std::declval<QString>().size());
 
@@ -48,7 +48,7 @@ namespace cs {
 
     constexpr auto MAX_STD_SIZE = maxab_v<std::size_t,size_type>;
 
-  } // namespace Qt
+  } // namespace impl_qt
 
   inline QChar L1C(const char c)
   {
@@ -64,7 +64,7 @@ namespace cs {
 
   inline QString toQString(const std::u8string_view& s)
   {
-    return !s.empty()  &&  s.size() <= Qt::MAX_STD_SIZE
+    return !s.empty()  &&  s.size() <= impl_qt::MAX_STD_SIZE
         ? QString::fromUtf8(CSTR(s.data()), int(s.size()))
         : QString();
   }
@@ -78,7 +78,7 @@ namespace cs {
 
   inline QString toQString(const std::u16string_view& s)
   {
-    return !s.empty()  &&  s.size() <= Qt::MAX_STD_SIZE
+    return !s.empty()  &&  s.size() <= impl_qt::MAX_STD_SIZE
         ? QString::fromUtf16(s.data(), int(s.size()))
         : QString();
   }
@@ -88,7 +88,7 @@ namespace cs {
     using size_type = std::u8string::size_type;
 
     const QByteArray utf8 = s.toUtf8();
-    return !utf8.isEmpty()  &&  utf8.size() <= Qt::MAX_QT_SIZE
+    return !utf8.isEmpty()  &&  utf8.size() <= impl_qt::MAX_QT_SIZE
         ? std::u8string(UTF8(utf8.constData()), size_type(utf8.size()))
         : std::u8string();
   }
