@@ -69,6 +69,11 @@ namespace cs {
         : QString();
   }
 
+  inline QString toQString(const std::u8string& s)
+  {
+    return toQString(static_cast<std::u8string_view>(s));
+  }
+
   inline QString toQString(const char16_t *s)
   {
     return s != nullptr
@@ -81,6 +86,11 @@ namespace cs {
     return !s.empty()  &&  s.size() <= impl_qt::MAX_STD_SIZE
         ? QString::fromUtf16(s.data(), int(s.size()))
         : QString();
+  }
+
+  inline QString toQString(const std::u16string& s)
+  {
+    return toQString(static_cast<std::u16string_view>(s));
   }
 
   inline std::u8string toUtf8String(const QString& s)
