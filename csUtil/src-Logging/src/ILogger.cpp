@@ -47,29 +47,4 @@ namespace cs {
   {
   }
 
-  void ILogger::logText(const std::u8string& text) const
-  {
-    logText(text.data());
-  }
-
-  void ILogger::logWarning(const std::u8string& warning) const
-  {
-    logWarning(warning.data());
-  }
-
-  void ILogger::logWarning(const int line, const std::u8string& warning) const
-  {
-    logWarning(line, warning.data());
-  }
-
-  void ILogger::logError(const std::u8string& error) const
-  {
-    logError(error.data());
-  }
-
-  void ILogger::logError(const int line, const std::u8string& error) const
-  {
-    logError(line, error.data());
-  }
-
 } // namespace cs

@@ -80,33 +80,33 @@ namespace cs {
     QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
   }
 
-  void WLogger::logText(const char8_t *text) const
+  void WLogger::logText(const std::u8string_view& sv) const
   {
-    const QString s = toQString(text);
+    const QString s = toQString(sv);
     impl_log::invokeLogText(const_cast<WLogger*>(this), s);
   }
 
-  void WLogger::logWarning(const char8_t *warning) const
+  void WLogger::logWarning(const std::u8string_view& sv) const
   {
-    const QString s = tr("WARNING: %1").arg(toQString(warning));
+    const QString s = tr("WARNING: %1").arg(toQString(sv));
     impl_log::invokeLogWarning(const_cast<WLogger*>(this), s);
   }
 
-  void WLogger::logWarning(const int lineno, const char8_t *warning) const
+  void WLogger::logWarning(const int lineno, const std::u8string_view& sv) const
   {
-    const QString s = tr("WARNING:%1: %2").arg(lineno).arg(toQString(warning));
+    const QString s = tr("WARNING:%1: %2").arg(lineno).arg(toQString(sv));
     impl_log::invokeLogWarning(const_cast<WLogger*>(this), s);
   }
 
-  void WLogger::logError(const char8_t *error) const
+  void WLogger::logError(const std::u8string_view& sv) const
   {
-    const QString s = tr("ERROR: %1").arg(toQString(error));
+    const QString s = tr("ERROR: %1").arg(toQString(sv));
     impl_log::invokeLogError(const_cast<WLogger*>(this), s);
   }
 
-  void WLogger::logError(const int lineno, const char8_t *error) const
+  void WLogger::logError(const int lineno, const std::u8string_view& sv) const
   {
-    const QString s = tr("ERROR:%1: %2").arg(lineno).arg(toQString(error));
+    const QString s = tr("ERROR:%1: %2").arg(lineno).arg(toQString(sv));
     impl_log::invokeLogError(const_cast<WLogger*>(this), s);
   }
 

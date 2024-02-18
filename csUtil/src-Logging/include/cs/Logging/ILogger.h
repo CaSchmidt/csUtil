@@ -44,18 +44,13 @@ namespace cs {
 
     virtual void logFlush() const;
 
-    virtual void logText(const char8_t *) const = 0;
-    virtual void logText(const std::u8string&) const;
+    virtual void logText(const std::u8string_view& sv) const = 0;
 
-    virtual void logWarning(const char8_t *) const = 0;
-    virtual void logWarning(const std::u8string&) const;
-    virtual void logWarning(const int, const char8_t *) const = 0;
-    virtual void logWarning(const int, const std::u8string&) const;
+    virtual void logWarning(const std::u8string_view& sv) const = 0;
+    virtual void logWarning(const int lineno, const std::u8string_view& sv) const = 0;
 
-    virtual void logError(const char8_t *) const = 0;
-    virtual void logError(const std::u8string&) const;
-    virtual void logError(const int, const char8_t *) const = 0;
-    virtual void logError(const int, const std::u8string&) const;
+    virtual void logError(const std::u8string_view& sv) const = 0;
+    virtual void logError(const int lineno, const std::u8string_view& sv) const = 0;
 
   private:
     ILogger(const ILogger&) noexcept = delete;

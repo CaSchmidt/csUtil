@@ -51,18 +51,13 @@ namespace cs {
 
     void logFlush() const;
 
-    void logText(const char8_t *text) const;
-    void logText(const std::u8string& text) const;
+    void logText(const std::u8string_view& sv) const;
 
-    void logWarning(const char8_t *warning) const;
-    void logWarning(const std::u8string& warning) const;
-    void logWarning(const int line, const char8_t *warning) const;
-    void logWarning(const int line, const std::u8string& warning) const;
+    void logWarning(const std::u8string_view& sv) const;
+    void logWarning(const int lineno, const std::u8string_view& sv) const;
 
-    void logError(const char8_t *error) const;
-    void logError(const std::u8string& error) const;
-    void logError(const int line, const char8_t *error) const;
-    void logError(const int line, const std::u8string& error) const;
+    void logError(const std::u8string_view& sv) const;
+    void logError(const int lineno, const std::u8string_view& sv) const;
 
     const IProgress *progress() const;
 

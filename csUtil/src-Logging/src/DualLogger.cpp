@@ -51,34 +51,34 @@ namespace cs {
     _b->logFlush();
   }
 
-  void DualLogger::logText(const char8_t *s) const
+  void DualLogger::logText(const std::u8string_view& sv) const
   {
-    _a->logText(s);
-    _b->logText(s);
+    _a->logText(sv);
+    _b->logText(sv);
   }
 
-  void DualLogger::logWarning(const char8_t *s) const
+  void DualLogger::logWarning(const std::u8string_view& sv) const
   {
-    _a->logWarning(s);
-    _b->logWarning(s);
+    _a->logWarning(sv);
+    _b->logWarning(sv);
   }
 
-  void DualLogger::logWarning(const int lineno, const char8_t *s) const
+  void DualLogger::logWarning(const int lineno, const std::u8string_view& sv) const
   {
-    _a->logWarning(lineno, s);
-    _b->logWarning(lineno, s);
+    _a->logWarning(lineno, sv);
+    _b->logWarning(lineno, sv);
   }
 
-  void DualLogger::logError(const char8_t *s) const
+  void DualLogger::logError(const std::u8string_view& sv) const
   {
-    _a->logError(s);
-    _b->logError(s);
+    _a->logError(sv);
+    _b->logError(sv);
   }
 
-  void DualLogger::logError(const int lineno, const char8_t *s) const
+  void DualLogger::logError(const int lineno, const std::u8string_view& sv) const
   {
-    _a->logError(lineno, s);
-    _b->logError(lineno, s);
+    _a->logError(lineno, sv);
+    _b->logError(lineno, sv);
   }
 
 } // namespace cs

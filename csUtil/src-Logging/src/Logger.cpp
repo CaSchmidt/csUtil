@@ -55,29 +55,41 @@ namespace cs {
     fflush(_file);
   }
 
-  void Logger::logText(const char8_t *s) const
+  constexpr auto MAX_STD_SIZE = maxab_v<std::u8string_view::size_type,int>;
+
+  void Logger::logText(const std::u8string_view& sv) const
   {
-    fprintf(_file, "%s\n", CSTR(s));
+    if( !sv.empty()  &&  sv.size() <= MAX_STD_SIZE ) {
+      fprintf(_file, "%.*s\n", int(sv.size()), CSTR(sv.data()));
+    }
   }
 
-  void Logger::logWarning(const char8_t *s) const
+  void Logger::logWarning(const std::u8string_view& sv) const
   {
-    fprintf(_file, "WARNING: %s\n", CSTR(s));
+    if( !sv.empty()  &&  sv.size() <= MAX_STD_SIZE ) {
+      fprintf(_file, "WARNING: %.*s\n", int(sv.size()), CSTR(sv.data()));
+    }
   }
 
-  void Logger::logWarning(const int lineno, const char8_t *s) const
+  void Logger::logWarning(const int lineno, const std::u8string_view& sv) const
   {
-    fprintf(_file, "WARNING:%d: %s\n", lineno, CSTR(s));
+    if( !sv.empty()  &&  sv.size() <= MAX_STD_SIZE ) {
+      fprintf(_file, "WARNING:%d: %.*s\n", lineno, int(sv.size()), CSTR(sv.data()));
+    }
   }
 
-  void Logger::logError(const char8_t *s) const
+  void Logger::logError(const std::u8string_view& sv) const
   {
-    fprintf(_file, "ERROR: %s\n", CSTR(s));
+    if( !sv.empty()  &&  sv.size() <= MAX_STD_SIZE ) {
+      fprintf(_file, "ERROR: %.*s\n", int(sv.size()), CSTR(sv.data()));
+    }
   }
 
-  void Logger::logError(const int lineno, const char8_t *s) const
+  void Logger::logError(const int lineno, const std::u8string_view& sv) const
   {
-    fprintf(_file, "ERROR:%d: %s\n", lineno, CSTR(s));
+    if( !sv.empty()  &&  sv.size() <= MAX_STD_SIZE ) {
+      fprintf(_file, "ERROR:%d: %.*s\n", lineno, int(sv.size()), CSTR(sv.data()));
+    }
   }
 
 } // namespace cs

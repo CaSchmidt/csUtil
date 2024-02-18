@@ -71,100 +71,50 @@ namespace cs {
     }
   }
 
-  void OutputContext::logText(const char8_t *text) const
+  void OutputContext::logText(const std::u8string_view& sv) const
   {
     if( _logger != nullptr ) {
-      _logger->logText(text);
+      _logger->logText(sv);
       if( _logger_flush ) {
         _logger->logFlush();
       }
     }
   }
 
-  void OutputContext::logText(const std::u8string& text) const
+  void OutputContext::logWarning(const std::u8string_view& sv) const
   {
     if( _logger != nullptr ) {
-      _logger->logText(text);
+      _logger->logWarning(sv);
       if( _logger_flush ) {
         _logger->logFlush();
       }
     }
   }
 
-  void OutputContext::logWarning(const char8_t *warning) const
+  void OutputContext::logWarning(const int lineno, const std::u8string_view& sv) const
   {
     if( _logger != nullptr ) {
-      _logger->logWarning(warning);
+      _logger->logWarning(lineno, sv);
       if( _logger_flush ) {
         _logger->logFlush();
       }
     }
   }
 
-  void OutputContext::logWarning(const std::u8string& warning) const
+  void OutputContext::logError(const std::u8string_view& sv) const
   {
     if( _logger != nullptr ) {
-      _logger->logWarning(warning);
+      _logger->logError(sv);
       if( _logger_flush ) {
         _logger->logFlush();
       }
     }
   }
 
-  void OutputContext::logWarning(const int line, const char8_t *warning) const
+  void OutputContext::logError(const int lineno, const std::u8string_view& sv) const
   {
     if( _logger != nullptr ) {
-      _logger->logWarning(line, warning);
-      if( _logger_flush ) {
-        _logger->logFlush();
-      }
-    }
-  }
-
-  void OutputContext::logWarning(const int line, const std::u8string& warning) const
-  {
-    if( _logger != nullptr ) {
-      _logger->logWarning(line, warning);
-      if( _logger_flush ) {
-        _logger->logFlush();
-      }
-    }
-  }
-
-  void OutputContext::logError(const char8_t *error) const
-  {
-    if( _logger != nullptr ) {
-      _logger->logError(error);
-      if( _logger_flush ) {
-        _logger->logFlush();
-      }
-    }
-  }
-
-  void OutputContext::logError(const std::u8string& error) const
-  {
-    if( _logger != nullptr ) {
-      _logger->logError(error);
-      if( _logger_flush ) {
-        _logger->logFlush();
-      }
-    }
-  }
-
-  void OutputContext::logError(const int line, const char8_t *error) const
-  {
-    if( _logger != nullptr ) {
-      _logger->logError(line, error);
-      if( _logger_flush ) {
-        _logger->logFlush();
-      }
-    }
-  }
-
-  void OutputContext::logError(const int line, const std::u8string& error) const
-  {
-    if( _logger != nullptr ) {
-      _logger->logError(line, error);
+      _logger->logError(lineno, sv);
       if( _logger_flush ) {
         _logger->logFlush();
       }

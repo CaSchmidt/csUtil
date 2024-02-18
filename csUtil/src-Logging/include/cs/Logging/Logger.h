@@ -44,13 +44,13 @@ namespace cs {
 
     void logFlush() const;
 
-    void logText(const char8_t *s) const final;
+    void logText(const std::u8string_view& sv) const;
 
-    void logWarning(const char8_t *s) const final;
-    void logWarning(const int lineno, const char8_t *s) const final;
+    void logWarning(const std::u8string_view& sv) const;
+    void logWarning(const int lineno, const std::u8string_view& sv) const;
 
-    void logError(const char8_t *s) const final;
-    void logError(const int lineno, const char8_t *s) const final;
+    void logError(const std::u8string_view& sv) const;
+    void logError(const int lineno, const std::u8string_view& sv) const;
 
   private:
     FILE *_file;
