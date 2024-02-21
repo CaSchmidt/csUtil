@@ -1,5 +1,6 @@
 list(APPEND csSystem_HEADERS
   include/cs/System/FileSystem.h
+  include/cs/System/Random.h
   include/cs/System/Time.h
   )
 
