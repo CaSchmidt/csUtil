@@ -48,6 +48,7 @@ namespace cs {
            const result_type b = std::numeric_limits<result_type>::max()) noexcept
       : _dist(a, b)
     {
+      seed();
     }
 
     ~Random() noexcept
