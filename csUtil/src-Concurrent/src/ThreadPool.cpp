@@ -41,11 +41,9 @@ namespace cs {
 
   ThreadPool::ThreadPool(const size_type count,
                          const bool finish_on_dtor) noexcept
-    :_finish_on_dtor{finish_on_dtor}
+    : _finish_on_dtor{finish_on_dtor}
   {
-    for(size_type i = 0; i < count; i++) {
-      _pool.push_back(std::thread(&ThreadPool::worker, this, i));
-    }
+    start(count);
   }
 
   ThreadPool::~ThreadPool() noexcept
@@ -64,20 +62,19 @@ namespace cs {
     return !_pool.empty();
   }
 
-  void ThreadPool::clear(bool *is_empty)
+  bool ThreadPool::start(const size_type count)
   {
-    { // lock
-      std::lock_guard<std::mutex> lock(_mutex);
+    if( isValid() ) {
+      return false;
+    }
 
-      if( is_empty != nullptr ) {
-        *is_empty = _queue.empty();
-      }
+    clear();
 
-      while( !_queue.empty() ) {
-        _queue.pop();
-      }
-    } // unlock
-    _cv.notify_all();
+    for(size_type i = 0; i < count; i++) {
+      _pool.push_back(std::thread(&ThreadPool::worker, this, i));
+    }
+
+    return isValid();
   }
 
   void ThreadPool::cancel(bool *is_empty)
@@ -94,10 +91,26 @@ namespace cs {
     join(Finish);
   }
 
-  void ThreadPool::dispatch(RunnablePtr ptr)
+  void ThreadPool::clear(bool *is_empty)
   {
-    if( !ptr ) {
-      return;
+    { // lock
+      std::lock_guard<std::mutex> lock(_mutex);
+
+      if( is_empty != nullptr ) {
+        *is_empty = _queue.empty();
+      }
+
+      while( !_queue.empty() ) {
+        _queue.pop();
+      }
+    } // unlock
+    _cv.notify_all(); // why?
+  }
+
+  bool ThreadPool::dispatch(RunnablePtr ptr)
+  {
+    if( !isValid()  ||  !ptr ) {
+      return false;
     }
 
     { // lock
@@ -105,15 +118,9 @@ namespace cs {
       _queue.push(std::move(ptr));
     } // unlock
     _cv.notify_one();
-  }
 
-  void ThreadPool::wait()
-  { // lock
-    std::unique_lock<std::mutex> lock(_mutex);
-    _cv.wait(lock, [this]() -> bool {
-      return _queue.empty();
-    });
-  } // unlock
+    return true;
+  }
 
   ////// private /////////////////////////////////////////////////////////////
 
@@ -156,7 +163,6 @@ namespace cs {
           _queue.pop();
         }
       } // unlock
-      _cv.notify_all();
 
       if( runnable ) {
         runnable->run();

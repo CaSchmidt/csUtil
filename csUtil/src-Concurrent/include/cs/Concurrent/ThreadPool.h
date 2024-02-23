@@ -50,14 +50,12 @@ namespace cs {
 
     bool isValid() const;
 
-    void clear(bool *is_empty = nullptr);
-
+    bool start(const size_type count = std::thread::hardware_concurrency());
     void cancel(bool *is_empty = nullptr);
     void finish();
 
-    void dispatch(RunnablePtr ptr);
-
-    void wait();
+    void clear(bool *is_empty = nullptr);
+    bool dispatch(RunnablePtr ptr);
 
   private:
     enum PoolState {
