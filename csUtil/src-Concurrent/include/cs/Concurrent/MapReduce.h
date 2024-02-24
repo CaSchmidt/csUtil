@@ -55,7 +55,7 @@ namespace cs {
   template<typename T, typename ForwardIt, typename MapToFunc, typename ReduceFunc, typename FoldFunc>
   T blockingMapReduce(const std::size_t numThreads,
                       ForwardIt first, ForwardIt last,
-                      MapToFunc&& mapTo, const std::chrono::milliseconds wait_ms,
+                      MapToFunc&& mapTo,
                       ReduceFunc&& reduce, FoldFunc&& fold)
   {
     using namespace impl_mapreduce;
@@ -71,7 +71,7 @@ namespace cs {
     // (1) Map Items /////////////////////////////////////////////////////////
 
     blockingMapSorted(numThreads, mapped.begin(), mapped.end(),
-                      first, last, std::forward<MapToFunc>(mapTo), wait_ms);
+                      first, last, std::forward<MapToFunc>(mapTo));
 
     // (2) Reduce Items //////////////////////////////////////////////////////
 
@@ -85,40 +85,37 @@ namespace cs {
   template<typename T, typename ForwardIt, typename MapToFunc, typename ReduceFunc>
   T blockingMapReduce(const std::size_t numThreads,
                       ForwardIt first, ForwardIt last,
-                      MapToFunc&& mapTo, ReduceFunc&& reduce,
-                      const std::chrono::milliseconds wait_ms = MAP_WAIT_ms)
+                      MapToFunc&& mapTo, ReduceFunc&& reduce)
   {
     return blockingMapReduce<T>(numThreads, first, last,
-                                std::forward<MapToFunc>(mapTo), wait_ms,
+                                std::forward<MapToFunc>(mapTo),
                                 std::forward<ReduceFunc>(reduce), std::plus<void>{});
   }
 
   template<typename T, typename ForwardIt, typename MapToFunc, typename ReduceFunc, typename FoldFunc>
   [[nodiscard]] std::future<T> mapReduce(const std::size_t numThreads,
                                          ForwardIt first, ForwardIt last,
-                                         MapToFunc&& mapTo, const std::chrono::milliseconds wait_ms,
+                                         MapToFunc&& mapTo,
                                          ReduceFunc&& reduce, FoldFunc&& fold)
   {
     using namespace impl_mapreduce;
 
     return std::async(ASYNC, blockingMapReduce<T,ForwardIt,MapToFunc,ReduceFunc,FoldFunc>,
                       numThreads, first, last,
-                      std::forward<MapToFunc>(mapTo), wait_ms,
+                      std::forward<MapToFunc>(mapTo),
                       std::forward<ReduceFunc>(reduce), std::forward<FoldFunc>(fold));
   }
 
   template<typename T, typename ForwardIt, typename MapToFunc, typename ReduceFunc>
   [[nodiscard]] std::future<T> mapReduce(const std::size_t numThreads,
                                          ForwardIt first, ForwardIt last, MapToFunc&& mapTo,
-                                         ReduceFunc&& reduce,
-                                         const std::chrono::milliseconds wait_ms = MAP_WAIT_ms)
+                                         ReduceFunc&& reduce)
   {
     using namespace impl_mapreduce;
 
     return std::async(ASYNC, blockingMapReduce<T,ForwardIt,MapToFunc,ReduceFunc>,
                       numThreads, first, last,
-                      std::forward<MapToFunc>(mapTo), std::forward<ReduceFunc>(reduce),
-                      wait_ms);
+                      std::forward<MapToFunc>(mapTo), std::forward<ReduceFunc>(reduce));
   }
 
 } // namespace cs
