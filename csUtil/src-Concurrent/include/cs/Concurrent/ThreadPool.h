@@ -32,13 +32,16 @@
 #pragma once
 
 #include <condition_variable>
+#include <functional>
 #include <list>
 #include <queue>
 #include <thread>
 
-#include <cs/Concurrent/Runnable.h>
+#include <cs/Core/csutil_config.h>
 
 namespace cs {
+
+  using Runnable = std::function<void()>;
 
   class CS_UTIL_EXPORT ThreadPool {
   public:
@@ -55,13 +58,13 @@ namespace cs {
     void finish();
 
     void clear(bool *is_empty = nullptr);
-    bool dispatch(RunnablePtr ptr);
+    bool dispatch(Runnable runnable);
 
   private:
     enum PoolState {
       Idle = 0, // waiting for work to be queued...
       Finish,   // finish queued work; then exit
-      Cancel    // exit, discarding queued work
+      Cancel    // exit; discard queued work
     };
 
     void join(const PoolState reason);
@@ -71,7 +74,7 @@ namespace cs {
     bool                    _finish_on_dtor{false};
     std::mutex              _mutex;
     std::list<std::thread>  _pool;
-    std::queue<RunnablePtr> _queue;
+    std::queue<Runnable>    _queue;
     PoolState               _state{Idle};
   };
 

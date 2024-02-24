@@ -2,12 +2,10 @@ list(APPEND csConcurrent_HEADERS
   include/cs/Concurrent/Map.h
   include/cs/Concurrent/MapReduce.h
   include/cs/Concurrent/Reduce.h
-  include/cs/Concurrent/Runnable.h
   include/cs/Concurrent/ThreadPool.h
 )
 
 list(APPEND csConcurrent_SOURCES
-  src/Runnable.cpp
   src/ThreadPool.cpp
   src/main_concurrent.cpp
 )

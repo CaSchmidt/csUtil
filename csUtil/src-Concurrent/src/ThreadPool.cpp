@@ -107,15 +107,15 @@ namespace cs {
     _cv.notify_all(); // why?
   }
 
-  bool ThreadPool::dispatch(RunnablePtr ptr)
+  bool ThreadPool::dispatch(Runnable runnable)
   {
-    if( !isValid()  ||  !ptr ) {
+    if( !isValid()  ||  !runnable ) {
       return false;
     }
 
     { // lock
       std::lock_guard<std::mutex> lock(_mutex);
-      _queue.push(std::move(ptr));
+      _queue.push(std::move(runnable));
     } // unlock
     _cv.notify_one();
 
@@ -143,10 +143,12 @@ namespace cs {
 #ifdef HAVE_WORKER_DEBUG
     fprintf(stderr, "Starting %d...\n", int(id));
     fflush(stderr);
+#else
+    static_cast<void>(id); // silence warning of unused 'id'
 #endif
 
     while( true ) {
-      RunnablePtr runnable;
+      Runnable runnable;
 
       { // lock
         std::unique_lock<std::mutex> lock(_mutex);
@@ -165,7 +167,7 @@ namespace cs {
       } // unlock
 
       if( runnable ) {
-        runnable->run();
+        runnable();
       }
     } // while( true )
 
