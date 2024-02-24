@@ -57,8 +57,9 @@ namespace cs {
 
     void seed()
     {
-      std::random_device device;
+      _dist.reset();
 
+      std::random_device device;
       _engine.seed(device());
     }
 
