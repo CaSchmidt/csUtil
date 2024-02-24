@@ -32,6 +32,7 @@
 #pragma once
 
 #include <memory>
+#include <tuple>
 
 #include <cs/Core/csutil_config.h>
 
@@ -46,5 +47,37 @@ namespace cs {
 
     virtual void run() = 0;
   };
+
+  ////// Generic Runnable ////////////////////////////////////////////////////
+
+  template<typename Func, typename... Args>
+  class GenericRunnable : public Runnable {
+  public:
+    GenericRunnable(Func&& func, Args&&... args) noexcept
+      : _func{std::forward<Func>(func)}
+      , _args{std::forward_as_tuple(std::forward<Args>(args)...)}
+    {
+    }
+
+    ~GenericRunnable() noexcept
+    {
+    }
+
+    void run()
+    {
+      std::apply(_func, _args);
+    }
+
+  private:
+    Func&&                _func;
+    std::tuple<Args&&...> _args;
+  };
+
+  template<typename Func, typename... Args>
+  RunnablePtr make_runnable(Func&& func, Args&&... args)
+  {
+    return std::make_unique<GenericRunnable<Func,Args...>>(std::forward<Func>(func),
+                                                           std::forward<Args>(args)...);
+  }
 
 } // namespace cs
