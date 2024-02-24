@@ -54,8 +54,8 @@ namespace cs {
 
       using const_reference = std::add_const_t<reference>;
 
-      template<typename T>
-      struct is_dereferenceable : std::is_assignable<decltype(*std::declval<IterT>()),T> {};
+      template<typename T> // check if *IterT = T compiles
+      struct is_assignable : std::is_assignable<decltype(*std::declval<IterT>()),T> {};
     };
 
     template<typename IterT>
@@ -68,7 +68,7 @@ namespace cs {
     using iter_value_type = typename iterator_traits<IterT>::value_type;
 
     template<typename IterT, typename T>
-    inline constexpr bool iter_is_dereferenceable_v = iterator_traits<IterT>::template is_dereferenceable<T>::value;
+    inline constexpr bool iter_is_assignable_v = iterator_traits<IterT>::template is_assignable<T>::value;
 
   } // namespace impl_iter
 

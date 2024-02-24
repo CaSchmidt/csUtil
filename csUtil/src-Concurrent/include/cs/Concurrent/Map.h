@@ -71,7 +71,7 @@ namespace cs {
 
     template<typename OutputIt, typename MapToFunc, typename InputIt>
     using is_mapTo = std::bool_constant<
-    iter_is_dereferenceable_v<OutputIt,std::invoke_result_t<MapToFunc,iter_const_reference<InputIt>>>
+    iter_is_assignable_v<OutputIt,std::invoke_result_t<MapToFunc,iter_const_reference<InputIt>>>
     >;
 
     template<typename OutputIt, typename MapToFunc, typename InputIt>
