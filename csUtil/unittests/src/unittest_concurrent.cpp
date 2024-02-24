@@ -1,57 +1,49 @@
 #include <array>
 #include <iostream>
-#include <mutex>
 #include <numeric>
-#include <random>
-#include <thread>
 
 #include <catch.hpp>
 
 #include <cs/Concurrent/MapReduce.h>
+#include <cs/System/Random.h>
+#include <cs/System/Time.h>
 #include <cs/Text/PrintUtil.h>
 
 namespace util {
 
-  template<int MAX>
   class Delay {
   public:
-    static_assert( MAX > 1 );
+    using Random = cs::Random<unsigned int>;
+
+    using random_t = Random::result_type;
 
     Delay() noexcept
+      : _random(1, 5)
     {
-      reset();
     }
 
     ~Delay() noexcept
     {
     }
 
-    void operator()()
+    void operator()() const
     {
-      std::this_thread::sleep_for(std::chrono::seconds{random()});
+      auto thiz = const_cast<Delay*>(this);
+      cs::sleep(thiz->random());
     }
 
-    int random()
+    random_t random()
     {
       std::lock_guard<std::mutex> guard(_mutex);
-      return _dist(_gen);
-    }
-
-    void reset()
-    {
-      _dist.reset();
-
-      std::random_device rd;
-      _gen.seed(rd());
+      return _random();
     }
 
   private:
-    std::uniform_int_distribution<int> _dist{1, MAX};
-    std::mt19937 _gen{};
-    std::mutex _mutex{};
+    std::mutex _mutex;
+    Random     _random;
   };
 
-  Delay<5> delay{};
+  Delay delay;
 
   ////////////////////////////////////////////////////////////////////////////
 
