@@ -9,6 +9,8 @@
 #include <cs/System/Time.h>
 #include <cs/Text/PrintUtil.h>
 
+inline constexpr std::size_t NUM_THREADS = 4;
+
 namespace util {
 
   class Delay {
@@ -187,10 +189,12 @@ namespace test_map {
       util::init(v.begin(), v.end(), 1);
       util::print(v.begin(), v.end(), "vold = ");
 
-      auto f = cs::map(4, v.begin(), v.end(), &util::inc);
+      auto f = cs::map(NUM_THREADS,
+                       v.begin(), v.end(),
+                       &util::inc);
       f.get();
 
-      // cs::blockingMap(4, v.cbegin(), v.cend(), util::Print());
+      // cs::blockingMap(NUM_THREADS, v.cbegin(), v.cend(), util::Print());
 
       util::print(v.begin(), v.end(), "vnew = ");
 
@@ -204,9 +208,11 @@ namespace test_map {
       util::init(a, COUNT, 1);
       util::print(a, COUNT, "aold = ");
 
-      cs::blockingMap(4, a, a + COUNT, util::Increment());
+      cs::blockingMap(NUM_THREADS,
+                      a, a + COUNT,
+                      util::Increment());
 
-      // cs::blockingMap(4, a, a + COUNT, util::Print());
+      // cs::blockingMap(NUM_THREADS, a, a + COUNT, util::Print());
 
       util::print(a, COUNT, "anew = ");
 
@@ -229,8 +235,10 @@ namespace test_map {
     {
       std::vector<int> v;
 
-      cs::blockingMapUnsorted(4, std::back_inserter(v),
-                              data.begin(), data.end(), &util::incTo);
+      cs::blockingMapUnsorted(NUM_THREADS,
+                              std::back_inserter(v),
+                              data.begin(), data.end(),
+                              &util::incTo);
 
       util::print(v.begin(), v.end(), "vnew = ");
 
@@ -242,7 +250,10 @@ namespace test_map {
     {
       int a[COUNT];
 
-      auto f = cs::mapUnsorted(4, a, data.begin(), data.end(), &util::incTo);
+      auto f = cs::mapUnsorted(NUM_THREADS,
+                               a,
+                               data.begin(), data.end(),
+                               &util::incTo);
       f.get();
 
       util::print(a, COUNT, "anew = ");
@@ -267,8 +278,10 @@ namespace test_map {
     {
       std::vector<int> v(COUNT + EXTRA, 0);
 
-      cs::blockingMapSorted(4, v.begin(), std::next(v.begin(), COUNT),
-                            data.begin(), data.end(), &util::incTo);
+      cs::blockingMapSorted(NUM_THREADS,
+                            v.begin(), std::next(v.begin(), COUNT),
+                            data.begin(), data.end(),
+                            &util::incTo);
 
       util::print(v.begin(), v.end(), "vnew = ");
 
@@ -280,8 +293,10 @@ namespace test_map {
     {
       int a[COUNT + EXTRA] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-      auto f = cs::mapSorted(4, a, a + COUNT + EXTRA,
-                             data.begin(), std::next(data.begin(), COUNT), &util::incTo);
+      auto f = cs::mapSorted(NUM_THREADS,
+                             a, a + COUNT + EXTRA,
+                             data.begin(), std::next(data.begin(), COUNT),
+                             &util::incTo);
       f.get();
 
       util::print(a, COUNT + EXTRA, "anew = ");
@@ -307,7 +322,8 @@ namespace test_reduce {
 
     {
       const std::string reduced =
-          cs::blockingReduce<std::string>(4, data.begin(), data.end(),
+          cs::blockingReduce<std::string>(NUM_THREADS,
+                                          data.begin(), data.end(),
                                           &util::reduce, std::plus<>{});
       cs::println("reduced = %", reduced);
 
@@ -318,7 +334,8 @@ namespace test_reduce {
 
     {
       const std::string reduced =
-          cs::blockingReduce<std::string>(4, data.begin(), std::next(data.begin(), 3),
+          cs::blockingReduce<std::string>(NUM_THREADS,
+                                          data.begin(), std::next(data.begin(), 3),
                                           &util::reduce, std::plus<>{});
       cs::println("reduced = %", reduced);
 
@@ -328,7 +345,8 @@ namespace test_reduce {
     std::cout << "---------------------------------------------" << std::endl;
 
     {
-      auto f = cs::reduce<std::string>(4, data.begin(), std::next(data.begin(), 4),
+      auto f = cs::reduce<std::string>(NUM_THREADS,
+                                       data.begin(), std::next(data.begin(), 4),
                                        &util::reduce, std::plus<>{});
       const std::string reduced = f.get();
       cs::println("reduced = %", reduced);
@@ -339,7 +357,8 @@ namespace test_reduce {
     std::cout << "---------------------------------------------" << std::endl;
 
     {
-      auto f = cs::reduce<std::string>(4, data.begin(), std::next(data.begin(), 7),
+      auto f = cs::reduce<std::string>(NUM_THREADS,
+                                       data.begin(), std::next(data.begin(), 7),
                                        &util::reduce);
       const std::string reduced = f.get();
       cs::println("reduced = %", reduced);
@@ -366,7 +385,7 @@ namespace test_mapreduce {
 
     {
       const std::string reduced =
-          cs::blockingMapReduce<std::string>(4,
+          cs::blockingMapReduce<std::string>(NUM_THREADS,
                                              data.begin(), data.end(),
                                              &util::incTo, &util::reduce);
       cs::println("reduced = %", reduced);
@@ -377,13 +396,49 @@ namespace test_mapreduce {
     std::cout << "---------------------------------------------" << std::endl;
 
     {
-      auto f = cs::mapReduce<std::string>(4,
-                                          data.begin(), data.end(), &util::incTo,
-                                          &util::reduce);
+      auto f = cs::mapReduce<std::string>(NUM_THREADS,
+                                          data.begin(), data.end(),
+                                          &util::incTo, &util::reduce);
       const std::string reduced = f.get();
       cs::println("reduced = %", reduced);
 
       REQUIRE( reduced == "2345678" );
+    }
+
+    std::cout << "---------------------------------------------" << std::endl;
+
+    {
+      const std::string unsorted =
+          cs::blockingMapReduceUnsorted<std::string>(NUM_THREADS,
+                                                     data.begin(), data.end(),
+                                                     &util::incTo, &util::reduce);
+      cs::println("reduced (unsorted) = %", unsorted);
+
+      REQUIRE( unsorted.size() == data.size() );
+
+      std::string sorted(unsorted);
+      std::sort(sorted.begin(), sorted.end());
+      cs::println("reduced (sorted) = %", sorted);
+
+      REQUIRE( sorted == "2345678" );
+    }
+
+    std::cout << "---------------------------------------------" << std::endl;
+
+    {
+      auto f = cs::mapReduceUnsorted<std::string>(NUM_THREADS,
+                                                  data.begin(), data.end(),
+                                                  &util::incTo, &util::reduce);
+      const std::string unsorted = f.get();
+      cs::println("reduced (unsorted) = %", unsorted);
+
+      REQUIRE( unsorted.size() == data.size() );
+
+      std::string sorted(unsorted);
+      std::sort(sorted.begin(), sorted.end());
+      cs::println("reduced (sorted) = %", sorted);
+
+      REQUIRE( sorted == "2345678" );
     }
 
     std::cout << std::endl;
