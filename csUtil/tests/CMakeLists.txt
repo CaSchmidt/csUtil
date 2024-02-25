@@ -23,6 +23,11 @@ macro(cs_test target)
       AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/forms
       )
   endif()
+  if(CMAKE_COMPILER_IS_GNUCC  OR  CMAKE_COMPILER_IS_GNUCXX)
+    target_compile_options(${target}
+      PRIVATE -Wall
+    )
+  endif()
 endmacro()
 
 ### Tests ####################################################################

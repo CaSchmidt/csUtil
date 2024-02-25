@@ -17,6 +17,11 @@ macro(cs_unittest target)
     PRIVATE ${csUtil_SOURCE_DIR}/testutils/include
     )
   target_link_libraries(${target} csUtil)
+  if(CMAKE_COMPILER_IS_GNUCC  OR  CMAKE_COMPILER_IS_GNUCXX)
+    target_compile_options(${target}
+      PRIVATE -Wall
+    )
+  endif()
   add_test(NAME ${target} COMMAND ${target})
 endmacro()
 

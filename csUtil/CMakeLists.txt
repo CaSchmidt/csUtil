@@ -19,7 +19,7 @@ endif()
 # config.h
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src-Core/include/config/csutil_config.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/include/cs/Core/csutil_config.h @ONLY
-  )
+)
 
 # Build Modules?
 option(ENABLE_CHARCONV "Build elementary string conversions module" OFF)
@@ -47,39 +47,45 @@ format_output_name(csUtil "csUtil")
 set_target_properties(csUtil PROPERTIES
   CXX_STANDARD 20
   CXX_STANDARD_REQUIRED ON
-  )
+)
 
 target_compile_definitions(csUtil
   PRIVATE CS_BUILD_UTIL_LIB
-  )
+)
 
 if(ENABLE_QT)
   target_sources(csUtil
     PRIVATE resources/csUtil.qrc
-    )
+  )
 
-  target_compile_definitions(csUtil
-    PRIVATE QT_NO_CAST_FROM_ASCII
-    PRIVATE QT_NO_CAST_TO_ASCII
-    )
+target_compile_definitions(csUtil
+  PRIVATE QT_NO_CAST_FROM_ASCII
+  PRIVATE QT_NO_CAST_TO_ASCII
+)
 
-  target_link_libraries(csUtil
-    PUBLIC Qt5::Widgets
-    )
+target_link_libraries(csUtil
+  PUBLIC Qt5::Widgets
+)
 
-  set_target_properties(csUtil PROPERTIES
-    AUTOMOC ON
-    AUTORCC ON
-    AUTOUIC ON
-    )
+set_target_properties(csUtil PROPERTIES
+  AUTOMOC ON
+  AUTORCC ON
+  AUTOUIC ON
+)
 
-  # set_property(TARGET <target> APPEND PROPERTY AUTOUIC_SEARCH_PATHS <path>)
+# set_property(TARGET <target> APPEND PROPERTY AUTOUIC_SEARCH_PATHS <path>)
 endif()
 
 if(UNIX)
   target_link_libraries(csUtil
     PUBLIC pthread # std::unique_ptr<>
-    )
+  )
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCC  OR  CMAKE_COMPILER_IS_GNUCXX)
+  target_compile_options(csUtil
+    PRIVATE -Wall
+  )
 endif()
 
 ### Modules ##################################################################
