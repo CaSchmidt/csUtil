@@ -79,23 +79,25 @@ namespace cs {
 
     // Types /////////////////////////////////////////////////////////////////
 
+    using size_type = std::size_t;
+
     /*
      * Usage:
      * -> Number of Threads
      * -> Items per Thread AKA the "Stride"
      * -> Number of Items modulo Number of Threads AKA the "Remaining Items"
      */
-    using ReduceInfo = std::tuple<std::size_t,std::size_t,std::size_t>;
+    using ReduceInfo = std::tuple<size_type,size_type,size_type>;
 
     // Constants /////////////////////////////////////////////////////////////
 
     constexpr auto ASYNC = std::launch::async;
-    constexpr std::size_t ONE = 1;
+    constexpr size_type ONE = 1;
 
     // Implementation ////////////////////////////////////////////////////////
 
-    inline ReduceInfo computeReduceInfo(const std::size_t numThreads,
-                                        const std::size_t numItems)
+    inline ReduceInfo computeReduceInfo(const size_type numThreads,
+                                        const size_type numItems)
     {
       if( numThreads < ONE  ||  numItems < ONE ) {
         return ReduceInfo{0, 0, 0};
@@ -105,8 +107,8 @@ namespace cs {
         return ReduceInfo{numItems, 1, 0};
       }
 
-      const std::size_t stride = numItems/numThreads;
-      const std::size_t remain = numItems%numThreads;
+      const size_type stride = numItems/numThreads;
+      const size_type remain = numItems%numThreads;
 
       return ReduceInfo{numThreads, stride, remain};
     }
@@ -156,7 +158,7 @@ namespace cs {
 
     // (1) Run Threads ///////////////////////////////////////////////////////
 
-    for(std::size_t i = 0; i < numThreads; i++) {
+    for(size_type i = 0; i < numThreads; i++) {
       const ForwardIt last = i < remain
           ? std::next(first, stride + ONE)
           : std::next(first, stride);
