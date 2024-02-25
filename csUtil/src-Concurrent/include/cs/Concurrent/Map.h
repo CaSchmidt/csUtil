@@ -95,8 +95,7 @@ namespace cs {
   {
     using namespace impl_mapreduce;
 
-    using  input_t = iter_value_type<InputIt>;
-    using output_t = iter_value_type<OutputIt>;
+    using Context = MapToContext<OutputIt,MapToFunc,InputIt>;
 
     // (1) Create ThreadPool /////////////////////////////////////////////////
 
@@ -107,13 +106,10 @@ namespace cs {
 
     // (2) Dispatch Work /////////////////////////////////////////////////////
 
-    auto lambda_worker =
-        [&](output_t& out, const input_t& in) -> void {
-      out = std::invoke(std::forward<MapToFunc>(mapTo), in);
-    };
+    Context ctx(std::forward<MapToFunc>(mapTo));
 
     for(; first != last; ++dest, ++first) {
-      pool.dispatch(std::bind(lambda_worker, std::ref(*dest), std::cref(*first)));
+      pool.dispatch(std::bind(ctx, std::ref(*dest), std::cref(*first)));
     }
 
     // (3) Wait //////////////////////////////////////////////////////////////
@@ -146,8 +142,7 @@ namespace cs {
   {
     using namespace impl_mapreduce;
 
-    using  input_t = iter_value_type<InputIt>;
-    using output_t = iter_value_type<OutputIt>;
+    using Context = MapToContext<OutputIt,MapToFunc,InputIt>;
 
     // (1) Create ThreadPool /////////////////////////////////////////////////
 
@@ -158,14 +153,11 @@ namespace cs {
 
     // (2) Dispatch Work /////////////////////////////////////////////////////
 
-    auto lambda_worker =
-        [&](output_t& out, const input_t& in) -> void {
-      out = std::invoke(std::forward<MapToFunc>(mapTo), in);
-    };
+    Context ctx(std::forward<MapToFunc>(mapTo));
 
     for(; !isDone(destFirst, destLast, srcFirst, srcLast);
         ++destFirst, ++srcFirst) {
-      pool.dispatch(std::bind(lambda_worker, std::ref(*destFirst), std::cref(*srcFirst)));
+      pool.dispatch(std::bind(ctx, std::ref(*destFirst), std::cref(*srcFirst)));
     }
 
     // (3) Wait //////////////////////////////////////////////////////////////

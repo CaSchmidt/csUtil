@@ -98,6 +98,36 @@ namespace cs {
       return isDone(destFirst, destLast)  ||  isDone(srcFirst, srcLast);
     }
 
+    template<typename OutputIt, typename MapToFunc, typename InputIt>
+    requires is_mapTo_v<OutputIt,MapToFunc,InputIt>
+    class MapToContext {
+    public:
+      using  input_t = iter_value_type<InputIt>;
+      using output_t = iter_value_type<OutputIt>;
+
+      MapToContext(MapToFunc&& mapTo) noexcept
+        : _mapTo{std::forward<MapToFunc>(mapTo)}
+      {
+      }
+
+      MapToContext(const MapToContext& other) noexcept
+        : _mapTo{std::forward<MapToFunc>(other._mapTo)}
+      {
+      }
+
+      ~MapToContext() noexcept
+      {
+      }
+
+      void operator()(output_t& out, const input_t& in) const
+      {
+        out = std::invoke(std::forward<MapToFunc>(_mapTo), in);
+      }
+
+    private:
+      MapToFunc&& _mapTo;
+    };
+
   } // namespace impl_mapreduce
 
 } // namespace cs
