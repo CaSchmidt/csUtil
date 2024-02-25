@@ -143,4 +143,16 @@ namespace cs {
     return result;
   }
 
+  template<typename T, typename InputIt, typename MapToFunc, typename ReduceFunc>
+  [[nodiscard]] std::future<T> mapReduceUnsorted(const std::size_t numThreads,
+                                                 InputIt first, InputIt last,
+                                                 MapToFunc&& mapTo, ReduceFunc&& reduce)
+  {
+    using namespace impl_mapreduce;
+
+    return std::async(ASYNC, blockingMapReduceUnsorted<T,InputIt,MapToFunc,ReduceFunc>,
+                      numThreads, first, last,
+                      std::forward<MapToFunc>(mapTo), std::forward<ReduceFunc>(reduce));
+  }
+
 } // namespace cs
