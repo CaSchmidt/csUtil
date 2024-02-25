@@ -31,79 +31,17 @@
 
 #pragma once
 
-#include <future>
-
+#include <cs/Concurrent/MapReduceUtil.h>
 #include <cs/Concurrent/ThreadPool.h>
-#include <cs/Core/Container.h>
-#include <cs/Core/Iterator.h>
 
 namespace cs {
-
-  ////// Implementation //////////////////////////////////////////////////////
-
-  namespace impl_map {
-
-    using namespace impl_iter;
-
-    // Type Traits ///////////////////////////////////////////////////////////
-
-    /*
-     * Syntax of map() function:
-     *
-     * U map(T& item)
-     *
-     * NOTE: Return value is never used!
-     */
-
-    template<typename MapFunc, typename IterT>
-    using is_map = std::bool_constant<
-    std::is_invocable_v<MapFunc,iter_reference<IterT>>
-    >;
-
-    template<typename MapFunc, typename IterT>
-    inline constexpr bool is_map_v = is_map<MapFunc,IterT>::value;
-
-    /*
-     * Syntax of mapTo() function:
-     *
-     * U mapTo(const T& item)
-     */
-
-    template<typename OutputIt, typename MapToFunc, typename InputIt>
-    using is_mapTo = std::bool_constant<
-    iter_is_assignable_v<OutputIt,std::invoke_result_t<MapToFunc,iter_const_reference<InputIt>>>
-    >;
-
-    template<typename OutputIt, typename MapToFunc, typename InputIt>
-    inline constexpr bool is_mapTo_v = is_mapTo<OutputIt,MapToFunc,InputIt>::value;
-
-    // Constants /////////////////////////////////////////////////////////////
-
-    constexpr auto ASYNC = std::launch::async;
-
-    // Implementation ////////////////////////////////////////////////////////
-
-    template<typename IterT>
-    inline bool isDone(IterT first, IterT last)
-    {
-      return first == last;
-    }
-
-    template<typename OutputIt, typename InputIt>
-    inline bool isDone(OutputIt destFirst, OutputIt destLast,
-                       InputIt srcFirst, InputIt srcLast)
-    {
-      return isDone(destFirst, destLast)  ||  isDone(srcFirst, srcLast);
-    }
-
-  } // namespace impl_map
 
   ////// Public //////////////////////////////////////////////////////////////
 
   // In-Place Map ////////////////////////////////////////////////////////////
 
   template<typename MapFunc, typename IterT>
-  concept IsMapFunction = impl_map::is_map_v<MapFunc,IterT>;
+  concept IsMapFunction = impl_mapreduce::is_map_v<MapFunc,IterT>;
 
   template<typename ForwardIt, typename MapFunc>
   requires IsMapFunction<MapFunc,ForwardIt>
@@ -111,7 +49,7 @@ namespace cs {
                    ForwardIt first, ForwardIt last,
                    MapFunc&& map)
   {
-    using namespace impl_map;
+    using namespace impl_mapreduce;
 
     // (1) Create ThreadPool /////////////////////////////////////////////////
 
@@ -137,7 +75,7 @@ namespace cs {
                                       ForwardIt first, ForwardIt last,
                                       MapFunc&& map)
   {
-    using namespace impl_map;
+    using namespace impl_mapreduce;
 
     return std::async(ASYNC, blockingMap<ForwardIt,MapFunc>,
                       numThreads, first, last, std::forward<MapFunc>(map));
@@ -146,7 +84,7 @@ namespace cs {
   ////// Unsorted Map ////////////////////////////////////////////////////////
 
   template<typename OutputIt, typename MapToFunc, typename InputIt>
-  concept IsMapToFunction = impl_map::is_mapTo_v<OutputIt,MapToFunc,InputIt>;
+  concept IsMapToFunction = impl_mapreduce::is_mapTo_v<OutputIt,MapToFunc,InputIt>;
 
   template<typename OutputIt, typename InputIt, typename MapToFunc>
   requires IsMapToFunction<OutputIt,MapToFunc,InputIt>
@@ -155,7 +93,7 @@ namespace cs {
                            InputIt first, InputIt last,
                            MapToFunc&& mapTo)
   {
-    using namespace impl_map;
+    using namespace impl_mapreduce;
 
     using  input_t = iter_value_type<InputIt>;
     using output_t = iter_value_type<OutputIt>;
@@ -190,7 +128,7 @@ namespace cs {
                                               InputIt first, InputIt last,
                                               MapToFunc&& mapTo)
   {
-    using namespace impl_map;
+    using namespace impl_mapreduce;
 
     return std::async(ASYNC, blockingMapUnsorted<OutputIt,InputIt,MapToFunc>,
                       numThreads, dest,
@@ -206,7 +144,7 @@ namespace cs {
                          InputIt srcFirst, InputIt srcLast,
                          MapToFunc&& mapTo)
   {
-    using namespace impl_map;
+    using namespace impl_mapreduce;
 
     using  input_t = iter_value_type<InputIt>;
     using output_t = iter_value_type<OutputIt>;
@@ -242,7 +180,7 @@ namespace cs {
                                             InputIt srcFirst, InputIt srcLast,
                                             MapToFunc&& mapTo)
   {
-    using namespace impl_map;
+    using namespace impl_mapreduce;
 
     return std::async(ASYNC, blockingMapSorted<OutputIt,InputIt,MapToFunc>,
                       numThreads, destFirst, destLast,
