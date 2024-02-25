@@ -52,7 +52,7 @@ namespace cs {
      *
      * U map(T& item)
      *
-     * NOTE: Return value is never used!
+     * NOTE: Return value & type are never used!
      */
 
     template<typename MapFunc, typename IterT>
@@ -126,6 +126,47 @@ namespace cs {
 
     private:
       MapToFunc&& _mapTo;
+    };
+
+    template<typename T, typename ReduceFunc, typename MapToFunc, typename InputIt>
+    class MapReduceUnsorted {
+    public:
+      using  input_t = iter_value_type<InputIt>;
+      using mapped_t = std::invoke_result_t<MapToFunc,iter_const_reference<InputIt>>;
+
+      MapReduceUnsorted(MapToFunc&& mapTo, ReduceFunc&& reduce,
+                        std::mutex& mutex) noexcept
+        : _mapTo{std::forward<MapToFunc>(mapTo)}
+        , _reduce{std::forward<ReduceFunc>(reduce)}
+        , _mutex{mutex}
+      {
+      }
+
+      MapReduceUnsorted(const MapReduceUnsorted& other) noexcept
+        : _mapTo{std::forward<MapToFunc>(other._mapTo)}
+        , _reduce{std::forward<ReduceFunc>(other._reduce)}
+        , _mutex{other._mutex}
+      {
+      }
+
+      ~MapReduceUnsorted() noexcept
+      {
+      }
+
+      void operator()(T& reduced, const input_t& in) const
+      {
+        const mapped_t mapped = std::invoke(std::forward<MapToFunc>(_mapTo), in);
+
+        { // lock
+          std::lock_guard<std::mutex> guard(_mutex);
+          std::invoke(std::forward<ReduceFunc>(_reduce), reduced, mapped);
+        } // unlock
+      }
+
+    private:
+      MapToFunc&&  _mapTo;
+      ReduceFunc&& _reduce;
+      std::mutex&  _mutex;
     };
 
   } // namespace impl_mapreduce
