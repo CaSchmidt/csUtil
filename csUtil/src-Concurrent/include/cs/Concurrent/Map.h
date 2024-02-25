@@ -170,7 +170,7 @@ namespace cs {
     // (2) Dispatch Work /////////////////////////////////////////////////////
 
     auto lambda_worker =
-        [&mapTo](output_t& out, const input_t& in) -> void {
+        [&](output_t& out, const input_t& in) -> void {
       out = std::invoke(std::forward<MapToFunc>(mapTo), in);
     };
 
@@ -221,7 +221,7 @@ namespace cs {
     // (2) Dispatch Work /////////////////////////////////////////////////////
 
     auto lambda_worker =
-        [&mapTo](output_t& out, const input_t& in) -> void {
+        [&](output_t& out, const input_t& in) -> void {
       out = std::invoke(std::forward<MapToFunc>(mapTo), in);
     };
 
