@@ -5,24 +5,24 @@ macro(cs_test target)
   set_target_properties(${target} PROPERTIES
     CXX_STANDARD 20
     CXX_STANDARD_REQUIRED ON
-    )
+  )
   target_include_directories(${target}
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
     PRIVATE ${csUtil_SOURCE_DIR}/testutils/include
-    )
+  )
   target_link_libraries(${target} csUtil)
   if(ENABLE_QT)
     target_compile_definitions(${target} PRIVATE
       QT_NO_CAST_FROM_ASCII
       QT_NO_CAST_TO_ASCII
-      )
+    )
     set_target_properties(${target} PROPERTIES
       AUTOMOC ON
       AUTORCC ON
       AUTOUIC ON
       AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/forms
-      )
-  endif()
+    )
+  endif() # ENABLE_QT
   if(CMAKE_COMPILER_IS_GNUCC  OR  CMAKE_COMPILER_IS_GNUCXX)
     target_compile_options(${target}
       PRIVATE -Wall

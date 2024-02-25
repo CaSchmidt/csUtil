@@ -5,17 +5,17 @@ macro(cs_unittest target)
   set_target_properties(${target} PROPERTIES
     CXX_STANDARD 20
     CXX_STANDARD_REQUIRED ON
-    )
+  )
   if(MSVC)
     target_compile_options(${target}
       PRIVATE /source-charset:UTF-8 /execution-charset:UTF-8 /validate-charset
-      )
+    )
   endif()
   target_include_directories(${target}
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
     PRIVATE ${csUtil_SOURCE_DIR}/3rdparty/catch2/include
     PRIVATE ${csUtil_SOURCE_DIR}/testutils/include
-    )
+  )
   target_link_libraries(${target} csUtil)
   if(CMAKE_COMPILER_IS_GNUCC  OR  CMAKE_COMPILER_IS_GNUCXX)
     target_compile_options(${target}

@@ -58,23 +58,23 @@ if(ENABLE_QT)
     PRIVATE resources/csUtil.qrc
   )
 
-target_compile_definitions(csUtil
-  PRIVATE QT_NO_CAST_FROM_ASCII
-  PRIVATE QT_NO_CAST_TO_ASCII
-)
+  target_compile_definitions(csUtil
+    PRIVATE QT_NO_CAST_FROM_ASCII
+    PRIVATE QT_NO_CAST_TO_ASCII
+  )
 
-target_link_libraries(csUtil
-  PUBLIC Qt5::Widgets
-)
+  target_link_libraries(csUtil
+    PUBLIC Qt5::Widgets
+  )
 
-set_target_properties(csUtil PROPERTIES
-  AUTOMOC ON
-  AUTORCC ON
-  AUTOUIC ON
-)
+  set_target_properties(csUtil PROPERTIES
+    AUTOMOC ON
+    AUTORCC ON
+    AUTOUIC ON
+  )
 
-# set_property(TARGET <target> APPEND PROPERTY AUTOUIC_SEARCH_PATHS <path>)
-endif()
+  # set_property(TARGET <target> APPEND PROPERTY AUTOUIC_SEARCH_PATHS <path>)
+endif() # ENABLE_QT
 
 if(UNIX)
   target_link_libraries(csUtil
