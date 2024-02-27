@@ -408,6 +408,18 @@ namespace test_mapreduce {
     std::cout << "---------------------------------------------" << std::endl;
 
     {
+      const std::string reduced =
+          cs::blockingMapReduceSorted<std::string>(NUM_THREADS,
+                                                   data.begin(), data.end(),
+                                                   &util::incTo, &util::reduce);
+      cs::println("reduced = %", reduced);
+
+      REQUIRE( reduced == "2345678" );
+    }
+
+    std::cout << "---------------------------------------------" << std::endl;
+
+    {
       const std::string unsorted =
           cs::blockingMapReduceUnsorted<std::string>(NUM_THREADS,
                                                      data.begin(), data.end(),
