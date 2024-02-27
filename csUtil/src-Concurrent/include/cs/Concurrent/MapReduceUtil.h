@@ -101,22 +101,22 @@ namespace cs {
 
     template<typename OutputIt, typename MapToFunc, typename InputIt>
     requires is_mapTo_v<OutputIt,MapToFunc,InputIt>
-    class MapToContext {
+    class MapTo {
     public:
       using  input_t = iter_value_type<InputIt>;
       using output_t = iter_value_type<OutputIt>;
 
-      MapToContext(MapToFunc&& mapTo) noexcept
+      MapTo(MapToFunc&& mapTo) noexcept
         : _mapTo{std::forward<MapToFunc>(mapTo)}
       {
       }
 
-      MapToContext(const MapToContext& other) noexcept
+      MapTo(const MapTo& other) noexcept
         : _mapTo{std::forward<MapToFunc>(other._mapTo)}
       {
       }
 
-      ~MapToContext() noexcept
+      ~MapTo() noexcept
       {
       }
 

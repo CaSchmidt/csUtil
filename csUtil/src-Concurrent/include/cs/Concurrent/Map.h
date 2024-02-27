@@ -81,57 +81,10 @@ namespace cs {
                       numThreads, first, last, std::forward<MapFunc>(map));
   }
 
-  ////// Unsorted Map ////////////////////////////////////////////////////////
+  // Sorted Map //////////////////////////////////////////////////////////////
 
   template<typename OutputIt, typename MapToFunc, typename InputIt>
   concept IsMapToFunction = impl_mapreduce::is_mapTo_v<OutputIt,MapToFunc,InputIt>;
-
-  template<typename OutputIt, typename InputIt, typename MapToFunc>
-  requires IsMapToFunction<OutputIt,MapToFunc,InputIt>
-  void blockingMapUnsorted(const std::size_t numThreads,
-                           OutputIt dest,
-                           InputIt first, InputIt last,
-                           MapToFunc&& mapTo)
-  {
-    using namespace impl_mapreduce;
-
-    using Context = MapToContext<OutputIt,MapToFunc,InputIt>;
-
-    // (1) Create ThreadPool /////////////////////////////////////////////////
-
-    ThreadPool pool(0);
-    if( !pool.start(numThreads) ) {
-      return;
-    }
-
-    // (2) Dispatch Work /////////////////////////////////////////////////////
-
-    Context ctx(std::forward<MapToFunc>(mapTo));
-
-    for(; first != last; ++dest, ++first) {
-      pool.dispatch(std::bind(ctx, std::ref(*dest), std::cref(*first)));
-    }
-
-    // (3) Wait //////////////////////////////////////////////////////////////
-
-    pool.finish();
-  }
-
-  template<typename OutputIt, typename InputIt, typename MapToFunc>
-  requires IsMapToFunction<OutputIt,MapToFunc,InputIt>
-  [[nodiscard]] std::future<void> mapUnsorted(const std::size_t numThreads,
-                                              OutputIt dest,
-                                              InputIt first, InputIt last,
-                                              MapToFunc&& mapTo)
-  {
-    using namespace impl_mapreduce;
-
-    return std::async(ASYNC, blockingMapUnsorted<OutputIt,InputIt,MapToFunc>,
-                      numThreads, dest,
-                      first, last, std::forward<MapToFunc>(mapTo));
-  }
-
-  ////// Sorted Map //////////////////////////////////////////////////////////
 
   template<typename OutputIt, typename InputIt, typename MapToFunc>
   requires IsMapToFunction<OutputIt,MapToFunc,InputIt>
@@ -142,7 +95,7 @@ namespace cs {
   {
     using namespace impl_mapreduce;
 
-    using Context = MapToContext<OutputIt,MapToFunc,InputIt>;
+    using Context = MapTo<OutputIt,MapToFunc,InputIt>;
 
     // (1) Create ThreadPool /////////////////////////////////////////////////
 
@@ -177,6 +130,53 @@ namespace cs {
     return std::async(ASYNC, blockingMapSorted<OutputIt,InputIt,MapToFunc>,
                       numThreads, destFirst, destLast,
                       srcFirst, srcLast, std::forward<MapToFunc>(mapTo));
+  }
+
+  // Unsorted Map ////////////////////////////////////////////////////////////
+
+  template<typename OutputIt, typename InputIt, typename MapToFunc>
+  requires IsMapToFunction<OutputIt,MapToFunc,InputIt>
+  void blockingMapUnsorted(const std::size_t numThreads,
+                           OutputIt dest,
+                           InputIt first, InputIt last,
+                           MapToFunc&& mapTo)
+  {
+    using namespace impl_mapreduce;
+
+    using Context = MapTo<OutputIt,MapToFunc,InputIt>;
+
+    // (1) Create ThreadPool /////////////////////////////////////////////////
+
+    ThreadPool pool(0);
+    if( !pool.start(numThreads) ) {
+      return;
+    }
+
+    // (2) Dispatch Work /////////////////////////////////////////////////////
+
+    Context ctx(std::forward<MapToFunc>(mapTo));
+
+    for(; first != last; ++dest, ++first) {
+      pool.dispatch(std::bind(ctx, std::ref(*dest), std::cref(*first)));
+    }
+
+    // (3) Wait //////////////////////////////////////////////////////////////
+
+    pool.finish();
+  }
+
+  template<typename OutputIt, typename InputIt, typename MapToFunc>
+  requires IsMapToFunction<OutputIt,MapToFunc,InputIt>
+  [[nodiscard]] std::future<void> mapUnsorted(const std::size_t numThreads,
+                                              OutputIt dest,
+                                              InputIt first, InputIt last,
+                                              MapToFunc&& mapTo)
+  {
+    using namespace impl_mapreduce;
+
+    return std::async(ASYNC, blockingMapUnsorted<OutputIt,InputIt,MapToFunc>,
+                      numThreads, dest,
+                      first, last, std::forward<MapToFunc>(mapTo));
   }
 
 } // namespace cs
