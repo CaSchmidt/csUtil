@@ -4,6 +4,7 @@
 
 #include <catch.hpp>
 
+#include <cs/Concurrent/Map.h>
 #include <cs/Concurrent/MapReduce.h>
 #include <cs/System/Random.h>
 #include <cs/System/Time.h>
@@ -222,48 +223,6 @@ namespace test_map {
     std::cout << std::endl;
   }
 
-  TEST_CASE("Map sequence to unsorted sequence.", "[mapunsorted]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
-
-    constexpr std::size_t COUNT = 7;
-    const std::array<int,COUNT> data{1, 2, 3, 4, 5, 6, 7};
-
-    util::print(data.begin(), data.end(), "data = ");
-
-    std::cout << "---------------------------------------------" << std::endl;
-
-    {
-      std::vector<int> v;
-
-      cs::blockingMapUnsorted(NUM_THREADS,
-                              std::back_inserter(v),
-                              data.begin(), data.end(),
-                              &util::incTo);
-
-      util::print(v.begin(), v.end(), "vnew = ");
-
-      REQUIRE( util::accumulate(v.begin(), v.end()) == 35 );
-    }
-
-    std::cout << "---------------------------------------------" << std::endl;
-
-    {
-      int a[COUNT];
-
-      auto f = cs::mapUnsorted(NUM_THREADS,
-                               a,
-                               data.begin(), data.end(),
-                               &util::incTo);
-      f.get();
-
-      util::print(a, COUNT, "anew = ");
-
-      REQUIRE( util::accumulate(a, COUNT) == 35 );
-    }
-
-    std::cout << std::endl;
-  }
-
   TEST_CASE("Map sequence to sorted sequence.", "[mapsorted]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
@@ -307,73 +266,7 @@ namespace test_map {
     std::cout << std::endl;
   }
 
-} // namespace test_map
-
-namespace test_reduce {
-
-  TEST_CASE("Reduce sequence.", "[reduce]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
-
-    constexpr std::size_t COUNT = 11;
-    std::array<int,COUNT> data{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
-    util::print(data.begin(), data.end(), "data = ");
-
-    std::cout << "---------------------------------------------" << std::endl;
-
-    {
-      const std::string reduced =
-          cs::blockingReduce<std::string>(NUM_THREADS,
-                                          data.begin(), data.end(),
-                                          &util::reduce, std::plus<>{});
-      cs::println("reduced = %", reduced);
-
-      REQUIRE( reduced == "1234567891011" );
-    }
-
-    std::cout << "---------------------------------------------" << std::endl;
-
-    {
-      const std::string reduced =
-          cs::blockingReduce<std::string>(NUM_THREADS,
-                                          data.begin(), std::next(data.begin(), 3),
-                                          &util::reduce, std::plus<>{});
-      cs::println("reduced = %", reduced);
-
-      REQUIRE( reduced == "123" );
-    }
-
-    std::cout << "---------------------------------------------" << std::endl;
-
-    {
-      auto f = cs::reduce<std::string>(NUM_THREADS,
-                                       data.begin(), std::next(data.begin(), 4),
-                                       &util::reduce, std::plus<>{});
-      const std::string reduced = f.get();
-      cs::println("reduced = %", reduced);
-
-      REQUIRE( reduced == "1234" );
-    }
-
-    std::cout << "---------------------------------------------" << std::endl;
-
-    {
-      auto f = cs::reduce<std::string>(NUM_THREADS,
-                                       data.begin(), std::next(data.begin(), 7),
-                                       &util::reduce);
-      const std::string reduced = f.get();
-      cs::println("reduced = %", reduced);
-
-      REQUIRE( reduced == "1234567" );
-    }
-
-    std::cout << std::endl;
-  }
-
-} // namespace test_reduce
-
-namespace test_mapreduce {
-
-  TEST_CASE("Reduce mapped sequence.", "[mapreduce]") {
+  TEST_CASE("Map sequence to unsorted sequence.", "[mapunsorted]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
     constexpr std::size_t COUNT = 7;
@@ -384,26 +277,48 @@ namespace test_mapreduce {
     std::cout << "---------------------------------------------" << std::endl;
 
     {
-      const std::string reduced =
-          cs::blockingMapReduce<std::string>(NUM_THREADS,
-                                             data.begin(), data.end(),
-                                             &util::incTo, &util::reduce);
-      cs::println("reduced = %", reduced);
+      std::vector<int> v;
 
-      REQUIRE( reduced == "2345678" );
+      cs::blockingMapUnsorted(NUM_THREADS,
+                              std::back_inserter(v),
+                              data.begin(), data.end(),
+                              &util::incTo);
+
+      util::print(v.begin(), v.end(), "vnew = ");
+
+      REQUIRE( util::accumulate(v.begin(), v.end()) == 35 );
     }
 
     std::cout << "---------------------------------------------" << std::endl;
 
     {
-      auto f = cs::mapReduce<std::string>(NUM_THREADS,
-                                          data.begin(), data.end(),
-                                          &util::incTo, &util::reduce);
-      const std::string reduced = f.get();
-      cs::println("reduced = %", reduced);
+      int a[COUNT];
 
-      REQUIRE( reduced == "2345678" );
+      auto f = cs::mapUnsorted(NUM_THREADS,
+                               a,
+                               data.begin(), data.end(),
+                               &util::incTo);
+      f.get();
+
+      util::print(a, COUNT, "anew = ");
+
+      REQUIRE( util::accumulate(a, COUNT) == 35 );
     }
+
+    std::cout << std::endl;
+  }
+
+} // namespace test_map
+
+namespace test_mapreduce {
+
+  TEST_CASE("Sorted map-reduce.", "[mapreducesorted]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    constexpr std::size_t COUNT = 7;
+    const std::array<int,COUNT> data{1, 2, 3, 4, 5, 6, 7};
+
+    util::print(data.begin(), data.end(), "data = ");
 
     std::cout << "---------------------------------------------" << std::endl;
 
@@ -416,6 +331,29 @@ namespace test_mapreduce {
 
       REQUIRE( reduced == "2345678" );
     }
+
+    std::cout << "---------------------------------------------" << std::endl;
+
+    {
+      auto f = cs::mapReduceSorted<std::string>(NUM_THREADS,
+                                                data.begin(), data.end(),
+                                                &util::incTo, &util::reduce);
+      const std::string reduced = f.get();
+      cs::println("reduced = %", reduced);
+
+      REQUIRE( reduced == "2345678" );
+    }
+
+    std::cout << std::endl;
+  }
+
+  TEST_CASE("Unsorted map-reduce.", "[mapreduceunsorted]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    constexpr std::size_t COUNT = 7;
+    const std::array<int,COUNT> data{1, 2, 3, 4, 5, 6, 7};
+
+    util::print(data.begin(), data.end(), "data = ");
 
     std::cout << "---------------------------------------------" << std::endl;
 

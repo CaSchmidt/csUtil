@@ -31,80 +31,12 @@
 
 #pragma once
 
-#include <cs/Concurrent/Map.h>
-#include <cs/Concurrent/Reduce.h>
+#include <cs/Concurrent/MapReduceUtil.h>
+#include <cs/Concurrent/ThreadPool.h>
 
 namespace cs {
 
   ////// Public //////////////////////////////////////////////////////////////
-
-  // (Sorted) Map-Reduce /////////////////////////////////////////////////////
-
-  template<typename T, typename ForwardIt, typename MapToFunc, typename ReduceFunc, typename FoldFunc>
-  T blockingMapReduce(const std::size_t numThreads,
-                      ForwardIt first, ForwardIt last,
-                      MapToFunc&& mapTo,
-                      ReduceFunc&& reduce, FoldFunc&& fold)
-  {
-    using namespace impl_mapreduce;
-
-    using mapped_t = std::invoke_result_t<MapToFunc,impl_iter::iter_const_reference<ForwardIt>>;
-    using Mapped = std::vector<mapped_t>;
-
-    Mapped mapped;
-    if( numThreads < ONE  ||  !resize(&mapped, distance0(first, last)) ) {
-      return T{};
-    }
-
-    // (1) Map Items /////////////////////////////////////////////////////////
-
-    blockingMapSorted(numThreads, mapped.begin(), mapped.end(),
-                      first, last, std::forward<MapToFunc>(mapTo));
-
-    // (2) Reduce Items //////////////////////////////////////////////////////
-
-    const T result = blockingReduce<T>(numThreads, mapped.begin(), mapped.end(),
-                                       std::forward<ReduceFunc>(reduce),
-                                       std::forward<FoldFunc>(fold));
-
-    return result;
-  }
-
-  template<typename T, typename ForwardIt, typename MapToFunc, typename ReduceFunc>
-  T blockingMapReduce(const std::size_t numThreads,
-                      ForwardIt first, ForwardIt last,
-                      MapToFunc&& mapTo, ReduceFunc&& reduce)
-  {
-    return blockingMapReduce<T>(numThreads, first, last,
-                                std::forward<MapToFunc>(mapTo),
-                                std::forward<ReduceFunc>(reduce), std::plus<void>{});
-  }
-
-  template<typename T, typename ForwardIt, typename MapToFunc, typename ReduceFunc, typename FoldFunc>
-  [[nodiscard]] std::future<T> mapReduce(const std::size_t numThreads,
-                                         ForwardIt first, ForwardIt last,
-                                         MapToFunc&& mapTo,
-                                         ReduceFunc&& reduce, FoldFunc&& fold)
-  {
-    using namespace impl_mapreduce;
-
-    return std::async(ASYNC, blockingMapReduce<T,ForwardIt,MapToFunc,ReduceFunc,FoldFunc>,
-                      numThreads, first, last,
-                      std::forward<MapToFunc>(mapTo),
-                      std::forward<ReduceFunc>(reduce), std::forward<FoldFunc>(fold));
-  }
-
-  template<typename T, typename ForwardIt, typename MapToFunc, typename ReduceFunc>
-  [[nodiscard]] std::future<T> mapReduce(const std::size_t numThreads,
-                                         ForwardIt first, ForwardIt last, MapToFunc&& mapTo,
-                                         ReduceFunc&& reduce)
-  {
-    using namespace impl_mapreduce;
-
-    return std::async(ASYNC, blockingMapReduce<T,ForwardIt,MapToFunc,ReduceFunc>,
-                      numThreads, first, last,
-                      std::forward<MapToFunc>(mapTo), std::forward<ReduceFunc>(reduce));
-  }
 
   // (Sorted) Map-Reduce /////////////////////////////////////////////////////
 
@@ -146,7 +78,19 @@ namespace cs {
     return result;
   }
 
-  // Unsorted Map-Reduce /////////////////////////////////////////////////////
+  template<typename T, typename InputIt, typename MapToFunc, typename ReduceFunc>
+  [[nodiscard]] std::future<T> mapReduceSorted(const std::size_t numThreads,
+                                               InputIt first, InputIt last,
+                                               MapToFunc&& mapTo, ReduceFunc&& reduce)
+  {
+    using namespace impl_mapreduce;
+
+    return std::async(ASYNC, blockingMapReduceSorted<T,InputIt,MapToFunc,ReduceFunc>,
+                      numThreads, first, last,
+                      std::forward<MapToFunc>(mapTo), std::forward<ReduceFunc>(reduce));
+  }
+
+  // (Unsorted) Map-Reduce ///////////////////////////////////////////////////
 
   template<typename T, typename InputIt, typename MapToFunc, typename ReduceFunc>
   T blockingMapReduceUnsorted(const std::size_t numThreads,
