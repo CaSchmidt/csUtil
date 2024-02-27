@@ -94,7 +94,7 @@ namespace cs {
   void ThreadPool::clear(bool *is_empty)
   {
     { // lock
-      std::lock_guard<std::mutex> lock(_mutex);
+      std::lock_guard<std::mutex> guard(_mutex);
 
       if( is_empty != nullptr ) {
         *is_empty = _queue.empty();
@@ -114,7 +114,7 @@ namespace cs {
     }
 
     { // lock
-      std::lock_guard<std::mutex> lock(_mutex);
+      std::lock_guard<std::mutex> guard(_mutex);
       _queue.push(std::move(runnable));
     } // unlock
     _cv.notify_one();
@@ -127,7 +127,7 @@ namespace cs {
   void ThreadPool::join(const PoolState reason)
   {
     { // lock
-      std::lock_guard<std::mutex> lock(_mutex);
+      std::lock_guard<std::mutex> guard(_mutex);
       _state = reason;
     } // unlock
     _cv.notify_all();
