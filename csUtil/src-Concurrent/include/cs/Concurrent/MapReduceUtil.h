@@ -33,6 +33,7 @@
 
 #include <future>
 
+#include <cs/Concurrent/SyncCondition.h>
 #include <cs/Core/Iterator.h>
 
 namespace cs {
@@ -126,6 +127,48 @@ namespace cs {
 
     private:
       MapToFunc&& _mapTo;
+    };
+
+    template<typename T, typename ReduceFunc, typename MapToFunc, typename InputIt>
+    class MapReduceSorted {
+    public:
+      using  input_t = iter_value_type<InputIt>;
+      using mapped_t = std::invoke_result_t<MapToFunc,iter_const_reference<InputIt>>;
+
+      MapReduceSorted(MapToFunc&& mapTo, ReduceFunc&& reduce,
+                      SyncCondition<size_type>& sync) noexcept
+        : _mapTo{std::forward<MapToFunc>(mapTo)}
+        , _reduce{std::forward<ReduceFunc>(reduce)}
+        , _sync{sync}
+      {
+      }
+
+      MapReduceSorted(const MapReduceSorted& other) noexcept
+        : _mapTo{std::forward<MapToFunc>(other._mapTo)}
+        , _reduce{std::forward<ReduceFunc>(other._reduce)}
+        , _sync{other._sync}
+      {
+      }
+
+      ~MapReduceSorted() noexcept
+      {
+      }
+
+      void operator()(const size_type id, T& reduced, const input_t& in) const
+      {
+        const mapped_t mapped = std::invoke(std::forward<MapToFunc>(_mapTo), in);
+
+        _sync.wait(id);
+
+        std::invoke(std::forward<ReduceFunc>(_reduce), reduced, mapped);
+
+        _sync.notify_all(id + ONE);
+      }
+
+    private:
+      MapToFunc&&  _mapTo;
+      ReduceFunc&& _reduce;
+      SyncCondition<size_type>& _sync;
     };
 
     template<typename T, typename ReduceFunc, typename MapToFunc, typename InputIt>

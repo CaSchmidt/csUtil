@@ -106,6 +106,46 @@ namespace cs {
                       std::forward<MapToFunc>(mapTo), std::forward<ReduceFunc>(reduce));
   }
 
+  // (Sorted) Map-Reduce /////////////////////////////////////////////////////
+
+  template<typename T, typename InputIt, typename MapToFunc, typename ReduceFunc>
+  T blockingMapReduceSorted(const std::size_t numThreads,
+                            InputIt first, InputIt last,
+                            MapToFunc&& mapTo, ReduceFunc&& reduce)
+  {
+    using namespace impl_mapreduce;
+
+    using Context = MapReduceSorted<T,ReduceFunc,MapToFunc,InputIt>;
+
+    constexpr size_type INIT_ID = 0;
+
+    // (1) Create ThreadPool /////////////////////////////////////////////////
+
+    ThreadPool pool(0);
+    if( !pool.start(numThreads) ) {
+      return T();
+    }
+
+    // (2) Dispatch Work /////////////////////////////////////////////////////
+
+    SyncCondition<size_type> sync(INIT_ID);
+    Context ctx(std::forward<MapToFunc>(mapTo),
+                std::forward<ReduceFunc>(reduce),
+                sync);
+
+    size_type id = INIT_ID;
+    T result{};
+    for(; first != last; ++first, id++) {
+      pool.dispatch(std::bind(ctx, id, std::ref(result), std::cref(*first)));
+    }
+
+    // (3) Wait //////////////////////////////////////////////////////////////
+
+    pool.finish();
+
+    return result;
+  }
+
   // Unsorted Map-Reduce /////////////////////////////////////////////////////
 
   template<typename T, typename InputIt, typename MapToFunc, typename ReduceFunc>
