@@ -38,9 +38,13 @@ namespace cs {
 
   ////// Public //////////////////////////////////////////////////////////////
 
+  template<typename R, typename ReduceFunc, typename MapToFunc, typename InputIt>
+  concept IsMapReduceFunction = impl_mapreduce::is_mapReduce_v<R,ReduceFunc,MapToFunc,InputIt>;
+
   // (Sorted) Map-Reduce /////////////////////////////////////////////////////
 
   template<typename T, typename InputIt, typename MapToFunc, typename ReduceFunc>
+  requires IsMapReduceFunction<T,ReduceFunc,MapToFunc,InputIt>
   T blockingMapReduceSorted(const std::size_t numThreads,
                             InputIt first, InputIt last,
                             MapToFunc&& mapTo, ReduceFunc&& reduce)
@@ -79,6 +83,7 @@ namespace cs {
   }
 
   template<typename T, typename InputIt, typename MapToFunc, typename ReduceFunc>
+  requires IsMapReduceFunction<T,ReduceFunc,MapToFunc,InputIt>
   [[nodiscard]] std::future<T> mapReduceSorted(const std::size_t numThreads,
                                                InputIt first, InputIt last,
                                                MapToFunc&& mapTo, ReduceFunc&& reduce)
@@ -93,6 +98,7 @@ namespace cs {
   // (Unsorted) Map-Reduce ///////////////////////////////////////////////////
 
   template<typename T, typename InputIt, typename MapToFunc, typename ReduceFunc>
+  requires IsMapReduceFunction<T,ReduceFunc,MapToFunc,InputIt>
   T blockingMapReduceUnsorted(const std::size_t numThreads,
                               InputIt first, InputIt last,
                               MapToFunc&& mapTo, ReduceFunc&& reduce)
@@ -128,6 +134,7 @@ namespace cs {
   }
 
   template<typename T, typename InputIt, typename MapToFunc, typename ReduceFunc>
+  requires IsMapReduceFunction<T,ReduceFunc,MapToFunc,InputIt>
   [[nodiscard]] std::future<T> mapReduceUnsorted(const std::size_t numThreads,
                                                  InputIt first, InputIt last,
                                                  MapToFunc&& mapTo, ReduceFunc&& reduce)

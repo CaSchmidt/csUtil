@@ -78,6 +78,25 @@ namespace cs {
     template<typename OutputIt, typename MapToFunc, typename InputIt>
     inline constexpr bool is_mapTo_v = is_mapTo<OutputIt,MapToFunc,InputIt>::value;
 
+    /*
+     * Syntax of Map-Reduce functions:
+     *
+     * M mapTo(const T& item)
+     * U reduce(R& reduced, const M& mapped)
+     *
+     * NOTE: reduce()'s return value & type are never used!
+     */
+
+    template<typename R, typename ReduceFunc, typename MapToFunc, typename InputIt>
+    using is_mapReduce = std::bool_constant<
+    std::is_invocable_v<ReduceFunc,
+    std::add_lvalue_reference_t<R>,
+    std::add_const_t<std::add_lvalue_reference_t<std::invoke_result_t<MapToFunc,iter_const_reference<InputIt>>>>>
+    >;
+
+    template<typename R, typename ReduceFunc, typename MapToFunc, typename InputIt>
+    inline constexpr bool is_mapReduce_v = is_mapReduce<R,ReduceFunc,MapToFunc,InputIt>::value;
+
     // Constants /////////////////////////////////////////////////////////////
 
     inline constexpr auto ASYNC = std::launch::async;
