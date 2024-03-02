@@ -87,15 +87,15 @@ namespace cs::concurrent {
      * NOTE: reduce()'s return value & type are never used!
      */
 
-    template<typename R, typename ReduceFunc, typename MapToFunc, typename InputIt>
+    template<typename T, typename ReduceFunc, typename MapToFunc, typename InputIt>
     using is_mapReduce = std::bool_constant<
     std::is_invocable_v<ReduceFunc,
-    std::add_lvalue_reference_t<R>,
+    std::add_lvalue_reference_t<T>,
     std::add_const_t<std::add_lvalue_reference_t<std::invoke_result_t<MapToFunc,iter_const_reference<InputIt>>>>>
     >;
 
-    template<typename R, typename ReduceFunc, typename MapToFunc, typename InputIt>
-    inline constexpr bool is_mapReduce_v = is_mapReduce<R,ReduceFunc,MapToFunc,InputIt>::value;
+    template<typename T, typename ReduceFunc, typename MapToFunc, typename InputIt>
+    inline constexpr bool is_mapReduce_v = is_mapReduce<T,ReduceFunc,MapToFunc,InputIt>::value;
 
     // Constants /////////////////////////////////////////////////////////////
 

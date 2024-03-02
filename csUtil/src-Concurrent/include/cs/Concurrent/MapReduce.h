@@ -38,8 +38,30 @@ namespace cs::concurrent {
 
   ////// Public //////////////////////////////////////////////////////////////
 
-  template<typename R, typename ReduceFunc, typename MapToFunc, typename InputIt>
-  concept IsMapReduceFunction = impl_mapreduce::is_mapReduce_v<R,ReduceFunc,MapToFunc,InputIt>;
+  /*
+   * Apply the Map-Reduce model to the result of dereferencing every iterator
+   * in the range [first,last).
+   *
+   * The Map-Reduce operation is executed in two steps:
+   *
+   * Step 1: Apply the mapTo() function to the dereferenced iterator:
+   *
+   * M mapTo(const U&)
+   *
+   * Step 2: Reduce the mapped result of Step 1 using the reduce() function:
+   *
+   * V reduce(T&, const M&)
+   *
+   * The return type and value of the reduce() function is never used.
+   *
+   * Both steps are executed in the same thread.
+   *
+   * Access to the reduced result is protected using a mutex; no additional
+   * synchronization needs to be implemented!
+   */
+
+  template<typename T, typename ReduceFunc, typename MapToFunc, typename InputIt>
+  concept IsMapReduceFunction = impl_mapreduce::is_mapReduce_v<T,ReduceFunc,MapToFunc,InputIt>;
 
   // (Sorted) Map-Reduce /////////////////////////////////////////////////////
 
