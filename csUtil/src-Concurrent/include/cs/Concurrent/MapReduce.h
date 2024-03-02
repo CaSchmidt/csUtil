@@ -34,7 +34,7 @@
 #include <cs/Concurrent/MapReduceUtil.h>
 #include <cs/Concurrent/ThreadPool.h>
 
-namespace cs {
+namespace cs::concurrent {
 
   ////// Public //////////////////////////////////////////////////////////////
 
@@ -146,4 +146,4 @@ namespace cs {
                       std::forward<MapToFunc>(mapTo), std::forward<ReduceFunc>(reduce));
   }
 
-} // namespace cs
+} // namespace cs::concurrent

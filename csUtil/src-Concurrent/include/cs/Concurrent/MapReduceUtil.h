@@ -36,7 +36,7 @@
 #include <cs/Concurrent/SyncCondition.h>
 #include <cs/Core/Iterator.h>
 
-namespace cs {
+namespace cs::concurrent {
 
   namespace impl_mapreduce {
 
@@ -273,4 +273,4 @@ namespace cs {
 
   } // namespace impl_mapreduce
 
-} // namespace cs
+} // namespace cs::concurrent
