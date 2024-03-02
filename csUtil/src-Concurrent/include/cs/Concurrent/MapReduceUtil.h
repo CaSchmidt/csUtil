@@ -187,6 +187,7 @@ namespace cs {
     };
 
     template<typename T, typename ReduceFunc, typename MapToFunc, typename InputIt>
+    requires is_mapReduce_v<T,ReduceFunc,MapToFunc,InputIt>
     class MapReduceSorted {
     public:
       using  input_t = iter_value_type<InputIt>;
@@ -229,6 +230,7 @@ namespace cs {
     };
 
     template<typename T, typename ReduceFunc, typename MapToFunc, typename InputIt>
+    requires is_mapReduce_v<T,ReduceFunc,MapToFunc,InputIt>
     class MapReduceUnsorted {
     public:
       using  input_t = iter_value_type<InputIt>;
