@@ -148,6 +148,44 @@ namespace cs {
       MapToFunc&& _mapTo;
     };
 
+    template<typename OutputIt, typename MapToFunc, typename InputIt>
+    requires is_mapTo_v<OutputIt,MapToFunc,InputIt>
+    class MapToLockedIter {
+    public:
+      using  input_t = iter_value_type<InputIt>;
+      using mapped_t = std::invoke_result_t<MapToFunc,iter_const_reference<InputIt>>;
+
+      MapToLockedIter(MapToFunc&& mapTo, std::mutex& mutex) noexcept
+        : _mapTo{std::forward<MapToFunc>(mapTo)}
+        , _mutex{mutex}
+      {
+      }
+
+      MapToLockedIter(const MapToLockedIter& other) noexcept
+        : _mapTo{std::forward<MapToFunc>(other._mapTo)}
+        , _mutex{other._mutex}
+      {
+      }
+
+      ~MapToLockedIter() noexcept
+      {
+      }
+
+      void operator()(OutputIt dest, const input_t& in) const
+      {
+        const mapped_t mapped = std::invoke(std::forward<MapToFunc>(_mapTo), in);
+
+        { // lock
+          std::lock_guard<std::mutex> guard(_mutex);
+          *dest = mapped;
+        } // unlock
+      }
+
+    private:
+      MapToFunc&& _mapTo;
+      std::mutex& _mutex;
+    };
+
     template<typename T, typename ReduceFunc, typename MapToFunc, typename InputIt>
     class MapReduceSorted {
     public:

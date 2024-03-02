@@ -143,7 +143,7 @@ namespace cs {
   {
     using namespace impl_mapreduce;
 
-    using Context = MapTo<OutputIt,MapToFunc,InputIt>;
+    using Context = MapToLockedIter<OutputIt,MapToFunc,InputIt>;
 
     // (1) Create ThreadPool /////////////////////////////////////////////////
 
@@ -154,10 +154,11 @@ namespace cs {
 
     // (2) Dispatch Work /////////////////////////////////////////////////////
 
-    Context ctx(std::forward<MapToFunc>(mapTo));
+    std::mutex mutex;
+    Context ctx(std::forward<MapToFunc>(mapTo), mutex);
 
     for(; first != last; ++dest, ++first) {
-      pool.dispatch(std::bind(ctx, std::ref(*dest), std::cref(*first)));
+      pool.dispatch(std::bind(ctx, dest, std::cref(*first)));
     }
 
     // (3) Wait //////////////////////////////////////////////////////////////
