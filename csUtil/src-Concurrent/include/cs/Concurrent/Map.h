@@ -45,9 +45,9 @@ namespace cs::concurrent {
 
   template<typename ForwardIt, typename MapFunc>
   requires IsMapFunction<MapFunc,ForwardIt>
-  void blockingMap(const std::size_t numThreads,
-                   ForwardIt first, ForwardIt last,
-                   MapFunc&& map)
+  void map(const std::size_t numThreads,
+           ForwardIt first, ForwardIt last,
+           MapFunc&& func)
   {
     using namespace impl_mapreduce;
 
@@ -61,7 +61,7 @@ namespace cs::concurrent {
     // (2) Dispatch Work /////////////////////////////////////////////////////
 
     for(; first != last; ++first) {
-      pool.dispatch(std::bind(std::forward<MapFunc>(map), std::ref(*first)));
+      pool.dispatch(std::bind(std::forward<MapFunc>(func), std::ref(*first)));
     }
 
     // (3) Wait //////////////////////////////////////////////////////////////
@@ -71,14 +71,14 @@ namespace cs::concurrent {
 
   template<typename ForwardIt, typename MapFunc>
   requires IsMapFunction<MapFunc,ForwardIt>
-  [[nodiscard]] std::future<void> map(const std::size_t numThreads,
-                                      ForwardIt first, ForwardIt last,
-                                      MapFunc&& map)
+  [[nodiscard]] std::future<void> asyncMap(const std::size_t numThreads,
+                                           ForwardIt first, ForwardIt last,
+                                           MapFunc&& func)
   {
     using namespace impl_mapreduce;
 
-    return std::async(ASYNC, blockingMap<ForwardIt,MapFunc>,
-                      numThreads, first, last, std::forward<MapFunc>(map));
+    return std::async(ASYNC, map<ForwardIt,MapFunc>,
+                      numThreads, first, last, std::forward<MapFunc>(func));
   }
 
   // Sorted Map //////////////////////////////////////////////////////////////
@@ -88,10 +88,10 @@ namespace cs::concurrent {
 
   template<typename OutputIt, typename InputIt, typename MapToFunc>
   requires IsMapToFunction<OutputIt,MapToFunc,InputIt>
-  void blockingMapSorted(const std::size_t numThreads,
-                         OutputIt destFirst, OutputIt destLast,
-                         InputIt srcFirst, InputIt srcLast,
-                         MapToFunc&& mapTo)
+  void mapSorted(const std::size_t numThreads,
+                 OutputIt destFirst, OutputIt destLast,
+                 InputIt srcFirst, InputIt srcLast,
+                 MapToFunc&& mapTo)
   {
     using namespace impl_mapreduce;
 
@@ -120,14 +120,14 @@ namespace cs::concurrent {
 
   template<typename OutputIt, typename InputIt, typename MapToFunc>
   requires IsMapToFunction<OutputIt,MapToFunc,InputIt>
-  [[nodiscard]] std::future<void> mapSorted(const std::size_t numThreads,
-                                            OutputIt destFirst, OutputIt destLast,
-                                            InputIt srcFirst, InputIt srcLast,
-                                            MapToFunc&& mapTo)
+  [[nodiscard]] std::future<void> asyncMapSorted(const std::size_t numThreads,
+                                                 OutputIt destFirst, OutputIt destLast,
+                                                 InputIt srcFirst, InputIt srcLast,
+                                                 MapToFunc&& mapTo)
   {
     using namespace impl_mapreduce;
 
-    return std::async(ASYNC, blockingMapSorted<OutputIt,InputIt,MapToFunc>,
+    return std::async(ASYNC, mapSorted<OutputIt,InputIt,MapToFunc>,
                       numThreads, destFirst, destLast,
                       srcFirst, srcLast, std::forward<MapToFunc>(mapTo));
   }
@@ -136,10 +136,10 @@ namespace cs::concurrent {
 
   template<typename OutputIt, typename InputIt, typename MapToFunc>
   requires IsMapToFunction<OutputIt,MapToFunc,InputIt>
-  void blockingMapUnsorted(const std::size_t numThreads,
-                           OutputIt dest,
-                           InputIt first, InputIt last,
-                           MapToFunc&& mapTo)
+  void mapUnsorted(const std::size_t numThreads,
+                   OutputIt dest,
+                   InputIt first, InputIt last,
+                   MapToFunc&& mapTo)
   {
     using namespace impl_mapreduce;
 
@@ -168,14 +168,14 @@ namespace cs::concurrent {
 
   template<typename OutputIt, typename InputIt, typename MapToFunc>
   requires IsMapToFunction<OutputIt,MapToFunc,InputIt>
-  [[nodiscard]] std::future<void> mapUnsorted(const std::size_t numThreads,
-                                              OutputIt dest,
-                                              InputIt first, InputIt last,
-                                              MapToFunc&& mapTo)
+  [[nodiscard]] std::future<void> asyncMapUnsorted(const std::size_t numThreads,
+                                                   OutputIt dest,
+                                                   InputIt first, InputIt last,
+                                                   MapToFunc&& mapTo)
   {
     using namespace impl_mapreduce;
 
-    return std::async(ASYNC, blockingMapUnsorted<OutputIt,InputIt,MapToFunc>,
+    return std::async(ASYNC, mapUnsorted<OutputIt,InputIt,MapToFunc>,
                       numThreads, dest,
                       first, last, std::forward<MapToFunc>(mapTo));
   }

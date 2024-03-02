@@ -67,9 +67,9 @@ namespace cs::concurrent {
 
   template<typename T, typename InputIt, typename MapToFunc, typename ReduceFunc>
   requires IsMapReduceFunction<T,ReduceFunc,MapToFunc,InputIt>
-  T blockingMapReduceSorted(const std::size_t numThreads,
-                            InputIt first, InputIt last,
-                            MapToFunc&& mapTo, ReduceFunc&& reduce)
+  T mapReduceSorted(const std::size_t numThreads,
+                    InputIt first, InputIt last,
+                    MapToFunc&& mapTo, ReduceFunc&& reduce)
   {
     using namespace impl_mapreduce;
 
@@ -106,13 +106,13 @@ namespace cs::concurrent {
 
   template<typename T, typename InputIt, typename MapToFunc, typename ReduceFunc>
   requires IsMapReduceFunction<T,ReduceFunc,MapToFunc,InputIt>
-  [[nodiscard]] std::future<T> mapReduceSorted(const std::size_t numThreads,
-                                               InputIt first, InputIt last,
-                                               MapToFunc&& mapTo, ReduceFunc&& reduce)
+  [[nodiscard]] std::future<T> asyncMapReduceSorted(const std::size_t numThreads,
+                                                    InputIt first, InputIt last,
+                                                    MapToFunc&& mapTo, ReduceFunc&& reduce)
   {
     using namespace impl_mapreduce;
 
-    return std::async(ASYNC, blockingMapReduceSorted<T,InputIt,MapToFunc,ReduceFunc>,
+    return std::async(ASYNC, mapReduceSorted<T,InputIt,MapToFunc,ReduceFunc>,
                       numThreads, first, last,
                       std::forward<MapToFunc>(mapTo), std::forward<ReduceFunc>(reduce));
   }
@@ -121,9 +121,9 @@ namespace cs::concurrent {
 
   template<typename T, typename InputIt, typename MapToFunc, typename ReduceFunc>
   requires IsMapReduceFunction<T,ReduceFunc,MapToFunc,InputIt>
-  T blockingMapReduceUnsorted(const std::size_t numThreads,
-                              InputIt first, InputIt last,
-                              MapToFunc&& mapTo, ReduceFunc&& reduce)
+  T mapReduceUnsorted(const std::size_t numThreads,
+                      InputIt first, InputIt last,
+                      MapToFunc&& mapTo, ReduceFunc&& reduce)
   {
     using namespace impl_mapreduce;
 
@@ -157,13 +157,13 @@ namespace cs::concurrent {
 
   template<typename T, typename InputIt, typename MapToFunc, typename ReduceFunc>
   requires IsMapReduceFunction<T,ReduceFunc,MapToFunc,InputIt>
-  [[nodiscard]] std::future<T> mapReduceUnsorted(const std::size_t numThreads,
-                                                 InputIt first, InputIt last,
-                                                 MapToFunc&& mapTo, ReduceFunc&& reduce)
+  [[nodiscard]] std::future<T> asyncMapReduceUnsorted(const std::size_t numThreads,
+                                                      InputIt first, InputIt last,
+                                                      MapToFunc&& mapTo, ReduceFunc&& reduce)
   {
     using namespace impl_mapreduce;
 
-    return std::async(ASYNC, blockingMapReduceUnsorted<T,InputIt,MapToFunc,ReduceFunc>,
+    return std::async(ASYNC, mapReduceUnsorted<T,InputIt,MapToFunc,ReduceFunc>,
                       numThreads, first, last,
                       std::forward<MapToFunc>(mapTo), std::forward<ReduceFunc>(reduce));
   }
