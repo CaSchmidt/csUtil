@@ -96,6 +96,15 @@ namespace cs {
                                       func);
   }
 
+  template<typename PredFunc>
+  inline bool contains(const std::wstring_view& str,
+                       PredFunc func,
+                       if_char_predicate_t<PredFunc,wchar_t> * = nullptr)
+  {
+    return !str.empty()  &&  contains(str.data(), str.size(),
+                                      func);
+  }
+
   ////// String ends with pattern... /////////////////////////////////////////
 
   inline bool endsWith(const std::string_view& str,
@@ -186,6 +195,17 @@ namespace cs {
   inline void replaceAll(std::string *str,
                          const char& pat,
                          const char& txt)
+  {
+    if( str != nullptr  &&  !str->empty() ) {
+      replaceAll(str->data(), str->size(),
+                 pat,
+                 txt);
+    }
+  }
+
+  inline void replaceAll(std::wstring *str,
+                         const wchar_t& pat,
+                         const wchar_t& txt)
   {
     if( str != nullptr  &&  !str->empty() ) {
       replaceAll(str->data(), str->size(),
