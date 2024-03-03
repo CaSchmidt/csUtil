@@ -39,7 +39,7 @@ namespace cs {
 
   template<typename PredFunc, typename T>
   using is_char_predicate = std::bool_constant<
-  is_char_v<T>  &&  std::is_invocable_r_v<bool,PredFunc,const T&>
+  is_char_v<T>  &&  std::is_invocable_r_v<bool,PredFunc,std::add_const_t<T>>
   >;
 
   template<typename PredFunc, typename T>
@@ -98,13 +98,13 @@ namespace cs {
   ////// Classification //////////////////////////////////////////////////////
 
   template<typename T> requires is_char_v<T>
-  constexpr bool isDigit(const T& c)
+  constexpr bool isDigit(const T c)
   {
     return glyph<T>::zero <= c  &&  c <= glyph<T>::nine;
   }
 
   template<typename T> requires is_char_v<T>
-  inline bool isHexDigit(const T& c)
+  inline bool isHexDigit(const T c)
   {
     const bool is_0to9 = glyph<T>::zero <= c  &&  c <= glyph<T>::nine;
     const bool is_atof = glyph<T>::a    <= c  &&  c <= glyph<T>::f;
@@ -113,26 +113,26 @@ namespace cs {
   }
 
   template<typename T> requires is_char_v<T>
-  constexpr bool isLower(const T& c)
+  constexpr bool isLower(const T c)
   {
     return glyph<T>::a <= c  &&  c <= glyph<T>::z;
   }
 
   template<typename T, bool OR_SPACE = false> requires is_char_v<T>
-  constexpr bool isPrintable(const T& c)
+  constexpr bool isPrintable(const T c)
   {
     using g = glyph<T>;
     return (g::space < c  &&  c < g::DEL)  ||  (OR_SPACE  &&  c == g::space);
   }
 
   template<typename T> requires is_char_v<T>
-  constexpr bool isPrintableOrSpace(const T& c)
+  constexpr bool isPrintableOrSpace(const T c)
   {
     return isPrintable<T,true>(c);
   }
 
   template<typename T> requires is_char_v<T>
-  constexpr bool isSpace(const T& c)
+  constexpr bool isSpace(const T c)
   {
     return
         c == glyph<T>::space  ||
@@ -144,19 +144,19 @@ namespace cs {
   }
 
   template<typename T> requires is_char_v<T>
-  constexpr bool isUpper(const T& c)
+  constexpr bool isUpper(const T c)
   {
     return glyph<T>::A <= c  &&  c <= glyph<T>::Z;
   }
 
   template<typename T, bool IS_FIRST = false> requires is_char_v<T>
-  constexpr bool isIdent(const T& c)
+  constexpr bool isIdent(const T c)
   {
     return isLower(c)  ||  isUpper(c)  ||  (!IS_FIRST  &&  isDigit(c))  ||  c == glyph<T>::under;
   }
 
   template<typename T> requires is_char_v<T>
-  constexpr bool isIdentFirst(const T& c)
+  constexpr bool isIdentFirst(const T c)
   {
     return isIdent<T,true>(c);
   }
@@ -164,7 +164,7 @@ namespace cs {
   ////// Case Conversion /////////////////////////////////////////////////////
 
   template<typename T> requires is_char_v<T>
-  constexpr T toLower(const T& c)
+  constexpr T toLower(const T c)
   {
     return isUpper(c)
         ? c - glyph<T>::A + glyph<T>::a
@@ -172,7 +172,7 @@ namespace cs {
   }
 
   template<typename T> requires is_char_v<T>
-  constexpr T toUpper(const T& c)
+  constexpr T toUpper(const T c)
   {
     return isLower(c)
         ? c - glyph<T>::a + glyph<T>::A
@@ -182,7 +182,7 @@ namespace cs {
   ////// Hex Conversion //////////////////////////////////////////////////////
 
   template<typename T> requires is_char_v<T>
-  constexpr byte_t fromHexChar(const T& c)
+  constexpr byte_t fromHexChar(const T c)
   {
     using g = glyph<T>;
     if(        g::a    <= c  &&  c <= g::f    ) {
@@ -196,7 +196,7 @@ namespace cs {
   }
 
   template<typename T, bool UPPER = false> requires is_char_v<T>
-  constexpr T toHexChar(const byte_t& in, const bool hi_nibble = false)
+  constexpr T toHexChar(const byte_t in, const bool hi_nibble = false)
   {
     constexpr T hex10 = UPPER
         ? glyph<T>::A
@@ -213,7 +213,7 @@ namespace cs {
 
   template<typename NCharT, typename WCharT>
   requires is_narrowchar_v<NCharT>  &&  is_widechar_v<WCharT>
-  constexpr NCharT narrow(const WCharT& in)
+  constexpr NCharT narrow(const WCharT in)
   {
     constexpr WCharT MAX_ASCII = 0x7F;
 
@@ -224,7 +224,7 @@ namespace cs {
 
   template<typename WCharT, typename NCharT>
   requires is_widechar_v<WCharT>  &&  is_narrowchar_v<NCharT>
-  constexpr WCharT widen(const NCharT& in)
+  constexpr WCharT widen(const NCharT in)
   {
     constexpr NCharT ZERO = 0;
     constexpr NCharT  ONE = 1;
@@ -243,7 +243,7 @@ namespace cs {
   template<typename T> requires is_char_v<T>
   constexpr auto lambda_eqI()
   {
-    return [](const T& a, const T& b) -> bool {
+    return [](const T a, const T b) -> bool {
       return toLower(a) == toLower(b);
     };
   }
@@ -251,7 +251,7 @@ namespace cs {
   template<typename T> requires is_char_v<T>
   constexpr auto lambda_is_hex()
   {
-    return [](const T& c) -> bool {
+    return [](const T c) -> bool {
       return isHexDigit(c);
     };
   }
@@ -259,7 +259,7 @@ namespace cs {
   template<typename T> requires is_char_v<T>
   constexpr auto lambda_is_ident()
   {
-    return [](const T& c) -> bool {
+    return [](const T c) -> bool {
       return isIdent(c);
     };
   }
@@ -267,7 +267,7 @@ namespace cs {
   template<typename T> requires is_char_v<T>
   constexpr auto lambda_is_printable()
   {
-    return [](const T& c) -> bool {
+    return [](const T c) -> bool {
       return isPrintable(c);
     };
   }
@@ -275,7 +275,7 @@ namespace cs {
   template<typename T> requires is_char_v<T>
   constexpr auto lambda_is_printable_or_space()
   {
-    return [](const T& c) -> bool {
+    return [](const T c) -> bool {
       return isPrintableOrSpace(c);
     };
   }
@@ -283,7 +283,7 @@ namespace cs {
   template<typename T> requires is_char_v<T>
   constexpr auto lambda_is_space()
   {
-    return [](const T& c) -> bool {
+    return [](const T c) -> bool {
       return isSpace(c);
     };
   }
@@ -291,7 +291,7 @@ namespace cs {
   template<typename T> requires is_char_v<T>
   constexpr auto lambda_is_zero()
   {
-    return [](const T& c) -> bool {
+    return [](const T c) -> bool {
       return c == glyph<T>::zero;
     };
   }
@@ -324,7 +324,7 @@ namespace cs {
   requires is_narrowchar_v<NCharT>  &&  is_widechar_v<WCharT>
   constexpr auto lambda_narrow()
   {
-    return [](const WCharT& c) -> NCharT {
+    return [](const WCharT c) -> NCharT {
       return narrow<NCharT,WCharT>(c);
     };
   }
@@ -333,7 +333,7 @@ namespace cs {
   requires is_widechar_v<WCharT>  &&  is_narrowchar_v<NCharT>
   constexpr auto lambda_widen()
   {
-    return [](const NCharT& c) -> WCharT {
+    return [](const NCharT c) -> WCharT {
       return widen<WCharT,NCharT>(c);
     };
   }
