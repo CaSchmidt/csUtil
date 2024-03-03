@@ -44,7 +44,7 @@ namespace cs {
 
     template<typename T> requires is_char_v<T>
     inline bool contains(const T *first, const T *last,
-                         const T& pat)
+                         const T pat)
     {
       return std::find(first, last, pat) != last;
     }
@@ -53,7 +53,7 @@ namespace cs {
 
   template<typename T> requires is_char_v<T>
   inline bool contains_s(const T *str, const std::size_t len,
-                         const T& pat)
+                         const T pat)
   {
     const std::size_t max = strlen(str, len);
 
@@ -64,14 +64,14 @@ namespace cs {
 
   template<typename T> requires is_char_v<T>
   inline bool contains(const T *str, const std::size_t len,
-                       const T& pat)
+                       const T pat)
   {
     return impl_string::contains(str, str + len, pat);
   }
 
   template<typename T> requires is_char_v<T>
   inline bool contains(const T *str,
-                       const T& pat)
+                       const T pat)
   {
     const std::size_t max = strlen(str);
 
@@ -453,7 +453,7 @@ namespace cs {
 
     template<typename T> requires is_char_v<T>
     inline void removeAll(T *first, T *last,
-                          const T& pat)
+                          const T pat)
     {
       T *end = std::remove(first, last, pat);
       std::for_each(end, last, lambda_set_null<T>());
@@ -463,7 +463,7 @@ namespace cs {
 
   template<typename T> requires is_char_v<T>
   inline void removeAll_s(T *str, const std::size_t len,
-                          const T& pat)
+                          const T pat)
   {
     const std::size_t max = strlen(str, len);
 
@@ -474,14 +474,14 @@ namespace cs {
 
   template<typename T> requires is_char_v<T>
   inline void removeAll(T *str, const std::size_t len,
-                        const T& pat)
+                        const T pat)
   {
     impl_string::removeAll(str, str + len, pat);
   }
 
   template<typename T> requires is_char_v<T>
   inline void removeAll(T *str,
-                        const T& pat)
+                        const T pat)
   {
     const std::size_t max = strlen(str);
 
@@ -610,7 +610,7 @@ namespace cs {
 
     template<typename T> requires is_char_v<T>
     inline void replaceAll(T *first, T *last,
-                           const T& pat, const T& txt)
+                           const T pat, const T txt)
     {
       std::replace(first, last, pat, txt);
     }
@@ -619,7 +619,7 @@ namespace cs {
 
   template<typename T> requires is_char_v<T>
   inline void replaceAll_s(T *str, const std::size_t len,
-                           const T& pat, const T& txt)
+                           const T pat, const T txt)
   {
     const std::size_t max = strlen(str, len);
 
@@ -630,14 +630,14 @@ namespace cs {
 
   template<typename T> requires is_char_v<T>
   inline void replaceAll(T *str, const std::size_t len,
-                         const T& pat, const T& txt)
+                         const T pat, const T txt)
   {
     impl_string::replaceAll(str, str + len, pat, txt);
   }
 
   template<typename T> requires is_char_v<T>
   inline void replaceAll(T *str,
-                         const T& pat, const T& txt)
+                         const T pat, const T txt)
   {
     const std::size_t max = strlen(str);
 
@@ -652,7 +652,7 @@ namespace cs {
 
     template<typename T, typename PredFunc> requires is_char_v<T>
     inline void replaceAll(T *first, T *last,
-                           PredFunc func, const T& txt)
+                           PredFunc func, const T txt)
     {
       std::replace_if(first, last, func, txt);
     }
@@ -661,7 +661,7 @@ namespace cs {
 
   template<typename T, typename PredFunc> requires is_char_v<T>
   inline void replaceAll_s(T *str, const std::size_t len,
-                           PredFunc func, const T& txt)
+                           PredFunc func, const T txt)
   {
     const std::size_t max = strlen(str, len);
 
@@ -672,14 +672,14 @@ namespace cs {
 
   template<typename T, typename PredFunc> requires is_char_v<T>
   inline void replaceAll(T *str, const std::size_t len,
-                         PredFunc func, const T& txt)
+                         PredFunc func, const T txt)
   {
     impl_string::replaceAll<T,PredFunc>(str, str + len, func, txt);
   }
 
   template<typename T, typename PredFunc> requires is_char_v<T>
   inline void replaceAll(T *str,
-                         PredFunc func, const T& txt)
+                         PredFunc func, const T txt)
   {
     const std::size_t max = strlen(str);
 
@@ -744,7 +744,7 @@ namespace cs {
     template<typename T> requires is_char_v<T>
     inline void simplify(T *first, T *last)
     {
-      constexpr auto lambda_adjacent_space = [](const T& a, const T& b) -> bool {
+      constexpr auto lambda_adjacent_space = [](const T a, const T b) -> bool {
         return ::cs::isSpace(a)  &&  ::cs::isSpace(b);
       };
 
