@@ -52,7 +52,7 @@ namespace cs::concurrent {
    *
    * V reduce(T&, const M&)
    *
-   * The return type and value of the reduce() function is never used.
+   * NOTE: The return type and value of the reduce() function are never used!
    *
    * Both steps are executed in the same thread.
    *
@@ -106,7 +106,7 @@ namespace cs::concurrent {
 
   template<typename T, typename InputIt, typename MapToFunc, typename ReduceFunc>
   requires IsMapReduceFunction<T,ReduceFunc,MapToFunc,InputIt>
-  [[nodiscard]] std::future<T> asyncMapReduceSorted(const std::size_t numThreads,
+  [[nodiscard]] std::future<T> mapReduceSortedAsync(const std::size_t numThreads,
                                                     InputIt first, InputIt last,
                                                     MapToFunc&& mapTo, ReduceFunc&& reduce)
   {
@@ -157,7 +157,7 @@ namespace cs::concurrent {
 
   template<typename T, typename InputIt, typename MapToFunc, typename ReduceFunc>
   requires IsMapReduceFunction<T,ReduceFunc,MapToFunc,InputIt>
-  [[nodiscard]] std::future<T> asyncMapReduceUnsorted(const std::size_t numThreads,
+  [[nodiscard]] std::future<T> mapReduceUnsortedAsync(const std::size_t numThreads,
                                                       InputIt first, InputIt last,
                                                       MapToFunc&& mapTo, ReduceFunc&& reduce)
   {

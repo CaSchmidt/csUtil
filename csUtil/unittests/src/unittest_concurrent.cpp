@@ -192,7 +192,7 @@ namespace test_map {
       util::init(v.begin(), v.end(), 1);
       util::print(v.begin(), v.end(), "vold = ");
 
-      auto f = conc::asyncMap(NUM_THREADS,
+      auto f = conc::mapAsync(NUM_THREADS,
                               v.begin(), v.end(),
                               &util::inc);
       f.get();
@@ -254,7 +254,7 @@ namespace test_map {
     {
       int a[COUNT + EXTRA] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-      auto f = conc::asyncMapSorted(NUM_THREADS,
+      auto f = conc::mapSortedAsync(NUM_THREADS,
                                     a, a + COUNT + EXTRA,
                                     data.begin(), std::next(data.begin(), COUNT),
                                     &util::incTo);
@@ -296,7 +296,7 @@ namespace test_map {
     {
       int a[COUNT];
 
-      auto f = conc::asyncMapUnsorted(NUM_THREADS,
+      auto f = conc::mapUnsortedAsync(NUM_THREADS,
                                       a,
                                       data.begin(), data.end(),
                                       &util::incTo);
@@ -337,7 +337,7 @@ namespace test_mapreduce {
     std::cout << "---------------------------------------------" << std::endl;
 
     {
-      auto f = conc::asyncMapReduceSorted<std::string>(NUM_THREADS,
+      auto f = conc::mapReduceSortedAsync<std::string>(NUM_THREADS,
                                                        data.begin(), data.end(),
                                                        &util::incTo, &util::reduce);
       const std::string reduced = f.get();
@@ -378,7 +378,7 @@ namespace test_mapreduce {
     std::cout << "---------------------------------------------" << std::endl;
 
     {
-      auto f = conc::asyncMapReduceUnsorted<std::string>(NUM_THREADS,
+      auto f = conc::mapReduceUnsortedAsync<std::string>(NUM_THREADS,
                                                          data.begin(), data.end(),
                                                          &util::incTo, &util::reduce);
       const std::string unsorted = f.get();

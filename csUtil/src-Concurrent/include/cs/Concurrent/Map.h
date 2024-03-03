@@ -71,7 +71,7 @@ namespace cs::concurrent {
 
   template<typename InputIt, typename MapFunc>
   requires IsMapFunction<MapFunc,InputIt>
-  [[nodiscard]] std::future<void> asyncMap(const std::size_t numThreads,
+  [[nodiscard]] std::future<void> mapAsync(const std::size_t numThreads,
                                            InputIt first, InputIt last,
                                            MapFunc&& func)
   {
@@ -120,7 +120,7 @@ namespace cs::concurrent {
 
   template<typename OutputIt, typename InputIt, typename MapToFunc>
   requires IsMapToFunction<OutputIt,MapToFunc,InputIt>
-  [[nodiscard]] std::future<void> asyncMapSorted(const std::size_t numThreads,
+  [[nodiscard]] std::future<void> mapSortedAsync(const std::size_t numThreads,
                                                  OutputIt destFirst, OutputIt destLast,
                                                  InputIt srcFirst, InputIt srcLast,
                                                  MapToFunc&& mapTo)
@@ -168,7 +168,7 @@ namespace cs::concurrent {
 
   template<typename OutputIt, typename InputIt, typename MapToFunc>
   requires IsMapToFunction<OutputIt,MapToFunc,InputIt>
-  [[nodiscard]] std::future<void> asyncMapUnsorted(const std::size_t numThreads,
+  [[nodiscard]] std::future<void> mapUnsortedAsync(const std::size_t numThreads,
                                                    OutputIt d_first,
                                                    InputIt first, InputIt last,
                                                    MapToFunc&& mapTo)
