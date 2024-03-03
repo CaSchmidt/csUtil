@@ -39,7 +39,7 @@ namespace cs {
 
   template<typename PredFunc, typename T>
   using is_char_predicate = std::bool_constant<
-  is_char_v<T>  &&  std::is_invocable_r_v<T,PredFunc,const T&>
+  is_char_v<T>  &&  std::is_invocable_r_v<bool,PredFunc,const T&>
   >;
 
   template<typename PredFunc, typename T>
