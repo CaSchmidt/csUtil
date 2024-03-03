@@ -72,7 +72,7 @@ namespace cs {
   ////// String contains character/pattern/predicate... //////////////////////
 
   inline bool contains(const std::string_view& str,
-                       const char& pat)
+                       const char pat)
   {
     return !str.empty()  &&  contains(str.data(), str.size(),
                                       pat);
@@ -147,7 +147,7 @@ namespace cs {
   ////// Remove character/pattern/predicate from string... ///////////////////
 
   inline void removeAll(std::string *str,
-                        const char& pat)
+                        const char pat)
   {
     if( str != nullptr  &&  !str->empty() ) {
       removeAll(str->data(), str->size(),
@@ -193,8 +193,8 @@ namespace cs {
   ////// Replace character/predicate with character... ///////////////////////
 
   inline void replaceAll(std::string *str,
-                         const char& pat,
-                         const char& txt)
+                         const char pat,
+                         const char txt)
   {
     if( str != nullptr  &&  !str->empty() ) {
       replaceAll(str->data(), str->size(),
@@ -204,8 +204,8 @@ namespace cs {
   }
 
   inline void replaceAll(std::wstring *str,
-                         const wchar_t& pat,
-                         const wchar_t& txt)
+                         const wchar_t pat,
+                         const wchar_t txt)
   {
     if( str != nullptr  &&  !str->empty() ) {
       replaceAll(str->data(), str->size(),
@@ -217,7 +217,7 @@ namespace cs {
   template<typename PredFunc>
   inline void replaceAll(std::string *str,
                          PredFunc func,
-                         const char& txt,
+                         const char txt,
                          if_char_predicate_t<PredFunc,char> * = nullptr)
   {
     if( str != nullptr  &&  !str->empty() ) {
@@ -230,7 +230,7 @@ namespace cs {
   ////// Replace character/pattern with text... //////////////////////////////
 
   inline void replaceAll(std::string *str,
-                         const char& pat,
+                         const char pat,
                          const std::string_view& txt)
   {
     if( str != nullptr  &&  !str->empty()  &&
@@ -272,7 +272,7 @@ namespace cs {
   ////// Split string at character/pattern... ////////////////////////////////
 
   inline std::list<std::string> split(const std::string_view& str,
-                                      const char& pat,
+                                      const char pat,
                                       const bool skipEmpty = false, const bool doTrim = false)
   {
     if( !str.empty() ) {
