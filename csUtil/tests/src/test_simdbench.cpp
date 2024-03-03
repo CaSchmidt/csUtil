@@ -41,7 +41,7 @@ namespace util {
 
     vector_type result;
 
-    if( !cs::resize(&result, size) ) {
+    if( !cs::resize(result, size) ) {
       return vector_type{};
     }
 

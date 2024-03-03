@@ -44,7 +44,7 @@ namespace cs {
     : _buffer{}
   {
     reset();
-    resize(&_buffer, sizeBuffer);
+    resize(_buffer, sizeBuffer);
   }
 
   BufferedReader::~BufferedReader() noexcept

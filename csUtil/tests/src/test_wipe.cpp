@@ -20,7 +20,7 @@ int main(int, char **)
   const char *filename = "space.bin";
 
   cs::Buffer buffer;
-  if( !cs::resize(&buffer, BUFFER_SIZE, '\0') ) {
+  if( !cs::resize(buffer, BUFFER_SIZE, '\0') ) {
     fprintf(stderr, "ERROR: resize()\n");
     return EXIT_FAILURE;
   }

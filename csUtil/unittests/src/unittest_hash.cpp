@@ -125,7 +125,7 @@ namespace test_util {
   std::string makeMessage1M()
   {
     std::string s;
-    cs::resize(&s, 1'000'000, 'a');
+    cs::resize(s, 1'000'000, 'a');
     return s;
   }
 

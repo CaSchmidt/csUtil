@@ -86,7 +86,7 @@ namespace cs {
       Buffer digest() const
       {
         Buffer result;
-        if( !resize(&result, digestSize()) ) {
+        if( !resize(result, digestSize()) ) {
           return Buffer();
         }
 
@@ -135,7 +135,7 @@ namespace cs {
       Buffer digest() const
       {
         Buffer result;
-        if( !resize(&result, digestSize()) ) {
+        if( !resize(result, digestSize()) ) {
           return Buffer();
         }
 
@@ -192,7 +192,7 @@ namespace cs {
       Buffer digest() const
       {
         Buffer result;
-        if( !resize(&result, digestSize()) ) {
+        if( !resize(result, digestSize()) ) {
           return Buffer();
         }
 
@@ -251,7 +251,7 @@ namespace cs {
       Buffer digest() const
       {
         Buffer result;
-        if( !resize(&result, digestSize()) ) {
+        if( !resize(result, digestSize()) ) {
           return Buffer();
         }
 
@@ -310,7 +310,7 @@ namespace cs {
       Buffer digest() const
       {
         Buffer result;
-        if( !resize(&result, digestSize()) ) {
+        if( !resize(result, digestSize()) ) {
           return Buffer();
         }
 
@@ -369,7 +369,7 @@ namespace cs {
       Buffer digest() const
       {
         Buffer result;
-        if( !resize(&result, digestSize()) ) {
+        if( !resize(result, digestSize()) ) {
           return Buffer();
         }
 
@@ -428,7 +428,7 @@ namespace cs {
       Buffer digest() const
       {
         Buffer result;
-        if( !resize(&result, digestSize()) ) {
+        if( !resize(result, digestSize()) ) {
           return Buffer();
         }
 

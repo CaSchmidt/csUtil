@@ -42,7 +42,7 @@ namespace test_util {
     cs::Buffer temp;
 
     const std::list<std::string> lines = cs::readLines(filename, true, true);
-    if( lines.empty()  ||  !algo  ||  !cs::resize(&temp, algo->blockSize()) ) {
+    if( lines.empty()  ||  !algo  ||  !cs::resize(temp, algo->blockSize()) ) {
       return false;
     }
 

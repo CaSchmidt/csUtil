@@ -36,60 +36,62 @@
 namespace cs {
 
   template<typename C>
-  inline bool resize(C *container,
+  inline bool resize(C& container,
                      const typename C::size_type count)
   {
     constexpr typename C::size_type ONE = 1;
 
-    container->clear();
+    container.clear();
 
     if( count < ONE ) {
       return false;
     }
 
     try {
-      container->resize(count);
+      container.resize(count);
     } catch(...) {
-      container->clear();
+      container.clear();
       return false;
     }
-    return container->size() == count;
+
+    return container.size() == count;
   }
 
   template<typename C>
-  inline bool resize(C *container,
+  inline bool resize(C& container,
                      const typename C::size_type count,
                      const typename C::value_type& value)
   {
     constexpr typename C::size_type ONE = 1;
 
-    container->clear();
+    container.clear();
 
     if( count < ONE ) {
       return false;
     }
 
     try {
-      container->resize(count, value);
+      container.resize(count, value);
     } catch(...) {
-      container->clear();
+      container.clear();
       return false;
     }
-    return container->size() == count;
+
+    return container.size() == count;
   }
 
   template<typename C>
-  inline typename C::value_type takeFirst(C *container,
+  inline typename C::value_type takeFirst(C& container,
                                           const typename C::value_type& defValue = typename C::value_type{})
   {
-    if( container->empty() ) {
+    if( container.empty() ) {
       return defValue;
     }
 
     typename C::value_type result{};
     try {
-      result = std::move(container->front());
-      container->pop_front();
+      result = std::move(container.front());
+      container.pop_front();
     } catch(...) {
       return defValue;
     }

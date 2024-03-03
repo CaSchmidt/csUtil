@@ -66,7 +66,7 @@ namespace cs {
     }
 
     Buffer result;
-    if( !resize(&result, (lenStr + k::ONE)/k::TWO) ) {
+    if( !resize(result, (lenStr + k::ONE)/k::TWO) ) {
       return Buffer();
     }
 
@@ -102,7 +102,7 @@ namespace cs {
         : sizData*k::TWO;
 
     std::string result;
-    if( !resize(&result, length, sep) ) {
+    if( !resize(result, length, sep) ) {
       return std::string();
     }
 

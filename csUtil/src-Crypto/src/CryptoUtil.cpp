@@ -42,7 +42,7 @@ namespace cs {
 
     Buffer buffer;
     HashPtr  hash = Hash::make(func);
-    if( !file.isOpen()  ||  !resize(&buffer, sizTemp)  ||  !hash ) {
+    if( !file.isOpen()  ||  !resize(buffer, sizTemp)  ||  !hash ) {
       return Buffer();
     }
 

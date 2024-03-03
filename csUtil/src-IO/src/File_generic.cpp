@@ -51,7 +51,7 @@ namespace cs {
     const std::size_t numToRead = static_cast<std::size_t>(sizFile);
 
     Buffer buffer;
-    if( !resize(&buffer, numToRead) ) {
+    if( !resize(buffer, numToRead) ) {
       return Buffer();
     }
 

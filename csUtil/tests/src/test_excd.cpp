@@ -103,7 +103,7 @@ int main(int /*argc*/, char **argv)
   std::size_t   have;
   cs::byte_t    mode = cdrom::INVALID_MODE;
 
-  if( !cs::resize(&buffer, cdrom::SIZE_READBUFFER) ) {
+  if( !cs::resize(buffer, cdrom::SIZE_READBUFFER) ) {
     fprintf(stderr, "ERROR: Unable to allocate read buffer!\n");
     return EXIT_FAILURE;
   }
