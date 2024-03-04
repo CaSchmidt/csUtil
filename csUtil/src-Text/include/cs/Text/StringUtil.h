@@ -61,11 +61,11 @@ namespace cs {
 
   ////// Length Functions ////////////////////////////////////////////////////
 
-  inline void shrink(std::string *str, const bool reclaim = false)
+  inline void shrink(std::string& str, const bool reclaim = false)
   {
-    str->resize(strlen(str->data(), str->size()));
+    str.resize(strlen(str.data(), str.size()));
     if( reclaim ) {
-      str->shrink_to_fit();
+      str.shrink_to_fit();
     }
   }
 
@@ -146,33 +146,33 @@ namespace cs {
 
   ////// Remove character/pattern/predicate from string... ///////////////////
 
-  inline void removeAll(std::string *str,
+  inline void removeAll(std::string& str,
                         const char pat)
   {
-    if( str != nullptr  &&  !str->empty() ) {
-      removeAll(str->data(), str->size(),
+    if( !str.empty() ) {
+      removeAll(str.data(), str.size(),
                 pat);
       shrink(str);
     }
   }
 
-  inline void removeAll(std::string *str,
+  inline void removeAll(std::string& str,
                         const std::string_view& pat)
   {
-    if( str != nullptr  &&  !str->empty() ) {
-      removeAll(str->data(), str->size(),
+    if( !str.empty() ) {
+      removeAll(str.data(), str.size(),
                 pat.data(), pat.size());
       shrink(str);
     }
   }
 
   template<typename PredFunc>
-  inline void removeAll(std::string *str,
+  inline void removeAll(std::string& str,
                         PredFunc func,
                         if_char_predicate_t<PredFunc,char> * = nullptr)
   {
-    if( str != nullptr  &&  !str->empty() ) {
-      removeAll(str->data(), str->size(),
+    if( !str.empty() ) {
+      removeAll(str.data(), str.size(),
                 func);
       shrink(str);
     }
@@ -180,11 +180,11 @@ namespace cs {
 
   ////// Remove Trailing Zeros from Fixed-Notation Floating-Point String... //
 
-  inline void removeTrailingZeros(std::string *str,
+  inline void removeTrailingZeros(std::string& str,
                                   const bool removeDot = true)
   {
-    if( str != nullptr  &&  !str->empty() ) {
-      removeTrailingZeros(str->data(), str->size(),
+    if( !str.empty() ) {
+      removeTrailingZeros(str.data(), str.size(),
                           removeDot);
       shrink(str);
     }
@@ -192,36 +192,36 @@ namespace cs {
 
   ////// Replace character/predicate with character... ///////////////////////
 
-  inline void replaceAll(std::string *str,
+  inline void replaceAll(std::string& str,
                          const char pat,
                          const char txt)
   {
-    if( str != nullptr  &&  !str->empty() ) {
-      replaceAll(str->data(), str->size(),
+    if( !str.empty() ) {
+      replaceAll(str.data(), str.size(),
                  pat,
                  txt);
     }
   }
 
-  inline void replaceAll(std::wstring *str,
+  inline void replaceAll(std::wstring& str,
                          const wchar_t pat,
                          const wchar_t txt)
   {
-    if( str != nullptr  &&  !str->empty() ) {
-      replaceAll(str->data(), str->size(),
+    if( !str.empty() ) {
+      replaceAll(str.data(), str.size(),
                  pat,
                  txt);
     }
   }
 
   template<typename PredFunc>
-  inline void replaceAll(std::string *str,
+  inline void replaceAll(std::string& str,
                          PredFunc func,
                          const char txt,
                          if_char_predicate_t<PredFunc,char> * = nullptr)
   {
-    if( str != nullptr  &&  !str->empty() ) {
-      replaceAll(str->data(), str->size(),
+    if( !str.empty() ) {
+      replaceAll(str.data(), str.size(),
                  func,
                  txt);
     }
@@ -229,11 +229,11 @@ namespace cs {
 
   ////// Replace character/pattern with text... //////////////////////////////
 
-  inline void replaceAll(std::string *str,
+  inline void replaceAll(std::string& str,
                          const char pat,
                          const std::string_view& txt)
   {
-    if( str != nullptr  &&  !str->empty()  &&
+    if( !str.empty()  &&
         !txt.empty() ) {
       impl_string::replaceAll(str,
                               &pat, 1,
@@ -241,12 +241,12 @@ namespace cs {
     }
   }
 
-  inline void replaceAll(std::string *str,
+  inline void replaceAll(std::string& str,
                          const std::string_view& pat,
                          const std::string_view& txt)
   {
-    if( str != nullptr  &&  !str->empty()  &&
-        str->size() >= pat.size()  &&  !txt.empty() ) {
+    if( !str.empty()  &&
+        str.size() >= pat.size()  &&  !txt.empty() ) {
       impl_string::replaceAll(str,
                               pat.data(), pat.size(),
                               txt.data(), txt.size());
@@ -255,17 +255,17 @@ namespace cs {
 
   ////// Replace consecutive whitespace with single space... /////////////////
 
-  inline void simplify(std::string *str)
+  inline void simplify(std::string& str)
   {
-    if( str != nullptr  &&  !str->empty() ) {
-      simplify(str->data(), str->size());
+    if( !str.empty() ) {
+      simplify(str.data(), str.size());
       shrink(str);
     }
   }
 
   inline std::string simplified(std::string str)
   {
-    simplify(&str);
+    simplify(str);
     return str;
   }
 
@@ -308,45 +308,45 @@ namespace cs {
 
   ////// Case conversion... //////////////////////////////////////////////////
 
-  inline void toLower(std::string *str)
+  inline void lower(std::string& str)
   {
-    if( str != nullptr  &&  !str->empty() ) {
-      toLower(str->data(), str->size());
+    if( !str.empty() ) {
+      toLower(str.data(), str.size());
     }
   }
 
   inline std::string toLower(std::string str)
   {
-    toLower(&str);
+    lower(str);
     return str;
   }
 
-  inline void toUpper(std::string *str)
+  inline void upper(std::string& str)
   {
-    if( str != nullptr  &&  !str->empty() ) {
-      toUpper(str->data(), str->size());
+    if( !str.empty() ) {
+      toUpper(str.data(), str.size());
     }
   }
 
   inline std::string toUpper(std::string str)
   {
-    toUpper(&str);
+    upper(str);
     return str;
   }
 
   ////// Remove whitespace from begin & end... ///////////////////////////////
 
-  inline void trim(std::string *str)
+  inline void trim(std::string& str)
   {
-    if( str != nullptr  &&  !str->empty() ) {
-      trim(str->data(), str->size());
+    if( !str.empty() ) {
+      trim(str.data(), str.size());
       shrink(str);
     }
   }
 
   inline std::string trimmed(std::string str)
   {
-    trim(&str);
+    trim(str);
     return str;
   }
 

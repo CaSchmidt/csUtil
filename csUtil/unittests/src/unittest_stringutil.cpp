@@ -157,7 +157,7 @@ namespace stringutil {
     {
       String str(PTR_input3);
       cs::removeAll_s(str.data(), str.size(), cs::lambda_is_space<char>());
-      cs::shrink(&str);
+      cs::shrink(str);
       REQUIRE( str == PTR_abc );
     }
 
@@ -165,19 +165,19 @@ namespace stringutil {
 
     {
       String str(PTR_input1);
-      cs::removeAll(&str, '.');
+      cs::removeAll(str, '.');
       REQUIRE( str == PTR_abcd );
     }
 
     {
       String str(PTR_input2);
-      cs::removeAll(&str, PTR_abc);
+      cs::removeAll(str, PTR_abc);
       REQUIRE( str.size() == 0 );
     }
 
     {
       String str(PTR_input3);
-      cs::removeAll(&str, cs::lambda_is_space<char>());
+      cs::removeAll(str, cs::lambda_is_space<char>());
       REQUIRE( str == PTR_abc );
     }
   }
@@ -202,55 +202,55 @@ namespace stringutil {
     String s;
 
     s = PTR_90;
-    cs::removeTrailingZeros(&s);
+    cs::removeTrailingZeros(s);
     REQUIRE( s == PTR_90 );
 
     s = PTR_90p0e0;
-    cs::removeTrailingZeros(&s);
+    cs::removeTrailingZeros(s);
     REQUIRE( s == PTR_90p0e0 );
 
     s = PTR_90p0E0;
-    cs::removeTrailingZeros(&s);
+    cs::removeTrailingZeros(s);
     REQUIRE( s == PTR_90p0E0 );
 
     s = PTR_90p999;
-    cs::removeTrailingZeros(&s);
+    cs::removeTrailingZeros(s);
     REQUIRE( s == PTR_90p999 );
 
     s = PTR_90p;
-    cs::removeTrailingZeros(&s);
+    cs::removeTrailingZeros(s);
     REQUIRE( s == PTR_90 );
 
     s = PTR_90p0;
-    cs::removeTrailingZeros(&s);
+    cs::removeTrailingZeros(s);
     REQUIRE( s == PTR_90 );
 
     s = PTR_90p000;
-    cs::removeTrailingZeros(&s);
+    cs::removeTrailingZeros(s);
     REQUIRE( s == PTR_90 );
 
     s = PTR_90p009;
-    cs::removeTrailingZeros(&s);
+    cs::removeTrailingZeros(s);
     REQUIRE( s == PTR_90p009 );
 
     s = PTR_90p90;
-    cs::removeTrailingZeros(&s);
+    cs::removeTrailingZeros(s);
     REQUIRE( s == PTR_90p9 );
 
     s = PTR_90p900;
-    cs::removeTrailingZeros(&s);
+    cs::removeTrailingZeros(s);
     REQUIRE( s == PTR_90p9 );
 
     s = PTR_90p;
-    cs::removeTrailingZeros(&s, false);
+    cs::removeTrailingZeros(s, false);
     REQUIRE( s == PTR_90p );
 
     s = PTR_90p0;
-    cs::removeTrailingZeros(&s, false);
+    cs::removeTrailingZeros(s, false);
     REQUIRE( s == PTR_90p );
 
     s = PTR_90p000;
-    cs::removeTrailingZeros(&s, false);
+    cs::removeTrailingZeros(s, false);
     REQUIRE( s == PTR_90p );
   }
 
@@ -264,31 +264,31 @@ namespace stringutil {
 
     {
       String str(PTR_input2);
-      cs::replaceAll(&str, 'c', 'x');
+      cs::replaceAll(str, 'c', 'x');
       REQUIRE( str == "abxabx" );
     }
 
     {
       String str(PTR_input1);
-      cs::replaceAll(&str, cs::lambda_is_space<char>(), '.');
+      cs::replaceAll(str, cs::lambda_is_space<char>(), '.');
       REQUIRE( str == ".abc.abc." );
     }
 
     {
       String str(PTR_input1);
-      cs::replaceAll(&str, ' ', ".");
+      cs::replaceAll(str, ' ', ".");
       REQUIRE( str == ".abc.abc." );
     }
 
     {
       String str(PTR_input1);
-      cs::replaceAll(&str, "abc", "xyz");
+      cs::replaceAll(str, "abc", "xyz");
       REQUIRE( str == " xyz xyz " );
     }
 
     {
       String str(PTR_input2);
-      cs::replaceAll(&str, "abc", "xyz");
+      cs::replaceAll(str, "abc", "xyz");
       REQUIRE( str == "xyzxyz" );
     }
   }
@@ -402,7 +402,7 @@ namespace stringutil {
 
     {
       String str(PTR_ABCD);
-      cs::toLower(&str);
+      cs::lower(str);
       REQUIRE( str == PTR_abcd );
     }
   }
@@ -414,7 +414,7 @@ namespace stringutil {
 
     {
       String str(PTR_abcd);
-      cs::toUpper(&str);
+      cs::upper(str);
       REQUIRE( str == PTR_ABCD );
     }
   }

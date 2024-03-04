@@ -40,16 +40,16 @@ namespace cs {
   namespace impl_string {
 
     template<typename T> requires is_char_v<T>
-    inline void replaceAll(std::basic_string<T> *str,
+    inline void replaceAll(std::basic_string<T>& str,
                            const T *pat, const std::size_t maxpat,
                            const T *txt, const std::size_t maxtxt)
     {
       constexpr auto NPOS = std::basic_string<T>::npos;
 
       for(std::size_t pos = 0;
-          (pos = str->find(pat, pos, maxpat)) != NPOS;
+          (pos = str.find(pat, pos, maxpat)) != NPOS;
           pos += maxtxt) {
-        str->replace(pos, maxpat, txt, maxtxt);
+        str.replace(pos, maxpat, txt, maxtxt);
       }
     }
 

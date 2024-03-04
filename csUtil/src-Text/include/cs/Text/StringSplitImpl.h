@@ -41,7 +41,7 @@ namespace cs {
   namespace impl_string {
 
     template<typename T> requires is_char_v<T>
-    inline void extract(std::list<std::basic_string<T>> *result,
+    inline void extract(std::list<std::basic_string<T>>& result,
                         const T *first, const T *last,
                         const bool skipEmpty, const bool doTrim)
     {
@@ -59,7 +59,7 @@ namespace cs {
         return;
       }
 
-      result->push_back(std::move(part));
+      result.push_back(std::move(part));
     }
 
     template<typename T> requires is_char_v<T>
@@ -73,9 +73,9 @@ namespace cs {
       for(const T *hit = nullptr;
           (hit = std::search(from, last, pat, pat + maxpat)) != last;
           from = hit + maxpat) {
-        extract(&result, from, hit, skipEmpty, doTrim);
+        extract(result, from, hit, skipEmpty, doTrim);
       }
-      extract(&result, from, last, skipEmpty, doTrim);
+      extract(result, from, last, skipEmpty, doTrim);
 
       return result;
     }
@@ -91,9 +91,9 @@ namespace cs {
       for(const T *hit = nullptr;
           (hit = std::find(from, last, pat)) != last;
           from = hit + 1) {
-        extract(&result, from, hit, skipEmpty, doTrim);
+        extract(result, from, hit, skipEmpty, doTrim);
       }
-      extract(&result, from, last, skipEmpty, doTrim);
+      extract(result, from, last, skipEmpty, doTrim);
 
       return result;
     }
