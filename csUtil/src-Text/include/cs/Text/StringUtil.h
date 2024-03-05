@@ -352,6 +352,14 @@ namespace cs {
 
   ////// Type conversion... //////////////////////////////////////////////////
 
+  /*
+   * NOTE: CSTR() and WSTR() cannot operate on std::basic_string_view<> as
+   * it is not required to be nullterminated!
+   *
+   * Using these functions with std::basic_string_view<> will copy the
+   * view to a std::basic_string<>.
+   */
+
   inline const char *CSTR(const std::u8string& str)
   {
     return !str.empty()
