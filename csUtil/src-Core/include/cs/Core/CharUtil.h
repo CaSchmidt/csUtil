@@ -211,31 +211,38 @@ namespace cs {
 
   ////// Narrow/Widen Character //////////////////////////////////////////////
 
+  /*
+   * NOTE: Narrowing/Widening of characters is limited to the 7bit ASCII range;
+   * e.g. [0,127]. Values outside of this range will be replaced/substituted.
+   *
+   * The actual range detection is somewhat delicate,
+   * as neither 'char' nor 'wchar_t' have specified signedness!
+   */
+
   template<typename NCharT, typename WCharT>
   requires is_narrowchar_v<NCharT>  &&  is_widechar_v<WCharT>
   constexpr NCharT narrow(const WCharT in)
   {
-    constexpr WCharT MAX_ASCII = 0x7F;
+    constexpr auto NUL = glyph<WCharT>::NUL;
+    constexpr auto DEL = glyph<WCharT>::DEL;
 
-    return in > MAX_ASCII
-        ? glyph<NCharT>::SUB
-        : static_cast<NCharT>(in);
+    return NUL <= in  &&  in <= DEL
+        ? static_cast<NCharT>(in)
+        : glyph<NCharT>::SUB;
   }
 
   template<typename WCharT, typename NCharT>
   requires is_widechar_v<WCharT>  &&  is_narrowchar_v<NCharT>
   constexpr WCharT widen(const NCharT in)
   {
-    constexpr NCharT ZERO = 0;
-    constexpr NCharT  ONE = 1;
+    constexpr auto NUL = glyph<NCharT>::NUL;
+    constexpr auto DEL = glyph<NCharT>::DEL;
 
-    constexpr std::size_t MAX_BIT  = sizeof(NCharT)*8 - 1;
-    constexpr NCharT       HI_BIT  = ONE << MAX_BIT;
-    constexpr WCharT     REPL_CHAR = 0xFFFD;
+    constexpr WCharT REPL_CHAR = 0xFFFD;
 
-    return (in & HI_BIT) != ZERO
-        ? REPL_CHAR
-        : static_cast<WCharT>(in);
+    return NUL <= in  &&  in <= DEL
+        ? static_cast<WCharT>(in)
+        : REPL_CHAR;
   }
 
   ////// Lambdas /////////////////////////////////////////////////////////////
