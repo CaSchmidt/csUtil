@@ -1,7 +1,7 @@
 list(APPEND csConcurrent_HEADERS
   include/cs/Concurrent/Map.h
   include/cs/Concurrent/MapReduce.h
-  include/cs/Concurrent/MapReduceUtil.h
+  include/cs/Concurrent/MapReduceImpl.h
   include/cs/Concurrent/SyncCondition.h
   include/cs/Concurrent/SyncValue.h
   include/cs/Concurrent/ThreadPool.h

@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include <cs/Concurrent/MapReduceUtil.h>
+#include <cs/Concurrent/MapReduceImpl.h>
 #include <cs/Concurrent/ThreadPool.h>
 
 namespace cs::concurrent {
