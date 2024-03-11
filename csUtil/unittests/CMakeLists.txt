@@ -77,6 +77,7 @@ cs_unittest(unittest_serialization src/unittest_serialization.cpp src/unittest_s
 cs_unittest(unittest_simd src/unittest_simd.cpp src/unittest_simd_main.cpp)
 cs_unittest(unittest_statistics src/unittest_statistics.cpp src/unittest_statistics_main.cpp)
 cs_unittest(unittest_stringutil src/unittest_stringutil.cpp src/unittest_stringutil_main.cpp)
+cs_unittest(unittest_stringvalue src/unittest_stringvalue.cpp src/unittest_stringvalue_main.cpp)
 cs_unittest(unittest_text src/unittest_text.cpp src/unittest_text_main.cpp)
 cs_unittest(unittest_traits src/unittest_traits.cpp src/unittest_traits_main.cpp)
 cs_unittest(unittest_trie src/unittest_trie.cpp src/unittest_trie_main.cpp)
