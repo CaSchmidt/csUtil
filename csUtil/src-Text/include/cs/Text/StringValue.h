@@ -33,6 +33,7 @@
 
 #include <cctype>
 
+#include <algorithm>
 #include <charconv>
 #include <string>
 
@@ -68,19 +69,14 @@ namespace cs {
           first[0] == '0';
     }
 
-    inline bool isSpace(const char ch)
-    {
-      // cf. https://en.cppreference.com/w/cpp/string/byte/isspace
-      return std::isspace(static_cast<unsigned char>(ch)) != 0;
-    }
-
     inline const char *skipSpace(const char *first, const char *last)
     {
-      for(; !(first == last)  &&  isSpace(first[0]); ++first) {
-        // no operation...
-      }
+      constexpr auto lambda = [](const char ch) -> bool {
+        // cf. https://en.cppreference.com/w/cpp/string/byte/isspace
+        return std::isspace(static_cast<unsigned char>(ch)) != 0;
+      };
 
-      return first;
+      return std::find_if_not(first, last, lambda);
     }
 
   } // namespace impl_strval
