@@ -73,10 +73,12 @@ namespace cs {
     static constexpr auto r = static_cast<T>('r');
     static constexpr auto t = static_cast<T>('t');
     static constexpr auto v = static_cast<T>('v');
+    static constexpr auto x = static_cast<T>('x');
 
     static constexpr auto A = static_cast<T>('A');
     static constexpr auto E = static_cast<T>('E');
     static constexpr auto F = static_cast<T>('F');
+    static constexpr auto X = static_cast<T>('X');
     static constexpr auto Z = static_cast<T>('Z');
 
     static constexpr auto  bckslash = static_cast<T>('\\');
