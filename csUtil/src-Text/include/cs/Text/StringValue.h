@@ -153,4 +153,74 @@ namespace cs {
     return value;
   }
 
+  template<typename T, bool HAVE_SKIP = true>
+  inline if_real_t<T> toValue(const std::string_view& str,
+                              bool *ok = nullptr, const int base = 10)
+  {
+    using namespace impl_strval;
+
+    constexpr T ERROR_VALUE = T{0};
+
+    // (0) Initialization ////////////////////////////////////////////////////
+
+    if( ok != nullptr ) {
+      *ok = false;
+    }
+
+    if( str.empty() ) {
+      return ERROR_VALUE;
+    }
+
+    const char *first = str.data();
+    const char  *last = str.data() + str.size();
+
+    // (1) Sanitize base /////////////////////////////////////////////////////
+
+    if( base != 10  &&  base != 16 ) {
+      return ERROR_VALUE;
+    }
+
+    const std::chars_format fmt = base == 16
+        ? std::chars_format::hex
+        : std::chars_format::general;
+
+    // (2) Skip leading whitespace ///////////////////////////////////////////
+
+    if constexpr( HAVE_SKIP ) {
+      first = skipSpace(first, last);
+
+      if( first == last ) {
+        return ERROR_VALUE;
+      }
+    } // HAVE_SKIP
+
+    // (3) Skip leading plus sign ////////////////////////////////////////////
+
+    if constexpr( HAVE_SKIP ) {
+      if( first[0] == '+' ) {
+        first += ONE;
+      }
+
+      if( first == last ) {
+        return ERROR_VALUE;
+      }
+    } // HAVE_SKIP
+
+    // (4) Conversion ////////////////////////////////////////////////////////
+
+    T value = ERROR_VALUE;
+    const std::from_chars_result result = std::from_chars(first, last, value, fmt);
+    if( result.ec != std::errc{} ) {
+      return ERROR_VALUE;
+    }
+
+    // Done! /////////////////////////////////////////////////////////////////
+
+    if( ok != nullptr ) {
+      *ok = true;
+    }
+
+    return value;
+  }
+
 } // namespace cs
