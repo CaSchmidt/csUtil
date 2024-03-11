@@ -7,6 +7,7 @@ list(APPEND csText_HEADERS
   include/cs/Text/StringReplaceImpl.h
   include/cs/Text/StringSplitImpl.h
   include/cs/Text/StringUtil.h
+  include/cs/Text/StringValue.h
   include/cs/Text/TextIO.h
 )
 
