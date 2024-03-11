@@ -50,24 +50,8 @@ namespace cs {
     // Constants /////////////////////////////////////////////////////////////
 
     constexpr size_type ONE = 1;
-    constexpr size_type TWO = 2;
 
     // Implementation ////////////////////////////////////////////////////////
-
-    inline bool isHexBase(const char *first, const char *last)
-    {
-      return
-          first + TWO <= last  &&
-          first[0] == '0'      &&
-          (first[1] == 'x'  ||  first[1] == 'X');
-    }
-
-    inline bool isOctBase(const char *first, const char *last)
-    {
-      return
-          first < last  &&
-          first[0] == '0';
-    }
 
     inline const char *skipSpace(const char *first, const char *last)
     {
