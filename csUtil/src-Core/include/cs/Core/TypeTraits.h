@@ -243,10 +243,24 @@ namespace cs {
   ////// Integral Transformations ////////////////////////////////////////////
 
   template<typename T>
-  using signed_from_unsigned_t = if_unsigned_t<T,typename IntegralOfSize<sizeof(T)>::signed_type>;
+  using make_signed_t =
+  std::enable_if_t<is_integral_v<T>,typename IntegralOfSize<sizeof(T)>::signed_type>;
 
   template<typename T>
-  using unsigned_from_signed_t = if_signed_t<T,typename IntegralOfSize<sizeof(T)>::unsigned_type>;
+  constexpr make_signed_t<T> signed_cast(const T value)
+  {
+    return static_cast<make_signed_t<T>>(value);
+  }
+
+  template<typename T>
+  using make_unsigned_t =
+  std::enable_if_t<is_integral_v<T>,typename IntegralOfSize<sizeof(T)>::unsigned_type>;
+
+  template<typename T>
+  constexpr make_unsigned_t<T> unsigned_cast(const T value)
+  {
+    return static_cast<make_unsigned_t<T>>(value);
+  }
 
   ////// Miscellaneous Transformations ///////////////////////////////////////
 
