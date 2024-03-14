@@ -45,27 +45,95 @@ namespace cs {
 
     // Types /////////////////////////////////////////////////////////////////
 
-    using size_type = std::string_view::size_type;
+    using   size_type = std::string::size_type;
+    using traits_type = std::string::traits_type;
 
     // Constants /////////////////////////////////////////////////////////////
 
     constexpr size_type ONE = 1;
 
+    constexpr size_type STR_SIZE = 128;
+
     // Implementation ////////////////////////////////////////////////////////
+
+    inline bool resize(std::string& str, const size_type len)
+    {
+      try {
+        str.resize(len, '\0');
+      } catch( ... ) {
+        str.clear();
+        return false;
+      }
+
+      return str.size() == len;
+    }
+
+    inline void shrink(std::string& str, const bool reclaim)
+    {
+      try {
+        const size_type len = traits_type::length(str.data());
+        str.resize(len);
+        if( reclaim ) {
+          str.shrink_to_fit();
+        }
+      } catch( ... ) {
+        str.clear();
+      }
+    }
 
     inline const char *skipSpace(const char *first, const char *last)
     {
-      constexpr auto lambda = [](const char ch) -> bool {
+      constexpr auto is_space = [](const char ch) -> bool {
         // cf. https://en.cppreference.com/w/cpp/string/byte/isspace
         return std::isspace(static_cast<unsigned char>(ch)) != 0;
       };
 
-      return std::find_if_not(first, last, lambda);
+      return std::find_if_not(first, last, is_space);
     }
 
   } // namespace impl_strval
 
   ////// Public //////////////////////////////////////////////////////////////
+
+  template<typename T, bool RECLAIM = true>
+  inline if_integral_t<T,std::string> toString(const T value,
+                                               const int base = 10)
+  {
+    using namespace impl_strval;
+
+    // (0) Initialization ////////////////////////////////////////////////////
+
+    std::string str;
+    if( !resize(str, STR_SIZE) ) {
+      return std::string();
+    }
+
+    char *first = str.data();
+    char  *last = str.data() + str.size();
+
+    // (1) Sanitize base /////////////////////////////////////////////////////
+
+    if( base < 2  ||  base > 36 ) {
+      return std::string();
+    }
+
+    // (2) Conversion ////////////////////////////////////////////////////////
+
+    const std::to_chars_result result = base == 10
+        ? std::to_chars(first, last, value, base)
+        : std::to_chars(first, last, unsigned_cast(value), base);
+    if( result.ec != std::errc{} ) {
+      return std::string();
+    }
+
+    *(result.ptr) = '\0';
+
+    shrink(str, RECLAIM);
+
+    // Done! /////////////////////////////////////////////////////////////////
+
+    return str;
+  }
 
   template<typename T, bool HAVE_SKIP = true>
   inline if_integral_t<T> toValue(const std::string_view& str,
