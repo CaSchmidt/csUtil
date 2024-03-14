@@ -46,11 +46,11 @@ namespace cs {
     namespace impl_sat {
 
       template<typename T>
-      constexpr unsigned_from_signed_t<T> abs(const T& x)
+      constexpr make_unsigned_t<T> abs(const T x)
       {
         return x >= Konst<T>::ZERO
-            ? x
-            : (~x) + Konst<T>::ONE;
+            ? unsigned_cast(x)
+            : unsigned_cast((~x) + Konst<T>::ONE);
       }
 
       template<typename T>
@@ -103,9 +103,9 @@ namespace cs {
       }
 
       template<typename T>
-      constexpr signed_from_unsigned_t<T> neg(const T& x)
+      constexpr make_signed_t<T> neg(const T x)
       {
-        return (~x) + Konst<T>::ONE;
+        return signed_cast((~x) + Konst<T>::ONE);
       }
 
     } // namespace impl_sat
@@ -139,7 +139,7 @@ namespace cs {
     template<typename T>
     inline if_signed_t<T> mul(const T& a, const T& b)
     {
-      using UnsignedT = unsigned_from_signed_t<T>;
+      using UnsignedT = make_unsigned_t<T>;
 
       const bool is_neg_result = testBit(a ^ b, MAX_BIT<T>);
 
