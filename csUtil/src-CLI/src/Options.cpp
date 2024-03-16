@@ -60,7 +60,7 @@ namespace cs {
     return result.second;
   }
 
-  bool Options::isValid(std::ostream *output) const
+  bool Options::isValid(std::ostream& output) const
   {
     for(ConstOptionIter it = _options.cbegin(); it != _options.cend(); ++it) {
       const IOption *opt = it->second.get();
@@ -72,7 +72,7 @@ namespace cs {
     return true;
   }
 
-  bool Options::parse(int argc, char **argv, std::ostream *output)
+  bool Options::parse(int argc, char **argv, std::ostream& output)
   {
     const int numArgs = argc - 1;
     if( numArgs < 1 ) {
@@ -109,7 +109,7 @@ namespace cs {
     return isValid(output);
   }
 
-  void Options::printUsage(int /*argc*/, char **argv, std::ostream *output) const
+  void Options::printUsage(int /*argc*/, char **argv, std::ostream& output) const
   {
     println(output, "Usage: %", argv[0]);
     println(output, "");

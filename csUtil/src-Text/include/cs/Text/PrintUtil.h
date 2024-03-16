@@ -41,20 +41,20 @@ namespace cs {
   template<typename ...Args>
   void print(const char *fmt, Args&&... args)
   {
-    print(&std::cout, fmt, std::forward<Args>(args)...);
+    print(std::cout, fmt, std::forward<Args>(args)...);
   }
 
   template<typename ...Args>
   void println(const char *fmt, Args&&... args)
   {
-    println(&std::cout, fmt, std::forward<Args>(args)...);
+    println(std::cout, fmt, std::forward<Args>(args)...);
   }
 
   template<typename CharT, typename ...Args>
   std::basic_string<CharT> sprint(const CharT *fmt, Args&&... args)
   {
     std::basic_ostringstream<CharT> s;
-    print(&s, fmt, std::forward<Args>(args)...);
+    print(s, fmt, std::forward<Args>(args)...);
     return s.str();
   }
 
@@ -62,7 +62,7 @@ namespace cs {
   std::basic_string<CharT> sprintln(const CharT *fmt, Args&&... args)
   {
     std::basic_ostringstream<CharT> s;
-    println(&s, fmt, std::forward<Args>(args)...);
+    println(s, fmt, std::forward<Args>(args)...);
     return s.str();
   }
 

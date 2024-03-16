@@ -59,7 +59,7 @@ namespace cs {
     bool parse(const char *arg);
     bool isValid() const;
 
-    void printUsage(std::ostream *output) const;
+    void printUsage(std::ostream& output) const;
 
     static bool isValidName(const char *s);
 

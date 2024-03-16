@@ -61,10 +61,10 @@ namespace cs {
 
     bool add(OptionPtr& ptr);
 
-    bool isValid(std::ostream *output) const;
-    bool parse(int argc, char **argv, std::ostream *output);
+    bool isValid(std::ostream& output) const;
+    bool parse(int argc, char **argv, std::ostream& output);
 
-    void printUsage(int argc, char **argv, std::ostream *output) const;
+    void printUsage(int argc, char **argv, std::ostream& output) const;
 
     void setLongFormat(const bool on);
 

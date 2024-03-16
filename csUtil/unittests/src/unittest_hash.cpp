@@ -159,7 +159,7 @@ namespace test_util {
 
     const std::string message = makeMessage1M();
     if( message.empty() ) {
-      cs::println(&std::cerr, "ERROR: Unable to create message!");
+      cs::println(std::cerr, "ERROR: Unable to create message!");
       return false;
     }
 
@@ -168,12 +168,12 @@ namespace test_util {
     {
       cs::File output;
       if( !output.open(filename, cs::FileOpenFlag::Write) ) {
-        cs::println(&std::cerr, "ERROR: Unable to create file %!", filename);
+        cs::println(std::cerr, "ERROR: Unable to create file %!", filename);
         return false;
       }
 
       if( output.write(message.data(), message.size()) != message.size() ) {
-        cs::println(&std::cerr, "ERROR: Unable to write file %!", filename);
+        cs::println(std::cerr, "ERROR: Unable to write file %!", filename);
         return false;
       }
     }
@@ -182,13 +182,13 @@ namespace test_util {
 
     cs::File input;
     if( !input.open(filename) ) {
-      cs::println(&std::cerr, "ERROR: Unable to open file %!", filename.filename());
+      cs::println(std::cerr, "ERROR: Unable to open file %!", filename.filename());
       return false;
     }
 
     const cs::Buffer digest = cs::sum(input, func, SIZ_TEMP);
     if( digest.empty() ) {
-      cs::println(&std::cerr, "ERROR: Unable to hash file %!", filename.filename());
+      cs::println(std::cerr, "ERROR: Unable to hash file %!", filename.filename());
       return false;
     }
 

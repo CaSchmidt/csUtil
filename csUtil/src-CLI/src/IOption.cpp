@@ -95,7 +95,7 @@ namespace cs {
     return impl_isValid();
   }
 
-  void IOption::printUsage(std::ostream *output) const
+  void IOption::printUsage(std::ostream& output) const
   {
     if( isRequired() ) {
       print(output, "    ");
