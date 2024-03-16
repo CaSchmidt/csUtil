@@ -33,9 +33,43 @@ namespace util {
   template<typename T>
   inline std::string to_octstr(const T value)
   {
+#if 0
     std::ostringstream stream;
     stream << std::oct << value;
     return stream.str();
+#else
+    std::string str(128, '\0');
+    snprintf(str.data(), str.size(), "%o", value);
+    cs::impl_strval::shrink(str, true);
+    return str;
+#endif
+  }
+
+  template<typename T>
+  inline cs::if_real_t<T,void> print(const T value,
+                                     const char fmt,
+                                     const int prec)
+  {
+    std::cout << "value = ";
+    std::cout << value;
+    std::cout << " (std) vs. ";
+    std::cout << cs::toString(value, fmt, prec);
+    std::cout << " (";
+    std::cout << "format = " << fmt;
+    std::cout << ", ";
+    std::cout << "precision = " << prec;
+    std::cout << ")";
+    std::cout << std::endl;
+  }
+
+  template<typename T>
+  inline cs::if_real_t<T,void> print3(const T value,
+                                      const char fmt)
+  {
+    print(value, fmt, 0);
+    print(value, fmt, 3);
+    print(value, fmt, 6);
+    std::cout << std::endl;
   }
 
 } // namespace util
@@ -86,6 +120,28 @@ namespace stringvalue {
       REQUIRE( cs::toString<ValueT>(MIN, 8) == "100000" );
     }
   } // TEST_CASE
+
+  TEST_CASE("Real value to string.", "[realtostr]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    using ValueT = double;
+
+    util::print3(ValueT{1250}, 'e');
+    util::print3(ValueT{1500}, 'e');
+
+    util::print3(1.25, 'f');
+    util::print3(1.5, 'f');
+
+    { // fixed
+      REQUIRE( cs::toString(1.25, 'f', 0) == "1" );
+      REQUIRE( cs::toString(1.25, 'f', 3) == "1.250" );
+      REQUIRE( cs::toString(1.25, 'f', 6) == "1.250000" );
+
+      REQUIRE( cs::toString(1.5, 'f', 0) == "2" );
+      REQUIRE( cs::toString(1.5, 'f', 3) == "1.500" );
+      REQUIRE( cs::toString(1.5, 'f', 6) == "1.500000" );
+    }
+  }
 
   TEST_CASE("String to integral value.", "[strtointegral]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;

@@ -56,6 +56,21 @@ namespace cs {
 
     // Implementation ////////////////////////////////////////////////////////
 
+    inline std::chars_format make_format(const char ch)
+    {
+      if(        ch == 'a'  ||  ch == 'A' ) {
+        return std::chars_format::hex;
+      } else if( ch == 'e'  ||  ch == 'E' ) {
+        return std::chars_format::scientific;
+      } else if( ch == 'f'  ||  ch == 'F' ) {
+        return std::chars_format::fixed;
+      } else if( ch == 'g'  ||  ch == 'G' ) { // superfluous
+        return std::chars_format::general;
+      }
+
+      return std::chars_format::general; // default
+    }
+
     inline bool resize(std::string& str, const size_type len)
     {
       try {
@@ -122,6 +137,44 @@ namespace cs {
     const std::to_chars_result result = base == 10
         ? std::to_chars(first, last, value, base)
         : std::to_chars(first, last, unsigned_cast(value), base);
+    if( result.ec != std::errc{} ) {
+      return std::string();
+    }
+
+    *(result.ptr) = '\0';
+
+    shrink(str, RECLAIM);
+
+    // Done! /////////////////////////////////////////////////////////////////
+
+    return str;
+  }
+
+  template<typename T, bool RECLAIM = true>
+  inline if_real_t<T,std::string> toString(const T value,
+                                           const char format = 'g',
+                                           const int precision = 6)
+  {
+    using namespace impl_strval;
+
+    // (0) Initialization ////////////////////////////////////////////////////
+
+    std::string str;
+    if( !resize(str, STR_SIZE) ) {
+      return std::string();
+    }
+
+    char *first = str.data();
+    char  *last = str.data() + str.size();
+
+    // (1) Sanitize format & precision ///////////////////////////////////////
+
+    const std::chars_format fmt = make_format(format);
+    const int              prec = std::max<int>(0, precision);
+
+    // (2) Conversion ////////////////////////////////////////////////////////
+
+    const std::to_chars_result result = std::to_chars(first, last, value, fmt, prec);
     if( result.ec != std::errc{} ) {
       return std::string();
     }
