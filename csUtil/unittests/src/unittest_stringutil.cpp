@@ -298,8 +298,8 @@ namespace stringutil {
 
     // StringUtil.h
 
-    REQUIRE( cs::simplified(String("\fa\nb\rc\td\v")) == "a b c d" );
-    REQUIRE( cs::simplified(String(PTR_abcd)) == PTR_abcd );
+    REQUIRE( cs::toSimplified(String("\fa\nb\rc\td\v")) == "a b c d" );
+    REQUIRE( cs::toSimplified(String(PTR_abcd)) == PTR_abcd );
   }
 
   TEST_CASE("Split string at delimiter.", "[split]") {
@@ -424,8 +424,8 @@ namespace stringutil {
 
     // StringUtil.h
 
-    REQUIRE( cs::trimmed(String("\nabc\r")) == PTR_abc );
-    REQUIRE( cs::trimmed(String(PTR_abc)) == PTR_abc );
+    REQUIRE( cs::toTrimmed(String("\nabc\r")) == PTR_abc );
+    REQUIRE( cs::toTrimmed(String(PTR_abc)) == PTR_abc );
   }
 
 } // namespace stringutil

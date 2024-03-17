@@ -272,7 +272,7 @@ namespace cs {
     }
   }
 
-  inline std::string simplified(std::string str)
+  inline std::string toSimplified(std::string str)
   {
     simplify(str);
     return str;
@@ -353,7 +353,7 @@ namespace cs {
     }
   }
 
-  inline std::string trimmed(std::string str)
+  inline std::string toTrimmed(std::string str)
   {
     trim(str);
     return str;

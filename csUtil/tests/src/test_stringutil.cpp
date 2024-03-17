@@ -7,13 +7,13 @@
 
 void simplify(const std::string& s)
 {
-  const std::string x = cs::simplified(s);
+  const std::string x = cs::toSimplified(s);
   printf("simplify: <%s> -> <%s>\n", s.data(), x.data());
 }
 
 void trim(const std::string& s)
 {
-  const std::string x = cs::trimmed(s);
+  const std::string x = cs::toTrimmed(s);
   printf("trim: <%s> -> <%s>\n", s.data(), x.data());
 }
 
