@@ -63,9 +63,18 @@ namespace cs {
 
   inline void shrink(std::string& str, const bool reclaim = false)
   {
-    str.resize(strlen(str.data(), str.size()));
-    if( reclaim ) {
-      str.shrink_to_fit();
+    if( str.empty() ) {
+      return;
+    }
+
+    try {
+      const std::size_t len = strlen(str.data(), str.size());
+      str.resize(len);
+      if( reclaim ) {
+        str.shrink_to_fit();
+      }
+    } catch( ... ) {
+      str.clear();
     }
   }
 

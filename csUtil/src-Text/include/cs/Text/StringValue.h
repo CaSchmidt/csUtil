@@ -85,6 +85,10 @@ namespace cs {
 
     inline void shrink(std::string& str, const bool reclaim)
     {
+      if( str.empty() ) {
+        return;
+      }
+
       try {
         const size_type len = traits_type::length(str.data());
         str.resize(len);
