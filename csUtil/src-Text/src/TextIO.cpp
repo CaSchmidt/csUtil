@@ -39,8 +39,7 @@ namespace cs {
   ////// Public ////////////////////////////////////////////////////////////////
 
   CS_UTIL_EXPORT std::list<std::string> readLines(const std::filesystem::path& path,
-                                                  const bool skipBlank,
-                                                  const bool doTrim)
+                                                  const LineFlags flags)
   {
     constexpr auto lambda_is_blank = [](const std::string& str) -> bool {
       return str.empty()  ||  isSpace(str);
@@ -51,15 +50,20 @@ namespace cs {
       return std::list<std::string>{};
     }
 
-    std::list<std::string> lines = split(text, '\n', false, doTrim);
-    if( skipBlank ) {
+    const SplitFlags split_flags = flags.testAny(LineFlag::Trim)
+        ? SplitFlag::Trim
+        : SplitFlag::None;
+
+    std::list<std::string> lines = split(text, '\n', split_flags);
+    if( flags.testAny(LineFlag::SkipBlank) ) {
       lines.remove_if(lambda_is_blank);
     }
 
     return lines;
   }
 
-  CS_UTIL_EXPORT std::string readTextFile(const std::filesystem::path& path, bool *ok)
+  CS_UTIL_EXPORT std::string readTextFile(const std::filesystem::path& path,
+                                          bool *ok)
   {
     if( ok != nullptr ) {
       *ok = false;

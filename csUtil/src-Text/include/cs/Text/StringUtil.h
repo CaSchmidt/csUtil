@@ -31,33 +31,30 @@
 
 #pragma once
 
+#include <cs/Core/Flags.h>
 #include <cs/Text/StringReplaceImpl.h>
 #include <cs/Text/StringSplitImpl.h>
 
 namespace cs {
 
+  ////// Flags ///////////////////////////////////////////////////////////////
+
+  enum class SplitFlag : unsigned {
+    None      = 0,
+    SkipEmpty = 0x01,
+    Trim      = 0x02,
+    All       = 0xFF
+  };
+
+} // namespace cs
+
+CS_ENABLE_FLAGS(cs::SplitFlag)
+
+namespace cs {
+
   ////// Types ///////////////////////////////////////////////////////////////
 
-  template<typename T> requires is_char_v<T>
-  using String = std::basic_string<T>;
-
-  template<typename T> requires is_char_v<T>
-  using StringIter = typename String<T>::iterator;
-
-  template<typename T> requires is_char_v<T>
-  using ConstStringIter = typename String<T>::const_iterator;
-
-  template<typename T> requires is_char_v<T>
-  using StringList = std::list<String<T>>;
-
-  template<typename T> requires is_char_v<T>
-  using StringListIter = typename StringList<T>::iterator;
-
-  template<typename T> requires is_char_v<T>
-  using ConstStringListIter = typename StringList<T>::const_iterator;
-
-  template<typename T> requires is_char_v<T>
-  using StringView = std::basic_string_view<T>;
+  using SplitFlags = Flags<SplitFlag>;
 
   ////// Length Functions ////////////////////////////////////////////////////
 
@@ -282,24 +279,26 @@ namespace cs {
 
   inline std::list<std::string> split(const std::string_view& str,
                                       const char pat,
-                                      const bool skipEmpty = false, const bool doTrim = false)
+                                      const SplitFlags flags = SplitFlag::None)
   {
     if( !str.empty() ) {
       return impl_string::split(str.data(), str.data() + str.size(),
                                 pat,
-                                skipEmpty, doTrim);
+                                flags.testAny(SplitFlag::SkipEmpty),
+                                flags.testAny(SplitFlag::Trim));
     }
     return std::list<std::string>();
   }
 
   inline std::list<std::string> split(const std::string_view& str,
                                       const std::string_view& pat,
-                                      const bool skipEmpty = false, const bool doTrim = false)
+                                      const SplitFlags flags = SplitFlag::None)
   {
     if( !str.empty()  &&  str.size() >= pat.size() ) {
       return impl_string::split(str.data(), str.data() + str.size(),
                                 pat.data(), pat.size(),
-                                skipEmpty, doTrim);
+                                flags.testAny(SplitFlag::SkipEmpty),
+                                flags.testAny(SplitFlag::Trim));
     }
     return std::list<std::string>();
   }

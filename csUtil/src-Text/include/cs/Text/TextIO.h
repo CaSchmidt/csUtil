@@ -35,13 +35,29 @@
 #include <list>
 
 #include <cs/Core/csutil_config.h>
+#include <cs/Core/Flags.h>
 
 namespace cs {
 
-  CS_UTIL_EXPORT std::list<std::string> readLines(const std::filesystem::path& path,
-                                                  const bool skipBlank = false,
-                                                  const bool doTrim = false);
+  enum class LineFlag : unsigned {
+    None      = 0,
+    SkipBlank = 0x01,
+    Trim      = 0x02,
+    All       = 0xFF
+  };
 
-  CS_UTIL_EXPORT std::string readTextFile(const std::filesystem::path& path, bool *ok = nullptr);
+} // namespace cs
+
+CS_ENABLE_FLAGS(cs::LineFlag);
+
+namespace cs {
+
+  using LineFlags = Flags<LineFlag>;
+
+  CS_UTIL_EXPORT std::list<std::string> readLines(const std::filesystem::path& path,
+                                                  const LineFlags flags = LineFlag::None);
+
+  CS_UTIL_EXPORT std::string readTextFile(const std::filesystem::path& path,
+                                          bool *ok = nullptr);
 
 } // namespace cs

@@ -24,7 +24,7 @@ void print(const StringList& lines)
 int main(int /*argc*/, char **argv)
 {
   printf("filename: %s\n", argv[1]);
-  const StringList lines = cs::readLines(cs::UTF8(argv[1]), true);
+  const StringList lines = cs::readLines(cs::UTF8(argv[1]), cs::LineFlag::SkipBlank);
   print(lines);
 
   return EXIT_SUCCESS;

@@ -125,7 +125,7 @@ namespace priv {
 
   StringList readWords()
   {
-    StringList result = cs::readLines(WORD_LIST, true, true);
+    StringList result = cs::readLines(WORD_LIST, cs::LineFlag::All);
     if( result.empty() ) {
       return result;
     }

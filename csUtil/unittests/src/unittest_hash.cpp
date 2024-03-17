@@ -57,7 +57,7 @@ namespace test_util {
                  const cs::Hash::Function func)
   {
     cs::HashPtr hash = cs::Hash::make(func);
-    const std::list<std::string> lines = cs::readLines(path, true, true);
+    const std::list<std::string> lines = cs::readLines(path, cs::LineFlag::All);
     if( !hash  ||  lines.empty() ) {
       return false;
     }

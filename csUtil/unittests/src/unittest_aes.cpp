@@ -41,7 +41,7 @@ namespace test_util {
     cs::BlockCipherPtr algo = cs::BlockCipher::make(algoid);
     cs::Buffer temp;
 
-    const std::list<std::string> lines = cs::readLines(filename, true, true);
+    const std::list<std::string> lines = cs::readLines(filename, cs::LineFlag::All);
     if( lines.empty()  ||  !algo  ||  !cs::resize(temp, algo->blockSize()) ) {
       return false;
     }

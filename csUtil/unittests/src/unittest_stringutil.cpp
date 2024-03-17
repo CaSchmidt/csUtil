@@ -10,8 +10,8 @@
 
 namespace stringutil {
 
-  using String     = cs::String<char>;
-  using StringList = cs::StringList<char>;
+  using String     = std::string;
+  using StringList = std::list<String>;
 
   const char *PTR_abcd = "abcd";
   const char *PTR_abc  = "abc";
@@ -317,7 +317,7 @@ namespace stringutil {
     }
 
     {
-      const StringList result = cs::split(String(PTR_split1), '/');
+      const StringList result = cs::split(PTR_split1, '/');
 
       REQUIRE(  result.size() == 5 );
       REQUIRE(  std::next(result.begin(), 0)->empty() );
@@ -328,7 +328,7 @@ namespace stringutil {
     }
 
     {
-      const StringList result = cs::split(String(PTR_split1), '/', true);
+      const StringList result = cs::split(PTR_split1, '/', cs::SplitFlag::SkipEmpty);
 
       REQUIRE(  result.size() == 2 );
       REQUIRE( *std::next(result.begin(), 0) == PTR_abc );
@@ -338,7 +338,7 @@ namespace stringutil {
     const char *PTR_split2 = "..abc....ABC..";
 
     {
-      const StringList result = cs::split(String(PTR_split2), "..");
+      const StringList result = cs::split(PTR_split2, "..");
 
       REQUIRE(  result.size() == 5 );
       REQUIRE(  std::next(result.begin(), 0)->empty() );
@@ -349,7 +349,7 @@ namespace stringutil {
     }
 
     {
-      const StringList result = cs::split(String(PTR_split2), "..", true);
+      const StringList result = cs::split(PTR_split2, "..", cs::SplitFlag::SkipEmpty);
 
       REQUIRE(  result.size() == 2 );
       REQUIRE( *std::next(result.begin(), 0) == PTR_abc );
@@ -359,7 +359,7 @@ namespace stringutil {
     const char *PTR_split3 = "\v: abc\t:\rABC\n:\f";
 
     {
-      const StringList result = cs::split(PTR_split3, ':', false, true);
+      const StringList result = cs::split(PTR_split3, ':', cs::SplitFlag::Trim);
 
       REQUIRE(  result.size() == 4 );
       REQUIRE(  std::next(result.begin(), 0)->empty() );

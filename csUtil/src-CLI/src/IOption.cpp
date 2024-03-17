@@ -110,8 +110,8 @@ namespace cs {
     }
 
     if( !_help.empty() ) {
-      const StringList<char> lines = split(_help, '\n');
-      for(const String<char>& line : lines) {
+      const std::list<std::string> lines = split(_help, '\n');
+      for(const std::string& line : lines) {
         println(output, "");
         print(output, "        %", line);
       }
