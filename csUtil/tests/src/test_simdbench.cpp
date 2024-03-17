@@ -9,8 +9,8 @@
 #include <cs/SIMD/SIMD.h>
 #include <cs/SIMD/SIMD128.h>
 #include <cs/System/Time.h>
-#include <cs/Text/PrintFormat.h>
 #include <cs/Text/PrintUtil.h>
+#include <cs/Text/StringValue.h>
 
 namespace util {
 
@@ -86,7 +86,7 @@ namespace util {
                           : double(dur)/double(ref))*100.0;
 
     cs::println("%(%,%) = %, %us, ratio = %%",
-                name, beg, end, sum, dur, cs::fixedf(rat, 2), '%');
+                name, beg, end, sum, dur, cs::toString(rat, 'f', 2), '%');
 
     return dur;
   }
@@ -115,7 +115,7 @@ namespace util {
                           : double(dur)/double(ref))*100.0;
 
     cs::println("%(%,%) = %, %us, ratio = %%",
-                name, beg, end, sum, dur, cs::fixedf(rat, 2), '%');
+                name, beg, end, sum, dur, cs::toString(rat, 'f', 2), '%');
 
     return dur;
   }

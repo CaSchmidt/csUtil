@@ -3,8 +3,19 @@
 #include <catch.hpp>
 
 #include <cs/Core/Constants.h>
+#include <cs/Core/Flags.h>
 #include <cs/Text/PrintFormat.h>
 #include <cs/Text/PrintUtil.h>
+
+enum class FormatFlag : unsigned {
+  None  = 0,
+  Left  = 0x01,
+  Upper = 0x02
+};
+
+CS_ENABLE_FLAGS(FormatFlag);
+
+using FormatFlags = cs::Flags<FormatFlag>;
 
 using size_type = std::size_t;
 
@@ -24,7 +35,7 @@ namespace util {
   requires cs::is_integral_v<T>
   std::string make_binstring(const T value,
                              const size_type width, const char fill,
-                             const cs::FormatFlags& flags)
+                             const FormatFlags flags = FormatFlag::None)
   {
     constexpr T MIN = cs::Konst<T>::MIN;
     constexpr T MAX = cs::Konst<T>::MAX;
@@ -33,7 +44,8 @@ namespace util {
       return std::string{};
     }
 
-    const bool is_left    = flags.testAny(cs::FormatFlag::Left);
+    const bool is_left = flags.testAny(FormatFlag::Left);
+
     const bool is_maximum = value == MAX;
     const bool is_minimum = value == MIN;
 
@@ -99,7 +111,7 @@ namespace util {
   requires cs::is_integral_v<T>
   std::string make_hexstring(const T value,
                              const size_type width, const char fill,
-                             const cs::FormatFlags& flags)
+                             const FormatFlags flags = FormatFlag::Upper)
   {
     constexpr T MIN = cs::Konst<T>::MIN;
     constexpr T MAX = cs::Konst<T>::MAX;
@@ -108,10 +120,11 @@ namespace util {
       return std::string{};
     }
 
-    const bool is_left    = flags.testAny(cs::FormatFlag::Left);
+    const bool is_left = flags.testAny(FormatFlag::Left);
+
     const bool is_minimum = value == MIN;
 
-    const char glyph_f = flags.testAny(cs::FormatFlag::Upper)
+    const char glyph_f = flags.testAny(FormatFlag::Upper)
         ? 'F'
         : 'f';
 
@@ -180,138 +193,34 @@ namespace util {
 
 } // namespace util
 
-namespace test_integral {
+namespace test_align {
 
-  template<typename T>
-  requires cs::is_integral_v<T>
-  util::TwoStrings make_binint(const T value, const cs::FormatFlags& flags)
-  {
-    constexpr size_type WIDTH = sizeof(T)*8 + 3;
-    constexpr      char  FILL = '.';
-
-    const std::string val_str =
-        cs::sprint("%", cs::format(value, 2, WIDTH, FILL, flags));
-    const std::string ref_str =
-        util::make_binstring(value, WIDTH, FILL, flags);
-
-    return util::TwoStrings{val_str, ref_str};
-  }
-
-  template<typename T>
-  requires cs::is_integral_v<T>
-  util::TwoStrings make_hexint(const T value, const cs::FormatFlags& flags)
-  {
-    constexpr size_type WIDTH = sizeof(T)*2 + 3;
-    constexpr      char  FILL = '.';
-
-    const std::string val_str =
-        cs::sprint("%", cs::format(value, 16, WIDTH, FILL, flags));
-    const std::string ref_str =
-        util::make_hexstring<T>(value, WIDTH, FILL, flags);
-
-    return util::TwoStrings{val_str, ref_str};
-  }
-
-  TEMPLATE_TEST_CASE("Formatting of integral types.", "[integral]",
-                     int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t) {
+  TEST_CASE("Alignment of text.", "[align]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
-    using value_type = TestType;
+    constexpr size_type WIDTH = 4;
+    constexpr char       FILL = '.';
 
-    { // Minimum /////////////////////////////////////////////////////////////
-      constexpr value_type MIN = cs::Konst<value_type>::MIN;
+    { // left
+      REQUIRE( cs::left(std::string(), WIDTH, FILL).empty() );
 
-      {
-        const cs::FormatFlags flags{cs::FormatFlag::None};
-        const util::TwoStrings p = make_binint(MIN, flags);
-        util::print(p);
-        REQUIRE( p.first == p.second );
-      }
+      REQUIRE( cs::left("x",     WIDTH, FILL) == "x..."  );
+      REQUIRE( cs::left("xxx",   WIDTH, FILL) == "xxx."  );
+      REQUIRE( cs::left("xxxx",  WIDTH, FILL) == "xxxx"  );
+      REQUIRE( cs::left("xxxxx", WIDTH, FILL) == "xxxxx" );
+    }
 
-      {
-        const cs::FormatFlags flags{cs::FormatFlag::Left};
-        const util::TwoStrings p = make_binint(MIN, flags);
-        util::print(p);
-        REQUIRE( p.first == p.second );
-      }
+    { // right
+      REQUIRE( cs::right(std::string(), WIDTH, FILL).empty() );
 
-      {
-        const cs::FormatFlags flags{cs::FormatFlag::None};
-        const util::TwoStrings p = make_hexint(MIN, flags);
-        util::print(p);
-        REQUIRE( p.first == p.second );
-      }
-
-      {
-        const cs::FormatFlags flags{cs::FormatFlag::Left};
-        const util::TwoStrings p = make_hexint(MIN, flags);
-        util::print(p);
-        REQUIRE( p.first == p.second );
-      }
-
-      {
-        const cs::FormatFlags flags{cs::FormatFlag::Upper};
-        const util::TwoStrings p = make_hexint(MIN, flags);
-        util::print(p);
-        REQUIRE( p.first == p.second );
-      }
-
-      {
-        const cs::FormatFlags flags{cs::FormatFlag::Left | cs::FormatFlag::Upper};
-        const util::TwoStrings p = make_hexint(MIN, flags);
-        util::print(p);
-        REQUIRE( p.first == p.second );
-      }
-    } // Minimum
-
-    { // Maximum /////////////////////////////////////////////////////////////
-      constexpr value_type MAX = cs::Konst<value_type>::MAX;
-
-      {
-        const cs::FormatFlags flags{cs::FormatFlag::None};
-        const util::TwoStrings p = make_binint(MAX, flags);
-        util::print(p);
-        REQUIRE( p.first == p.second );
-      }
-
-      {
-        const cs::FormatFlags flags{cs::FormatFlag::Left};
-        const util::TwoStrings p = make_binint(MAX, flags);
-        util::print(p);
-        REQUIRE( p.first == p.second );
-      }
-
-      {
-        const cs::FormatFlags flags{cs::FormatFlag::None};
-        const util::TwoStrings p = make_hexint(MAX, flags);
-        util::print(p);
-        REQUIRE( p.first == p.second );
-      }
-
-      {
-        const cs::FormatFlags flags{cs::FormatFlag::Left};
-        const util::TwoStrings p = make_hexint(MAX, flags);
-        util::print(p);
-        REQUIRE( p.first == p.second );
-      }
-
-      {
-        const cs::FormatFlags flags{cs::FormatFlag::Upper};
-        const util::TwoStrings p = make_hexint(MAX, flags);
-        util::print(p);
-        REQUIRE( p.first == p.second );
-      }
-
-      {
-        const cs::FormatFlags flags{cs::FormatFlag::Left | cs::FormatFlag::Upper};
-        const util::TwoStrings p = make_hexint(MAX, flags);
-        util::print(p);
-        REQUIRE( p.first == p.second );
-      }
-    } // Maximum
+      REQUIRE( cs::right(    "x", WIDTH, FILL) == "...x"  );
+      REQUIRE( cs::right(  "xxx", WIDTH, FILL) == ".xxx"  );
+      REQUIRE( cs::right( "xxxx", WIDTH, FILL) == "xxxx"  );
+      REQUIRE( cs::right("xxxxx", WIDTH, FILL) == "xxxxx" );
+    }
   } // TEST_CASE
 
-} // namespace test_integral
+} // namespace test_align
 
 namespace test_hex {
 
@@ -323,8 +232,8 @@ namespace test_hex {
         ? sizeof(T)*2
         : 0;
 
-    const std::string val_str = cs::sprint("%", cs::hexf(value, fill_digits));
-    const std::string ref_str = util::make_hexstring(value, width, '0', cs::FormatFlag::Upper);
+    const std::string val_str = cs::hexf(value, fill_digits);
+    const std::string ref_str = util::make_hexstring(value, width, '0');
 
     return util::TwoStrings{val_str, ref_str};
   }
@@ -380,8 +289,8 @@ namespace test_bin {
         ? sizeof(T)*8
         : 0;
 
-    const std::string val_str = cs::sprint("%", cs::binf(value, fill_digits));
-    const std::string ref_str = util::make_binstring(value, width, '0', cs::FormatFlag::None);
+    const std::string val_str = cs::binf(value, fill_digits);
+    const std::string ref_str = util::make_binstring(value, width, '0');
 
     return util::TwoStrings{val_str, ref_str};
   }
