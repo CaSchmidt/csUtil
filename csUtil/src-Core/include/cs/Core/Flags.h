@@ -155,7 +155,7 @@ namespace cs {
     {
     }
 
-    Flags(const value_type value) noexcept
+    explicit Flags(const value_type value) noexcept
       : _flags{static_cast<enum_type>(value)}
     {
     }
