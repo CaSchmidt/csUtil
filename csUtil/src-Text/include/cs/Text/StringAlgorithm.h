@@ -1071,49 +1071,4 @@ namespace cs {
 
   } // namespace impl_string
 
-#if 0
-  template<typename WCharT, typename NCharT>
-  requires is_widechar_v<WCharT>  &&  is_narrowchar_v<NCharT>
-  inline std::size_t widen_s(WCharT *dst, const std::size_t lendst,
-                             const NCharT *str, const std::size_t lenstr)
-  {
-    const std::size_t maxstr = strlen(str, lenstr);
-
-    if( dst != nullptr  &&  lendst > 0  &&  lendst >= maxstr ) {
-      impl_string::widen(dst, str, str + maxstr);
-      return maxstr;
-    }
-
-    return 0;
-  }
-
-  template<typename WCharT, typename NCharT>
-  requires is_widechar_v<WCharT>  &&  is_narrowchar_v<NCharT>
-  inline std::size_t widen(WCharT *dst, const std::size_t lendst,
-                           const NCharT *str, const std::size_t lenstr)
-  {
-    if( lendst >= lenstr ) {
-      impl_string::widen(dst, str, str + lenstr);
-      return lenstr;
-    }
-
-    return 0;
-  }
-
-  template<typename WCharT, typename NCharT>
-  requires is_widechar_v<WCharT>  &&  is_narrowchar_v<NCharT>
-  inline std::size_t widen(WCharT *dest,
-                           const NCharT *str)
-  {
-    const std::size_t max = strlen(str);
-
-    if( max > 0 ) {
-      impl_string::widen(dest, str, str + max);
-      return max;
-    }
-
-    return 0;
-  }
-#endif
-
 } // namespace cs
