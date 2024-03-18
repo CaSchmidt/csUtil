@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include <cs/Core/Container.h>
 #include <cs/Core/Flags.h>
 #include <cs/Text/StringReplaceImpl.h>
 #include <cs/Text/StringSplitImpl.h>
@@ -358,11 +359,61 @@ namespace cs {
     return str;
   }
 
+  ////// Narrowing/Widening of strings... ////////////////////////////////////
+
+  inline std::string toString(const std::u16string_view& str)
+  {
+    std::string result;
+    if( str.empty()  ||  !resize(result, str.size()) ) {
+      return std::string();
+    }
+
+    impl_string::narrow(result.data(), str.data(), str.data() + str.size());
+
+    return result;
+  }
+
+  inline std::string toString(const std::wstring_view& str)
+  {
+    std::string result;
+    if( str.empty()  ||  !resize(result, str.size()) ) {
+      return std::string();
+    }
+
+    impl_string::narrow(result.data(), str.data(), str.data() + str.size());
+
+    return result;
+  }
+
+  inline std::u16string toUtf16String(const std::string_view& str)
+  {
+    std::u16string result;
+    if( str.empty()  ||  !resize(result, str.size()) ) {
+      return std::u16string();
+    }
+
+    impl_string::widen(result.data(), str.data(), str.data() + str.size());
+
+    return result;
+  }
+
+  inline std::wstring toWString(const std::string_view& str)
+  {
+    std::wstring result;
+    if( str.empty()  ||  !resize(result, str.size()) ) {
+      return std::wstring();
+    }
+
+    impl_string::widen(result.data(), str.data(), str.data() + str.size());
+
+    return result;
+  }
+
   ////// Type conversion... //////////////////////////////////////////////////
 
   /*
    * NOTE: CSTR() and WSTR() cannot operate on std::basic_string_view<> as
-   * it is not required to be nullterminated!
+   * it is not required to be null-terminated!
    *
    * Using these functions with std::basic_string_view<> will copy the
    * view to a std::basic_string<>.

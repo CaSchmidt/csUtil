@@ -1049,9 +1049,17 @@ namespace cs {
     }
   }
 
-  ////// Widen string... /////////////////////////////////////////////////////
+  ////// Narrow/Widen string... //////////////////////////////////////////////
 
   namespace impl_string {
+
+    template<typename NCharT, typename WCharT>
+    requires is_narrowchar_v<NCharT>  &&  is_widechar_v<WCharT>
+    inline void narrow(NCharT *dest,
+                       const WCharT *first, const WCharT *last)
+    {
+      std::transform(first, last, dest, lambda_narrow<NCharT,WCharT>());
+    }
 
     template<typename WCharT, typename NCharT>
     requires is_widechar_v<WCharT>  &&  is_narrowchar_v<NCharT>
@@ -1063,6 +1071,7 @@ namespace cs {
 
   } // namespace impl_string
 
+#if 0
   template<typename WCharT, typename NCharT>
   requires is_widechar_v<WCharT>  &&  is_narrowchar_v<NCharT>
   inline std::size_t widen_s(WCharT *dst, const std::size_t lendst,
@@ -1105,5 +1114,6 @@ namespace cs {
 
     return 0;
   }
+#endif
 
 } // namespace cs

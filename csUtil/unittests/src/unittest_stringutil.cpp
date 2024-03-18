@@ -428,4 +428,20 @@ namespace stringutil {
     REQUIRE( cs::toTrimmed(String(PTR_abc)) == PTR_abc );
   }
 
+  TEST_CASE("Narrowing/Widening of strings.", "[narrowwiden]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    { // narrow
+      REQUIRE( cs::toString(u"Hello, World!") == "Hello, World!" );
+
+      REQUIRE( cs::toString(L"Hello, World!") == "Hello, World!" );
+    }
+
+    { // widen
+      REQUIRE( cs::toUtf16String("Hello, World!") == u"Hello, World!" );
+
+      REQUIRE( cs::toWString("Hello, World!") == L"Hello, World!" );
+    }
+  } // TEST_CASE
+
 } // namespace stringutil
