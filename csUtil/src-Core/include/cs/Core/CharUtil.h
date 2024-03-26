@@ -81,15 +81,16 @@ namespace cs {
     static constexpr auto X = static_cast<T>('X');
     static constexpr auto Z = static_cast<T>('Z');
 
-    static constexpr auto  bckslash = static_cast<T>('\\');
-    static constexpr auto     colon = static_cast<T>(':');
-    static constexpr auto     comma = static_cast<T>(',');
-    static constexpr auto  dblquote = static_cast<T>('"');
-    static constexpr auto       dot = static_cast<T>('.');
-    static constexpr auto       pct = static_cast<T>('%');
-    static constexpr auto  qstnmark = static_cast<T>('?');
-    static constexpr auto snglquote = static_cast<T>('\'');
-    static constexpr auto     under = static_cast<T>('_');
+    static constexpr auto bckslash = static_cast<T>('\\');
+    static constexpr auto    colon = static_cast<T>(':');
+    static constexpr auto    comma = static_cast<T>(',');
+    static constexpr auto dblquote = static_cast<T>('"');
+    static constexpr auto      dot = static_cast<T>('.');
+    static constexpr auto      pct = static_cast<T>('%');
+    static constexpr auto qstnmark = static_cast<T>('?');
+    static constexpr auto    slash = static_cast<T>('/');
+    static constexpr auto sngquote = static_cast<T>('\'');
+    static constexpr auto    under = static_cast<T>('_');
 
     static constexpr auto BEL = static_cast<T>('\a'); // bell
     static constexpr auto  BS = static_cast<T>('\b'); // backspace

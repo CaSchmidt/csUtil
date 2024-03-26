@@ -89,7 +89,7 @@ namespace cs {
           break;
 
           // (3.2) Escape Sequence ///////////////////////////////////////////
-        } else if( ch == g::bckslash  &&  isEscaped(lookAhead(pos, input)) ) {
+        } else if( ch == g::bckslash  &&  isEscape(lookAhead(pos, input)) ) {
           pos += ONE;
           str.push_back(escape(input[pos]));
 
@@ -134,7 +134,7 @@ namespace cs {
 
     inline value_type escape(const value_type ch) const
     {
-      if(        ch == g::snglquote ) {
+      if(        ch == g::sngquote ) {
         return ch;
       } else if( ch == g::dblquote ) {
         return ch;
@@ -160,20 +160,20 @@ namespace cs {
       return g::NUL;
     }
 
-    inline bool isEscaped(const value_type ch) const
+    inline bool isEscape(const value_type ch) const
     {
       return
-          ch == g::snglquote  || // \'
-          ch == g::dblquote   || // \"
-          ch == g::qstnmark   || // \?
-          ch == g::bckslash   ||
-          ch == g::a          || // \a
-          ch == g::b          || // \b
-          ch == g::f          || // \f
-          ch == g::n          || // \n
-          ch == g::r          || // \r
-          ch == g::t          || // \t
-          ch == g::v;            // \v
+          ch == g::sngquote  || // \'
+          ch == g::dblquote  || // \"
+          ch == g::qstnmark  || // \?
+          ch == g::bckslash  ||
+          ch == g::a         || // \a
+          ch == g::b         || // \b
+          ch == g::f         || // \f
+          ch == g::n         || // \n
+          ch == g::r         || // \r
+          ch == g::t         || // \t
+          ch == g::v;           // \v
     }
 
     inline bool isExcept(const value_type ch) const
