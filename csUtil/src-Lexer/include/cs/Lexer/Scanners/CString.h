@@ -76,7 +76,11 @@ namespace cs {
       // (2) Reserve String //////////////////////////////////////////////////
 
       String str;
-      str.reserve(_reserve);
+      try {
+        str.reserve(_reserve);
+      } catch( ... ) {
+        return TokenPtr();
+      }
 
       // (3) Scan Input & Build String ///////////////////////////////////////
 
