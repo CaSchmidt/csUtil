@@ -31,71 +31,40 @@
 
 #pragma once
 
-#include <memory>
-#include <type_traits>
+#include <limits>
 
-#include <cs/Core/csutil_config.h>
+#include <cs/Lexer/ValueToken.h>
 
 namespace cs {
 
-  ////// Type Traits /////////////////////////////////////////////////////////
+  namespace Token {
 
-  template<typename T>
-  using is_typeid_type = std::bool_constant<
-  std::is_unsigned_v<T>  &&  (sizeof(T) > 2)
-  >;
+    template<typename CharT>
+    inline bool is_literal(const TokenPtr& tok, const CharT ch)
+    {
+      return tok  &&  tok->id() == static_cast<tokenid_t>(ch);
+    }
 
-  template<typename T>
-  inline constexpr bool is_typeid_type_v = is_typeid_type<T>::value;
+    constexpr tokenid_t make_userid(const tokenid_t user)
+    {
+      constexpr auto  MAX = std::numeric_limits<tokenid_t>::max();
+      constexpr auto USER = static_cast<tokenid_t>(TOK_User);
 
-  ////// Types ///////////////////////////////////////////////////////////////
+      return MAX - USER >= user
+          ? USER + user
+          : 0;
+    }
 
-  template<typename T>
-  using declare_tokenid_type = std::enable_if_t<is_typeid_type_v<T>,T>;
+    template<typename T>
+    inline T to_value(const TokenPtr& tok, const T& defValue = T())
+    {
+      using VT = ValueToken<T>;
 
-  using tokenid_t = declare_tokenid_type<unsigned>;
+      return dynamic_cast<const VT*>(tok.get()) != nullptr
+          ? dynamic_cast<const VT*>(tok.get())->value()
+          : defValue;
+    }
 
-  ////// Token IDs ///////////////////////////////////////////////////////////
-
-  enum TokenId : tokenid_t {
-    TOK_EndOfInput = 0x0,
-    TOK_Unknown    = 0xFFFF, // <not a character>; cf. https://www.unicode.org/charts/PDF/UFFF0.pdf
-    TOK_User
-  };
-
-  ////// Base Token Implementation ///////////////////////////////////////////
-
-  using TokenPtr = std::unique_ptr<class BaseToken>;
-
-  class CS_UTIL_EXPORT BaseToken {
-  protected:
-    struct ctor_tag {
-      ctor_tag() noexcept = default;
-    };
-
-  public:
-    BaseToken(const tokenid_t id, const size_t size,
-              const ctor_tag& = ctor_tag()) noexcept;
-    virtual ~BaseToken() noexcept;
-
-    tokenid_t id() const;
-
-    size_t column() const;
-    size_t line() const;
-
-    void setLocation(const size_t line, const size_t column);
-
-    size_t size() const;
-
-    static TokenPtr make(const tokenid_t id, const size_t size);
-
-  private:
-    BaseToken() noexcept = delete;
-
-    size_t    _column{0};
-    tokenid_t _id{};
-    size_t    _line{0};
-    size_t    _size{0};
-  };
+  } // namespace Token
 
 } // namespace cs

@@ -74,16 +74,4 @@ namespace cs {
     value_type _value;
   };
 
-  ////// Utilities ///////////////////////////////////////////////////////////
-
-  template<typename T>
-  inline T to_value(const TokenPtr& tok, const T& defValue = T())
-  {
-    using VT = ValueToken<T>;
-
-    return dynamic_cast<const VT*>(tok.get()) != nullptr
-        ? dynamic_cast<const VT*>(tok.get())->value()
-        : defValue;
-  }
-
 } // namespace cs

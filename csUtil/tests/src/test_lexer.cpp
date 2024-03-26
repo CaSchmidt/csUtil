@@ -3,6 +3,7 @@
 
 #include <cs/Lexer/Lexer.h>
 #include <cs/Lexer/Scanners/CString.h>
+#include <cs/Lexer/TokenUtil.h>
 #include <cs/Text/PrintUtil.h>
 
 template<typename CharT>
@@ -15,8 +16,8 @@ struct LexerContext {
   using CStringScanner = cs::CStringScanner<value_type>;
 };
 
-enum MyTokens {
-  TOK_String = cs::make_tokenid(1)
+enum MyTokens : cs::tokenid_t {
+  TOK_String = cs::Token::make_userid(1)
 };
 
 int main(int argc, char **argv)
@@ -36,12 +37,12 @@ int main(int argc, char **argv)
       cs::println("UNKNOWN(%,%): '%'",
                   tok->line(),
                   tok->column(),
-                  cs::to_value<char>(tok));
+                  cs::Token::to_value<char>(tok));
     } else if( tok->id() == TOK_String ) {
       cs::println("STRING(%,%): \"%\"",
                   tok->line(),
                   tok->column(),
-                  cs::to_value<std::string>(tok));
+                  cs::Token::to_value<std::string>(tok));
     }
   }
 
