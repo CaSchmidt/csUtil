@@ -32,6 +32,7 @@
 #pragma once
 
 #include <cs/Lexer/Lexer.h>
+#include <cs/Lexer/Scanners/CIdentifier.h>
 #include <cs/Lexer/Scanners/CString.h>
 
 namespace cs {
@@ -43,7 +44,8 @@ namespace cs {
     using Lexer = Lexer<value_type>;
     using Token = TokenPtr;
 
-    using CStringScanner = CStringScanner<value_type>;
+    using CIdentifierScanner = CIdentifierScanner<value_type>;
+    using CStringScanner     = CStringScanner<value_type>;
   };
 
 } // namespace cs

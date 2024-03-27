@@ -2,6 +2,7 @@ list(APPEND csLexer_HEADERS
   include/cs/Lexer/Context.h
   include/cs/Lexer/Lexer.h
   include/cs/Lexer/Scanner.h
+  include/cs/Lexer/Scanners/CIdentifier.h
   include/cs/Lexer/Scanners/CString.h
   include/cs/Lexer/Token.h
   include/cs/Lexer/TokenUtil.h
