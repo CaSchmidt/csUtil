@@ -85,8 +85,8 @@ namespace cs {
 
       // (3) Scan Input & Build String ///////////////////////////////////////
 
-      size_type pos = 0;
-      for(pos = ONE; pos < input.size(); pos++) {
+      size_type pos = ONE; // start after the double quote!
+      for(; pos < input.size(); pos++) {
         const value_type ch = input[pos];
 
         // (3.1) End-of-String ///////////////////////////////////////////////
@@ -109,15 +109,13 @@ namespace cs {
         }
       } // For input[pos]
 
-      // (4) Terminator Found? ///////////////////////////////////////////////
+      // (4) End-of-String Terminator Found? /////////////////////////////////
 
       if( pos >= input.size() ) {
         return TokenPtr();
       }
 
       // Done! ///////////////////////////////////////////////////////////////
-
-      str.shrink_to_fit();
 
       return ValueToken<String>::make(_id, str, pos + ONE);
     }
