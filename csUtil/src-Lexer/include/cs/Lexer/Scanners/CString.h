@@ -47,10 +47,11 @@ namespace cs {
     };
 
   public:
-    using String     = std::basic_string<CharT>;
-    using value_type = typename String::value_type;
-    using  size_type = typename String::size_type;
-    using StringView = std::basic_string_view<value_type>;
+    using typename IScanner<CharT>::StringView;
+    using typename IScanner<CharT>::size_type;
+    using typename IScanner<CharT>::value_type;
+
+    using String = std::basic_string<value_type>;
 
     CStringScanner(const tokenid_t id, const size_type reserve,
                    const ctor_tag& = ctor_tag()) noexcept
