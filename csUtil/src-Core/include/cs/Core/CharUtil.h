@@ -52,67 +52,83 @@ namespace cs {
 
   template<typename T> requires is_char_v<T>
   struct glyph {
-    static constexpr auto NUL = static_cast<T>('\0');
+    using value_type = T;
 
-    static constexpr auto space = static_cast<T>(' ');  // space
-    static constexpr auto    FF = static_cast<T>('\f'); // form feed
-    static constexpr auto    LF = static_cast<T>('\n'); // line feed
-    static constexpr auto    CR = static_cast<T>('\r'); // carriage return
-    static constexpr auto    HT = static_cast<T>('\t'); // horizontal tab
-    static constexpr auto    VT = static_cast<T>('\v'); // vertical tab
+    static constexpr auto NUL = static_cast<value_type>('\0');
 
-    static constexpr auto zero = static_cast<T>('0');
-    static constexpr auto nine = static_cast<T>('9');
+    static constexpr auto space = static_cast<value_type>(' ');  // space
+    static constexpr auto    FF = static_cast<value_type>('\f'); // form feed
+    static constexpr auto    LF = static_cast<value_type>('\n'); // line feed
+    static constexpr auto    CR = static_cast<value_type>('\r'); // carriage return
+    static constexpr auto    HT = static_cast<value_type>('\t'); // horizontal tab
+    static constexpr auto    VT = static_cast<value_type>('\v'); // vertical tab
 
-    static constexpr auto a = static_cast<T>('a');
-    static constexpr auto b = static_cast<T>('b');
-    static constexpr auto e = static_cast<T>('e');
-    static constexpr auto f = static_cast<T>('f');
-    static constexpr auto z = static_cast<T>('z');
-    static constexpr auto n = static_cast<T>('n');
-    static constexpr auto r = static_cast<T>('r');
-    static constexpr auto t = static_cast<T>('t');
-    static constexpr auto v = static_cast<T>('v');
-    static constexpr auto x = static_cast<T>('x');
+    static constexpr auto zero = static_cast<value_type>('0');
+    static constexpr auto nine = static_cast<value_type>('9');
 
-    static constexpr auto A = static_cast<T>('A');
-    static constexpr auto E = static_cast<T>('E');
-    static constexpr auto F = static_cast<T>('F');
-    static constexpr auto X = static_cast<T>('X');
-    static constexpr auto Z = static_cast<T>('Z');
+    static constexpr auto a = static_cast<value_type>('a');
+    static constexpr auto b = static_cast<value_type>('b');
+    static constexpr auto e = static_cast<value_type>('e');
+    static constexpr auto f = static_cast<value_type>('f');
+    static constexpr auto z = static_cast<value_type>('z');
+    static constexpr auto n = static_cast<value_type>('n');
+    static constexpr auto r = static_cast<value_type>('r');
+    static constexpr auto t = static_cast<value_type>('t');
+    static constexpr auto v = static_cast<value_type>('v');
+    static constexpr auto x = static_cast<value_type>('x');
 
-    static constexpr auto bckslash = static_cast<T>('\\');
-    static constexpr auto    colon = static_cast<T>(':');
-    static constexpr auto    comma = static_cast<T>(',');
-    static constexpr auto dblquote = static_cast<T>('"');
-    static constexpr auto      dot = static_cast<T>('.');
-    static constexpr auto      pct = static_cast<T>('%');
-    static constexpr auto qstnmark = static_cast<T>('?');
-    static constexpr auto    slash = static_cast<T>('/');
-    static constexpr auto sngquote = static_cast<T>('\'');
-    static constexpr auto    under = static_cast<T>('_');
+    static constexpr auto A = static_cast<value_type>('A');
+    static constexpr auto E = static_cast<value_type>('E');
+    static constexpr auto F = static_cast<value_type>('F');
+    static constexpr auto X = static_cast<value_type>('X');
+    static constexpr auto Z = static_cast<value_type>('Z');
 
-    static constexpr auto BEL = static_cast<T>('\a'); // bell
-    static constexpr auto  BS = static_cast<T>('\b'); // backspace
-    static constexpr auto SUB = static_cast<T>(0x1A); // substitute
-    static constexpr auto DEL = static_cast<T>(0x7F); // delete
+    static constexpr auto bckslash = static_cast<value_type>('\\');
+    static constexpr auto    colon = static_cast<value_type>(':');
+    static constexpr auto    comma = static_cast<value_type>(',');
+    static constexpr auto dblquote = static_cast<value_type>('"');
+    static constexpr auto      dot = static_cast<value_type>('.');
+    static constexpr auto      pct = static_cast<value_type>('%');
+    static constexpr auto qstnmark = static_cast<value_type>('?');
+    static constexpr auto    slash = static_cast<value_type>('/');
+    static constexpr auto sngquote = static_cast<value_type>('\'');
+    static constexpr auto    under = static_cast<value_type>('_');
+
+    static constexpr auto BEL = static_cast<value_type>('\a'); // bell
+    static constexpr auto  BS = static_cast<value_type>('\b'); // backspace
+    static constexpr auto SUB = static_cast<value_type>(0x1A); // substitute
+    static constexpr auto DEL = static_cast<value_type>(0x7F); // delete
   };
 
   ////// Classification //////////////////////////////////////////////////////
 
-  template<typename T> requires is_char_v<T>
+  template<typename T, int BASE = 10> requires is_char_v<T>
   constexpr bool isDigit(const T c)
   {
-    return glyph<T>::zero <= c  &&  c <= glyph<T>::nine;
+    static_assert( 2 <= BASE  &&  BASE <= 36 );
+
+    constexpr auto _0 = static_cast<T>('0');
+    constexpr auto _a = static_cast<T>('a');
+    constexpr auto _A = static_cast<T>('A');
+
+    constexpr T DIGBASE = static_cast<T>(BASE);
+    constexpr T LETBASE = static_cast<T>(BASE - 10);
+
+    return             (_0 <= c  &&  c < _0 + DIGBASE)  ||
+        (BASE > 10  &&  _a <= c  &&  c < _a + LETBASE)  ||
+        (BASE > 10  &&  _A <= c  &&  c < _A + LETBASE);
   }
 
   template<typename T> requires is_char_v<T>
-  inline bool isHexDigit(const T c)
+  constexpr bool isBinDigit(const T c)
   {
-    const bool is_0to9 = glyph<T>::zero <= c  &&  c <= glyph<T>::nine;
-    const bool is_atof = glyph<T>::a    <= c  &&  c <= glyph<T>::f;
-    const bool is_AtoF = glyph<T>::A    <= c  &&  c <= glyph<T>::F;
-    return is_0to9  ||  is_atof  ||  is_AtoF;
+    return isDigit<T,2>(c);
+  }
+
+  template<typename T> requires is_char_v<T>
+  constexpr bool isHexDigit(const T c)
+  {
+    return isDigit<T,16>(c);
   }
 
   template<typename T> requires is_char_v<T>
@@ -226,10 +242,9 @@ namespace cs {
   requires is_narrowchar_v<NCharT>  &&  is_widechar_v<WCharT>
   constexpr NCharT narrow(const WCharT in)
   {
-    constexpr auto NUL = glyph<WCharT>::NUL;
-    constexpr auto DEL = glyph<WCharT>::DEL;
+    using g = glyph<WCharT>;
 
-    return NUL <= in  &&  in <= DEL
+    return g::NUL <= in  &&  in <= g::DEL
         ? static_cast<NCharT>(in)
         : glyph<NCharT>::SUB;
   }
@@ -238,12 +253,11 @@ namespace cs {
   requires is_widechar_v<WCharT>  &&  is_narrowchar_v<NCharT>
   constexpr WCharT widen(const NCharT in)
   {
-    constexpr auto NUL = glyph<NCharT>::NUL;
-    constexpr auto DEL = glyph<NCharT>::DEL;
+    using g = glyph<NCharT>;
 
     constexpr WCharT REPL_CHAR = 0xFFFD;
 
-    return NUL <= in  &&  in <= DEL
+    return g::NUL <= in  &&  in <= g::DEL
         ? static_cast<WCharT>(in)
         : REPL_CHAR;
   }
