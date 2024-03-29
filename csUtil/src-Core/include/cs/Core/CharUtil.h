@@ -111,18 +111,12 @@ namespace cs {
     constexpr auto _a = static_cast<T>('a');
     constexpr auto _A = static_cast<T>('A');
 
-    constexpr T DIGBASE = static_cast<T>(BASE);
-    constexpr T LETBASE = static_cast<T>(BASE - 10);
+    constexpr T DIGRANGE = static_cast<T>(BASE > 10 ? 10 : BASE);
+    constexpr T LETRANGE = static_cast<T>(BASE > 10 ? BASE - 10 : 0);
 
-    return             (_0 <= c  &&  c < _0 + DIGBASE)  ||
-        (BASE > 10  &&  _a <= c  &&  c < _a + LETBASE)  ||
-        (BASE > 10  &&  _A <= c  &&  c < _A + LETBASE);
-  }
-
-  template<typename T> requires is_char_v<T>
-  constexpr bool isBinDigit(const T c)
-  {
-    return isDigit<T,2>(c);
+    return             (_0 <= c  &&  c < _0 + DIGRANGE)  ||
+        (BASE > 10  &&  _a <= c  &&  c < _a + LETRANGE)  ||
+        (BASE > 10  &&  _A <= c  &&  c < _A + LETRANGE);
   }
 
   template<typename T> requires is_char_v<T>

@@ -147,6 +147,32 @@ namespace stringutil {
     REQUIRE( !cs::isSpace(String(" \f\n\r\t\v-")) );
   }
 
+  TEST_CASE("Detect digets in various radices.", "[isDigit]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    constexpr char succ9 = '9' + 1;
+
+    REQUIRE(  cs::isDigit('0') );
+    REQUIRE(  cs::isDigit('9') );
+    REQUIRE( !cs::isDigit(succ9) );
+
+    REQUIRE(  cs::isHexDigit('0') );
+    REQUIRE(  cs::isHexDigit('9') );
+    REQUIRE( !cs::isHexDigit(succ9) );
+
+    REQUIRE(  cs::isHexDigit('a') );
+    REQUIRE(  cs::isHexDigit('f') );
+    REQUIRE( !cs::isHexDigit('g') );
+
+    REQUIRE(  cs::isHexDigit('A') );
+    REQUIRE(  cs::isHexDigit('F') );
+    REQUIRE( !cs::isHexDigit('G') );
+
+    REQUIRE(  cs::isOctDigit('0') );
+    REQUIRE(  cs::isOctDigit('7') );
+    REQUIRE( !cs::isOctDigit('8') );
+  }
+
   TEST_CASE("Remove patterns string.", "[removeAll]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
