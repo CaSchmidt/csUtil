@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include <cs/Math/Math.h>
+#include <cs/Core/TypeTraits.h>
 
 namespace cs {
 
@@ -47,11 +47,12 @@ namespace cs {
       cnt++;
       x /= BASE;
     } while( x != ZERO );
+
     return cnt;
   }
 
   template<typename T> requires is_integral_v<T>
-  constexpr bool isEven(const T& x)
+  constexpr bool isEven(const T x)
   {
     constexpr T  ONE = 1;
     constexpr T ZERO = 0;
@@ -60,7 +61,7 @@ namespace cs {
   }
 
   template<typename T> requires is_integral_v<T>
-  constexpr bool isOdd(const T& x)
+  constexpr bool isOdd(const T x)
   {
     constexpr T  ONE = 1;
     constexpr T ZERO = 0;
