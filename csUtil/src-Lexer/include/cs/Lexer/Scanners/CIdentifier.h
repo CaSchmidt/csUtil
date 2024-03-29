@@ -102,7 +102,7 @@ namespace cs {
       return ValueToken<String>::make(_id, str, pos);
     }
 
-    static ScannerPtr<value_type> make(const tokenid_t id, const size_type reserve = 1024)
+    static ScannerPtr<value_type> make(const tokenid_t id, const size_type reserve = 0)
     {
       return std::make_unique<CIdentifierScanner<value_type>>(id, reserve);
     }

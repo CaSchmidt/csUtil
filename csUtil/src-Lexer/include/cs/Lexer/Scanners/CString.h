@@ -120,7 +120,7 @@ namespace cs {
       return ValueToken<String>::make(_id, str, pos + ONE);
     }
 
-    static ScannerPtr<value_type> make(const tokenid_t id, const size_type reserve = 1024)
+    static ScannerPtr<value_type> make(const tokenid_t id, const size_type reserve = 0)
     {
       return std::make_unique<CStringScanner<value_type>>(id, reserve);
     }
