@@ -132,6 +132,12 @@ namespace cs {
   }
 
   template<typename T> requires is_char_v<T>
+  constexpr bool isOctDigit(const T c)
+  {
+    return isDigit<T,8>(c);
+  }
+
+  template<typename T> requires is_char_v<T>
   constexpr bool isLower(const T c)
   {
     return glyph<T>::a <= c  &&  c <= glyph<T>::z;
@@ -265,6 +271,14 @@ namespace cs {
   ////// Lambdas /////////////////////////////////////////////////////////////
 
   template<typename T> requires is_char_v<T>
+  constexpr auto lambda_is_digit()
+  {
+    return [](const T c) -> bool {
+      return isDigit(c);
+    };
+  }
+
+  template<typename T> requires is_char_v<T>
   constexpr auto lambda_eqI()
   {
     return [](const T a, const T b) -> bool {
@@ -285,6 +299,14 @@ namespace cs {
   {
     return [](const T c) -> bool {
       return isIdent(c);
+    };
+  }
+
+  template<typename T> requires is_char_v<T>
+  constexpr auto lambda_is_oct()
+  {
+    return [](const T c) -> bool {
+      return isOctDigit(c);
     };
   }
 
