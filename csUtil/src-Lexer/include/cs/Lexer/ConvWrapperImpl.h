@@ -62,10 +62,6 @@ namespace cs {
       inline static if_integral_t<T,Result<T>> toValue(const StringView& input,
                                                        const bool have_prefix = false)
       {
-        if( input.empty() ) {
-          return Result<T>{0, 0};
-        }
-
         const auto [base, prefix] = scanBasePrefix(input, have_prefix);
         {}
         if( base == 0 ) {
