@@ -13,6 +13,7 @@ namespace lexer {
   enum MyTokens : unsigned {
     TOK_Identifier = cs::Token::make_userid(1),
     TOK_Integral,
+    TOK_Real,
     TOK_String
   };
 
@@ -73,6 +74,66 @@ namespace lexer {
     tok = lexer.nextToken();
     REQUIRE( tok->id() == TOK_Integral );
     REQUIRE( cs::Token::to_value<unsigned>(tok) == unsigned{255} );
+
+    tok = lexer.nextToken();
+    REQUIRE( tok->id() == cs::TOK_EndOfInput );
+  }
+
+  TEST_CASE("Scan real values.", "[real]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    constexpr auto   _0p25  =  0x0.4p0;
+    constexpr auto   _1p0   =  0x1.0p0;
+    constexpr auto   _1p25  =  0x1.4p0;
+    constexpr auto  _25p0   = 0x19.0p0;
+    constexpr auto _100p0   = 0x64.0p0;
+    constexpr auto _125p0   = 0x7d.0p0;
+
+    ctx::Lexer lexer;
+    lexer.addScanner(ctx::CRealScanner<double>::make(TOK_Real));
+    lexer.initialize(" eE1 125E-2 .25 1.25 1. .25e2 1.25e2 1.E2  ");
+
+    ctx::Token tok;
+
+    tok = lexer.nextToken();
+    REQUIRE( tok->id() == cs::TOK_Unknown );
+    REQUIRE( cs::Token::to_value<char>(tok) == 'e' );
+
+    tok = lexer.nextToken();
+    REQUIRE( tok->id() == cs::TOK_Unknown );
+    REQUIRE( cs::Token::to_value<char>(tok) == 'E' );
+
+    tok = lexer.nextToken();
+    REQUIRE( tok->id() == cs::TOK_Unknown );
+    REQUIRE( cs::Token::to_value<char>(tok) == '1' );
+
+    tok = lexer.nextToken();
+    REQUIRE( tok->id() == TOK_Real );
+    REQUIRE( cs::Token::to_value<double>(tok) == _1p25 );
+
+    tok = lexer.nextToken();
+    REQUIRE( tok->id() == TOK_Real );
+    REQUIRE( cs::Token::to_value<double>(tok) == _0p25 );
+
+    tok = lexer.nextToken();
+    REQUIRE( tok->id() == TOK_Real );
+    REQUIRE( cs::Token::to_value<double>(tok) == _1p25 );
+
+    tok = lexer.nextToken();
+    REQUIRE( tok->id() == TOK_Real );
+    REQUIRE( cs::Token::to_value<double>(tok) == _1p0 );
+
+    tok = lexer.nextToken();
+    REQUIRE( tok->id() == TOK_Real );
+    REQUIRE( cs::Token::to_value<double>(tok) == _25p0 );
+
+    tok = lexer.nextToken();
+    REQUIRE( tok->id() == TOK_Real );
+    REQUIRE( cs::Token::to_value<double>(tok) == _125p0 );
+
+    tok = lexer.nextToken();
+    REQUIRE( tok->id() == TOK_Real );
+    REQUIRE( cs::Token::to_value<double>(tok) == _100p0 );
 
     tok = lexer.nextToken();
     REQUIRE( tok->id() == cs::TOK_EndOfInput );

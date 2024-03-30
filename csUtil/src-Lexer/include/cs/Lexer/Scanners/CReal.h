@@ -31,29 +31,56 @@
 
 #pragma once
 
-#include <cs/Lexer/Lexer.h>
-#include <cs/Lexer/Scanners/CIdentifier.h>
-#include <cs/Lexer/Scanners/CIntegral.h>
-#include <cs/Lexer/Scanners/CReal.h>
-#include <cs/Lexer/Scanners/CString.h>
+#include <cs/Lexer/ConvWrapperImpl.h>
+#include <cs/Lexer/Scanner.h>
+#include <cs/Lexer/ValueToken.h>
 
 namespace cs {
 
-  template<typename CharT>
-  struct LexerContext {
-    using value_type = CharT;
+  template<typename CharT, typename T>
+  class CRealScanner : public IScanner<CharT> {
+  private:
+    struct ctor_tag {
+      ctor_tag() noexcept = default;
+    };
 
-    using Lexer = Lexer<value_type>;
-    using Token = TokenPtr;
+  public:
+    using typename IScanner<CharT>::StringView;
+    using typename IScanner<CharT>::size_type;
+    using typename IScanner<CharT>::value_type;
 
-    template<typename T>
-    using CIntegralScanner = CIntegralScanner<value_type,T>;
+    using real_type = T;
 
-    template<typename T>
-    using CRealScanner = CRealScanner<value_type,T>;
+    CRealScanner(const tokenid_t id,
+                 const ctor_tag& = ctor_tag()) noexcept
+      : _id{id}
+    {
+    }
 
-    using CIdentifierScanner = CIdentifierScanner<value_type>;
-    using CStringScanner     = CStringScanner<value_type>;
+    ~CRealScanner() noexcept
+    {
+    }
+
+    TokenPtr scan(const StringView& input) const
+    {
+      using Conv = impl_lexer::ConvWrapper<CharT>;
+
+      const auto [value, consumed] = Conv::template toValue<real_type>(input);
+      {}
+      if( consumed == 0 ) {
+        return TokenPtr();
+      }
+
+      return ValueToken<real_type>::make(_id, value, consumed);
+    }
+
+    static ScannerPtr<value_type> make(const tokenid_t id)
+    {
+      return std::make_unique<CRealScanner<value_type,real_type>>(id);
+    }
+
+  private:
+    tokenid_t _id{0};
   };
 
 } // namespace cs

@@ -84,8 +84,33 @@ namespace cs {
         return Result<T>{value, consumed};
       }
 
+      template<typename T>
+      inline static if_real_t<T,Result<T>> toValue(const StringView& input)
+      {
+        if( !isRealPrefix(input) ) {
+          return Result<T>{0, 0};
+        }
+
+        Buffer buffer;
+        const auto [first, last] = makeRange(buffer, input, 0);
+        {}
+
+        T value{0};
+        const std::from_chars_result result =
+            std::from_chars(first, last, value, std::chars_format::general);
+        if( result.ec != std::errc{} ) {
+          return Result<T>{0, 0};
+        }
+
+        const size_type consumed = static_cast<size_type>(result.ptr - first);
+
+        return Result<T>{value, consumed};
+      }
+
     private:
       static_assert( std::is_unsigned_v<size_type> );
+
+      using g = glyph<value_type>;
 
       inline static size_type fillBuffer(Buffer& buffer,
                                          const StringView& input,
@@ -99,6 +124,52 @@ namespace cs {
         }
 
         return length;
+      }
+
+      /*
+       * Floating-Point numbers according to C99:
+       *
+       * floating-constant:
+       *   decimal-floating-constant
+       *   hexadecimal-floating-constant   <- out-of-scope!
+       *
+       * decimal-floating-constant:
+       *   fractional-constant exponent-part-OPT floating-suffix-OPT
+       *   digit-sequence exponent-part floating-suffix-OPT
+       *
+       * fractional-constant:
+       *   digit-sequence-OPT '.' digit-sequence
+       *   digit-sequence '.'
+       */
+      inline static bool isRealPrefix(const StringView& input)
+      {
+        for(size_type pos = 0; pos < input.size(); pos++) {
+          const value_type ch = input[pos];
+
+          if( isDigit(ch) ) {
+            continue;
+
+          } else if( ch == g::dot ) {
+            /*
+             * NOTE: Covers the cases:
+             *   digit-sequence-OPT '.' digit-sequence
+             *   digit-sequence '.'
+             */
+            return true;
+
+          } else if( (ch == g::e  ||  ch == g::E)  &&  pos > 0 ) {
+            /*
+             * NOTE: Covers the case:
+             *   digit-sequence exponent-part
+             */
+            return true;
+
+          } else {
+            break;
+          }
+        }
+
+        return false;
       }
 
       inline static Range makeRange(Buffer& buffer,
@@ -126,8 +197,6 @@ namespace cs {
       inline static BasePrefix scanBasePrefix(const StringView& input,
                                               const bool have_prefix)
       {
-        using g = glyph<value_type>;
-
         constexpr int BASE_DEC = 10;
         constexpr int BASE_HEX = 16;
         constexpr int BASE_OCT =  8;
