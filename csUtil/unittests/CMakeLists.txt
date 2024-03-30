@@ -68,6 +68,7 @@ cs_unittest(unittest_fileio src/unittest_fileio.cpp src/unittest_fileio_main.cpp
 cs_unittest(unittest_flags src/unittest_flags.cpp src/unittest_flags_main.cpp)
 cs_unittest(unittest_format src/unittest_format.cpp src/unittest_format_main.cpp)
 cs_unittest(unittest_hash src/unittest_hash.cpp src/unittest_hash_main.cpp)
+cs_unittest(unittest_lexer src/unittest_lexer.cpp src/unittest_lexer_main.cpp)
 cs_unittest(unittest_math src/unittest_math.cpp src/unittest_math_main.cpp)
 cs_unittest(unittest_meta src/unittest_meta.cpp src/unittest_meta_main.cpp)
 cs_unittest(unittest_n4 src/unittest_n4.cpp src/unittest_n4_main.cpp)
