@@ -31,11 +31,7 @@
 
 #pragma once
 
-#include <array>
-#include <charconv>
-#include <tuple>
-
-#include <cs/Core/CharUtil.h>
+#include <cs/Lexer/ConvWrapperImpl.h>
 #include <cs/Lexer/Scanner.h>
 #include <cs/Lexer/ValueToken.h>
 
@@ -68,42 +64,16 @@ namespace cs {
 
     TokenPtr scan(const StringView& input) const
     {
-      // (1) Sanity Check ////////////////////////////////////////////////////
+      using Conv = impl_lexer::ConvWrapper<CharT>;
 
-      if( input.empty() ) {
-        return TokenPtr();
-      }
-
-      // (2) Scan base & prefix //////////////////////////////////////////////
-
-      const auto [base, prefix] = scanBasePrefix(input);
+      const auto [value, consumed] = Conv::template toValue<intergral_type>(input, _prefix);
       {}
 
-      // (3) Collect Consecutive Digits //////////////////////////////////////
-
-      Buffer buffer;
-      const size_type numDigits = base == 8
-          ? scanDigits(buffer, input, prefix, lambda_is_oct<value_type>())
-          : base == 16
-            ? scanDigits(buffer, input, prefix, lambda_is_hex<value_type>())
-            : scanDigits(buffer, input, prefix, lambda_is_digit<value_type>());
-
-      if( numDigits == 0 ) {
+      if( consumed == 0 ) {
         return TokenPtr();
       }
 
-      // (4) Conversion //////////////////////////////////////////////////////
-
-      intergral_type value{0};
-      const std::from_chars_result result =
-          std::from_chars(buffer.data(), buffer.data() + numDigits, value, base);
-      if( result.ec != std::errc{} ) {
-        return TokenPtr();
-      }
-
-      // Done! ///////////////////////////////////////////////////////////////
-
-      return ValueToken<intergral_type>::make(_id, value, prefix + numDigits);
+      return ValueToken<intergral_type>::make(_id, value, consumed);
     }
 
     static ScannerPtr<value_type> make(const tokenid_t id, const bool prefix = false)
@@ -112,51 +82,6 @@ namespace cs {
     }
 
   private:
-    using BasePrefix = std::tuple<int,size_type>;
-    using Buffer = std::array<char,128>;
-
-    inline BasePrefix scanBasePrefix(const StringView& input) const
-    {
-      using g = glyph<value_type>;
-
-      constexpr int BASE_DEC = 10;
-      constexpr int BASE_HEX = 16;
-      constexpr int BASE_OCT =  8;
-
-      constexpr size_type ZERO = 0;
-      constexpr size_type  ONE = 1;
-      constexpr size_type  TWO = 2;
-
-      if( _prefix ) {
-        if(        input.size() > TWO  &&  input[0] == g::zero  &&
-                   (input[1] == g::x  ||  input[1] == g::X) ) {
-          return std::make_tuple(BASE_HEX, TWO);
-        } else if( input.size() > ONE  &&  input[0] == g::zero ) {
-          return std::make_tuple(BASE_OCT, ONE);
-        }
-      } // Prefix
-
-      return std::make_tuple(BASE_DEC, ZERO);
-    }
-
-    template<typename UnaryPred>
-    inline size_type scanDigits(Buffer& buffer, const StringView& input,
-                                const size_type prefix, UnaryPred is_digit) const
-    {
-      size_type pos = prefix;
-      for(size_type i = 0; i < buffer.size()  &&  pos < input.size(); i++, pos++) {
-        const value_type ch = input[pos];
-
-        if( is_digit(ch) ) {
-          buffer[i] = static_cast<Buffer::value_type>(ch);
-        } else {
-          break;
-        }
-      }
-
-      return pos - prefix;
-    }
-
     tokenid_t _id{0};
     bool      _prefix{false};
   };
