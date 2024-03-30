@@ -90,9 +90,9 @@ namespace cs {
 
       inline static size_type fillBuffer(Buffer& buffer,
                                          const StringView& input,
-                                         const size_type prefix = 0)
+                                         const size_type prefix)
       {
-        const size_type length = std::min(buffer.size(), input.size() - prefix);
+        const size_type length = maxLength(input, prefix);
 
         const value_type *src = input.data() + prefix;
         for(size_type i = 0; i < length; i++) {
@@ -112,15 +112,28 @@ namespace cs {
 
       inline static Range makeRange(Buffer& buffer,
                                     const StringView& input,
-                                    const size_type prefix = 0)
+                                    const size_type prefix)
       {
+        if constexpr( sizeof(value_type) == sizeof(Buffer::value_type) ) {
+          const char *first = reinterpret_cast<const char*>(input.data()) + prefix;
+          const char  *last = first + maxLength(input, prefix);
+
+          return Range{first, last};
+        }
+
         const size_type length = fillBuffer(buffer, input, prefix);
 
         return Range{buffer.data(), buffer.data() + length};
       }
 
+      inline static size_type maxLength(const StringView& input,
+                                        const size_type prefix)
+      {
+        return std::min(Buffer().size(), input.size() - prefix);
+      }
+
       inline static BasePrefix scanBasePrefix(const StringView& input,
-                                              const bool have_prefix = false)
+                                              const bool have_prefix)
       {
         using g = glyph<value_type>;
 

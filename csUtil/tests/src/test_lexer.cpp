@@ -49,7 +49,7 @@ int main(int argc, char **argv)
       "\n"
       " \"Hello, World!\";  \"\",\n"
       " 0_0ident9. _:\n"
-      "0, 123456789, 01777, 0xFf, 0XfF";
+      "+0, 123456789, 01777, 0xFf, 0XfF";
 
   printText(input, "input");
 
@@ -59,13 +59,15 @@ int main(int argc, char **argv)
   lexer.addScanner(ctx::CIntegralScanner<unsigned>::make(TOK_UInt, true));
   lexer.initialize(input);
 
+  constexpr bool DISP_UNKNOWN = false;
+
   for(ctx::Token tok = lexer.nextToken();
       tok->id() != cs::TOK_EndOfInput;
       tok = lexer.nextToken()) {
     if( !tok ) {
       cs::println("<nullptr>");
 
-    } else if( tok->id() == cs::TOK_Unknown ) {
+    } else if( tok->id() == cs::TOK_Unknown  &&  DISP_UNKNOWN ) {
       cs::println("UNKNOWN(%,%): '%'",
                   tok->line(),
                   tok->column(),
