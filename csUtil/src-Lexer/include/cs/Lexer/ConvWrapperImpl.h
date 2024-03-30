@@ -105,14 +105,6 @@ namespace cs {
         return length;
       }
 
-      inline static bool isSignPrefix(const StringView& input)
-      {
-        constexpr auto MINUS = static_cast<value_type>('-');
-        constexpr auto PLUS  = static_cast<value_type>('+');
-
-        return !input.empty()  &&  (input[0] == MINUS  ||  input[0] == PLUS);
-      }
-
       inline static Range makeRange(Buffer& buffer,
                                     const StringView& input,
                                     const size_type prefix)
