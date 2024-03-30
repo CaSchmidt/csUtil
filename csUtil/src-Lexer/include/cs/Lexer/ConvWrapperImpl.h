@@ -62,12 +62,15 @@ namespace cs {
       inline static if_integral_t<T,Result<T>> toValue(const StringView& input,
                                                        const bool have_prefix = false)
       {
-        if( input.empty()  ||  isSignPrefix(input) ) {
+        if( input.empty() ) {
           return Result<T>{0, 0};
         }
 
         const auto [base, prefix] = scanBasePrefix(input, have_prefix);
         {}
+        if( base == 0 ) {
+          return Result<T>{0, 0};
+        }
 
         Buffer buffer;
         const auto [first, last] = makeRange(buffer, input, prefix);
@@ -116,7 +119,7 @@ namespace cs {
       {
         if constexpr( sizeof(value_type) == sizeof(Buffer::value_type) ) {
           const char *first = reinterpret_cast<const char*>(input.data()) + prefix;
-          const char  *last = first + maxLength(input, prefix);
+          const char  *last = first + input.size() - prefix;
 
           return Range{first, last};
         }
@@ -156,7 +159,11 @@ namespace cs {
           }
         } // Prefix
 
-        return BasePrefix{BASE_DEC, ZERO};
+        if( input.size() > ZERO  &&  isDigit(input[0]) ) {
+          return BasePrefix{BASE_DEC, ZERO};
+        }
+
+        return BasePrefix{0, 0};
       }
     };
 

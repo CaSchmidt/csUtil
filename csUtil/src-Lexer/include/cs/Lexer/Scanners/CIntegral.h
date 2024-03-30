@@ -68,7 +68,6 @@ namespace cs {
 
       const auto [value, consumed] = Conv::template toValue<intergral_type>(input, _prefix);
       {}
-
       if( consumed == 0 ) {
         return TokenPtr();
       }
