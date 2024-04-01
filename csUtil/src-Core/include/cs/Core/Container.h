@@ -31,9 +31,26 @@
 
 #pragma once
 
+#include <algorithm>
+#include <type_traits>
 #include <utility>
 
 namespace cs {
+
+  ////// Traits //////////////////////////////////////////////////////////////
+
+  template<typename C, typename = void>
+  struct is_sortable : std::false_type { };
+
+  template<typename C>
+  struct is_sortable<C,std::void_t<decltype((void)std::declval<C>().sort(),bool{})>> : std::true_type { };
+
+  template<typename C>
+  inline constexpr bool is_sortable_v = is_sortable<C>::value;
+
+  ////// Functions ///////////////////////////////////////////////////////////
+
+  // resize() Container... ///////////////////////////////////////////////////
 
   template<typename C>
   inline bool resize(C& container,
@@ -79,6 +96,36 @@ namespace cs {
 
     return container.size() == count;
   }
+
+  // sort() Container... /////////////////////////////////////////////////////
+
+  template<typename C>
+  inline std::enable_if_t<!is_sortable_v<C>,void> sort(C& container)
+  {
+    std::sort(container.begin(), container.end());
+  }
+
+  template<typename C, typename Compare>
+  inline std::enable_if_t<!is_sortable_v<C>,void> sort(C& container,
+                                                       Compare cmp)
+  {
+    std::sort(container.begin(), container.end(), cmp);
+  }
+
+  template<typename C>
+  inline std::enable_if_t<is_sortable_v<C>,void> sort(C& container)
+  {
+    container.sort();
+  }
+
+  template<typename C, typename Compare>
+  inline std::enable_if_t<is_sortable_v<C>,void> sort(C& container,
+                                                      Compare cmp)
+  {
+    container.sort(cmp);
+  }
+
+  // takeFirst() Element of Container... /////////////////////////////////////
 
   template<typename C>
   inline typename C::value_type takeFirst(C& container,
