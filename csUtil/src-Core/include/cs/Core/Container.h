@@ -58,8 +58,6 @@ namespace cs {
   {
     constexpr typename C::size_type ONE = 1;
 
-    container.clear();
-
     if( count < ONE ) {
       return false;
     }
@@ -80,8 +78,6 @@ namespace cs {
                      const typename C::value_type& value)
   {
     constexpr typename C::size_type ONE = 1;
-
-    container.clear();
 
     if( count < ONE ) {
       return false;
