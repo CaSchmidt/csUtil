@@ -11,11 +11,13 @@
 #include <catch.hpp>
 
 #include <cs/Core/Container.h>
+#include <cs/Text/PrintUtil.h>
 
 namespace container {
 
   using Greater = std::greater<void>;
 
+  using  size_type = std::size_t;
   using value_type = int;
 
   using List   = std::list<value_type>;
@@ -31,6 +33,26 @@ namespace container {
   inline C init()
   {
     return C{3, 1, 2};
+  }
+
+  TEST_CASE("Reserve capacity of containers.", "[reserve]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    constexpr size_type SIZE = 127;
+
+    {
+      REQUIRE( !cs::is_reservable_v<List> );
+    }
+
+    {
+      REQUIRE( cs::is_reservable_v<Vector> );
+
+      Vector v;
+
+      cs::reserve(v, SIZE);
+      cs::println("capacity = %", v.capacity());
+      REQUIRE( v.capacity() >= SIZE );
+    }
   }
 
   TEST_CASE("Sort containers.", "[sort]") {

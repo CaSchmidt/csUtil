@@ -40,6 +40,15 @@ namespace cs {
   ////// Traits //////////////////////////////////////////////////////////////
 
   template<typename C, typename = void>
+  struct is_reservable : std::false_type { };
+
+  template<typename C>
+  struct is_reservable<C,std::void_t<decltype((void)std::declval<C>().reserve(1),bool{})>> : std::true_type { };
+
+  template<typename C>
+  inline constexpr bool is_reservable_v = is_reservable<C>::value;
+
+  template<typename C, typename = void>
   struct is_sortable : std::false_type { };
 
   template<typename C>
@@ -49,6 +58,26 @@ namespace cs {
   inline constexpr bool is_sortable_v = is_sortable<C>::value;
 
   ////// Functions ///////////////////////////////////////////////////////////
+
+  // reserve() Container of Capacity... //////////////////////////////////////
+
+  template<typename C>
+  inline std::enable_if_t<!is_reservable_v<C>,void> reserve(C& /*container*/,
+                                                            const typename C::size_type /*cap*/)
+  {
+    // Container does not implement C::reserve()!
+  }
+
+  template<typename C>
+  inline std::enable_if_t<is_reservable_v<C>,void> reserve(C& container,
+                                                           const typename C::size_type cap)
+  {
+    try {
+      container.reserve(cap);
+    } catch( ... ) {
+      container.clear();
+    }
+  }
 
   // resize() Container... ///////////////////////////////////////////////////
 
@@ -64,7 +93,7 @@ namespace cs {
 
     try {
       container.resize(count);
-    } catch(...) {
+    } catch( ... ) {
       container.clear();
       return false;
     }
@@ -85,7 +114,7 @@ namespace cs {
 
     try {
       container.resize(count, value);
-    } catch(...) {
+    } catch( ... ) {
       container.clear();
       return false;
     }
@@ -135,7 +164,7 @@ namespace cs {
     try {
       result = std::move(container.front());
       container.pop_front();
-    } catch(...) {
+    } catch( ... ) {
       return defValue;
     }
 
