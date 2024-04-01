@@ -1,5 +1,6 @@
 list(APPEND csText_HEADERS
   include/cs/Text/KeyValue.h
+  include/cs/Text/MixIn.h
   include/cs/Text/Print.h
   include/cs/Text/PrintFormat.h
   include/cs/Text/PrintUtil.h
