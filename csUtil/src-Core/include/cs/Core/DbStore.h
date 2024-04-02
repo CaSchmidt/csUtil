@@ -112,9 +112,14 @@ namespace cs {
 
     // Generic DB Interface //////////////////////////////////////////////////
 
+    void clear()
+    {
+      _store.clear();
+    }
+
     bool contains(const key_type id) const
     {
-      return _store.contains(id);
+      return _store.count(id) > 0;
     }
 
     bool isEmpty() const
@@ -176,11 +181,11 @@ namespace cs {
         return false;
       }
 
-      const auto result = _store.emplace(std::move(item.id()), std::move(item));
+      _store[item.id()] = std::move(item);
 
       setModified();
 
-      return result.second;
+      return true;
     }
 
     item_type& find(const key_type id)
