@@ -40,19 +40,34 @@ namespace cs {
 
   ////// Key Traits //////////////////////////////////////////////////////////
 
-  template<typename T>
-  requires std::is_unsigned_v<T>
-  struct DbKeyTraits {
+  template<typename T = unsigned>
+  requires std::is_integral_v<T>
+  struct DbIntegralKeyTraits {
     using value_type = T;
 
-    static constexpr value_type INVALID_KEY = 0;
+    static constexpr bool isValid(const value_type id)
+    {
+      return id > 0;
+    }
+
+    static constexpr value_type makeInvalid()
+    {
+      return 0;
+    }
+
+    static constexpr value_type makeNext(const value_type id)
+    {
+      constexpr value_type ONE = 1;
+
+      return id + ONE;
+    }
   };
 
   ////// Item ////////////////////////////////////////////////////////////////
 
-  template<typename DerivedT, typename KeyT>
-  struct DbItem : cs::CRTPbase<DbItem<DerivedT,KeyT>> {
-    using traits_type = DbKeyTraits<KeyT>;
+  template<typename DerivedT, typename KeyTraitsT>
+  struct DbItem : cs::CRTPbase<DbItem<DerivedT,KeyTraitsT>> {
+    using traits_type = KeyTraitsT;
     using    key_type = typename traits_type::value_type;
 
     inline key_type id() const
@@ -62,7 +77,7 @@ namespace cs {
 
     inline bool isValid() const
     {
-      return id() != traits_type::INVALID_KEY  &&  this->as_derived().impl_isValid();
+      return traits_type::isValid(id())  &&  this->as_derived().impl_isValid();
     }
 
     inline explicit operator bool() const
@@ -91,7 +106,7 @@ namespace cs {
     using DirtyHandler = std::function<void(void)>;
 
     DbStore() noexcept
-      : _dummy(traits_type::INVALID_KEY)
+      : _dummy(traits_type::makeInvalid())
     {
     }
 
@@ -117,7 +132,7 @@ namespace cs {
       _store.clear();
     }
 
-    bool contains(const key_type id) const
+    bool contains(const key_type& id) const
     {
       return _store.count(id) > 0;
     }
@@ -129,12 +144,12 @@ namespace cs {
 
     bool isValid(const bool check_data = true) const
     {
-      if( _dummy.id() != traits_type::INVALID_KEY ) {
+      if( traits_type::isValid(_dummy.id()) ) {
         return false;
       }
 
       for(const value_type& item : _store) {
-        if( item.first == traits_type::INVALID_KEY ) {
+        if( !traits_type::isValid(item.first) ) {
           return false;
         }
 
@@ -152,8 +167,6 @@ namespace cs {
 
     key_type nextKey() const
     {
-      constexpr key_type ONE = 1;
-
       constexpr auto lambda_less = [](const value_type& a, const value_type& b) -> bool {
         return a.second.id() < b.second.id();
       };
@@ -163,8 +176,8 @@ namespace cs {
                                                   lambda_less);
 
       return hit != _store.cend()
-          ? hit->second.id() + ONE
-          : ONE;
+          ? traits_type::makeNext(hit->second.id())
+          : traits_type::makeNext(traits_type::makeInvalid());
     }
 
     size_type size() const
@@ -188,7 +201,8 @@ namespace cs {
       return true;
     }
 
-    item_type& find(const key_type id)
+#if 0
+    item_type& find(const key_type& id)
     {
       const iterator hit = _store.find(id);
 
@@ -200,9 +214,10 @@ namespace cs {
           ? hit->second
           : _dummy;
     }
+#endif
 
     // CRUD: read
-    const item_type& find(const key_type id) const
+    const item_type& find(const key_type& id) const
     {
       const const_iterator hit = _store.find(id);
 
@@ -212,7 +227,7 @@ namespace cs {
     }
 
     // CRUD: delete
-    bool remove(const key_type id)
+    bool remove(const key_type& id)
     {
       const size_type count = _store.erase(id);
 
