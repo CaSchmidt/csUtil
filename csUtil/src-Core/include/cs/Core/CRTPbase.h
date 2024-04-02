@@ -43,7 +43,7 @@ namespace cs {
   struct CRTPbase {
   };
 
-  template<template <typename...> typename MixInT, typename DerivedT, typename ...Args>
+  template<template<typename...> typename MixInT, typename DerivedT, typename ...Args>
   struct CRTPbase<MixInT<DerivedT,Args...>> {
     inline DerivedT& as_derived()
     {
