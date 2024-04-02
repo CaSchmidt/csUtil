@@ -38,6 +38,8 @@
 
 namespace cs {
 
+  ////// Key Traits //////////////////////////////////////////////////////////
+
   template<typename T>
   requires std::is_unsigned_v<T>
   struct DbKeyTraits {
@@ -45,6 +47,8 @@ namespace cs {
 
     static constexpr value_type INVALID_KEY = 0;
   };
+
+  ////// Item ////////////////////////////////////////////////////////////////
 
   template<typename DerivedT, typename KeyT>
   struct DbItem : cs::CRTPbase<DbItem<DerivedT,KeyT>> {
@@ -66,6 +70,8 @@ namespace cs {
       return isValid();
     }
   };
+
+  ////// Store ///////////////////////////////////////////////////////////////
 
   template<typename ItemT,
            template<typename...> typename StoreT>
@@ -99,6 +105,23 @@ namespace cs {
     DbStore(DbStore&&) noexcept = default;
     DbStore& operator=(DbStore&&) noexcept = default;
 
+    void setDirtyHandler(DirtyHandler handler)
+    {
+      _setDirty = handler;
+    }
+
+    // Generic DB Interface //////////////////////////////////////////////////
+
+    bool contains(const key_type id) const
+    {
+      return _store.contains(id);
+    }
+
+    bool isEmpty() const
+    {
+      return _store.empty();
+    }
+
     bool isValid(const bool check_data = true) const
     {
       if( _dummy.id() != traits_type::INVALID_KEY ) {
@@ -122,42 +145,6 @@ namespace cs {
       return true;
     }
 
-    bool add(item_type item)
-    {
-      if( !item  ||  contains(item.id()) ) {
-        return false;
-      }
-
-      const auto result = _store.emplace(std::move(item.id()), std::move(item));
-
-      setModified();
-
-      return result.second;
-    }
-
-    bool contains(const key_type id) const
-    {
-      return _store.contains(id);
-    }
-
-    item_type& find(const key_type id)
-    {
-      const iterator hit = _store.find(id);
-
-      return hit != _store.end()
-          ? hit->second
-          : _dummy;
-    }
-
-    const item_type& find(const key_type id) const
-    {
-      const const_iterator hit = _store.find(id);
-
-      return hit != _store.cend()
-          ? hit->second
-          : _dummy;
-    }
-
     key_type nextKey() const
     {
       constexpr key_type ONE = 1;
@@ -175,6 +162,51 @@ namespace cs {
           : ONE;
     }
 
+    size_type size() const
+    {
+      return _store.size();
+    }
+
+    // CRUD Interface ////////////////////////////////////////////////////////
+
+    // CRUD: create
+    bool add(item_type item)
+    {
+      if( !item  ||  contains(item.id()) ) {
+        return false;
+      }
+
+      const auto result = _store.emplace(std::move(item.id()), std::move(item));
+
+      setModified();
+
+      return result.second;
+    }
+
+    item_type& find(const key_type id)
+    {
+      const iterator hit = _store.find(id);
+
+      if( hit != _store.end() ) {
+        setModified();
+      }
+
+      return hit != _store.end()
+          ? hit->second
+          : _dummy;
+    }
+
+    // CRUD: read
+    const item_type& find(const key_type id) const
+    {
+      const const_iterator hit = _store.find(id);
+
+      return hit != _store.cend()
+          ? hit->second
+          : _dummy;
+    }
+
+    // CRUD: delete
     bool remove(const key_type id)
     {
       const size_type count = _store.erase(id);
@@ -184,6 +216,7 @@ namespace cs {
       return count > 0;
     }
 
+    // CRUD: update
     bool set(item_type item)
     {
       if( !item  ||  !contains(item.id()) ) {
@@ -195,11 +228,6 @@ namespace cs {
       setModified();
 
       return true;
-    }
-
-    size_type size() const
-    {
-      return _store.size();
     }
 
   private:
