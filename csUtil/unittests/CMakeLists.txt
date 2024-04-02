@@ -64,6 +64,7 @@ cs_unittest(unittest_bytearray src/unittest_bytearray.cpp src/unittest_bytearray
 cs_unittest(unittest_concurrent src/unittest_concurrent.cpp src/unittest_concurrent_main.cpp)
 cs_unittest(unittest_container src/unittest_container.cpp src/unittest_container_main.cpp)
 cs_unittest(unittest_crc src/unittest_crc.cpp src/unittest_crc_main.cpp)
+cs_unittest(unittest_db src/unittest_db.cpp src/unittest_db_main.cpp)
 cs_unittest(unittest_endian src/unittest_endian.cpp src/unittest_endian_impl.cpp src/unittest_endian_main.cpp)
 cs_unittest(unittest_fileio src/unittest_fileio.cpp src/unittest_fileio_main.cpp)
 cs_unittest(unittest_flags src/unittest_flags.cpp src/unittest_flags_main.cpp)

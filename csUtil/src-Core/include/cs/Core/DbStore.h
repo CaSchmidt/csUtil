@@ -165,15 +165,47 @@ namespace cs {
       return true;
     }
 
+    template<template<typename...> typename C>
+    C<item_type> list() const
+    {
+      if( isEmpty() ) {
+        return C<item_type>();
+      }
+
+      C<item_type> result;
+      reserve(result, size());
+
+      for(const value_type& v : _store) {
+        result.push_back(v.second);
+      }
+
+      return result;
+    }
+
+    template<template<typename...> typename C>
+    C<key_type> listKeys() const
+    {
+      if( isEmpty() ) {
+        return C<key_type>();
+      }
+
+      C<key_type> result;
+      reserve(result, size());
+
+      for(const value_type& v : _store) {
+        result.push_back(v.second.id());
+      }
+
+      sort(result);
+
+      return result;
+    }
+
     key_type nextKey() const
     {
-      constexpr auto lambda_less = [](const value_type& a, const value_type& b) -> bool {
-        return a.second.id() < b.second.id();
-      };
-
       const const_iterator hit = std::max_element(_store.cbegin(),
                                                   _store.cend(),
-                                                  lambda_less);
+                                                  value_less);
 
       return hit != _store.cend()
           ? traits_type::makeNext(hit->second.id())
@@ -251,6 +283,10 @@ namespace cs {
     }
 
   private:
+    static constexpr auto value_less = [](const value_type& a, const value_type& b) -> bool {
+      return a.second.id() < b.second.id();
+    };
+
     void setModified()
     {
       if( _setDirty ) {
