@@ -16,6 +16,26 @@
 
 namespace util {
 
+  template<typename DB_t>
+  void print(const DB_t& db,
+             const typename DB_t::key_type& id)
+  {
+    cs::println("find(%): %", id, db.find(id).toString());
+  }
+
+  template<typename DB_t>
+  void print(const DB_t& db)
+  {
+    const auto keys = db.template listKeys<std::list>();
+    for(const typename DB_t::key_type& key : keys) {
+      print(db, key);
+    }
+  }
+
+} // namespace util
+
+namespace db_integral {
+
   struct Item
       : cs::DbItem<Item,cs::DbIntegralKeyTraits<>>
       , cs::ToStringMixIn<Item> {
@@ -55,32 +75,15 @@ namespace util {
 
   using DB = cs::DbStore<Item,std::unordered_map>;
 
-  void print(const DB& db, const DB::key_type id)
-  {
-    cs::println("find(%): %", id, db.find(id).toString());
-  }
-
-  void print(const DB& db)
-  {
-    const auto keys = db.listKeys<std::list>();
-    for(const DB::key_type key : keys) {
-      print(db, key);
-    }
-  }
-
-} // namespace util
-
-namespace db {
-
-  using key_type = util::DB::key_type;
+  using key_type = DB::key_type;
 
   TEST_CASE("Various DB operations (integral key).", "[integral]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
-    util::DB db;
+    DB db;
 
     {
-      util::Item item = util::Item(db.nextKey());
+      Item item = Item(db.nextKey());
       REQUIRE( item.id() == 1 );
 
       REQUIRE( !db.add(item) );
@@ -90,10 +93,13 @@ namespace db {
     { // create
       cs::println("CRUD: create");
 
+      REQUIRE( db.nextKey() == 1 );
       REQUIRE( db.add({db.nextKey(), "one"}) );
 
+      REQUIRE( db.nextKey() == 2 );
       REQUIRE( db.add({db.nextKey(), "two"}) );
 
+      REQUIRE( db.nextKey() == 3 );
       REQUIRE( db.add({db.nextKey(), "three"}) );
 
       REQUIRE( db.size() == 3 );
@@ -118,7 +124,8 @@ namespace db {
 
       const auto keys = db.listKeys<std::vector>();
       for(const key_type key : keys) {
-        const util::Item old = db.find(key);
+        const Item old = db.find(key);
+        REQUIRE( !db.set({old.id()}) ); // Invalid; omits 'name'!
         REQUIRE( db.set({old.id(), cs::toUpper(old.name)}) );
         REQUIRE( db.find(key).name == cs::toUpper(old.name) );
         util::print(db, key);
@@ -137,4 +144,4 @@ namespace db {
     }
   }
 
-} // namespace db
+} // namespace db_integral
