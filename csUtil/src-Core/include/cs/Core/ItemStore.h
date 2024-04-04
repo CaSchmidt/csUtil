@@ -61,15 +61,24 @@ namespace cs {
     }
   };
 
+  template<typename KeyTraitsT, typename ItemT>
+  struct is_item : std::bool_constant<
+      std::is_same_v<typename KeyTraitsT::value_type,decltype(std::declval<ItemT>().id())>
+  > { };
+
+  template<typename KeyTraitsT, typename ItemT>
+  inline constexpr bool is_item_v = is_item<KeyTraitsT,ItemT>::value;
+
   ////// Store ///////////////////////////////////////////////////////////////
 
   template<typename ItemT,
            template<typename...> typename StoreT>
+  requires is_item_v<typename ItemT::traits_type,ItemT>
   class ItemStore {
   public:
     using   item_type = ItemT;
     using traits_type = typename item_type::traits_type;
-    using    key_type = typename item_type::key_type;
+    using    key_type = typename traits_type::value_type;
 
     using store_type = StoreT<key_type,item_type>;
     using  size_type = typename store_type::size_type;
