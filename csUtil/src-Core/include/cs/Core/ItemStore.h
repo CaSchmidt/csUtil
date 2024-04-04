@@ -38,35 +38,10 @@
 
 namespace cs {
 
-  ////// Key Traits //////////////////////////////////////////////////////////
-
-  template<typename T = unsigned>
-  requires std::is_integral_v<T>
-  struct DbIntegralKeyTraits {
-    using value_type = T;
-
-    static constexpr bool isValid(const value_type id)
-    {
-      return id > 0;
-    }
-
-    static constexpr value_type makeInvalid()
-    {
-      return 0;
-    }
-
-    static constexpr value_type makeNext(const value_type id)
-    {
-      constexpr value_type ONE = 1;
-
-      return id + ONE;
-    }
-  };
-
   ////// Item ////////////////////////////////////////////////////////////////
 
   template<typename DerivedT, typename KeyTraitsT>
-  struct DbItem : cs::CRTPbase<DbItem<DerivedT,KeyTraitsT>> {
+  struct AbstractItem : cs::CRTPbase<AbstractItem<DerivedT,KeyTraitsT>> {
     using traits_type = KeyTraitsT;
     using    key_type = typename traits_type::value_type;
 
@@ -90,7 +65,7 @@ namespace cs {
 
   template<typename ItemT,
            template<typename...> typename StoreT>
-  class DbStore {
+  class ItemStore {
   public:
     using   item_type = ItemT;
     using traits_type = typename item_type::traits_type;
@@ -105,20 +80,20 @@ namespace cs {
 
     using DirtyHandler = std::function<void(void)>;
 
-    DbStore() noexcept
+    ItemStore() noexcept
       : _dummy(traits_type::makeInvalid())
     {
     }
 
-    ~DbStore() noexcept
+    ~ItemStore() noexcept
     {
     }
 
-    DbStore(const DbStore&) noexcept = default;
-    DbStore& operator=(const DbStore&) noexcept = default;
+    ItemStore(const ItemStore&) noexcept = default;
+    ItemStore& operator=(const ItemStore&) noexcept = default;
 
-    DbStore(DbStore&&) noexcept = default;
-    DbStore& operator=(DbStore&&) noexcept = default;
+    ItemStore(ItemStore&&) noexcept = default;
+    ItemStore& operator=(ItemStore&&) noexcept = default;
 
     void setDirtyHandler(DirtyHandler handler)
     {

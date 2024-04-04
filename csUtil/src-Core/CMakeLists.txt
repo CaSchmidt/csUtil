@@ -7,10 +7,10 @@ list(APPEND csCore_HEADERS
   include/cs/Core/Container.h
   include/cs/Core/CRC.h
   include/cs/Core/CRTPbase.h
-  include/cs/Core/DbStore.h
-  include/cs/Core/DbStoreUtil.h
   include/cs/Core/Endian.h
   include/cs/Core/Flags.h
+  include/cs/Core/ItemStore.h
+  include/cs/Core/ItemStoreUtil.h
   include/cs/Core/Iterator.h
   include/cs/Core/Meta.h
   include/cs/Core/Pointer.h

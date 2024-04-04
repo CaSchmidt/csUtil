@@ -9,7 +9,7 @@
 
 #include <catch.hpp>
 
-#include <cs/Core/DbStoreUtil.h>
+#include <cs/Core/ItemStoreUtil.h>
 #include <cs/Text/MixIn.h>
 #include <cs/Text/PrintUtil.h>
 #include <cs/Text/StringUtil.h>
@@ -37,11 +37,11 @@ namespace util {
 namespace db_integral {
 
   struct Item
-      : cs::DbItem<Item,cs::DbIntegralKeyTraits<>>
+      : cs::AbstractItem<Item,cs::IntegralItemKeyTraits<>>
       , cs::ToStringMixIn<Item> {
   public:
-    using DbItem::key_type;
-    using DbItem::traits_type;
+    using AbstractItem::key_type;
+    using AbstractItem::traits_type;
 
     Item(const key_type id = traits_type::makeInvalid(),
          const std::string& name = std::string()) noexcept
@@ -58,7 +58,7 @@ namespace db_integral {
     std::string name;
 
   private:
-    friend DbItem;
+    friend AbstractItem;
 
     inline key_type impl_id() const
     {
@@ -73,7 +73,7 @@ namespace db_integral {
     key_type _id{traits_type::makeInvalid()};
   };
 
-  using DB = cs::DbStore<Item,std::unordered_map>;
+  using DB = cs::ItemStore<Item,std::unordered_map>;
 
   using key_type = DB::key_type;
 
@@ -150,11 +150,11 @@ namespace db_integral {
 namespace db_string {
 
   struct Item
-      : cs::DbItem<Item,cs::DbStringKeyTraits<>>
+      : cs::AbstractItem<Item,cs::StringItemKeyTraits<>>
       , cs::ToStringMixIn<Item> {
   public:
-    using DbItem::key_type;
-    using DbItem::traits_type;
+    using AbstractItem::key_type;
+    using AbstractItem::traits_type;
 
     Item(const key_type& id = traits_type::makeInvalid(),
          const std::string& name = std::string()) noexcept
@@ -171,7 +171,7 @@ namespace db_string {
     std::string name;
 
   private:
-    friend DbItem;
+    friend AbstractItem;
 
     inline key_type impl_id() const
     {
@@ -186,7 +186,7 @@ namespace db_string {
     key_type _id;
   };
 
-  using DB = cs::DbStore<Item,std::unordered_map>;
+  using DB = cs::ItemStore<Item,std::unordered_map>;
 
   using key_type = DB::key_type;
 

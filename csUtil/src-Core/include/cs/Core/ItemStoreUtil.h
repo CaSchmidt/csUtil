@@ -33,12 +33,35 @@
 
 #include <string>
 
-#include <cs/Core/DbStore.h>
+#include <cs/Core/ItemStore.h>
 
 namespace cs {
 
+  template<typename T = unsigned>
+  requires std::is_integral_v<T>
+  struct IntegralItemKeyTraits {
+    using value_type = T;
+
+    static constexpr bool isValid(const value_type id)
+    {
+      return id > 0;
+    }
+
+    static constexpr value_type makeInvalid()
+    {
+      return 0;
+    }
+
+    static constexpr value_type makeNext(const value_type id)
+    {
+      constexpr value_type ONE = 1;
+
+      return id + ONE;
+    }
+  };
+
   template<typename CharT = char>
-  struct DbStringKeyTraits {
+  struct StringItemKeyTraits {
     using value_type = std::basic_string<CharT>;
 
     static inline bool isValid(const value_type& id)
