@@ -6,7 +6,7 @@
 #include <iterator>
 #include <sstream>
 
-#include <catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 
 #include <cs/Text/StringValue.h>
 

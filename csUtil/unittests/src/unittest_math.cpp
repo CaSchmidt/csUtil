@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <iostream>
 
-#include <catch.hpp>
+#include <catch2/catch_template_test_macros.hpp>
 
 #include <cs/Core/Constants.h>
 #include <cs/Math/Compare.h>

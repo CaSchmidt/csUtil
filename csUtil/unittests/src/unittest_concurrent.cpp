@@ -2,7 +2,7 @@
 #include <iostream>
 #include <numeric>
 
-#include <catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 
 #include <cs/Concurrent/Map.h>
 #include <cs/Concurrent/MapReduce.h>

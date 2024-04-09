@@ -1,3 +1,21 @@
+### Dependencies #############################################################
+
+add_subdirectory(${csUtil_SOURCE_DIR}/3rdparty/Catch2-3.5.3
+  ${csUtil_BINARY_DIR}/3rdparty/Catch2-3.5.3
+)
+
+format_output_name(Catch2 "Catch2")
+format_output_name(Catch2WithMain "Catch2WithMain")
+
+set_target_properties(Catch2 Catch2WithMain
+  PROPERTIES
+  CXX_STANDARD 17
+  CXX_STANDARD_REQUIRED ON
+  DEBUG_POSTFIX ""
+)
+
+### Macros ###################################################################
+
 macro(cs_unittest target)
   set(sources ${ARGN})
   add_executable(${target} ${sources})
@@ -13,10 +31,8 @@ macro(cs_unittest target)
   endif()
   target_include_directories(${target}
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
-    PRIVATE ${csUtil_SOURCE_DIR}/3rdparty/catch2/include
-    PRIVATE ${csUtil_SOURCE_DIR}/testutils/include
   )
-  target_link_libraries(${target} csUtil)
+  target_link_libraries(${target} csUtil Catch2WithMain)
   if(CMAKE_COMPILER_IS_GNUCC  OR  CMAKE_COMPILER_IS_GNUCXX)
     target_compile_options(${target}
       PRIVATE -Wall
@@ -57,36 +73,36 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../testdata/Word-List.txt
   DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/testdata
 )
 
-cs_unittest(unittest_aes src/unittest_aes.cpp src/unittest_aes_main.cpp)
-cs_unittest(unittest_bit src/unittest_bit.cpp src/unittest_bit_main.cpp)
-cs_unittest(unittest_bufferedreader src/unittest_bufferedreader.cpp src/unittest_bufferedreader_main.cpp)
-cs_unittest(unittest_bytearray src/unittest_bytearray.cpp src/unittest_bytearray_main.cpp)
-cs_unittest(unittest_concurrent src/unittest_concurrent.cpp src/unittest_concurrent_main.cpp)
-cs_unittest(unittest_container src/unittest_container.cpp src/unittest_container_main.cpp)
-cs_unittest(unittest_crc src/unittest_crc.cpp src/unittest_crc_main.cpp)
-cs_unittest(unittest_db src/unittest_db.cpp src/unittest_db_main.cpp)
-cs_unittest(unittest_endian src/unittest_endian.cpp src/unittest_endian_impl.cpp src/unittest_endian_main.cpp)
-cs_unittest(unittest_fileio src/unittest_fileio.cpp src/unittest_fileio_main.cpp)
-cs_unittest(unittest_flags src/unittest_flags.cpp src/unittest_flags_main.cpp)
-cs_unittest(unittest_format src/unittest_format.cpp src/unittest_format_main.cpp)
-cs_unittest(unittest_hash src/unittest_hash.cpp src/unittest_hash_main.cpp)
-cs_unittest(unittest_lexer src/unittest_lexer.cpp src/unittest_lexer_main.cpp)
-cs_unittest(unittest_math src/unittest_math.cpp src/unittest_math_main.cpp)
-cs_unittest(unittest_meta src/unittest_meta.cpp src/unittest_meta_main.cpp)
-cs_unittest(unittest_n4 src/unittest_n4.cpp src/unittest_n4_main.cpp)
-cs_unittest(unittest_numeric src/unittest_numeric.cpp src/unittest_numeric_main.cpp)
-cs_unittest(unittest_pointer src/unittest_pointer.cpp src/unittest_pointer_main.cpp)
-cs_unittest(unittest_serialization src/unittest_serialization.cpp src/unittest_serialization_main.cpp)
-cs_unittest(unittest_simd src/unittest_simd.cpp src/unittest_simd_main.cpp)
-cs_unittest(unittest_statistics src/unittest_statistics.cpp src/unittest_statistics_main.cpp)
-cs_unittest(unittest_stringutil src/unittest_stringutil.cpp src/unittest_stringutil_main.cpp)
-cs_unittest(unittest_stringvalue src/unittest_stringvalue.cpp src/unittest_stringvalue_main.cpp)
-cs_unittest(unittest_text src/unittest_text.cpp src/unittest_text_main.cpp)
-cs_unittest(unittest_traits src/unittest_traits.cpp src/unittest_traits_main.cpp)
-cs_unittest(unittest_trie src/unittest_trie.cpp src/unittest_trie_main.cpp)
+cs_unittest(unittest_aes src/unittest_aes.cpp)
+cs_unittest(unittest_bit src/unittest_bit.cpp)
+cs_unittest(unittest_bufferedreader src/unittest_bufferedreader.cpp)
+cs_unittest(unittest_bytearray src/unittest_bytearray.cpp)
+cs_unittest(unittest_concurrent src/unittest_concurrent.cpp)
+cs_unittest(unittest_container src/unittest_container.cpp)
+cs_unittest(unittest_crc src/unittest_crc.cpp)
+cs_unittest(unittest_db src/unittest_db.cpp)
+cs_unittest(unittest_endian src/unittest_endian.cpp src/unittest_endian_impl.cpp)
+cs_unittest(unittest_fileio src/unittest_fileio.cpp)
+cs_unittest(unittest_flags src/unittest_flags.cpp)
+cs_unittest(unittest_format src/unittest_format.cpp)
+cs_unittest(unittest_hash src/unittest_hash.cpp)
+cs_unittest(unittest_lexer src/unittest_lexer.cpp)
+cs_unittest(unittest_math src/unittest_math.cpp)
+cs_unittest(unittest_meta src/unittest_meta.cpp)
+cs_unittest(unittest_n4 src/unittest_n4.cpp)
+cs_unittest(unittest_numeric src/unittest_numeric.cpp)
+cs_unittest(unittest_pointer src/unittest_pointer.cpp)
+cs_unittest(unittest_serialization src/unittest_serialization.cpp)
+cs_unittest(unittest_simd src/unittest_simd.cpp)
+cs_unittest(unittest_statistics src/unittest_statistics.cpp)
+cs_unittest(unittest_stringutil src/unittest_stringutil.cpp)
+cs_unittest(unittest_stringvalue src/unittest_stringvalue.cpp)
+cs_unittest(unittest_text src/unittest_text.cpp)
+cs_unittest(unittest_traits src/unittest_traits.cpp)
+cs_unittest(unittest_trie src/unittest_trie.cpp)
 
 if(ENABLE_UNICODE)
-  cs_unittest(unittest_textconverter src/unittest_textconverter.cpp src/unittest_textconverter_main.cpp)
+  cs_unittest(unittest_textconverter src/unittest_textconverter.cpp)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX)

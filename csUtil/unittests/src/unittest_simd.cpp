@@ -5,7 +5,7 @@
 #include <iostream>
 #include <numeric>
 
-#include <catch.hpp>
+#include <catch2/catch_template_test_macros.hpp>
 
 #include <cs/SIMD/SIMD.h>
 #include <cs/SIMD/SIMD128.h>

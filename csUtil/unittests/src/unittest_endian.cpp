@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include <catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 
 namespace test_integral {
 

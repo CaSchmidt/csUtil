@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include <catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 
 #include <cs/Convert/BufferUtil.h>
 #include <cs/Text/PrintFormat.h>

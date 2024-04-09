@@ -1,4 +1,5 @@
 #include <iostream>
+#include <numeric>
 #include <unordered_set>
 
 #include <cs/Text/TextIO.h>
@@ -6,9 +7,8 @@
 
 #include "internal/TrieNode.h"
 
-// NOTE: Needs to be defined in main module as well!
-#define CATCH_CONFIG_ENABLE_BENCHMARKING
-#include <catch.hpp>
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/benchmark/catch_benchmark.hpp>
 
 #undef HAVE_BENCHMARK
 

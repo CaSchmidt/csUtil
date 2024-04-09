@@ -4,7 +4,7 @@
 #include <iostream>
 #include <iterator>
 
-#include <catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 
 #include <cs/IO/File.h>
 #include <cs/Text/StringUtil.h>
