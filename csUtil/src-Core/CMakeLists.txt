@@ -13,6 +13,7 @@ list(APPEND csCore_HEADERS
   include/cs/Core/ItemStoreUtil.h
   include/cs/Core/Iterator.h
   include/cs/Core/Meta.h
+  include/cs/Core/MixIn.h
   include/cs/Core/Pointer.h
   include/cs/Core/Range.h
   include/cs/Core/TypeTraits.h
