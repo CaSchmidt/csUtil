@@ -38,6 +38,15 @@
 
 namespace cs {
 
+  /*
+   * NOTE: 'DerivedT' must implement:
+   *
+   * auto DerivedT::elements() const
+   * {
+   *   return std::forward_as_tuple(...);
+   * }
+   */
+
   template<typename DerivedT>
   struct ToStringMixIn : CRTPbase<ToStringMixIn<DerivedT>> {
     std::string toString(const std::string_view& sep = ", ") const
