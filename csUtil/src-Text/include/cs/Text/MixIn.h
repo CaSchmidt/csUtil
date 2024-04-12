@@ -49,18 +49,48 @@ namespace cs {
 
   template<typename DerivedT>
   struct ToStringMixIn : CRTPbase<ToStringMixIn<DerivedT>> {
-    std::string toString(const std::string_view& sep = ", ") const
+
+    template<typename CharT>
+    std::basic_string<CharT> toString(const std::basic_string_view<CharT>& sep) const
     {
-      std::ostringstream stream;
+      using StringView = std::basic_string_view<CharT>;
+
+      std::basic_ostringstream<CharT> stream;
 
       const auto& elems = this->as_derived().elements();
       std::apply([&stream,sep](const auto& ...args) -> void {
         std::size_t i{0};
-        ((stream << args << (++i != sizeof...(args) ? sep : "")), ...);
+        ((stream << args << (++i != sizeof...(args) ? sep : StringView())), ...);
       }, elems);
 
       return stream.str();
     }
+
+    inline std::string toString() const
+    {
+      return toString<char>(", ");
+    }
+
+    inline std::wstring toWString() const
+    {
+      return toString<wchar_t>(L", ");
+    }
   };
+
+  template<typename DerivedT>
+  inline std::ostream& operator<<(std::ostream& stream,
+                                  const ToStringMixIn<DerivedT>& derived)
+  {
+    stream << derived.toString();
+    return stream;
+  }
+
+  template<typename DerivedT>
+  inline std::wostream& operator<<(std::wostream& stream,
+                                   const ToStringMixIn<DerivedT>& derived)
+  {
+    stream << derived.toWString();
+    return stream;
+  }
 
 } // namespace cs
