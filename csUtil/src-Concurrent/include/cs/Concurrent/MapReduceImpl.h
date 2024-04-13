@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include <functional>
 #include <future>
 
 #include <cs/Concurrent/SyncCondition.h>
