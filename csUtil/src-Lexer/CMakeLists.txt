@@ -3,6 +3,7 @@ list(APPEND csLexer_HEADERS
   include/cs/Lexer/ConvWrapperImpl.h
   include/cs/Lexer/Lexer.h
   include/cs/Lexer/Scanner.h
+  include/cs/Lexer/Scanners/CharLiteral.h
   include/cs/Lexer/Scanners/CIdentifier.h
   include/cs/Lexer/Scanners/CIntegral.h
   include/cs/Lexer/Scanners/CReal.h

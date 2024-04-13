@@ -32,6 +32,7 @@
 #pragma once
 
 #include <cs/Lexer/Lexer.h>
+#include <cs/Lexer/Scanners/CharLiteral.h>
 #include <cs/Lexer/Scanners/CIdentifier.h>
 #include <cs/Lexer/Scanners/CIntegral.h>
 #include <cs/Lexer/Scanners/CReal.h>
@@ -52,6 +53,7 @@ namespace cs {
     template<typename T>
     using CRealScanner = CRealScanner<value_type,T>;
 
+    using CharLiteralScanner = CharLiteralScanner<value_type>;
     using CIdentifierScanner = CIdentifierScanner<value_type>;
     using CStringScanner     = CStringScanner<value_type>;
   };

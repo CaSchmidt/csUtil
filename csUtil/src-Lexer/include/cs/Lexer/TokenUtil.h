@@ -45,6 +45,15 @@ namespace cs {
       return tok  &&  tok->id() == static_cast<tokenid_t>(ch);
     }
 
+    template<typename CharT>
+    inline TokenPtr make_literal(const CharT ch)
+    {
+      const tokenid_t id = static_cast<tokenid_t>(ch);
+      return TOK_EndOfInput < id  &&  id < TOK_Unknown
+          ? BaseToken::make(id, 1)
+          : TokenPtr();
+    }
+
     constexpr tokenid_t make_userid(const tokenid_t user)
     {
       constexpr auto  MAX = std::numeric_limits<tokenid_t>::max();

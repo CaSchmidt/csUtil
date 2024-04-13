@@ -6,7 +6,6 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <cs/Lexer/Context.h>
-#include <cs/Lexer/TokenUtil.h>
 
 namespace lexer {
 
@@ -18,6 +17,28 @@ namespace lexer {
   };
 
   using ctx = cs::LexerContext<char>;
+
+  TEST_CASE("Scan character literals.", "[charliteral]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    ctx::Lexer lexer;
+    lexer.addScanner(ctx::CharLiteralScanner::make("{}+-"));
+    lexer.initialize(" { - + }   ");
+
+    ctx::Token tok;
+
+    tok = lexer.nextToken();
+    REQUIRE( cs::Token::is_literal(tok, '{') );
+
+    tok = lexer.nextToken();
+    REQUIRE( cs::Token::is_literal(tok, '-') );
+
+    tok = lexer.nextToken();
+    REQUIRE( cs::Token::is_literal(tok, '+') );
+
+    tok = lexer.nextToken();
+    REQUIRE( cs::Token::is_literal(tok, '}') );
+  }
 
   TEST_CASE("Scan identifiers.", "[identifier]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
