@@ -89,20 +89,36 @@ namespace cs {
 
     using DirtyHandler = std::function<void(void)>;
 
-    ItemStore() noexcept
+    ItemStore()
       : _dummy(traits_type::makeInvalid())
     {
     }
 
-    ~ItemStore() noexcept
+    ~ItemStore()
     {
     }
 
-    ItemStore(const ItemStore&) noexcept = default;
-    ItemStore& operator=(const ItemStore&) noexcept = default;
+    ItemStore(const ItemStore& other)
+    {
+      _store = other._store;
+    }
 
-    ItemStore(ItemStore&&) noexcept = default;
-    ItemStore& operator=(ItemStore&&) noexcept = default;
+    ItemStore& operator=(const ItemStore& other)
+    {
+      _store = other._store;
+      return *this;
+    }
+
+    ItemStore(ItemStore&& other)
+    {
+      _store = std::move(other._store);
+    }
+
+    ItemStore& operator=(ItemStore&& other)
+    {
+      _store = std::move(other._store);
+      return *this;
+    }
 
     void setDirtyHandler(DirtyHandler handler)
     {
@@ -279,7 +295,7 @@ namespace cs {
     }
 
     item_type    _dummy;
-    DirtyHandler _setDirty;
+    DirtyHandler _setDirty{nullptr};
     store_type   _store;
   };
 
