@@ -54,7 +54,7 @@ struct EncodeContext {
     return Encode::compose(fields, store);
   }
 
-  inline static size_type initialize(Store *store, const List& fields,
+  inline static size_type initialize(Store& store, const List& fields,
                                      const value_type initValue = 0)
   {
     return Encode::initialize(store, fields, initValue);

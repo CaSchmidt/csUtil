@@ -44,11 +44,13 @@ namespace Encode {
   inline T getValue(const VariableStore<T>& store, const FieldPtr<T>& field,
                     const T defValue = 0)
   {
+    using const_iterator = typename VariableStore<T>::const_iterator;
+
     if( !field ) {
       return defValue;
     }
-    const auto hit = store.find(field->name());
-    return hit != store.end()
+    const const_iterator hit = store.find(field->name());
+    return hit != store.cend()
         ? hit->second
         : defValue;
   }

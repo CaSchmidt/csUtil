@@ -45,6 +45,15 @@ void inputVariables(Encode::VariableStore<T> *store)
   }
 }
 
+/*
+ * Proposed Syntax:
+ *
+ * encode32("description") = { FIELD , FIELD, ... }
+ *
+ * With:
+ *
+ * FIELD = (IDENTIFIER | LITERAL) [to:from] @ at
+ */
 void encode32()
 {
   using ctx = EncodeContext<uint32_t>;
@@ -58,7 +67,7 @@ void encode32()
   fields.push_back(ctx::Variable::make("b",  6,  9,  4));
 
   ctx::Store store;
-  const auto count = ctx::initialize(&store, fields);
+  const auto count = ctx::initialize(store, fields);
   cs::println("Number of Variables = %", count);
 
   inputVariables(&store);

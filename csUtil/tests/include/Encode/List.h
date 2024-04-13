@@ -57,7 +57,7 @@ namespace Encode {
   }
 
   template<typename T>
-  inline size_t initialize(VariableStore<T> *store, const FieldList<T>& fields,
+  inline size_t initialize(VariableStore<T>& store, const FieldList<T>& fields,
                            const T initValue = 0)
   {
     size_t cntField = 0;
@@ -67,11 +67,11 @@ namespace Encode {
       }
 
       const std::string name = field->name();
-      if( name.empty()  ||  store->contains(name) ) {
+      if( name.empty()  ||  store.contains(name) ) {
         continue;
       }
 
-      (*store)[name] = initValue;
+      store[name] = initValue;
       cntField++;
     }
 
