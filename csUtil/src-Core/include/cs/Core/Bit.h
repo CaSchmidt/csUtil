@@ -48,8 +48,8 @@ namespace cs {
   template<std::size_t FROM, std::size_t TO, typename T> requires is_integral_v<T>
   constexpr T moveBitR(const T in)
   {
-    static_assert( 0 <= FROM  &&  FROM <= sizeof(T)*8 - 1 );
-    static_assert( 0 <= TO    &&  TO   <= sizeof(T)*8 - 1 );
+    static_assert( 0 <= FROM  &&  FROM <= MAX_BIT<T> );
+    static_assert( 0 <= TO    &&  TO   <= MAX_BIT<T> );
 
     static_assert( FROM > TO );
 
