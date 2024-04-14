@@ -42,7 +42,7 @@ namespace cs {
 
   template<typename T>
   using is_typeid_type = std::bool_constant<
-  std::is_unsigned_v<T>  &&  (sizeof(T) > 2)
+  std::is_unsigned_v<T>  &&  (sizeof(T) >= 4)
   >;
 
   template<typename T>
