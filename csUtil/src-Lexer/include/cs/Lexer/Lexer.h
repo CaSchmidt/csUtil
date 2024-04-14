@@ -34,10 +34,26 @@
 #include <list>
 
 #include <cs/Core/CharUtil.h>
+#include <cs/Core/Flags.h>
 #include <cs/Lexer/Scanner.h>
 #include <cs/Lexer/ValueToken.h>
 
 namespace cs {
+
+  enum class LexerFlag : unsigned {
+    None   = 0,
+    ScanHT = 0x01,
+    ScanLF = 0x02,
+    All    = 0xFF
+  };
+
+} // namespace cs
+
+CS_ENABLE_FLAGS(cs::LexerFlag)
+
+namespace cs {
+
+  using LexerFlags = Flags<LexerFlag>;
 
   template<typename CharT>
   class Lexer {
@@ -70,6 +86,7 @@ namespace cs {
 
     void clear()
     {
+      _flags = LexerFlag::None;
       initialize(String());
       _scanners.clear();
     }
@@ -84,7 +101,9 @@ namespace cs {
     {
       // (1) Skip Space //////////////////////////////////////////////////////
 
-      skip();
+      if( TokenPtr tok = skip(); tok ) {
+        return tok;
+      }
 
       // (2) End-of-Input reached? ///////////////////////////////////////////
 
@@ -126,6 +145,11 @@ namespace cs {
       return result;
     }
 
+    void setFlags(const LexerFlags flags)
+    {
+      _flags = flags;
+    }
+
   private:
     static_assert( std::is_unsigned_v<size_type> );
 
@@ -164,17 +188,25 @@ namespace cs {
           : 0;
     }
 
-    void skip()
+    TokenPtr skip()
     {
       while( _pos < _input.size() ) {
         const value_type ch = _input[_pos];
 
         if( isSpace(ch) ) {
           advance(ch);
+
+          if(        ch == g::HT  &&  _flags.testAny(LexerFlag::ScanHT) ) {
+            return BaseToken::make(static_cast<tokenid_t>(g::HT), 1);
+          } else if( ch == g::LF  &&  _flags.testAny(LexerFlag::ScanLF) ) {
+            return BaseToken::make(static_cast<tokenid_t>(g::LF), 1);
+          }
         } else {
           break;
         }
-      }
+      } // While input...
+
+      return TokenPtr();
     }
 
     StringView view() const
@@ -185,11 +217,12 @@ namespace cs {
           : StringView();
     }
 
-    String    _input;
-    Scanners  _scanners;
-    size_type _line{0};
-    size_type _column{0};
-    size_type _pos{0};
+    LexerFlags _flags{LexerFlag::None};
+    String     _input;
+    Scanners   _scanners;
+    size_type  _line{0};
+    size_type  _column{0};
+    size_type  _pos{0};
   };
 
 } // namespace cs

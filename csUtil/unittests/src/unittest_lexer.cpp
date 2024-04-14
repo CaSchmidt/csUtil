@@ -38,6 +38,9 @@ namespace lexer {
 
     tok = lexer.nextToken();
     REQUIRE( cs::Token::is_literal(tok, '}') );
+
+    tok = lexer.nextToken();
+    REQUIRE( tok->id() == cs::TOK_EndOfInput );
   }
 
   TEST_CASE("Scan identifiers.", "[identifier]") {
@@ -185,13 +188,20 @@ namespace lexer {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
     ctx::Lexer lexer;
+    lexer.setFlags(cs::LexerFlag::ScanHT | cs::LexerFlag::ScanLF);
     lexer.initialize(" \t\vX\n\f\r");
 
     ctx::Token tok;
 
     tok = lexer.nextToken();
+    REQUIRE( cs::Token::is_literal(tok, '\t') );
+
+    tok = lexer.nextToken();
     REQUIRE( tok->id() == cs::TOK_Unknown );
     REQUIRE( cs::Token::to_value<char>(tok) == 'X' );
+
+    tok = lexer.nextToken();
+    REQUIRE( cs::Token::is_literal(tok, '\n') );
 
     tok = lexer.nextToken();
     REQUIRE( tok->id() == cs::TOK_EndOfInput );
