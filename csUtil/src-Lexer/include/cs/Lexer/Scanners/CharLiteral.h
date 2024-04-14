@@ -46,9 +46,9 @@ namespace cs {
   public:
     using typename IScanner<CharT>::StringView;
     using typename IScanner<CharT>::size_type;
-    using typename IScanner<CharT>::value_type;
+    using typename IScanner<CharT>::char_type;
 
-    using String = std::basic_string<value_type>;
+    using String = std::basic_string<char_type>;
 
     CharLiteralScanner(const String& charset,
                        const ctor_tag& = ctor_tag()) noexcept
@@ -70,7 +70,7 @@ namespace cs {
 
       // (2) input[0] part of set? ///////////////////////////////////////////
 
-      const value_type ch = input[0];
+      const char_type ch = input[0];
       if( _charset.find_first_of(ch) == String::npos ) {
         return TokenPtr();
       }
@@ -78,9 +78,9 @@ namespace cs {
       return Token::make_literal(ch);
     }
 
-    static ScannerPtr<value_type> make(const String& charset)
+    static ScannerPtr<char_type> make(const String& charset)
     {
-      return std::make_unique<CharLiteralScanner<value_type>>(charset);
+      return std::make_unique<CharLiteralScanner<char_type>>(charset);
     }
 
   private:

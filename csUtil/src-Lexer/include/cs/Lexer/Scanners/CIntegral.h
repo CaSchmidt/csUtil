@@ -47,7 +47,7 @@ namespace cs {
   public:
     using typename IScanner<CharT>::StringView;
     using typename IScanner<CharT>::size_type;
-    using typename IScanner<CharT>::value_type;
+    using typename IScanner<CharT>::char_type;
 
     using intergral_type = T;
 
@@ -75,9 +75,9 @@ namespace cs {
       return ValueToken<intergral_type>::make(_id, value, consumed);
     }
 
-    static ScannerPtr<value_type> make(const tokenid_t id, const bool prefix = false)
+    static ScannerPtr<char_type> make(const tokenid_t id, const bool prefix = false)
     {
-      return std::make_unique<CIntegralScanner<value_type,intergral_type>>(id, prefix);
+      return std::make_unique<CIntegralScanner<char_type,intergral_type>>(id, prefix);
     }
 
   private:

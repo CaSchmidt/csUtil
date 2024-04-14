@@ -47,7 +47,7 @@ namespace cs {
   public:
     using typename IScanner<CharT>::StringView;
     using typename IScanner<CharT>::size_type;
-    using typename IScanner<CharT>::value_type;
+    using typename IScanner<CharT>::char_type;
 
     using real_type = T;
 
@@ -74,9 +74,9 @@ namespace cs {
       return ValueToken<real_type>::make(_id, value, consumed);
     }
 
-    static ScannerPtr<value_type> make(const tokenid_t id)
+    static ScannerPtr<char_type> make(const tokenid_t id)
     {
-      return std::make_unique<CRealScanner<value_type,real_type>>(id);
+      return std::make_unique<CRealScanner<char_type,real_type>>(id);
     }
 
   private:

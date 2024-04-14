@@ -44,7 +44,7 @@ namespace cs {
   public:
     using StringView = std::basic_string_view<CharT>;
     using  size_type = typename StringView::size_type;
-    using value_type = typename StringView::value_type;
+    using  char_type = typename StringView::value_type;
 
     IScanner() noexcept
     {

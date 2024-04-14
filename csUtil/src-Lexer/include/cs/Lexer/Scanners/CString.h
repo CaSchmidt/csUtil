@@ -49,9 +49,9 @@ namespace cs {
   public:
     using typename IScanner<CharT>::StringView;
     using typename IScanner<CharT>::size_type;
-    using typename IScanner<CharT>::value_type;
+    using typename IScanner<CharT>::char_type;
 
-    using String = std::basic_string<value_type>;
+    using String = std::basic_string<char_type>;
 
     CStringScanner(const tokenid_t id, const size_type reserve,
                    const ctor_tag& = ctor_tag()) noexcept
@@ -87,7 +87,7 @@ namespace cs {
 
       size_type pos = ONE; // start after the double quote!
       for(; pos < input.size(); pos++) {
-        const value_type ch = input[pos];
+        const char_type ch = input[pos];
 
         // (3.1) End-of-String ///////////////////////////////////////////////
         if( ch == g::dblquote ) {
@@ -120,22 +120,22 @@ namespace cs {
       return ValueToken<String>::make(_id, str, pos + ONE);
     }
 
-    static ScannerPtr<value_type> make(const tokenid_t id, const size_type reserve = 0)
+    static ScannerPtr<char_type> make(const tokenid_t id, const size_type reserve = 0)
     {
-      return std::make_unique<CStringScanner<value_type>>(id, reserve);
+      return std::make_unique<CStringScanner<char_type>>(id, reserve);
     }
 
   private:
     CStringScanner() noexcept = delete;
 
-    using g = glyph<value_type>;
+    using g = glyph<char_type>;
 
     static constexpr size_type ONE = 1;
     static constexpr size_type TWO = 2;
 
     static constexpr size_type RESERVE = 1024;
 
-    inline value_type escape(const value_type ch) const
+    inline char_type escape(const char_type ch) const
     {
       if(        ch == g::sngquote ) {
         return ch;
@@ -163,7 +163,7 @@ namespace cs {
       return g::NUL;
     }
 
-    inline bool isEscape(const value_type ch) const
+    inline bool isEscape(const char_type ch) const
     {
       return
           ch == g::sngquote  || // \'
@@ -179,7 +179,7 @@ namespace cs {
           ch == g::v;           // \v
     }
 
-    inline bool isExcept(const value_type ch) const
+    inline bool isExcept(const char_type ch) const
     {
       return
           ch == g::bckslash  ||
@@ -187,7 +187,7 @@ namespace cs {
           ch == g::LF;
     }
 
-    inline value_type lookAhead(const size_type pos, const StringView& input) const
+    inline char_type lookAhead(const size_type pos, const StringView& input) const
     {
       return pos + ONE < input.size()
           ? input[pos + ONE]

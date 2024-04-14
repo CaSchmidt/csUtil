@@ -47,7 +47,7 @@ namespace cs {
     struct ConvWrapper {
       using StringView = std::basic_string_view<CharT>;
       using  size_type = typename StringView::size_type;
-      using value_type = typename StringView::value_type;
+      using  char_type = typename StringView::value_type;
 
       using BasePrefix = std::tuple<int,size_type>; // [base, prefix]
 
@@ -110,7 +110,7 @@ namespace cs {
     private:
       static_assert( std::is_unsigned_v<size_type> );
 
-      using g = glyph<value_type>;
+      using g = glyph<char_type>;
 
       inline static size_type fillBuffer(Buffer& buffer,
                                          const StringView& input,
@@ -118,7 +118,7 @@ namespace cs {
       {
         const size_type length = maxLength(input, prefix);
 
-        const value_type *src = input.data() + prefix;
+        const char_type *src = input.data() + prefix;
         for(size_type i = 0; i < length; i++) {
           buffer[i] = static_cast<Buffer::value_type>(*src++);
         }
@@ -144,7 +144,7 @@ namespace cs {
       inline static bool isRealPrefix(const StringView& input)
       {
         for(size_type pos = 0; pos < input.size(); pos++) {
-          const value_type ch = input[pos];
+          const char_type ch = input[pos];
 
           if( isDigit(ch) ) {
             continue;
@@ -176,7 +176,7 @@ namespace cs {
                                     const StringView& input,
                                     const size_type prefix)
       {
-        if constexpr( sizeof(value_type) == sizeof(Buffer::value_type) ) {
+        if constexpr( sizeof(char_type) == sizeof(Buffer::value_type) ) {
           const char *first = reinterpret_cast<const char*>(input.data()) + prefix;
           const char  *last = first + input.size() - prefix;
 

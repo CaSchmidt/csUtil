@@ -47,9 +47,9 @@ namespace cs {
   public:
     using typename IScanner<CharT>::StringView;
     using typename IScanner<CharT>::size_type;
-    using typename IScanner<CharT>::value_type;
+    using typename IScanner<CharT>::char_type;
 
-    using String = std::basic_string<value_type>;
+    using String = std::basic_string<char_type>;
 
     CIdentifierScanner(const tokenid_t id, const size_type reserve,
                        const ctor_tag& = ctor_tag()) noexcept
@@ -87,7 +87,7 @@ namespace cs {
 
       size_type pos = ONE; // start at the 2nd character!
       for(; pos < input.size() ; pos++) {
-        const value_type ch = input[pos];
+        const char_type ch = input[pos];
 
         if( isIdent(ch) ) {
           str.push_back(ch);
@@ -102,9 +102,9 @@ namespace cs {
       return ValueToken<String>::make(_id, str, pos);
     }
 
-    static ScannerPtr<value_type> make(const tokenid_t id, const size_type reserve = 0)
+    static ScannerPtr<char_type> make(const tokenid_t id, const size_type reserve = 0)
     {
-      return std::make_unique<CIdentifierScanner<value_type>>(id, reserve);
+      return std::make_unique<CIdentifierScanner<char_type>>(id, reserve);
     }
 
   private:
