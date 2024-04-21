@@ -39,6 +39,11 @@ namespace cs {
 
   namespace Token {
 
+    constexpr bool is_literal(const tokenid_t id)
+    {
+      return TOK_EndOfInput < id  &&  id < TOK_Unknown;
+    }
+
     template<typename CharT>
     inline bool is_literal(const TokenPtr& tok, const CharT ch)
     {
@@ -49,7 +54,7 @@ namespace cs {
     inline TokenPtr make_literal(const CharT ch)
     {
       const tokenid_t id = static_cast<tokenid_t>(ch);
-      return TOK_EndOfInput < id  &&  id < TOK_Unknown
+      return is_literal(id)
           ? BaseToken::make(id, 1)
           : TokenPtr();
     }
