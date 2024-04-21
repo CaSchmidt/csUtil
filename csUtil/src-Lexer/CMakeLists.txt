@@ -2,6 +2,8 @@ list(APPEND csLexer_HEADERS
   include/cs/Lexer/Context.h
   include/cs/Lexer/ConvWrapperImpl.h
   include/cs/Lexer/Lexer.h
+  include/cs/Lexer/ParseException.h
+  include/cs/Lexer/Parser.h
   include/cs/Lexer/Scanner.h
   include/cs/Lexer/Scanners/CharLiteral.h
   include/cs/Lexer/Scanners/CIdentifier.h
@@ -14,8 +16,9 @@ list(APPEND csLexer_HEADERS
 )
 
 list(APPEND csLexer_SOURCES
-  src/main_lexer.cpp
+  src/ParseException.cpp
   src/Token.cpp
+  src/main_lexer.cpp
 )
 
 ### csUtil ###################################################################
