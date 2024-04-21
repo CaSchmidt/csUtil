@@ -98,12 +98,12 @@ namespace cs {
     size_t    _size{0};
   };
 
-  class TokenNames {
+  class CS_UTIL_EXPORT BaseTokenNames {
   public:
-    TokenNames() noexcept;
-    virtual ~TokenNames() noexcept;
+    BaseTokenNames() noexcept;
+    virtual ~BaseTokenNames() noexcept;
 
-    virtual const char *name(const tokenid_t id) noexcept;
+    virtual const char *name(const tokenid_t id) const noexcept;
   };
 
 } // namespace cs

@@ -77,17 +77,17 @@ namespace cs {
     return std::make_unique<BaseToken>(id, size);
   }
 
-  ////// TokenNames - public /////////////////////////////////////////////////
+  ////// BaseTokenNames - public /////////////////////////////////////////////
 
-  TokenNames::TokenNames() noexcept
+  BaseTokenNames::BaseTokenNames() noexcept
   {
   }
 
-  TokenNames::~TokenNames() noexcept
+  BaseTokenNames::~BaseTokenNames() noexcept
   {
   }
 
-  const char *TokenNames::name(const tokenid_t id) noexcept
+  const char *BaseTokenNames::name(const tokenid_t id) const noexcept
   {
     if(        id == TOK_EndOfInput ) {
       return "EndOfInput";
