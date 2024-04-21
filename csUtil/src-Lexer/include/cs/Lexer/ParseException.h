@@ -36,32 +36,35 @@
 #include <exception>
 #include <string>
 
+#include <cs/Core/csutil_config.h>
 #include <cs/Lexer/Token.h>
 
 namespace cs {
 
   namespace parse_exception {
 
-    class base : public std::exception {
+    class CS_UTIL_EXPORT base_exception : public std::exception {
     public:
-      base(const std::size_t line) noexcept;
-      ~base() noexcept;
+      base_exception(const std::size_t line) noexcept;
+      ~base_exception() noexcept;
 
-      base(const base&) noexcept;
-      base& operator=(const base&) noexcept;
+      base_exception(const base_exception&) noexcept;
+      base_exception& operator=(const base_exception&) noexcept;
 
       std::size_t line() const;
 
     private:
-      base() noexcept = delete;
+      base_exception() noexcept = delete;
 
       std::size_t _line{};
     };
 
-    class unexpected_token : public base {
+    class CS_UTIL_EXPORT unexpected_token : public base_exception {
     public:
+      unexpected_token(const TokenPtr& token,
+                       const TokenNamesPtr& names) noexcept;
       unexpected_token(const tokenid_t expected, const TokenPtr& unexpected,
-                       const BaseTokenNames& names) noexcept;
+                       const TokenNamesPtr& names) noexcept;
       ~unexpected_token() noexcept;
 
       unexpected_token(const unexpected_token&) noexcept;
@@ -71,6 +74,23 @@ namespace cs {
 
     private:
       unexpected_token() noexcept = delete;
+
+      std::string _what;
+    };
+
+    class CS_UTIL_EXPORT unexpected_token_value : public base_exception {
+    public:
+      unexpected_token_value(const TokenPtr& token,
+                             const TokenNamesPtr& names) noexcept;
+      ~unexpected_token_value() noexcept;
+
+      unexpected_token_value(const unexpected_token_value&) noexcept;
+      unexpected_token_value& operator=(const unexpected_token_value&) noexcept;
+
+      const char *what() const noexcept;
+
+    private:
+      unexpected_token_value() noexcept = delete;
 
       std::string _what;
     };

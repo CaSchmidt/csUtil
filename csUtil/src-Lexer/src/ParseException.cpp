@@ -40,14 +40,28 @@ namespace cs {
 
   namespace parse_exception {
 
-    namespace impl_parseex {
+    namespace impl_parser {
+
+      inline std::size_t getTokenLine(const TokenPtr& token)
+      {
+        return token
+            ? token->line()
+            : std::size_t{0};
+      }
+
+      inline const char *getTokenName(const TokenNamesPtr& names, const tokenid_t id)
+      {
+        return names
+            ? names->name(id)
+            : nullptr;
+      }
 
       std::ostream& format_id(std::ostream& stream, const tokenid_t id,
-                              const BaseTokenNames& names)
+                              const TokenNamesPtr& names)
       {
         stream << id;
 
-        if(        const char *name = names.name(id);
+        if(        const char *name = getTokenName(names, id);
                    name != nullptr ) {
           stream << " (" << name << ")";
         } else if( const auto ch = Token::id_to_char(id);
@@ -58,47 +72,71 @@ namespace cs {
         return stream;
       }
 
-      std::ostream& format_id(std::ostream& stream, const TokenPtr& tok,
-                              const BaseTokenNames& names)
+      std::ostream& format_id(std::ostream& stream, const TokenPtr& token,
+                              const TokenNamesPtr& names)
       {
-        return format_id(stream, tok ? tok->id() : TOK_Unknown, names);
+        return format_id(stream, token ? token->id() : TOK_Unknown, names);
       }
 
-    } // namespace impl_parseex
+      std::ostream& format_value(std::ostream& stream, const TokenPtr& token)
+      {
+        if( const auto *ptr = dynamic_cast<const ValueToken<std::string>*>(token.get()) ;
+            ptr != nullptr ) {
+          stream << "\"" << ptr->value() << "\"";
+        } else {
+          stream << "UNKNOWN VALUE";
+        }
+
+        return stream;
+      }
+
+    } // namespace impl_parser
 
     ////// base //////////////////////////////////////////////////////////////
 
-    base::base(const std::size_t line) noexcept
+    base_exception::base_exception(const std::size_t line) noexcept
       : _line{line}
     {
     }
 
-    base::~base() noexcept = default;
+    base_exception::~base_exception() noexcept = default;
 
-    base::base(const base&) noexcept = default;
-    base& base::operator=(const base&) noexcept = default;
+    base_exception::base_exception(const base_exception&) noexcept = default;
+    base_exception& base_exception::operator=(const base_exception&) noexcept = default;
 
-    std::size_t base::line() const
+    std::size_t base_exception::line() const
     {
       return _line;
     }
 
     ////// unexpected_token //////////////////////////////////////////////////
 
-    unexpected_token::unexpected_token(const tokenid_t expected,
-                                       const TokenPtr& unexpected,
-                                       const BaseTokenNames& names) noexcept
-      : base(unexpected ? unexpected->line() : std::size_t{0})
+    unexpected_token::unexpected_token(const TokenPtr& token,
+                                       const TokenNamesPtr& names) noexcept
+      : base_exception(impl_parser::getTokenLine(token))
     {
       std::stringstream stream;
 
-      stream << "expected = ";
-      impl_parseex::format_id(stream, expected, names);
+      stream << "unexpected token = ";
+      impl_parser::format_id(stream, token, names);
+
+      _what = stream.str();
+    }
+
+    unexpected_token::unexpected_token(const tokenid_t expected,
+                                       const TokenPtr& unexpected,
+                                       const TokenNamesPtr& names) noexcept
+      : base_exception(impl_parser::getTokenLine(unexpected))
+    {
+      std::stringstream stream;
+
+      stream << "expected token = ";
+      impl_parser::format_id(stream, expected, names);
 
       stream << ", ";
 
-      stream << "got = ";
-      impl_parseex::format_id(stream, unexpected, names);
+      stream << "have = ";
+      impl_parser::format_id(stream, unexpected, names);
 
       _what = stream.str();
     }
@@ -109,6 +147,35 @@ namespace cs {
     unexpected_token& unexpected_token::operator=(const unexpected_token&) noexcept = default;
 
     const char *unexpected_token::what() const noexcept
+    {
+      return _what.data();
+    }
+
+    ////// unexpected_token_value ////////////////////////////////////////////
+
+    unexpected_token_value::unexpected_token_value(const TokenPtr& token,
+                                                   const TokenNamesPtr& names) noexcept
+      : base_exception(impl_parser::getTokenLine(token))
+    {
+      std::stringstream stream;
+
+      stream << "unexpected value = " ;
+      impl_parser::format_value(stream, token);
+
+      stream << ", ";
+
+      stream << "token = ";
+      impl_parser::format_id(stream, token, names);
+
+      _what = stream.str();
+    }
+
+    unexpected_token_value::~unexpected_token_value() noexcept = default;
+
+    unexpected_token_value::unexpected_token_value(const unexpected_token_value&) noexcept = default;
+    unexpected_token_value& unexpected_token_value::operator=(const unexpected_token_value&) noexcept = default;
+
+    const char *unexpected_token_value::what() const noexcept
     {
       return _what.data();
     }
