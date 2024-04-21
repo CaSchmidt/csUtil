@@ -98,4 +98,12 @@ namespace cs {
     size_t    _size{0};
   };
 
+  class TokenNames {
+  public:
+    TokenNames() noexcept;
+    virtual ~TokenNames() noexcept;
+
+    virtual const char *name(const tokenid_t id) noexcept;
+  };
+
 } // namespace cs

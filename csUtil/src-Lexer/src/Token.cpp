@@ -33,7 +33,7 @@
 
 namespace cs {
 
-  ////// public //////////////////////////////////////////////////////////////
+  ////// BaseToken - public //////////////////////////////////////////////////
 
   BaseToken::BaseToken(const tokenid_t id, const size_t size,
                        const ctor_tag&) noexcept
@@ -75,6 +75,28 @@ namespace cs {
   TokenPtr BaseToken::make(const tokenid_t id, const size_t size)
   {
     return std::make_unique<BaseToken>(id, size);
+  }
+
+  ////// TokenNames - public /////////////////////////////////////////////////
+
+  TokenNames::TokenNames() noexcept
+  {
+  }
+
+  TokenNames::~TokenNames() noexcept
+  {
+  }
+
+  const char *TokenNames::name(const tokenid_t id) noexcept
+  {
+    if(        id == TOK_EndOfInput ) {
+      return "EndOfInput";
+    } else if( id == TOK_Unknown ) {
+      return "Unknown";
+    } else if( id == TOK_User ) {
+      return "User";
+    }
+    return nullptr;
   }
 
 } // namespace cs
