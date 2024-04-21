@@ -79,7 +79,7 @@ namespace cs {
 
   ////// BaseTokenNames - public /////////////////////////////////////////////
 
-  BaseTokenNames::BaseTokenNames() noexcept
+  BaseTokenNames::BaseTokenNames(const ctor_tag&) noexcept
   {
   }
 
@@ -97,6 +97,11 @@ namespace cs {
       return "User";
     }
     return nullptr;
+  }
+
+  TokenNamesPtr BaseTokenNames::make()
+  {
+    return std::make_unique<BaseTokenNames>();
   }
 
 } // namespace cs

@@ -98,12 +98,21 @@ namespace cs {
     size_t    _size{0};
   };
 
+  using TokenNamesPtr = std::unique_ptr<class BaseTokenNames>;
+
   class CS_UTIL_EXPORT BaseTokenNames {
+  private:
+    struct ctor_tag {
+      ctor_tag() noexcept = default;
+    };
+
   public:
-    BaseTokenNames() noexcept;
+    BaseTokenNames(const ctor_tag& = ctor_tag()) noexcept;
     virtual ~BaseTokenNames() noexcept;
 
     virtual const char *name(const tokenid_t id) const noexcept;
+
+    static TokenNamesPtr make();
   };
 
 } // namespace cs
