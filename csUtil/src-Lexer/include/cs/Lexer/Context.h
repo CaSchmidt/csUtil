@@ -42,20 +42,20 @@ namespace cs {
 
   template<typename CharT>
   struct LexerContext {
-    using value_type = CharT;
+    using char_type = CharT;
 
-    using Lexer = Lexer<value_type>;
+    using Lexer = Lexer<char_type>;
     using Token = TokenPtr;
 
     template<typename T>
-    using CIntegralScanner = CIntegralScanner<value_type,T>;
+    using CIntegralScanner = CIntegralScanner<char_type,T>;
 
     template<typename T>
-    using CRealScanner = CRealScanner<value_type,T>;
+    using CRealScanner = CRealScanner<char_type,T>;
 
-    using CharLiteralScanner = CharLiteralScanner<value_type>;
-    using CIdentifierScanner = CIdentifierScanner<value_type>;
-    using CStringScanner     = CStringScanner<value_type>;
+    using CharLiteralScanner = CharLiteralScanner<char_type>;
+    using CIdentifierScanner = CIdentifierScanner<char_type>;
+    using CStringScanner     = CStringScanner<char_type>;
   };
 
 } // namespace cs
