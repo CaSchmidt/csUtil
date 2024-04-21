@@ -192,6 +192,28 @@ namespace cs {
   template<typename T>
   inline constexpr bool is_pow2size_v = is_pow2size<T>::value;
 
+  ////// Character Types /////////////////////////////////////////////////////
+
+  template<std::size_t SIZE>
+  struct CharacterOfSize {
+    // SFINAE
+  };
+
+  template<>
+  struct CharacterOfSize<1> {
+    using char_type = char;
+  };
+
+  template<>
+  struct CharacterOfSize<2> {
+    using char_type = char16_t;
+  };
+
+  template<>
+  struct CharacterOfSize<4> {
+    using char_type = char32_t;
+  };
+
   ////// Integral Types //////////////////////////////////////////////////////
 
   template<std::size_t SIZE>
