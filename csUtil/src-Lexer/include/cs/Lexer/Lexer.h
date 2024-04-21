@@ -93,8 +93,10 @@ namespace cs {
 
     void initialize(String input)
     {
-      _input = std::move(input);
-      _pos = _line = _column = 0;
+      _input  = std::move(input);
+      _pos    = 0;
+      _line   = FIRST_LINE;
+      _column = FIRST_COLUMN;
     }
 
     TokenPtr nextToken()
@@ -155,11 +157,14 @@ namespace cs {
 
     using g = glyph<value_type>;
 
+    static constexpr std::size_t FIRST_LINE   = 1;
+    static constexpr std::size_t FIRST_COLUMN = 1;
+
     void advance(const value_type ch)
     {
       if( ch == g::LF ) {
         _line++;
-        _column = 0;
+        _column = FIRST_COLUMN;
       } else {
         _column++;
       }
@@ -220,8 +225,8 @@ namespace cs {
     LexerFlags _flags{LexerFlag::None};
     String     _input;
     Scanners   _scanners;
-    size_type  _line{0};
-    size_type  _column{0};
+    size_type  _line{FIRST_LINE};
+    size_type  _column{FIRST_COLUMN};
     size_type  _pos{0};
   };
 
