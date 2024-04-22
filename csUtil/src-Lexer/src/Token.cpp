@@ -87,7 +87,7 @@ namespace cs {
   {
   }
 
-  const char *BaseTokenNames::name(const tokenid_t id) const noexcept
+  const char *BaseTokenNames::name(const tokenid_t id) const
   {
     if(        id == TOK_EndOfInput ) {
       return "EndOfInput";

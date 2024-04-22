@@ -39,22 +39,28 @@ namespace cs {
 
   namespace Token {
 
+    template<typename CharT>
+    requires is_tokenid_char_v<CharT>
+    constexpr tokenid_t id_from_char(const CharT ch)
+    {
+      return static_cast<tokenid_t>(ch);
+    }
+
     constexpr bool is_literal(const tokenid_t id)
     {
       return TOK_EndOfInput < id  &&  id < TOK_Unknown;
     }
 
     template<typename CharT>
-    requires (sizeof(tokenid_t) >= sizeof(CharT))
     inline bool is_literal(const TokenPtr& tok, const CharT ch)
     {
-      return tok  &&  tok->id() == static_cast<tokenid_t>(ch);
+      return tok  &&  tok->id() == id_from_char(ch);
     }
 
     template<typename CharT>
     inline TokenPtr make_literal(const CharT ch)
     {
-      const tokenid_t id = static_cast<tokenid_t>(ch);
+      const tokenid_t id = id_from_char(ch);
       return is_literal(id)
           ? BaseToken::make(id, 1)
           : TokenPtr();

@@ -40,6 +40,7 @@
 namespace cs {
 
   template<typename CharT>
+  requires is_tokenid_char_v<CharT>
   class BaseParser {
   public:
     using char_type = CharT;

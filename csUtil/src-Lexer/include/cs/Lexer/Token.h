@@ -41,19 +41,29 @@ namespace cs {
   ////// Type Traits /////////////////////////////////////////////////////////
 
   template<typename T>
-  using is_typeid_type = std::bool_constant<
+  using is_tokenid_type = std::bool_constant<
   std::is_unsigned_v<T>  &&  (sizeof(T) >= 4)
   >;
 
   template<typename T>
-  inline constexpr bool is_typeid_type_v = is_typeid_type<T>::value;
+  inline constexpr bool is_tokenid_type_v = is_tokenid_type<T>::value;
 
   ////// Types ///////////////////////////////////////////////////////////////
 
   template<typename T>
-  using declare_tokenid_type = std::enable_if_t<is_typeid_type_v<T>,T>;
+  using declare_tokenid_type = std::enable_if_t<is_tokenid_type_v<T>,T>;
 
   using tokenid_t = declare_tokenid_type<unsigned>;
+
+  ////// Type Traits /////////////////////////////////////////////////////////
+
+  template<typename CharT>
+  using is_tokenid_char = std::bool_constant<
+  sizeof(tokenid_t) >= sizeof(CharT)
+  >;
+
+  template<typename CharT>
+  inline constexpr bool is_tokenid_char_v = is_tokenid_char<CharT>::value;
 
   ////// Token IDs ///////////////////////////////////////////////////////////
 
@@ -98,6 +108,8 @@ namespace cs {
     size_t    _size{0};
   };
 
+  ////// Base Token Names Implementation /////////////////////////////////////
+
   using TokenNamesPtr = std::unique_ptr<class BaseTokenNames>;
 
   class CS_UTIL_EXPORT BaseTokenNames {
@@ -110,7 +122,7 @@ namespace cs {
     BaseTokenNames(const ctor_tag& = ctor_tag()) noexcept;
     virtual ~BaseTokenNames() noexcept;
 
-    virtual const char *name(const tokenid_t id) const noexcept;
+    virtual const char *name(const tokenid_t id) const;
 
     static TokenNamesPtr make();
   };

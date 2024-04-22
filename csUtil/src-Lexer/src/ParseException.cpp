@@ -56,7 +56,7 @@ namespace cs {
             : nullptr;
       }
 
-      constexpr auto id_to_char(const tokenid_t id)
+      constexpr auto char_from_id(const tokenid_t id)
       {
         return static_cast<CharacterOfSize<sizeof(tokenid_t)>::char_type>(id);
       }
@@ -69,7 +69,7 @@ namespace cs {
         if(        const char *name = getTokenName(names, id);
                    name != nullptr ) {
           stream << " (" << name << ")";
-        } else if( const auto ch = id_to_char(id);
+        } else if( const auto ch = char_from_id(id);
                    isPrintableOrSpace(ch) ) {
           stream << " ('" << static_cast<char>(ch) << "')";
         }
