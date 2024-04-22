@@ -56,6 +56,11 @@ namespace cs {
             : nullptr;
       }
 
+      constexpr auto id_to_char(const tokenid_t id)
+      {
+        return static_cast<CharacterOfSize<sizeof(tokenid_t)>::char_type>(id);
+      }
+
       std::ostream& format_id(std::ostream& stream, const tokenid_t id,
                               const TokenNamesPtr& names)
       {
@@ -64,7 +69,7 @@ namespace cs {
         if(        const char *name = getTokenName(names, id);
                    name != nullptr ) {
           stream << " (" << name << ")";
-        } else if( const auto ch = Token::id_to_char(id);
+        } else if( const auto ch = id_to_char(id);
                    isPrintableOrSpace(ch) ) {
           stream << " ('" << static_cast<char>(ch) << "')";
         }
@@ -135,7 +140,7 @@ namespace cs {
 
       stream << ", ";
 
-      stream << "have = ";
+      stream << "have token = ";
       impl_parser::format_id(stream, unexpected, names);
 
       _what = stream.str();

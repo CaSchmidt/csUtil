@@ -33,17 +33,11 @@
 
 #include <limits>
 
-#include <cs/Core/TypeTraits.h>
 #include <cs/Lexer/ValueToken.h>
 
 namespace cs {
 
   namespace Token {
-
-    constexpr auto id_to_char(const tokenid_t id)
-    {
-      return static_cast<CharacterOfSize<sizeof(tokenid_t)>::char_type>(id);
-    }
 
     constexpr bool is_literal(const tokenid_t id)
     {
