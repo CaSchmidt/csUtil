@@ -68,7 +68,7 @@ namespace Encode {
                             const size_t at = 0)
     {
       FieldPtr<T> ptr = std::make_unique<LiteralField<T>>(value, from, to, at);
-      if( !ptr->isValid() ) {
+      if( ptr  &&  !ptr->isValid() ) {
         ptr.reset();
       }
       return ptr;

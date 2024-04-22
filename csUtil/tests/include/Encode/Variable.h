@@ -75,7 +75,7 @@ namespace Encode {
                             const size_t at = 0)
     {
       FieldPtr<T> ptr = std::make_unique<VariableField<T>>(name, from, to, at);
-      if( !ptr->isValid() ) {
+      if( ptr  &&  !ptr->isValid() ) {
         ptr.reset();
       }
       return ptr;

@@ -41,8 +41,6 @@ struct EncodeContext {
   using  size_type = Encode::size_t;
   using value_type = T;
 
-  static_assert( std::is_unsigned_v<value_type> );
-
   using Field    = Encode::FieldPtr<T>;
   using List     = Encode::FieldList<T>;
   using Literal  = Encode::LiteralField<T>;

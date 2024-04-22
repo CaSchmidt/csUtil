@@ -43,6 +43,7 @@ namespace Encode {
   static_assert( std::is_unsigned_v<size_t> );
 
   template<typename T>
+  requires std::is_unsigned_v<T>
   class IField {
   public:
     using value_type = T;
@@ -53,9 +54,14 @@ namespace Encode {
 
     virtual bool isValid() const
     {
-      constexpr size_t MAX_BIT = sizeof(value_type)*8 - 1;
+      constexpr size_t MAX_BIT = cs::MAX_BIT<value_type>;
 
-      return _from <= _to  &&  _at + _to - _from <= MAX_BIT;
+      const bool is_range =
+          0 <= _from  &&  _from <= MAX_BIT  &&
+          0 <= _to    &&  _to   <= MAX_BIT  &&
+          0 <= _at    &&  _at   <= MAX_BIT;
+
+      return is_range  &&  _from <= _to  &&  _at + _to - _from <= MAX_BIT;
     }
 
     virtual std::string name() const
