@@ -4,6 +4,9 @@
 
 #include <charconv>
 
+#include <cs/Lexer/Context.h>
+#include <cs/Lexer/Parser.h>
+#include <cs/Lexer/TokenUtil.h>
 #include <cs/Text/PrintFormat.h>
 #include <cs/Text/PrintUtil.h>
 
@@ -54,7 +57,7 @@ void inputVariables(Encode::VariableStore<T> *store)
  *
  * FIELD = (IDENTIFIER | LITERAL) [to:from] @ at
  */
-void encode32()
+void test_encode32()
 {
   using ctx = EncodeContext<uint32_t>;
 
@@ -77,8 +80,129 @@ void encode32()
   cs::println("0x%", cs::hexf(value, true));
 }
 
+////// Parser ////////////////////////////////////////////////////////////////
+
+enum EncodeTokens : cs::tokenid_t {
+  TOK_Identifier = cs::Token::make_userid(1),
+  TOK_Literal
+};
+
+class EncoderTokenNames : public cs::BaseTokenNames {
+private:
+  struct ctor_tag {
+    ctor_tag() noexcept = default;
+  };
+
+public:
+  EncoderTokenNames(const ctor_tag& = ctor_tag()) noexcept
+  {
+  }
+
+  ~EncoderTokenNames() noexcept = default;
+
+  const char *name(const cs::tokenid_t id) const
+  {
+    if(        id == TOK_Identifier ) {
+      return "Identifier";
+    } else if( id == TOK_Literal ) {
+      return "Literal";
+    }
+    return cs::BaseTokenNames::name(id);
+  }
+
+  static cs::TokenNamesPtr make()
+  {
+    return std::make_unique<EncoderTokenNames>();
+  }
+};
+
+class EncodeParser : public cs::BaseParser<char> {
+public:
+  using parser_type = cs::BaseParser<char>;
+  using parser_type::char_type;
+
+  using EncodeCtx  = EncodeContext<uint64_t>;
+  using value_type = EncodeCtx::value_type;
+
+  EncodeParser() noexcept = default;
+  ~EncodeParser() noexcept = default;
+
+protected:
+  bool initialize()
+  {
+    using ctx = cs::LexerContext<char_type>;
+
+    _lexer.addScanner(ctx::CharLiteralScanner::make("[]:@"));
+    _lexer.addScanner(ctx::CIdentifierScanner::make(TOK_Identifier));
+    _lexer.addScanner(ctx::CIntegralScanner<value_type>::make(TOK_Literal, true));
+
+    _names = EncoderTokenNames::make();
+
+    return true;
+  }
+
+  void start()
+  {
+    parseField();
+    check(cs::TOK_EndOfInput);
+  }
+
+  /*
+   * Grammar:
+   *
+   * Field = ( identifier | literal ) '[' literal ':' literal ']' '@' literal .
+   */
+  void parseField()
+  {
+    cs::TokenPtr fieldType;
+    if( isLookAhead(TOK_Identifier)  ||  isLookAhead(TOK_Literal) ) {
+      scan();
+      fieldType = std::move(_currentToken);
+    } else {
+      throwUnexpectedToken(_lookAheadToken);
+    }
+
+    check('[');
+
+    check(TOK_Literal);
+    const std::size_t to = cs::Token::to_value<value_type>(_currentToken);
+
+    check(':');
+
+    check(TOK_Literal);
+    const std::size_t from = cs::Token::to_value<value_type>(_currentToken);
+
+    check(']');
+
+    check('@');
+
+    check(TOK_Literal);
+    const std::size_t at = cs::Token::to_value<value_type>(_currentToken);
+
+    EncodeCtx::Field field = fieldType->id() == TOK_Identifier
+        ? EncodeCtx::Variable::make(cs::Token::to_value<std::string>(fieldType),
+                                    from, to, at)
+        : EncodeCtx::Literal::make(cs::Token::to_value<value_type>(fieldType),
+                                   from, to, at);
+    if( !field ) {
+      throwErrorMessage(_currentToken->line(), "invalid field definition");
+    }
+  } // parseField()
+};
+
+void test_parser()
+{
+  EncodeParser parser;
+
+  parser.parse("field[7:0]@2");
+  printf("---\n");
+  parser.parse("0xF[1:0]@0");
+}
+
+////// Main //////////////////////////////////////////////////////////////////
+
 int main(int /*argc*/, char ** /*argv*/)
 {
-  encode32();
+  test_parser();
   return EXIT_SUCCESS;
 }

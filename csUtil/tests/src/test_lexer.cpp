@@ -30,7 +30,7 @@ void printText(const std::string_view& text,
     cs::println("% =", title);
   }
 
-  std::size_t lineno = 0;
+  std::size_t lineno = 1;
   for( const std::string& line : lines ) {
     cs::println("%: >%<", cs::decf(lineno++, width), line);
   }
