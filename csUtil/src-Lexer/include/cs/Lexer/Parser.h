@@ -106,6 +106,13 @@ namespace cs {
 
     // Exceptions ////////////////////////////////////////////////////////////
 
+    void throwErrorMessage(const std::size_t line, const std::string& message)
+    {
+      using namespace parse_exception;
+
+      throw error_message(line, message);
+    }
+
     void throwUnexpectedToken(const TokenPtr& token)
     {
       using namespace parse_exception;

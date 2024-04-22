@@ -59,6 +59,22 @@ namespace cs {
       std::size_t _line{};
     };
 
+    class CS_UTIL_EXPORT error_message : public base_exception {
+    public:
+      error_message(const std::size_t line, const std::string& message) noexcept;
+      ~error_message() noexcept;
+
+      error_message(const error_message&) noexcept;
+      error_message& operator=(const error_message&) noexcept;
+
+      const char *what() const noexcept;
+
+    private:
+      error_message() noexcept = delete;
+
+      std::string _what;
+    };
+
     class CS_UTIL_EXPORT unexpected_token : public base_exception {
     public:
       unexpected_token(const TokenPtr& token,

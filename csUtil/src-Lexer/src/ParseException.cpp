@@ -114,6 +114,24 @@ namespace cs {
       return _line;
     }
 
+    ////// error_message /////////////////////////////////////////////////////
+
+    error_message::error_message(const std::size_t line, const std::string& message) noexcept
+      : base_exception(line)
+      , _what(message)
+    {
+    }
+
+    error_message::~error_message() noexcept = default;
+
+    error_message::error_message(const error_message&) noexcept = default;
+    error_message& error_message::operator=(const error_message&) noexcept = default;
+
+    const char *error_message::what() const noexcept
+    {
+      return _what.data();
+    }
+
     ////// unexpected_token //////////////////////////////////////////////////
 
     unexpected_token::unexpected_token(const TokenPtr& token,
