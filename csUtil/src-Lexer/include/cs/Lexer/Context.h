@@ -45,7 +45,6 @@ namespace cs {
     using char_type = CharT;
 
     using Lexer = Lexer<char_type>;
-    using Token = TokenPtr;
 
     template<typename T>
     using CIntegralScanner = CIntegralScanner<char_type,T>;

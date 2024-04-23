@@ -93,6 +93,18 @@ namespace cs {
       }
     }
 
+    template<typename T>
+    inline T currentValue(const T& defValue = T()) const
+    {
+      using Value = ValueToken<T>;
+
+      const Value *ptr = dynamic_cast<const Value*>(_currentToken.get());
+
+      return ptr != nullptr
+          ? ptr->value()
+          : defValue;
+    }
+
     inline bool isLookAhead(const tokenid_t id) const
     {
       return _lookAheadToken  &&  _lookAheadToken->id() == id;

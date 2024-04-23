@@ -61,7 +61,7 @@ int main(int argc, char **argv)
 
   constexpr bool DISP_UNKNOWN = false;
 
-  for(ctx::Token tok = lexer.nextToken();
+  for(cs::TokenPtr tok = lexer.nextToken();
       tok->id() != cs::TOK_EndOfInput;
       tok = lexer.nextToken()) {
     if( !tok ) {

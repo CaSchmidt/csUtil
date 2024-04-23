@@ -25,7 +25,7 @@ namespace lexer {
     lexer.addScanner(ctx::CharLiteralScanner::make("{}+-"));
     lexer.initialize(" { - + }   ");
 
-    ctx::Token tok;
+    cs::TokenPtr tok;
 
     tok = lexer.nextToken();
     REQUIRE( cs::Token::is_literal(tok, '{') );
@@ -50,7 +50,7 @@ namespace lexer {
     lexer.addScanner(ctx::CIdentifierScanner::make(TOK_Identifier));
     lexer.initialize(" 0_0ident9 _ ");
 
-    ctx::Token tok;
+    cs::TokenPtr tok;
 
     tok = lexer.nextToken();
     REQUIRE( tok->id() == cs::TOK_Unknown );
@@ -74,7 +74,7 @@ namespace lexer {
     lexer.addScanner(ctx::CIntegralScanner<unsigned>::make(TOK_Integral, true));
     lexer.initialize(" +0 123456789 01777 0xFf 0XfF ");
 
-    ctx::Token tok;
+    cs::TokenPtr tok;
 
     tok = lexer.nextToken();
     REQUIRE( tok->id() == cs::TOK_Unknown );
@@ -117,7 +117,7 @@ namespace lexer {
     lexer.addScanner(ctx::CRealScanner<double>::make(TOK_Real));
     lexer.initialize(" eE1 125E-2 .25 1.25 1. .25e2 1.25e2 1.E2  ");
 
-    ctx::Token tok;
+    cs::TokenPtr tok;
 
     tok = lexer.nextToken();
     REQUIRE( tok->id() == cs::TOK_Unknown );
@@ -170,7 +170,7 @@ namespace lexer {
     lexer.addScanner(ctx::CStringScanner::make(TOK_String));
     lexer.initialize(" \"Hello, World!\" \"\" ");
 
-    ctx::Token tok;
+    cs::TokenPtr tok;
 
     tok = lexer.nextToken();
     REQUIRE( tok->id() == TOK_String );
@@ -191,7 +191,7 @@ namespace lexer {
     lexer.setFlags(cs::LexerFlag::ScanHT | cs::LexerFlag::ScanLF);
     lexer.initialize(" \t\vX\n\f\r");
 
-    ctx::Token tok;
+    cs::TokenPtr tok;
 
     tok = lexer.nextToken();
     REQUIRE( cs::Token::is_literal(tok, '\t') );
