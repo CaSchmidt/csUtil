@@ -52,9 +52,9 @@ namespace cs {
     }
 
     template<typename CharT>
-    inline bool is_literal(const TokenPtr& tok, const CharT ch)
+    inline bool is_literal(const TokenPtr& token, const CharT ch)
     {
-      return tok  &&  tok->id() == id_from_char(ch);
+      return token  &&  token->id() == id_from_char(ch);
     }
 
     template<typename CharT>
@@ -77,12 +77,14 @@ namespace cs {
     }
 
     template<typename T>
-    inline T to_value(const TokenPtr& tok, const T& defValue = T())
+    inline T to_value(const TokenPtr& token, const T& defValue = T())
     {
-      using VT = ValueToken<T>;
+      using Value = ValueToken<T>;
 
-      return dynamic_cast<const VT*>(tok.get()) != nullptr
-          ? dynamic_cast<const VT*>(tok.get())->value()
+      const Value *ptr = dynamic_cast<const Value*>(token.get());
+
+      return ptr != nullptr
+          ? ptr->value()
           : defValue;
     }
 

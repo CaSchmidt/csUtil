@@ -93,9 +93,21 @@ namespace cs {
       }
     }
 
-    inline bool isLookAhead(const tokenid_t expected)
+    inline bool isLookAhead(const tokenid_t id) const
     {
-      return _lookAheadToken  &&  _lookAheadToken->id() == expected;
+      return _lookAheadToken  &&  _lookAheadToken->id() == id;
+    }
+
+    template<typename T>
+    inline bool isLookAheadValue(const tokenid_t id, const T& value) const
+    {
+      using Value = ValueToken<T>;
+
+      const Value *ptr = dynamic_cast<const Value*>(_lookAheadToken.get());
+
+      return ptr != nullptr
+          ? ptr->id() == id  &&  ptr->value() == value
+          : false;
     }
 
     void scan()
@@ -106,28 +118,28 @@ namespace cs {
 
     // Exceptions ////////////////////////////////////////////////////////////
 
-    void throwErrorMessage(const std::size_t line, const std::string& message)
+    void throwErrorMessage(const std::size_t line, const std::string& message) const
     {
       using namespace parse_exception;
 
       throw error_message(line, message);
     }
 
-    void throwUnexpectedToken(const TokenPtr& token)
+    void throwUnexpectedToken(const TokenPtr& token) const
     {
       using namespace parse_exception;
 
       throw unexpected_token(token, _names);
     }
 
-    void throwUnexpectedToken(const tokenid_t expected, const TokenPtr& unexpected)
+    void throwUnexpectedToken(const tokenid_t expected, const TokenPtr& unexpected) const
     {
       using namespace parse_exception;
 
       throw unexpected_token(expected, unexpected, _names);
     }
 
-    void throwUnexpectedTokenValue(const TokenPtr& token)
+    void throwUnexpectedTokenValue(const TokenPtr& token) const
     {
       using namespace parse_exception;
 
