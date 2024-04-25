@@ -146,14 +146,28 @@ protected:
 
   void start()
   {
-    parseEncode();
+    parseAssignment();
     check(cs::TOK_EndOfInput);
   }
 
   /*
    * Grammar:
    *
-   * Encode = identifier<'Encode'> '(' integral ',' string ')' '=' '{' Field { ',' Field } '}' .
+   * Assignment = Encode '=' FieldList .
+   */
+  void parseAssignment()
+  {
+    parseEncode();
+
+    check('=');
+
+    parseFieldList();
+  }
+
+  /*
+   * Grammar:
+   *
+   * Encode = identifier<'Encode'> '(' integral ',' string ')' .
    */
   void parseEncode()
   {
@@ -174,20 +188,6 @@ protected:
     // TODO
 
     check(')');
-
-    check('=');
-
-    check('{');
-
-    parseField();
-
-    while( isLookAhead(',') ) {
-      scan();
-
-      parseField();
-    }
-
-    check('}');
   }
 
   /*
@@ -233,6 +233,26 @@ protected:
       throwErrorMessage(_currentToken->line(), "invalid field definition");
     }
   } // parseField()
+
+  /*
+   * Grammar:
+   *
+   * FieldList = '{' Field { ',' Field } '}' .
+   */
+  void parseFieldList()
+  {
+    check('{');
+
+    parseField();
+
+    while( isLookAhead(',') ) {
+      scan();
+
+      parseField();
+    }
+
+    check('}');
+  }
 };
 
 void test_parser()
