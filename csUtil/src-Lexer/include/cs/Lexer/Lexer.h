@@ -59,11 +59,11 @@ namespace cs {
   class Lexer {
   public:
     using String     = std::basic_string<CharT>;
-    using value_type = typename String::value_type;
+    using  char_type = typename String::value_type;
     using  size_type = typename String::size_type;
-    using StringView = std::basic_string_view<value_type>;
+    using StringView = std::basic_string_view<char_type>;
 
-    using Scanner  = ScannerPtr<value_type>;
+    using Scanner  = ScannerPtr<char_type>;
     using Scanners = std::list<Scanner>;
 
     Lexer() noexcept
@@ -104,6 +104,7 @@ namespace cs {
       // (1) Skip Space //////////////////////////////////////////////////////
 
       if( TokenPtr tok = skip(); tok ) {
+        tok->setLocation(_line, _column);
         return tok;
       }
 
@@ -117,7 +118,7 @@ namespace cs {
 
       // (3) Treat current character as unknown //////////////////////////////
 
-      TokenPtr result = ValueToken<value_type>::make(TOK_Unknown, _input[_pos], 1);
+      TokenPtr result = ValueToken<char_type>::make(TOK_Unknown, _input[_pos], 1);
 
       // (4) Scan input & take longest token /////////////////////////////////
 
@@ -155,12 +156,12 @@ namespace cs {
   private:
     static_assert( std::is_unsigned_v<size_type> );
 
-    using g = glyph<value_type>;
+    using g = glyph<char_type>;
 
-    static constexpr std::size_t FIRST_LINE   = 1;
     static constexpr std::size_t FIRST_COLUMN = 1;
+    static constexpr std::size_t FIRST_LINE   = 1;
 
-    void advance(const value_type ch)
+    void advance(const char_type ch)
     {
       if( ch == g::LF ) {
         _line++;
@@ -196,7 +197,7 @@ namespace cs {
     TokenPtr skip()
     {
       while( _pos < _input.size() ) {
-        const value_type ch = _input[_pos];
+        const char_type ch = _input[_pos];
 
         if( isSpace(ch) ) {
           advance(ch);
