@@ -25,11 +25,11 @@ inline T stringToUInt(const char *first, const char *last,
 }
 
 template<typename T>
-void inputVariables(Encode::VariableStore<T> *store)
+void inputVariables(Encode::VariableStore<T>& store)
 {
   using citer_t = typename Encode::VariableStore<T>::const_iterator;
 
-  for(citer_t it = store->cbegin(); it != store->end(); ++it) {
+  for(citer_t it = store.cbegin(); it != store.cend(); ++it) {
     cs::print("% (== 0x%) := ", it->first, cs::hexf(it->second));
 
     std::string input;
@@ -43,7 +43,7 @@ void inputVariables(Encode::VariableStore<T> *store)
         ? stringToUInt<T>(input.data() + 2, input.data() + input.size(), 16)
         : stringToUInt<T>(input.data(), input.data() + input.size());
 
-    (*store)[it->first] = value;
+    store[it->first] = value;
   }
 }
 
@@ -72,7 +72,7 @@ void test_encode32()
   const auto count = ctx::initialize(store, fields);
   cs::println("Number of Variables = %", count);
 
-  inputVariables(&store);
+  inputVariables(store);
 
   const auto value = ctx::compose(fields, store);
 
