@@ -52,16 +52,32 @@ namespace Encode {
     {
     }
 
-    virtual bool isValid() const
+    static bool isRange(const size_t numBits)
     {
-      constexpr size_t MAX_BIT = cs::MAX_BIT<value_type>;
+      constexpr size_t EIGHT = 8;
+
+      return
+          numBits > 0                          &&
+          numBits <= cs::NUM_BITS<value_type>  &&
+          numBits%EIGHT == 0;
+    }
+
+    virtual bool isValid(const size_t numBits = 0) const
+    {
+      const size_t maxRange = isRange(numBits)
+          ? numBits
+          : cs::NUM_BITS<value_type>;
 
       const bool is_range =
-          0 <= _from  &&  _from <= MAX_BIT  &&
-          0 <= _to    &&  _to   <= MAX_BIT  &&
-          0 <= _at    &&  _at   <= MAX_BIT;
+          0 <= _from  &&  _from < maxRange  &&
+          0 <= _to    &&  _to   < maxRange  &&
+          0 <= _at    &&  _at   < maxRange;
 
-      return is_range  &&  _from <= _to  &&  _at + _to - _from <= MAX_BIT;
+      const size_t is_pos =
+          _from <= _to  &&
+          _at + _to - _from < maxRange;
+
+      return is_range  &&  is_pos;
     }
 
     virtual std::string name() const

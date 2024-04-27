@@ -60,9 +60,9 @@ namespace Encode {
     {
     }
 
-    bool isValid() const
+    bool isValid(const size_t numBits = 0) const
     {
-      return cs::isIdent(_name)  &&  IField<value_type>::isValid();
+      return cs::isIdent(_name)  &&  IField<value_type>::isValid(numBits);
     }
 
     std::string name() const
