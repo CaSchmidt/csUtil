@@ -41,6 +41,7 @@ cs_test(test_dbhdecrypt src/test_dbhdecrypt.cpp)
 cs_test(test_dot src/test_dot.cpp)
 cs_test(test_encode src/test_encode.cpp
   include/Encode/Encode.h
+  include/Encode/Engine.h
   include/Encode/Field.h
   include/Encode/List.h
   include/Encode/Literal.h
