@@ -53,8 +53,9 @@ struct EncodeContext {
   }
 
   inline static size_type initialize(Store& store, const List& fields,
-                                     const value_type initValue = 0)
+                                     const value_type initValue = 0,
+                                     const bool keep_values = false)
   {
-    return Encode::initialize(store, fields, initValue);
+    return Encode::initialize(store, fields, initValue, keep_values);
   }
 };

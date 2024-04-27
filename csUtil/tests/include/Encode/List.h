@@ -58,8 +58,14 @@ namespace Encode {
 
   template<typename T>
   inline size_t initialize(VariableStore<T>& store, const FieldList<T>& fields,
-                           const T initValue = 0)
+                           const T initValue = 0, const bool keep_values = false)
   {
+    const VariableStore<T> old = keep_values
+        ? std::move(store)
+        : VariableStore<T>();
+
+    store.clear();
+
     size_t cntField = 0;
     for(const FieldPtr<T>& field : fields) {
       if( !field ) {
@@ -71,7 +77,10 @@ namespace Encode {
         continue;
       }
 
-      store[name] = initValue;
+      store[name] = keep_values  &&  old.contains(name)
+          ? old.at(name)
+          : initValue;
+
       cntField++;
     }
 
