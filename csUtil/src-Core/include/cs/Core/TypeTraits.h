@@ -315,6 +315,32 @@ namespace cs {
   template<typename T, typename REF>
   using if_same_t = std::enable_if_t<std::is_same_v<T,REF>,T>;
 
+  ////// Array Traits ////////////////////////////////////////////////////////
+
+  template<typename T, std::size_t DIM>
+  struct is_array : std::bool_constant<
+      std::is_array_v<T>  &&  0 <= DIM  &&  DIM < std::rank_v<T>
+      > {};
+
+  template<typename T, std::size_t DIM = 0>
+  inline constexpr bool is_array_v = is_array<T,DIM>::value;
+
+  template<typename T, std::size_t DIM>
+  struct array_size : std::integral_constant<
+      std::enable_if_t<is_array_v<T,DIM>,std::size_t>,std::extent_v<T,DIM>
+      > {};
+
+  template<typename T, std::size_t DIM = 0>
+  inline constexpr std::size_t array_size_v = array_size<T,DIM>::value;
+
+  template<typename T, std::size_t SIZE, std::size_t DIM>
+  struct is_array_size : std::bool_constant<
+      is_array_v<T,DIM>  &&  array_size_v<T,DIM> == SIZE
+      > {};
+
+  template<typename T, std::size_t SIZE, std::size_t DIM = 0>
+  inline constexpr bool is_array_size_v = is_array_size<T,SIZE,DIM>::value;
+
   ////// Pointer Conversions /////////////////////////////////////////////////
 
   inline const char *CSTR(const char8_t *s)
