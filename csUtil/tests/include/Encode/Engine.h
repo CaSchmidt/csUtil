@@ -74,7 +74,7 @@ namespace Encode {
 
     bool isValid() const
     {
-      if( !Field::isRange(_numBits) ) {
+      if( !IField<value_type>::isRange(_numBits) ) {
         return false;
       }
 
