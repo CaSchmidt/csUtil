@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <cstddef>
 
+#include <algorithm>
 #include <charconv>
 
 #include <cs/Lexer/Context.h>
@@ -47,14 +48,34 @@ void inputVariables(Encode::VariableStore<T>& store)
   }
 }
 
+void test_engine(const Encode::EnginePtr<uint32_t>& engine)
+{
+  using Engine = std::remove_cvref_t<decltype(engine)>::element_type;
+  using Store  = Engine::Store;
+
+  using  size_type = Engine::size_type;
+  using value_type = Engine::value_type;
+
+  if( !engine  ||  !engine->isValid() ) {
+    return;
+  }
+
+  Store store;
+  const size_type count = engine->initialize(store);
+  cs::println("Number of Variables = %", count);
+
+  inputVariables(store);
+
+  const value_type value = engine->compose(store);
+  cs::println("%: 0x%", engine->text(), cs::hexf(value, true));
+
+  cs::println("");
+}
+
 void test_encode32()
 {
   using EnginePtr = Encode::EnginePtr<uint32_t>;
   using Engine    = EnginePtr::element_type;
-  using Store     = Engine::Store;
-
-  using  size_type = Engine::size_type;
-  using value_type = Engine::value_type;
 
   EnginePtr engine = Engine::make(32, "test_encode32");
   engine->addLiteral(0x91, 0, 7, 24);
@@ -64,29 +85,40 @@ void test_encode32()
   engine->addVariable("a",  0,  3, 20);
   engine->addVariable("b",  6,  9,  4);
 
-  Store store;
-  const size_type count = engine->initialize(store);
-  cs::println("Number of Variables = %", count);
-
-  inputVariables(store);
-
-  const value_type value = engine->compose(store);
-
-  cs::println("%: 0x%", engine->text(), cs::hexf(value, true));
+  test_engine(engine);
 }
 
 void test_parser()
 {
-  Encode::Parser<uint32_t> parser;
+  using Parser = Encode::Parser<uint32_t>;
 
-  parser.parse("Encode(32,\"Test\") = { field[7:0]@2 , 0xF[1:0]@0 }\n");
+  Parser parser;
+
+  parser.parse("Encode(32,\"test_parser\") = { "
+               "0x91[7:0]@24,"
+               "a[15:12]@0,"
+               "a[11:8]@8,"
+               "a[7:4]@16,"
+               "a[3:0]@20,"
+               "b[9:6]@4"
+               "}\n");
+
+  std::for_each(parser.result.cbegin(), parser.result.cend(), test_engine);
+}
+
+void display_note()
+{
+  cs::println("Enter a == 0xABCD and b == 0x3C0.");
+  cs::println("");
 }
 
 ////// Main //////////////////////////////////////////////////////////////////
 
 int main(int /*argc*/, char ** /*argv*/)
 {
+  display_note();
   test_encode32();
+  test_parser();
 
   return EXIT_SUCCESS;
 }
