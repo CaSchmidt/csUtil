@@ -61,8 +61,10 @@ namespace Encode {
     using Literal  = LiteralField<value_type>;
     using Variable = VariableField<value_type>;
 
-    Engine(const size_type numBits, const ctor_tag& = ctor_tag()) noexcept
+    Engine(const size_type numBits, const std::string_view& text,
+           const ctor_tag& = ctor_tag()) noexcept
       : _numBits{numBits}
+      , _text(text)
     {
     }
 
@@ -80,6 +82,8 @@ namespace Encode {
         if( !field->isValid(_numBits) ) {
           return false;
         }
+
+        // TODO: check for non-overlapping composition
       }
 
       return true;
@@ -90,9 +94,9 @@ namespace Encode {
       return _numBits;
     }
 
-    void clear()
+    std::string text() const
     {
-      _fields.clear();
+      return _text;
     }
 
     bool addLiteral(const value_type value,
@@ -121,9 +125,10 @@ namespace Encode {
       return ::Encode::initialize(store, _fields, initValue, keep_values);
     }
 
-    static EnginePtr<value_type> make(const size_type numBits)
+    static EnginePtr<value_type> make(const size_type numBits,
+                                      const std::string_view& text)
     {
-      EnginePtr<value_type> ptr = std::make_unique<Engine>(numBits);
+      EnginePtr<value_type> ptr = std::make_unique<Engine>(numBits, text);
       if( ptr  &&  !ptr->isValid() ) {
         ptr.reset();
       }
@@ -142,8 +147,9 @@ namespace Encode {
       return true;
     }
 
-    List      _fields;
-    size_type _numBits{0};
+    List        _fields;
+    size_type   _numBits{0};
+    std::string _text;
   };
 
 } // namespace Encode
