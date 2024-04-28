@@ -94,6 +94,20 @@ namespace cs {
     }
 
     template<typename T>
+    void checkValue(const tokenid_t expected, const T& value)
+    {
+      if( isLookAhead(expected) ) {
+        if( isLookAheadValue(expected, value) ) {
+          scan();
+        } else {
+          throwUnexpectedTokenValue(_lookAheadToken);
+        }
+      } else {
+        throwUnexpectedToken(expected, _lookAheadToken);
+      }
+    }
+
+    template<typename T>
     inline T currentValue(const T& defValue = T()) const
     {
       using Value = ValueToken<T>;
