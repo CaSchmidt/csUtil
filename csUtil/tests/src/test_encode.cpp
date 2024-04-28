@@ -9,7 +9,6 @@
 #include <cs/Text/PrintFormat.h>
 #include <cs/Text/PrintUtil.h>
 
-#include "Encode/Encode.h"
 #include "Encode/Parser.h"
 
 template<typename T>
@@ -50,25 +49,30 @@ void inputVariables(Encode::VariableStore<T>& store)
 
 void test_encode32()
 {
-  using ctx = EncodeContext<uint32_t>;
+  using EnginePtr = Encode::EnginePtr<uint32_t>;
+  using Engine    = EnginePtr::element_type;
+  using Store     = Engine::Store;
 
-  ctx::List fields;
-  fields.push_back(ctx::Literal::make(0x91, 0, 7, 24));
-  fields.push_back(ctx::Variable::make("a", 12, 15,  0));
-  fields.push_back(ctx::Variable::make("a",  8, 11,  8));
-  fields.push_back(ctx::Variable::make("a",  4,  7, 16));
-  fields.push_back(ctx::Variable::make("a",  0,  3, 20));
-  fields.push_back(ctx::Variable::make("b",  6,  9,  4));
+  using  size_type = Engine::size_type;
+  using value_type = Engine::value_type;
 
-  ctx::Store store;
-  const auto count = ctx::initialize(store, fields);
+  EnginePtr engine = Engine::make(32, "test_encode32");
+  engine->addLiteral(0x91, 0, 7, 24);
+  engine->addVariable("a", 12, 15,  0);
+  engine->addVariable("a",  8, 11,  8);
+  engine->addVariable("a",  4,  7, 16);
+  engine->addVariable("a",  0,  3, 20);
+  engine->addVariable("b",  6,  9,  4);
+
+  Store store;
+  const size_type count = engine->initialize(store);
   cs::println("Number of Variables = %", count);
 
   inputVariables(store);
 
-  const auto value = ctx::compose(fields, store);
+  const value_type value = engine->compose(store);
 
-  cs::println("0x%", cs::hexf(value, true));
+  cs::println("%: 0x%", engine->text(), cs::hexf(value, true));
 }
 
 void test_parser()
@@ -82,6 +86,7 @@ void test_parser()
 
 int main(int /*argc*/, char ** /*argv*/)
 {
-  test_parser();
+  test_encode32();
+
   return EXIT_SUCCESS;
 }
