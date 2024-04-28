@@ -139,6 +139,8 @@ protected:
     _lexer.addScanner(ctx::CIntegralScanner<value_type>::make(TOK_Integral, true));
     _lexer.addScanner(ctx::CStringScanner::make(TOK_String));
 
+    _lexer.setFlags(cs::LexerFlag::ScanLF);
+
     _names = EncoderTokenNames::make();
 
     return true;
@@ -146,8 +148,20 @@ protected:
 
   void start()
   {
-    parseAssignment();
+    while( isFirstAssignment()  ||  isLookAhead('\n') ) {
+      if( isFirstAssignment() ) {
+        parseAssignment();
+      }
+
+      check('\n');
+    }
+
     check(cs::TOK_EndOfInput);
+  }
+
+  bool isFirstAssignment() const
+  {
+    return isFirstEncode();
   }
 
   /*
@@ -164,6 +178,11 @@ protected:
     parseFieldList();
   }
 
+  bool isFirstEncode() const
+  {
+    return isLookAheadValue<std::string>(TOK_Identifier, "Encode");
+  }
+
   /*
    * Grammar:
    *
@@ -171,7 +190,7 @@ protected:
    */
   void parseEncode()
   {
-    if( isLookAheadValue<std::string>(TOK_Identifier, "Encode") ) {
+    if( isFirstEncode() ) {
       scan();
     } else {
       throwUnexpectedTokenValue(_lookAheadToken);
@@ -260,7 +279,7 @@ void test_parser()
   EncodeParser parser;
 
 #if 1
-  parser.parse("Encode(32,\"Test\") = { field[7:0]@2 , 0xF[1:0]@0 }");
+  parser.parse("Encode(32,\"Test\") = { field[7:0]@2 , 0xF[1:0]@0 }\n");
 #else
   parser.parse("field[7:0]@2");
   printf("---\n");
