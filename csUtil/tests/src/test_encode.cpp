@@ -10,6 +10,7 @@
 #include <cs/Text/PrintUtil.h>
 
 #include "Encode/Encode.h"
+#include "Encode/Parser.h"
 
 template<typename T>
 inline T stringToUInt(const char *first, const char *last,
@@ -47,15 +48,6 @@ void inputVariables(Encode::VariableStore<T>& store)
   }
 }
 
-/*
- * Proposed Syntax:
- *
- * encode32("description") = { FIELD , FIELD, ... }
- *
- * With:
- *
- * FIELD = (IDENTIFIER | LITERAL) [to:from] @ at
- */
 void test_encode32()
 {
   using ctx = EncodeContext<uint32_t>;
@@ -79,212 +71,11 @@ void test_encode32()
   cs::println("0x%", cs::hexf(value, true));
 }
 
-////// Parser ////////////////////////////////////////////////////////////////
-
-enum EncodeTokens : cs::tokenid_t {
-  TOK_Identifier = cs::Token::make_userid(1),
-  TOK_Integral,
-  TOK_String
-};
-
-class EncoderTokenNames : public cs::BaseTokenNames {
-private:
-  struct ctor_tag {
-    ctor_tag() noexcept = default;
-  };
-
-public:
-  EncoderTokenNames(const ctor_tag& = ctor_tag()) noexcept
-  {
-  }
-
-  ~EncoderTokenNames() noexcept = default;
-
-  const char *name(const cs::tokenid_t id) const
-  {
-    if(        id == TOK_Identifier ) {
-      return "Identifier";
-    } else if( id == TOK_Integral ) {
-      return "Integral";
-    } else if( id == TOK_String ) {
-      return "String";
-    }
-    return cs::BaseTokenNames::name(id);
-  }
-
-  static cs::TokenNamesPtr make()
-  {
-    return std::make_unique<EncoderTokenNames>();
-  }
-};
-
-class EncodeParser : public cs::BaseParser<char> {
-public:
-  using parser_type = cs::BaseParser<char>;
-  using parser_type::char_type;
-
-  using value_type = uint64_t; // TODO
-
-  EncodeParser() noexcept = default;
-
-  ~EncodeParser() noexcept = default;
-
-protected:
-  bool initialize()
-  {
-    using ctx = cs::LexerContext<char_type>;
-
-    _lexer.addScanner(ctx::CharLiteralScanner::make("(),={}[]:@"));
-    _lexer.addScanner(ctx::CIdentifierScanner::make(TOK_Identifier));
-    _lexer.addScanner(ctx::CIntegralScanner<value_type>::make(TOK_Integral, true));
-    _lexer.addScanner(ctx::CStringScanner::make(TOK_String));
-
-    _lexer.setFlags(cs::LexerFlag::ScanLF);
-
-    _names = EncoderTokenNames::make();
-
-    return true;
-  }
-
-  void start()
-  {
-    while( isFirstAssignment()  ||  isLookAhead('\n') ) {
-      if( isFirstAssignment() ) {
-        parseAssignment();
-      }
-
-      check('\n');
-    }
-
-    check(cs::TOK_EndOfInput);
-  }
-
-  bool isFirstAssignment() const
-  {
-    return isFirstEncode();
-  }
-
-  /*
-   * Grammar:
-   *
-   * Assignment = Encode '=' FieldList .
-   */
-  void parseAssignment()
-  {
-    parseEncode();
-
-    check('=');
-
-    parseFieldList();
-  }
-
-  bool isFirstEncode() const
-  {
-    return isLookAheadValue<std::string>(TOK_Identifier, "Encode");
-  }
-
-  /*
-   * Grammar:
-   *
-   * Encode = identifier<'Encode'> '(' integral ',' string ')' .
-   */
-  void parseEncode()
-  {
-    if( isFirstEncode() ) {
-      scan();
-    } else {
-      throwUnexpectedTokenValue(_lookAheadToken);
-    }
-
-    check('(');
-
-    check(TOK_Integral);
-    // TODO
-
-    check(',');
-
-    check(TOK_String);
-    // TODO
-
-    check(')');
-  }
-
-  /*
-   * Grammar:
-   *
-   * Field = ( identifier | integral ) '[' integral ':' integral ']' '@' integral .
-   */
-  void parseField()
-  {
-    using Ctx = EncodeContext<value_type>; // TODO
-
-    cs::TokenPtr fieldType;
-    if( isLookAhead(TOK_Identifier)  ||  isLookAhead(TOK_Integral) ) {
-      scan();
-      fieldType = std::move(_currentToken);
-    } else {
-      throwUnexpectedToken(_lookAheadToken);
-    }
-
-    check('[');
-
-    check(TOK_Integral);
-    const std::size_t to = currentValue<value_type>();
-
-    check(':');
-
-    check(TOK_Integral);
-    const std::size_t from = currentValue<value_type>();
-
-    check(']');
-
-    check('@');
-
-    check(TOK_Integral);
-    const std::size_t at = currentValue<value_type>();
-
-    Ctx::Field field = fieldType->id() == TOK_Identifier
-        ? Ctx::Variable::make(cs::Token::to_value<std::string>(fieldType),
-                              from, to, at)
-        : Ctx::Literal::make(cs::Token::to_value<value_type>(fieldType),
-                             from, to, at);
-    if( !field ) {
-      throwErrorMessage(_currentToken->line(), "invalid field definition");
-    }
-  } // parseField()
-
-  /*
-   * Grammar:
-   *
-   * FieldList = '{' Field { ',' Field } '}' .
-   */
-  void parseFieldList()
-  {
-    check('{');
-
-    parseField();
-
-    while( isLookAhead(',') ) {
-      scan();
-
-      parseField();
-    }
-
-    check('}');
-  }
-};
-
 void test_parser()
 {
-  EncodeParser parser;
+  Encode::Parser<uint32_t> parser;
 
-#if 1
   parser.parse("Encode(32,\"Test\") = { field[7:0]@2 , 0xF[1:0]@0 }\n");
-#else
-  parser.parse("field[7:0]@2");
-  printf("---\n");
-  parser.parse("0xF[1:0]@0");
-#endif
 }
 
 ////// Main //////////////////////////////////////////////////////////////////
