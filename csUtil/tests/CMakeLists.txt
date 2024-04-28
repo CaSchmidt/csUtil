@@ -45,8 +45,10 @@ cs_test(test_encode src/test_encode.cpp
   include/Encode/Field.h
   include/Encode/List.h
   include/Encode/Literal.h
+  include/Encode/Parser.h
   include/Encode/Store.h
   include/Encode/Variable.h
+  src/EncodeParser.cpp
 )
 cs_test(test_endian src/test_endian.cpp)
 cs_test(test_excd src/test_excd.cpp)
