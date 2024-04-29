@@ -62,7 +62,7 @@ namespace cs {
     {
       const tokenid_t id = id_from_char(ch);
       return is_literal(id)
-          ? BaseToken::make(id, 1)
+          ? TokenBase::make(id, 1)
           : TokenPtr();
     }
 

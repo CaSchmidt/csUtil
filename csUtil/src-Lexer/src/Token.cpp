@@ -35,59 +35,59 @@ namespace cs {
 
   ////// BaseToken - public //////////////////////////////////////////////////
 
-  BaseToken::BaseToken(const tokenid_t id, const size_t size,
+  TokenBase::TokenBase(const tokenid_t id, const size_t size,
                        const ctor_tag&) noexcept
     : _id{id}
     , _size{size}
   {
   }
 
-  BaseToken::~BaseToken() noexcept
+  TokenBase::~TokenBase() noexcept
   {
   }
 
-  tokenid_t BaseToken::id() const
+  tokenid_t TokenBase::id() const
   {
     return _id;
   }
 
-  size_t BaseToken::column() const
+  size_t TokenBase::column() const
   {
     return _column;
   }
 
-  size_t BaseToken::line() const
+  size_t TokenBase::line() const
   {
     return _line;
   }
 
-  void BaseToken::setLocation(const size_t line, const size_t column)
+  void TokenBase::setLocation(const size_t line, const size_t column)
   {
     _column = column;
     _line   = line;
   }
 
-  size_t BaseToken::size() const
+  size_t TokenBase::size() const
   {
     return _size;
   }
 
-  TokenPtr BaseToken::make(const tokenid_t id, const size_t size)
+  TokenPtr TokenBase::make(const tokenid_t id, const size_t size)
   {
-    return std::make_unique<BaseToken>(id, size);
+    return std::make_unique<TokenBase>(id, size);
   }
 
   ////// BaseTokenNames - public /////////////////////////////////////////////
 
-  BaseTokenNames::BaseTokenNames(const ctor_tag&) noexcept
+  TokenNamesBase::TokenNamesBase(const ctor_tag&) noexcept
   {
   }
 
-  BaseTokenNames::~BaseTokenNames() noexcept
+  TokenNamesBase::~TokenNamesBase() noexcept
   {
   }
 
-  const char *BaseTokenNames::name(const tokenid_t id) const
+  const char *TokenNamesBase::name(const tokenid_t id) const
   {
     if(        id == TOK_EndOfInput ) {
       return "EndOfInput";
@@ -99,9 +99,9 @@ namespace cs {
     return nullptr;
   }
 
-  TokenNamesPtr BaseTokenNames::make()
+  TokenNamesPtr TokenNamesBase::make()
   {
-    return std::make_unique<BaseTokenNames>();
+    return std::make_unique<TokenNamesBase>();
   }
 
 } // namespace cs

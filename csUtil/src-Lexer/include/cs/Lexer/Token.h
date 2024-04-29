@@ -75,18 +75,18 @@ namespace cs {
 
   ////// Base Token Implementation ///////////////////////////////////////////
 
-  using TokenPtr = std::unique_ptr<class BaseToken>;
+  using TokenPtr = std::unique_ptr<class TokenBase>;
 
-  class CS_UTIL_EXPORT BaseToken {
+  class CS_UTIL_EXPORT TokenBase {
   protected:
     struct ctor_tag {
       ctor_tag() noexcept = default;
     };
 
   public:
-    BaseToken(const tokenid_t id, const size_t size,
+    TokenBase(const tokenid_t id, const size_t size,
               const ctor_tag& = ctor_tag()) noexcept;
-    virtual ~BaseToken() noexcept;
+    virtual ~TokenBase() noexcept;
 
     tokenid_t id() const;
 
@@ -100,7 +100,7 @@ namespace cs {
     static TokenPtr make(const tokenid_t id, const size_t size);
 
   private:
-    BaseToken() noexcept = delete;
+    TokenBase() noexcept = delete;
 
     size_t    _column{0};
     tokenid_t _id{};
@@ -110,17 +110,17 @@ namespace cs {
 
   ////// Base Token Names Implementation /////////////////////////////////////
 
-  using TokenNamesPtr = std::unique_ptr<class BaseTokenNames>;
+  using TokenNamesPtr = std::unique_ptr<class TokenNamesBase>;
 
-  class CS_UTIL_EXPORT BaseTokenNames {
+  class CS_UTIL_EXPORT TokenNamesBase {
   private:
     struct ctor_tag {
       ctor_tag() noexcept = default;
     };
 
   public:
-    BaseTokenNames(const ctor_tag& = ctor_tag()) noexcept;
-    virtual ~BaseTokenNames() noexcept;
+    TokenNamesBase(const ctor_tag& = ctor_tag()) noexcept;
+    virtual ~TokenNamesBase() noexcept;
 
     virtual const char *name(const tokenid_t id) const;
 

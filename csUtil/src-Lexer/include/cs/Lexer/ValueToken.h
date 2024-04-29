@@ -38,7 +38,7 @@ namespace cs {
   ////// Value Token Implementation //////////////////////////////////////////
 
   template<typename T>
-  class ValueToken : public BaseToken {
+  class ValueToken : public TokenBase {
   protected:
     struct ctor_tag {
       ctor_tag() noexcept = default;
@@ -49,7 +49,7 @@ namespace cs {
 
     ValueToken(const tokenid_t id, const value_type& value, const size_t size,
                const ctor_tag& = ctor_tag()) noexcept
-      : BaseToken(id, size)
+      : TokenBase(id, size)
       , _value(value)
     {
     }

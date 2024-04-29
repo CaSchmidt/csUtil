@@ -5,8 +5,6 @@
 #include <algorithm>
 #include <charconv>
 
-#include <cs/Lexer/Context.h>
-#include <cs/Lexer/Parser.h>
 #include <cs/Text/PrintFormat.h>
 #include <cs/Text/PrintUtil.h>
 

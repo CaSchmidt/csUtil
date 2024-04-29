@@ -50,7 +50,7 @@ namespace Encode {
     } else if( id == TOK_String ) {
       return "String";
     }
-    return cs::BaseTokenNames::name(id);
+    return cs::TokenNamesBase::name(id);
   }
 
   cs::TokenNamesPtr EncodeTokenNames::make()

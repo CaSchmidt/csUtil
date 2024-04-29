@@ -111,7 +111,7 @@ namespace cs {
       // (2) End-of-Input reached? ///////////////////////////////////////////
 
       if( atEnd() ) {
-        TokenPtr eoi = BaseToken::make(TOK_EndOfInput, 0);
+        TokenPtr eoi = TokenBase::make(TOK_EndOfInput, 0);
         eoi->setLocation(_line, _column);
         return eoi;
       }
@@ -203,9 +203,9 @@ namespace cs {
           advance(ch);
 
           if(        ch == g::HT  &&  _flags.testAny(LexerFlag::ScanHT) ) {
-            return BaseToken::make(static_cast<tokenid_t>(g::HT), 1);
+            return TokenBase::make(static_cast<tokenid_t>(g::HT), 1);
           } else if( ch == g::LF  &&  _flags.testAny(LexerFlag::ScanLF) ) {
-            return BaseToken::make(static_cast<tokenid_t>(g::LF), 1);
+            return TokenBase::make(static_cast<tokenid_t>(g::LF), 1);
           }
         } else {
           break;

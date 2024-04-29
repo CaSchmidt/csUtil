@@ -41,16 +41,16 @@ namespace cs {
 
   template<typename CharT>
   requires is_tokenid_char_v<CharT>
-  class BaseParser {
+  class AbstractParser {
   public:
     using char_type = CharT;
     using    String = std::basic_string<char_type>;
 
-    BaseParser()
+    AbstractParser()
     {
     }
 
-    virtual ~BaseParser()
+    virtual ~AbstractParser()
     {
     }
 
@@ -59,7 +59,7 @@ namespace cs {
       _currentToken.reset();
       _lookAheadToken.reset();
       _lexer.clear();
-      _names = BaseTokenNames::make();
+      _names = TokenNamesBase::make();
 
       if( !initialize() ) {
         fprintf(stderr, "ERROR: initialize()\n"); // TODO

@@ -32,7 +32,7 @@
 #pragma once
 
 #include <cs/Lexer/Context.h>
-#include <cs/Lexer/Parser.h>
+#include <cs/Lexer/AbstractParser.h>
 
 #include <Encode/Engine.h>
 
@@ -44,7 +44,7 @@ namespace Encode {
     TOK_String
   };
 
-  class EncodeTokenNames : public cs::BaseTokenNames {
+  class EncodeTokenNames : public cs::TokenNamesBase {
   private:
     struct ctor_tag {
       ctor_tag() noexcept = default;
@@ -61,7 +61,7 @@ namespace Encode {
   };
 
   template<typename T>
-  class Parser : public cs::BaseParser<char> {
+  class Parser : public cs::AbstractParser<char> {
   public:
     using EnginePtr = Encode::EnginePtr<T>;
     using Engine    = typename EnginePtr::element_type;
