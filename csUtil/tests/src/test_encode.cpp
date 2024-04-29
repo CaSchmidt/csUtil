@@ -48,7 +48,7 @@ void inputVariables(Encode::VariableStore<T>& store)
 
 void test_engine(const Encode::EnginePtr<uint32_t>& engine)
 {
-  using Engine = std::remove_cvref_t<decltype(engine)>::element_type;
+  using Engine = cs::element_of_ptr_t<decltype(engine)>;
   using Store  = Engine::Store;
 
   using  size_type = Engine::size_type;

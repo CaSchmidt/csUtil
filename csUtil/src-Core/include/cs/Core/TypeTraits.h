@@ -310,6 +310,14 @@ namespace cs {
   template<typename A, typename B>
   inline constexpr A maxab_v = maxab<A,B>::value;
 
+  ////// Same Size ///////////////////////////////////////////////////////////
+
+  template<typename T1, typename T2>
+  struct is_size : std::bool_constant<sizeof(T1) == sizeof(T2)> {};
+
+  template<typename T1, typename T2>
+  inline constexpr bool is_size_v = is_size<T1,T2>::value;
+
   ////// Same Types //////////////////////////////////////////////////////////
 
   template<typename T, typename REF>
@@ -341,26 +349,33 @@ namespace cs {
   template<typename T, std::size_t SIZE, std::size_t DIM = 0>
   inline constexpr bool is_array_size_v = is_array_size<T,SIZE,DIM>::value;
 
+  ////// Deduce element_type of shared_ptr<>/unique_ptr<> ////////////////////
+
+  template<typename T>
+  using element_of_ptr_t = typename std::remove_cvref_t<T>::element_type;
+
   ////// Pointer Conversions /////////////////////////////////////////////////
 
-  inline const char *CSTR(const char8_t *s)
+  inline const char *CSTR(const char8_t *s,
+                          std::enable_if_t<is_size_v<char,char8_t>> * = nullptr)
   {
     return reinterpret_cast<const char*>(s);
   }
 
   inline const wchar_t *WSTR(const char16_t *s,
-                             std::enable_if_t<sizeof(wchar_t) == sizeof(char16_t)> * = nullptr)
+                             std::enable_if_t<is_size_v<wchar_t,char16_t>> * = nullptr)
   {
     return reinterpret_cast<const wchar_t*>(s);
   }
 
-  inline const char8_t *UTF8(const char *s)
+  inline const char8_t *UTF8(const char *s,
+                             std::enable_if_t<is_size_v<char8_t,char>> * = nullptr)
   {
     return reinterpret_cast<const char8_t*>(s);
   }
 
   inline const char16_t *UTF16(const wchar_t *s,
-                               std::enable_if_t<sizeof(char16_t) == sizeof(wchar_t)> * = nullptr)
+                               std::enable_if_t<is_size_v<char16_t,wchar_t>> * = nullptr)
   {
     return reinterpret_cast<const char16_t*>(s);
   }

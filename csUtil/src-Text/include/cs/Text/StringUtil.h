@@ -426,8 +426,7 @@ namespace cs {
         : nullptr;
   }
 
-  inline const wchar_t *WSTR(const std::u16string& str,
-                             std::enable_if_t<sizeof(wchar_t) == sizeof(char16_t)> * = nullptr)
+  inline const wchar_t *WSTR(const std::u16string& str)
   {
     return !str.empty()
         ? WSTR(str.data())
@@ -448,16 +447,14 @@ namespace cs {
         : std::u8string();
   }
 
-  inline std::u16string toUtf16String(const std::wstring_view& str,
-                                      std::enable_if_t<sizeof(char16_t) == sizeof(wchar_t)> * = nullptr)
+  inline std::u16string toUtf16String(const std::wstring_view& str)
   {
     return !str.empty()
         ? std::u16string(UTF16(str.data()), str.size())
         : std::u16string();
   }
 
-  inline std::wstring toWString(const std::u16string_view& str,
-                                std::enable_if_t<sizeof(wchar_t) == sizeof(char16_t)> * = nullptr)
+  inline std::wstring toWString(const std::u16string_view& str)
   {
     return !str.empty()
         ? std::wstring(WSTR(str.data()), str.size())
