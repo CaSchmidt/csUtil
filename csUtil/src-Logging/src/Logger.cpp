@@ -29,6 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <algorithm>
+
 #include "cs/Logging/Logger.h"
 
 #include "cs/Core/TypeTraits.h"
@@ -37,18 +39,23 @@ namespace cs {
 
   namespace impl_logger {
 
+    constexpr auto MAX_INT_SIZE = maxab_v<std::size_t,int>;
+
     inline bool isWidthSize(const std::u8string_view& view)
     {
-      constexpr auto MAX_WIDTH_SIZE = maxab_v<std::u8string_view::size_type,int>;
+      return !view.empty()  &&  view.size() <= MAX_INT_SIZE;
+    }
 
-      return !view.empty()  &&  view.size() <= MAX_WIDTH_SIZE;
+    inline int toInt(const std::size_t in)
+    {
+      return static_cast<int>(std::min(in, MAX_INT_SIZE));
     }
 
   } // namespace impl_logger
 
   ////// public //////////////////////////////////////////////////////////////
 
-  Logger::Logger(FILE *file, const bool is_owner)
+  Logger::Logger(FILE *file, const bool is_owner, const ctor_tag&)
     : _file(file)
     , _is_owner(is_owner)
   {
@@ -72,36 +79,46 @@ namespace cs {
   void Logger::logText(const std::u8string_view& msg) const
   {
     if( impl_logger::isWidthSize(msg) ) {
-      fprintf(_file, "%.*s\n", int(msg.size()), CSTR(msg.data()));
+      fprintf(_file, "%.*s\n",
+              int(msg.size()), CSTR(msg.data()));
     }
   }
 
   void Logger::logWarning(const std::u8string_view& msg) const
   {
     if( impl_logger::isWidthSize(msg) ) {
-      fprintf(_file, "WARNING: %.*s\n", int(msg.size()), CSTR(msg.data()));
+      fprintf(_file, "WARNING: %.*s\n",
+              int(msg.size()), CSTR(msg.data()));
     }
   }
 
-  void Logger::logWarning(const int lineno, const std::u8string_view& msg) const
+  void Logger::logWarning(const std::size_t lineno, const std::u8string_view& msg) const
   {
     if( impl_logger::isWidthSize(msg) ) {
-      fprintf(_file, "WARNING:%d: %.*s\n", lineno, int(msg.size()), CSTR(msg.data()));
+      fprintf(_file, "WARNING(L%d): %.*s\n",
+              impl_logger::toInt(lineno), int(msg.size()), CSTR(msg.data()));
     }
   }
 
   void Logger::logError(const std::u8string_view& msg) const
   {
     if( impl_logger::isWidthSize(msg) ) {
-      fprintf(_file, "ERROR: %.*s\n", int(msg.size()), CSTR(msg.data()));
+      fprintf(_file, "ERROR: %.*s\n",
+              int(msg.size()), CSTR(msg.data()));
     }
   }
 
-  void Logger::logError(const int lineno, const std::u8string_view& msg) const
+  void Logger::logError(const std::size_t lineno, const std::u8string_view& msg) const
   {
     if( impl_logger::isWidthSize(msg) ) {
-      fprintf(_file, "ERROR:%d: %.*s\n", lineno, int(msg.size()), CSTR(msg.data()));
+      fprintf(_file, "ERROR(L%d): %.*s\n",
+              impl_logger::toInt(lineno), int(msg.size()), CSTR(msg.data()));
     }
+  }
+
+  LoggerPtr Logger::make(FILE *file, const bool is_owner)
+  {
+    return std::make_shared<Logger>(file, is_owner);
   }
 
 } // namespace cs

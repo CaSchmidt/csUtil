@@ -33,28 +33,36 @@
 
 #include <cstdio>
 
-#include <cs/Logging/IProgress.h>
+#include <cs/Logging/AbstractProgress.h>
 
 namespace cs {
 
-  class CS_UTIL_EXPORT Progress : public IProgress {
-  public:
-    static constexpr int DEFAULT_STEP = 10;
+  class CS_UTIL_EXPORT Progress : public AbstractProgress {
+  private:
+    struct ctor_tag {
+      ctor_tag() noexcept = default;
+    };
 
-    Progress(FILE *file = stderr, const bool owner = true);
-    Progress(int step, FILE *file = stderr, const bool owner = true);
+  public:
+    static constexpr std::size_t DEFAULT_STEP = 10;
+
+    Progress(const std::size_t step, FILE *file, const bool is_owner,
+             const ctor_tag& = ctor_tag());
     ~Progress();
 
     void progressFlush() const;
-    void setProgressRange(const int min, const int max) const;
-    void setProgressValue(const int val) const;
+    void setProgressRange(const std::size_t min, const std::size_t max) const;
+    void setProgressValue(const std::size_t val) const;
+
+    static ProgressPtr make(const std::size_t step = DEFAULT_STEP,
+                            FILE *file = stderr, const bool is_owner = true);
 
   private:
-    FILE *_file{nullptr};
-    bool _is_owner{true};
-    int  _step{DEFAULT_STEP};
-    int  _min{0};
-    int  _max{100};
+    FILE       *_file{nullptr};
+    bool        _is_owner{true};
+    std::size_t _step{DEFAULT_STEP};
+    std::size_t _min{0};
+    std::size_t _max{100};
   };
 
 } // namespace cs

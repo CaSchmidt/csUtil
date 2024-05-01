@@ -33,13 +33,18 @@
 
 #include <cstdio>
 
-#include <cs/Logging/ILogger.h>
+#include <cs/Logging/AbstractLogger.h>
 
 namespace cs {
 
-  class CS_UTIL_EXPORT Logger : public ILogger {
+  class CS_UTIL_EXPORT Logger : public AbstractLogger {
+  private:
+    struct ctor_tag {
+      ctor_tag() noexcept = default;
+    };
+
   public:
-    Logger(FILE *file = stderr, const bool is_owner = true);
+    Logger(FILE *file, const bool is_owner, const ctor_tag& = ctor_tag());
     ~Logger();
 
     void logFlush() const;
@@ -47,10 +52,12 @@ namespace cs {
     void logText(const std::u8string_view& msg) const;
 
     void logWarning(const std::u8string_view& msg) const;
-    void logWarning(const int lineno, const std::u8string_view& msg) const;
+    void logWarning(const std::size_t lineno, const std::u8string_view& msg) const;
 
     void logError(const std::u8string_view& msg) const;
-    void logError(const int lineno, const std::u8string_view& msg) const;
+    void logError(const std::size_t lineno, const std::u8string_view& msg) const;
+
+    static LoggerPtr make(FILE *file = stderr, const bool is_owner = true);
 
   private:
     FILE *_file{nullptr};

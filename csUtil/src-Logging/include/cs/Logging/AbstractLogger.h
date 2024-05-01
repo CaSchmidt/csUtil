@@ -29,24 +29,45 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include "cs/Logging/ILogger.h"
+#pragma once
+
+#include <cstddef>
+
+#include <memory>
+#include <string_view>
+
+#include <cs/Core/csutil_config.h>
 
 namespace cs {
 
-  ////// public //////////////////////////////////////////////////////////////
+  using LoggerPtr = std::shared_ptr<class AbstractLogger>;
 
-  ILogger::~ILogger() noexcept
-  {
-  }
+  class CS_UTIL_EXPORT AbstractLogger {
+  public:
+    virtual ~AbstractLogger() noexcept;
 
-  void ILogger::logFlush() const
-  {
-  }
+    virtual void logFlush() const;
 
-  ////// protected ///////////////////////////////////////////////////////////
+    virtual void logText(const std::u8string_view& sv) const = 0;
 
-  ILogger::ILogger() noexcept
-  {
-  }
+    virtual void logWarning(const std::u8string_view& sv) const = 0;
+    virtual void logWarning(const std::size_t lineno, const std::u8string_view& sv) const = 0;
+
+    virtual void logError(const std::u8string_view& sv) const = 0;
+    virtual void logError(const std::size_t lineno, const std::u8string_view& sv) const = 0;
+
+  protected:
+    AbstractLogger() noexcept;
+
+  private:
+    AbstractLogger(const AbstractLogger&) noexcept = delete;
+    AbstractLogger& operator=(const AbstractLogger&) noexcept = delete;
+    AbstractLogger(AbstractLogger&&) noexcept = delete;
+    AbstractLogger& operator=(AbstractLogger&&) noexcept = delete;
+  };
+
+  struct CS_UTIL_EXPORT NoDeleteLoggerPtr {
+    void operator()(AbstractLogger*) const;
+  };
 
 } // namespace cs

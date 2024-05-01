@@ -1,16 +1,16 @@
 list(APPEND csLogging_HEADERS
+  include/cs/Logging/AbstractLogger.h
+  include/cs/Logging/AbstractProgress.h
   include/cs/Logging/DualLogger.h
-  include/cs/Logging/ILogger.h
-  include/cs/Logging/IProgress.h
   include/cs/Logging/Logger.h
   include/cs/Logging/OutputContext.h
   include/cs/Logging/Progress.h
   )
 
 list(APPEND csLogging_SOURCES
+  src/AbstractLogger.cpp
+  src/AbstractProgress.cpp
   src/DualLogger.cpp
-  src/ILogger.cpp
-  src/IProgress.cpp
   src/Logger.cpp
   src/main_logging.cpp
   src/OutputContext.cpp

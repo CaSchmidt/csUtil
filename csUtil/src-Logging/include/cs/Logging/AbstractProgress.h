@@ -29,28 +29,39 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include "cs/Logging/IProgress.h"
+#pragma once
+
+#include <cstddef>
+
+#include <memory>
+
+#include <cs/Core/csutil_config.h>
 
 namespace cs {
 
-  ////// public //////////////////////////////////////////////////////////////
+  using ProgressPtr = std::shared_ptr<class AbstractProgress>;
 
-  IProgress::~IProgress() noexcept
-  {
-  }
+  class CS_UTIL_EXPORT AbstractProgress {
+  public:
+    virtual ~AbstractProgress() noexcept;
 
-  void IProgress::progressFlush() const
-  {
-  }
+    virtual void progressFlush() const;
+    virtual void resetProgress() const;
+    virtual void setProgressRange(const std::size_t min, const std::size_t max) const = 0;
+    virtual void setProgressValue(const std::size_t val) const = 0;
 
-  void IProgress::resetProgress() const
-  {
-  }
+  protected:
+    AbstractProgress() noexcept;
 
-  ////// protected ///////////////////////////////////////////////////////////
+  private:
+    AbstractProgress(const AbstractProgress&) noexcept = delete;
+    AbstractProgress& operator=(const AbstractProgress&) noexcept = delete;
+    AbstractProgress(AbstractProgress&&) noexcept = delete;
+    AbstractProgress& operator=(AbstractProgress&&) noexcept = delete;
+  };
 
-  IProgress::IProgress() noexcept
-  {
-  }
+  struct CS_UTIL_EXPORT NoDeleteProgressPtr {
+    void operator()(AbstractProgress*) const;
+  };
 
 } // namespace cs

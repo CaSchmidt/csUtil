@@ -37,15 +37,20 @@
 
 namespace cs {
 
+  namespace impl_progress {
+
+    constexpr auto MAX_INT_SIZE = maxab_v<std::size_t,int>;
+
+    inline int toInt(const std::size_t in)
+    {
+      return static_cast<int>(std::min(in, MAX_INT_SIZE));
+    }
+
+  } // namespace impl_progress
+
   ////// public //////////////////////////////////////////////////////////////
 
-  Progress::Progress(FILE *file, const bool owner)
-    : _file{file}
-    , _is_owner{owner}
-  {
-  }
-
-  Progress::Progress(int step, FILE *file, const bool owner)
+  Progress::Progress(const std::size_t step, FILE *file, const bool owner, const ctor_tag&)
     : _file{file}
     , _is_owner{owner}
   {
@@ -69,7 +74,7 @@ namespace cs {
     fflush(_file);
   }
 
-  void Progress::setProgressRange(const int min, const int max) const
+  void Progress::setProgressRange(const std::size_t min, const std::size_t max) const
   {
     if( min < max ) {
       const_cast<Progress*>(this)->_min = min;
@@ -77,22 +82,30 @@ namespace cs {
     }
   }
 
-  void Progress::setProgressValue(const int val) const
+  void Progress::setProgressValue(const std::size_t val) const
   {
-    constexpr int HUNDRED = 100;
-    constexpr int    ZERO =   0;
+    using namespace impl_progress;
 
-    const int cval = std::clamp<int>(val, _min, _max);
+    constexpr std::size_t HUNDRED = 100;
+    constexpr std::size_t    ZERO =   0;
 
-    const int  pos = cval - _min;
-    const int span = _max - _min;
+    const std::size_t cval = std::clamp(val, _min, _max);
+
+    const std::size_t  pos = cval - _min; // position in span
+    const std::size_t span = _max - _min;
 
     if( pos%_step == ZERO  ||  pos == span ) {
-      const int   pct = (pos*HUNDRED)/span;
-      const int width = int(countDigits<int>(span));
+      const std::size_t pct = (pos*HUNDRED)/span;
+      const int       width = int(countDigits(span));
 
-      fprintf(_file, "Progress: %3d%% (%*d/%d)\n", pct, width, pos, span);
+      fprintf(_file, "Progress: %3d%% (%*d/%d)\n",
+              toInt(pct), width, toInt(pos), toInt(span));
     }
+  }
+
+  ProgressPtr Progress::make(const std::size_t step, FILE *file, const bool is_owner)
+  {
+    return std::make_shared<Progress>(step, file, is_owner);
   }
 
 } // namespace cs
