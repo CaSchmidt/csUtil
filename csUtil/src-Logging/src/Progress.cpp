@@ -82,9 +82,9 @@ namespace cs {
     constexpr int HUNDRED = 100;
     constexpr int    ZERO =   0;
 
-    const int _val = std::clamp<int>(val, _min, _max);
+    const int cval = std::clamp<int>(val, _min, _max);
 
-    const int  pos = _val - _min;
+    const int  pos = cval - _min;
     const int span = _max - _min;
 
     if( pos%_step == ZERO  ||  pos == span ) {
