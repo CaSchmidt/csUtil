@@ -41,13 +41,13 @@ namespace cs {
 
   Progress::Progress(FILE *file, const bool owner)
     : _file{file}
-    , _owner{owner}
+    , _is_owner{owner}
   {
   }
 
   Progress::Progress(int step, FILE *file, const bool owner)
     : _file{file}
-    , _owner{owner}
+    , _is_owner{owner}
   {
     _step = step > 0
         ? step
@@ -56,7 +56,10 @@ namespace cs {
 
   Progress::~Progress()
   {
-    if( _owner  &&  _file != stderr  &&  _file != stdout ) {
+    if( _file == stderr  ||  _file == stdin  ||  _file == stdout ) {
+      return;
+    }
+    if( _is_owner ) {
       fclose(_file);
     }
   }

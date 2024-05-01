@@ -50,8 +50,8 @@ namespace cs {
     void setProgressValue(const int val) const;
 
   private:
-    FILE *_file;
-    bool _owner;
+    FILE *_file{nullptr};
+    bool _is_owner{true};
     int  _step{DEFAULT_STEP};
     int  _min{0};
     int  _max{100};
