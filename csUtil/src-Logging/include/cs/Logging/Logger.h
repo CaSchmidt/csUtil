@@ -39,7 +39,7 @@ namespace cs {
 
   class CS_UTIL_EXPORT Logger : public ILogger {
   public:
-    Logger(FILE *file = stderr, const bool owner = true);
+    Logger(FILE *file = stderr, const bool is_owner = true);
     ~Logger();
 
     void logFlush() const;
@@ -53,8 +53,8 @@ namespace cs {
     void logError(const int lineno, const std::u8string_view& sv) const;
 
   private:
-    FILE *_file;
-    bool _owner;
+    FILE *_file{nullptr};
+    bool _is_owner{true};
   };
 
 } // namespace cs

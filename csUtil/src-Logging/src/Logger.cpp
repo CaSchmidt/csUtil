@@ -37,15 +37,18 @@ namespace cs {
 
   ////// public //////////////////////////////////////////////////////////////
 
-  Logger::Logger(FILE *file, const bool owner)
+  Logger::Logger(FILE *file, const bool is_owner)
     : _file(file)
-    , _owner(owner)
+    , _is_owner(is_owner)
   {
   }
 
   Logger::~Logger()
   {
-    if( _owner  &&  _file != stderr  &&  _file != stdout ) {
+    if( _file == stderr  ||  _file == stdin  ||  _file == stdout ) {
+      return;
+    }
+    if( _is_owner ) {
       fclose(_file);
     }
   }
