@@ -35,6 +35,17 @@
 
 namespace cs {
 
+  namespace impl_logger {
+
+    inline bool isWidthSize(const std::u8string_view& view)
+    {
+      constexpr auto MAX_WIDTH_SIZE = maxab_v<std::u8string_view::size_type,int>;
+
+      return !view.empty()  &&  view.size() <= MAX_WIDTH_SIZE;
+    }
+
+  } // namespace impl_logger
+
   ////// public //////////////////////////////////////////////////////////////
 
   Logger::Logger(FILE *file, const bool is_owner)
@@ -58,40 +69,38 @@ namespace cs {
     fflush(_file);
   }
 
-  constexpr auto MAX_STD_SIZE = maxab_v<std::u8string_view::size_type,int>;
-
-  void Logger::logText(const std::u8string_view& sv) const
+  void Logger::logText(const std::u8string_view& msg) const
   {
-    if( !sv.empty()  &&  sv.size() <= MAX_STD_SIZE ) {
-      fprintf(_file, "%.*s\n", int(sv.size()), CSTR(sv.data()));
+    if( impl_logger::isWidthSize(msg) ) {
+      fprintf(_file, "%.*s\n", int(msg.size()), CSTR(msg.data()));
     }
   }
 
-  void Logger::logWarning(const std::u8string_view& sv) const
+  void Logger::logWarning(const std::u8string_view& msg) const
   {
-    if( !sv.empty()  &&  sv.size() <= MAX_STD_SIZE ) {
-      fprintf(_file, "WARNING: %.*s\n", int(sv.size()), CSTR(sv.data()));
+    if( impl_logger::isWidthSize(msg) ) {
+      fprintf(_file, "WARNING: %.*s\n", int(msg.size()), CSTR(msg.data()));
     }
   }
 
-  void Logger::logWarning(const int lineno, const std::u8string_view& sv) const
+  void Logger::logWarning(const int lineno, const std::u8string_view& msg) const
   {
-    if( !sv.empty()  &&  sv.size() <= MAX_STD_SIZE ) {
-      fprintf(_file, "WARNING:%d: %.*s\n", lineno, int(sv.size()), CSTR(sv.data()));
+    if( impl_logger::isWidthSize(msg) ) {
+      fprintf(_file, "WARNING:%d: %.*s\n", lineno, int(msg.size()), CSTR(msg.data()));
     }
   }
 
-  void Logger::logError(const std::u8string_view& sv) const
+  void Logger::logError(const std::u8string_view& msg) const
   {
-    if( !sv.empty()  &&  sv.size() <= MAX_STD_SIZE ) {
-      fprintf(_file, "ERROR: %.*s\n", int(sv.size()), CSTR(sv.data()));
+    if( impl_logger::isWidthSize(msg) ) {
+      fprintf(_file, "ERROR: %.*s\n", int(msg.size()), CSTR(msg.data()));
     }
   }
 
-  void Logger::logError(const int lineno, const std::u8string_view& sv) const
+  void Logger::logError(const int lineno, const std::u8string_view& msg) const
   {
-    if( !sv.empty()  &&  sv.size() <= MAX_STD_SIZE ) {
-      fprintf(_file, "ERROR:%d: %.*s\n", lineno, int(sv.size()), CSTR(sv.data()));
+    if( impl_logger::isWidthSize(msg) ) {
+      fprintf(_file, "ERROR:%d: %.*s\n", lineno, int(msg.size()), CSTR(msg.data()));
     }
   }
 
