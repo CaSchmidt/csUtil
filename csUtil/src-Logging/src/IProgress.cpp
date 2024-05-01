@@ -33,9 +33,7 @@
 
 namespace cs {
 
-  IProgress::IProgress() noexcept
-  {
-  }
+  ////// public //////////////////////////////////////////////////////////////
 
   IProgress::~IProgress() noexcept
   {
@@ -46,6 +44,12 @@ namespace cs {
   }
 
   void IProgress::resetProgress() const
+  {
+  }
+
+  ////// protected ///////////////////////////////////////////////////////////
+
+  IProgress::IProgress() noexcept
   {
   }
 

@@ -35,15 +35,17 @@ namespace cs {
 
   ////// public //////////////////////////////////////////////////////////////
 
-  ILogger::ILogger() noexcept
-  {
-  }
-
   ILogger::~ILogger() noexcept
   {
   }
 
   void ILogger::logFlush() const
+  {
+  }
+
+  ////// protected ///////////////////////////////////////////////////////////
+
+  ILogger::ILogger() noexcept
   {
   }
 

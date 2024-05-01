@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include <string>
+#include <string_view>
 
 #include <cs/Core/csutil_config.h>
 
@@ -39,7 +39,6 @@ namespace cs {
 
   class CS_UTIL_EXPORT ILogger {
   public:
-    ILogger() noexcept;
     virtual ~ILogger() noexcept;
 
     virtual void logFlush() const;
@@ -51,6 +50,9 @@ namespace cs {
 
     virtual void logError(const std::u8string_view& sv) const = 0;
     virtual void logError(const int lineno, const std::u8string_view& sv) const = 0;
+
+  protected:
+    ILogger() noexcept;
 
   private:
     ILogger(const ILogger&) noexcept = delete;

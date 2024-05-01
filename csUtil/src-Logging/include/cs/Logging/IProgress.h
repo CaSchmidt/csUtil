@@ -37,13 +37,15 @@ namespace cs {
 
   class CS_UTIL_EXPORT IProgress {
   public:
-    IProgress() noexcept;
     virtual ~IProgress() noexcept;
 
     virtual void progressFlush() const;
     virtual void resetProgress() const;
     virtual void setProgressRange(const int min, const int max) const = 0;
     virtual void setProgressValue(const int val) const = 0;
+
+  protected:
+    IProgress() noexcept;
 
   private:
     IProgress(const IProgress&) noexcept = delete;
