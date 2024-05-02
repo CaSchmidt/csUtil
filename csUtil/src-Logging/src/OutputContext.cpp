@@ -58,7 +58,8 @@ namespace cs {
 
   LoggerPtr OutputContext::logger() const
   {
-    return _logger;
+    auto iface = const_cast<AbstractLogger*>(dynamic_cast<const AbstractLogger*>(this));
+    return LoggerPtr(iface, NoDeleteLoggerPtr());
   }
 
   void OutputContext::logFlush() const
@@ -120,7 +121,8 @@ namespace cs {
 
   ProgressPtr OutputContext::progress() const
   {
-    return _progress;
+    auto iface = const_cast<AbstractProgress*>(dynamic_cast<const AbstractProgress*>(this));
+    return ProgressPtr(iface, NoDeleteProgressPtr());
   }
 
   void OutputContext::progressFlush() const
