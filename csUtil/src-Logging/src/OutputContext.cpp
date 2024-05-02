@@ -31,26 +31,23 @@
 
 #include "cs/Logging/OutputContext.h"
 
-#include "cs/Logging/ILogger.h"
-#include "cs/Logging/IProgress.h"
-
 namespace cs {
 
-  OutputContext::OutputContext(const ILogger *logger, const bool logger_flush) noexcept
+  OutputContext::OutputContext(const LoggerPtr& logger, const bool logger_flush) noexcept
     : OutputContext(logger, logger_flush, nullptr, false)
   {
   }
 
-  OutputContext::OutputContext(const IProgress *progress, const bool progress_flush) noexcept
+  OutputContext::OutputContext(const ProgressPtr& progress, const bool progress_flush) noexcept
     : OutputContext(nullptr, false, progress, progress_flush)
   {
   }
 
-  OutputContext::OutputContext(const ILogger *logger, const bool logger_flush,
-                               const IProgress *progress, const bool progress_flush) noexcept
-    : _logger{logger}
+  OutputContext::OutputContext(const LoggerPtr& logger, const bool logger_flush,
+                               const ProgressPtr& progress, const bool progress_flush) noexcept
+    : _logger(logger)
     , _logger_flush{logger_flush}
-    , _progress{progress}
+    , _progress(progress)
     , _progress_flush{progress_flush}
   {
   }
@@ -59,83 +56,83 @@ namespace cs {
   {
   }
 
-  const ILogger *OutputContext::logger() const
+  LoggerPtr OutputContext::logger() const
   {
     return _logger;
   }
 
   void OutputContext::logFlush() const
   {
-    if( _logger != nullptr ) {
+    if( _logger ) {
       _logger->logFlush();
     }
   }
 
-  void OutputContext::logText(const std::u8string_view& sv) const
+  void OutputContext::logText(const std::u8string_view& msg) const
   {
-    if( _logger != nullptr ) {
-      _logger->logText(sv);
+    if( _logger ) {
+      _logger->logText(msg);
       if( _logger_flush ) {
         _logger->logFlush();
       }
     }
   }
 
-  void OutputContext::logWarning(const std::u8string_view& sv) const
+  void OutputContext::logWarning(const std::u8string_view& msg) const
   {
-    if( _logger != nullptr ) {
-      _logger->logWarning(sv);
+    if( _logger ) {
+      _logger->logWarning(msg);
       if( _logger_flush ) {
         _logger->logFlush();
       }
     }
   }
 
-  void OutputContext::logWarning(const int lineno, const std::u8string_view& sv) const
+  void OutputContext::logWarning(const std::size_t lineno, const std::u8string_view& msg) const
   {
-    if( _logger != nullptr ) {
-      _logger->logWarning(lineno, sv);
+    if( _logger ) {
+      _logger->logWarning(lineno, msg);
       if( _logger_flush ) {
         _logger->logFlush();
       }
     }
   }
 
-  void OutputContext::logError(const std::u8string_view& sv) const
+  void OutputContext::logError(const std::u8string_view& msg) const
   {
-    if( _logger != nullptr ) {
-      _logger->logError(sv);
+    if( _logger ) {
+      _logger->logError(msg);
       if( _logger_flush ) {
         _logger->logFlush();
       }
     }
   }
 
-  void OutputContext::logError(const int lineno, const std::u8string_view& sv) const
+  void OutputContext::logError(const std::size_t lineno, const std::u8string_view& msg) const
   {
-    if( _logger != nullptr ) {
-      _logger->logError(lineno, sv);
+    if( _logger ) {
+      _logger->logError(lineno, msg);
       if( _logger_flush ) {
         _logger->logFlush();
       }
     }
   }
 
-  const IProgress *OutputContext::progress() const
+  ProgressPtr OutputContext::progress() const
   {
     return _progress;
   }
 
   void OutputContext::progressFlush() const
   {
-    if( _progress != nullptr ) {
+    if( _progress ) {
       _progress->progressFlush();
     }
   }
 
   void OutputContext::resetProgress() const
   {
-    if( _progress != nullptr ) {
+    if( _progress ) {
       _progress->resetProgress();
       if( _progress_flush ) {
         _progress->progressFlush();
@@ -143,9 +140,9 @@ namespace cs {
     }
   }
 
-  void OutputContext::setProgressRange(const int min, const int max) const
+  void OutputContext::setProgressRange(const std::size_t min, const std::size_t max) const
   {
-    if( _progress != nullptr ) {
+    if( _progress ) {
       _progress->setProgressRange(min, max);
       if( _progress_flush ) {
         _progress->progressFlush();
@@ -153,9 +150,9 @@ namespace cs {
     }
   }
 
-  void OutputContext::setProgressValue(const int val) const
+  void OutputContext::setProgressValue(const std::size_t val) const
   {
-    if( _progress != nullptr ) {
+    if( _progress ) {
       _progress->setProgressValue(val);
       if( _progress_flush ) {
         _progress->progressFlush();

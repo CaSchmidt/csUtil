@@ -33,51 +33,46 @@
 
 #include <string>
 
-#include <cs/Logging/ILogger.h>
+#include <cs/Logging/AbstractLogger.h>
+#include <cs/Logging/AbstractProgress.h>
 
 namespace cs {
 
-  class IProgress;
-
-  class CS_UTIL_EXPORT OutputContext {
+  class CS_UTIL_EXPORT OutputContext
+      : public AbstractLogger
+      , public AbstractProgress {
   public:
-    OutputContext(const ILogger *logger, const bool logger_flush = false) noexcept;
-    OutputContext(const IProgress *progress, const bool progress_flush = false) noexcept;
-    OutputContext(const ILogger *logger, const bool logger_flush,
-                  const IProgress *progress, const bool progress_flush) noexcept;
+    OutputContext(const LoggerPtr& logger, const bool logger_flush = false) noexcept;
+    OutputContext(const ProgressPtr& progress, const bool progress_flush = false) noexcept;
+    OutputContext(const LoggerPtr& logger, const bool logger_flush,
+                  const ProgressPtr& progress, const bool progress_flush) noexcept;
     ~OutputContext() noexcept;
 
-    const ILogger *logger() const;
+    LoggerPtr logger() const;
 
     void logFlush() const;
 
-    void logText(const std::u8string_view& sv) const;
+    void logText(const std::u8string_view& msg) const;
 
-    void logWarning(const std::u8string_view& sv) const;
-    void logWarning(const int lineno, const std::u8string_view& sv) const;
+    void logWarning(const std::u8string_view& msg) const;
+    void logWarning(const std::size_t lineno, const std::u8string_view& msg) const;
 
-    void logError(const std::u8string_view& sv) const;
-    void logError(const int lineno, const std::u8string_view& sv) const;
+    void logError(const std::u8string_view& msg) const;
+    void logError(const std::size_t lineno, const std::u8string_view& msg) const;
 
-    const IProgress *progress() const;
+    ProgressPtr progress() const;
 
     void progressFlush() const;
 
     void resetProgress() const;
 
-    void setProgressRange(const int min, const int max) const;
-    void setProgressValue(const int val) const;
+    void setProgressRange(const std::size_t min, const std::size_t max) const;
+    void setProgressValue(const std::size_t val) const;
 
   private:
-    OutputContext(const OutputContext&) noexcept = delete;
-    OutputContext& operator=(const OutputContext&) noexcept = delete;
-
-    OutputContext(OutputContext&&) noexcept = delete;
-    OutputContext& operator=(OutputContext&&) noexcept = delete;
-
-    const ILogger *_logger{nullptr};
+    LoggerPtr _logger{nullptr};
     bool _logger_flush{false};
-    const IProgress *_progress{nullptr};
+    ProgressPtr _progress{nullptr};
     bool _progress_flush{false};
   };
 

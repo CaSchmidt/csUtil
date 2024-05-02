@@ -31,28 +31,28 @@
 
 #pragma once
 
-#include <cs/Logging/ILogger.h>
+#include <cs/Logging/AbstractLogger.h>
 
 namespace cs {
 
-  class CS_UTIL_EXPORT DualLogger : public ILogger {
+  class CS_UTIL_EXPORT DualLogger : public AbstractLogger {
   public:
-    DualLogger(const ILogger *a, const ILogger *b) noexcept;
+    DualLogger(const LoggerPtr& a, const LoggerPtr& b) noexcept;
     ~DualLogger() noexcept;
 
     void logFlush() const;
 
-    void logText(const std::u8string_view& sv) const;
+    void logText(const std::u8string_view& msg) const;
 
-    void logWarning(const std::u8string_view& sv) const;
-    void logWarning(const int lineno, const std::u8string_view& sv) const;
+    void logWarning(const std::u8string_view& msg) const;
+    void logWarning(const std::size_t lineno, const std::u8string_view& msg) const;
 
-    void logError(const std::u8string_view& sv) const;
-    void logError(const int lineno, const std::u8string_view& sv) const;
+    void logError(const std::u8string_view& msg) const;
+    void logError(const std::size_t lineno, const std::u8string_view& msg) const;
 
   private:
-    const ILogger *_a{nullptr};
-    const ILogger *_b{nullptr};
+    LoggerPtr _a{nullptr};
+    LoggerPtr _b{nullptr};
   };
 
 } // namespace cs
