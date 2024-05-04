@@ -11,6 +11,7 @@ set_target_properties(Catch2 Catch2WithMain
   PROPERTIES
   CXX_STANDARD 17
   CXX_STANDARD_REQUIRED ON
+  CXX_EXTENSIONS OFF
   DEBUG_POSTFIX ""
 )
 
@@ -23,6 +24,7 @@ macro(cs_unittest target)
   set_target_properties(${target} PROPERTIES
     CXX_STANDARD 20
     CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF
   )
   if(MSVC)
     target_compile_options(${target}

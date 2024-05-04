@@ -47,6 +47,7 @@ format_output_name(csUtil "csUtil")
 set_target_properties(csUtil PROPERTIES
   CXX_STANDARD 20
   CXX_STANDARD_REQUIRED ON
+  CXX_EXTENSIONS OFF
 )
 
 target_compile_definitions(csUtil
@@ -75,6 +76,12 @@ if(ENABLE_QT)
 
   # set_property(TARGET <target> APPEND PROPERTY AUTOUIC_SEARCH_PATHS <path>)
 endif() # ENABLE_QT
+
+if(MSVC)
+  target_compile_options(csUtil
+    PRIVATE /wd4251
+  )
+endif()
 
 if(UNIX)
   target_link_libraries(csUtil

@@ -5,6 +5,7 @@ macro(cs_test target)
   set_target_properties(${target} PROPERTIES
     CXX_STANDARD 20
     CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF
   )
   target_include_directories(${target}
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
