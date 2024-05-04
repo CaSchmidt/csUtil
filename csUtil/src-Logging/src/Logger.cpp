@@ -33,25 +33,9 @@
 
 #include "cs/Logging/Logger.h"
 
-#include "cs/Core/TypeTraits.h"
+#include "cs/Core/Convert.h"
 
 namespace cs {
-
-  namespace impl_logger {
-
-    constexpr auto MAX_INT_SIZE = maxab_v<std::size_t,int>;
-
-    inline bool isWidthSize(const std::u8string_view& view)
-    {
-      return !view.empty()  &&  view.size() <= MAX_INT_SIZE;
-    }
-
-    inline int toInt(const std::size_t in)
-    {
-      return static_cast<int>(std::min(in, MAX_INT_SIZE));
-    }
-
-  } // namespace impl_logger
 
   ////// public //////////////////////////////////////////////////////////////
 
@@ -78,41 +62,41 @@ namespace cs {
 
   void Logger::logText(const std::u8string_view& msg) const
   {
-    if( impl_logger::isWidthSize(msg) ) {
+    if( !msg.empty() ) {
       fprintf(_file, "%.*s\n",
-              int(msg.size()), CSTR(msg.data()));
+              toSigned<int>(msg.size()), CSTR(msg.data()));
     }
   }
 
   void Logger::logWarning(const std::u8string_view& msg) const
   {
-    if( impl_logger::isWidthSize(msg) ) {
+    if( !msg.empty() ) {
       fprintf(_file, "WARNING: %.*s\n",
-              int(msg.size()), CSTR(msg.data()));
+              cs::toSigned<int>(msg.size()), CSTR(msg.data()));
     }
   }
 
   void Logger::logWarning(const std::size_t lineno, const std::u8string_view& msg) const
   {
-    if( impl_logger::isWidthSize(msg) ) {
-      fprintf(_file, "WARNING(L%d): %.*s\n",
-              impl_logger::toInt(lineno), int(msg.size()), CSTR(msg.data()));
+    if( !msg.empty() ) {
+      fprintf(_file, "WARNING(L%d): %.*s\n", cs::toSigned<int>(lineno),
+              cs::toSigned<int>(msg.size()), CSTR(msg.data()));
     }
   }
 
   void Logger::logError(const std::u8string_view& msg) const
   {
-    if( impl_logger::isWidthSize(msg) ) {
+    if( !msg.empty() ) {
       fprintf(_file, "ERROR: %.*s\n",
-              int(msg.size()), CSTR(msg.data()));
+              cs::toSigned<int>(msg.size()), CSTR(msg.data()));
     }
   }
 
   void Logger::logError(const std::size_t lineno, const std::u8string_view& msg) const
   {
-    if( impl_logger::isWidthSize(msg) ) {
-      fprintf(_file, "ERROR(L%d): %.*s\n",
-              impl_logger::toInt(lineno), int(msg.size()), CSTR(msg.data()));
+    if( !msg.empty() ) {
+      fprintf(_file, "ERROR(L%d): %.*s\n", cs::toSigned<int>(lineno),
+              cs::toSigned<int>(msg.size()), CSTR(msg.data()));
     }
   }
 

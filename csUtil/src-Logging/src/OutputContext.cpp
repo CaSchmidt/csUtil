@@ -31,6 +31,8 @@
 
 #include "cs/Logging/OutputContext.h"
 
+#include "cs/Core/TypeTraits.h"
+
 namespace cs {
 
   OutputContext::OutputContext(const LoggerPtr& logger, const bool logger_flush) noexcept
@@ -58,8 +60,8 @@ namespace cs {
 
   LoggerPtr OutputContext::logger() const
   {
-    auto iface = const_cast<AbstractLogger*>(dynamic_cast<const AbstractLogger*>(this));
-    return LoggerPtr(iface, NoDeleteLoggerPtr());
+    return LoggerPtr(base_cast<AbstractLogger>(this),
+                     NoDeleteLoggerPtr());
   }
 
   void OutputContext::logFlush() const
@@ -121,8 +123,8 @@ namespace cs {
 
   ProgressPtr OutputContext::progress() const
   {
-    auto iface = const_cast<AbstractProgress*>(dynamic_cast<const AbstractProgress*>(this));
-    return ProgressPtr(iface, NoDeleteProgressPtr());
+    return ProgressPtr(base_cast<AbstractProgress>(this),
+                       NoDeleteProgressPtr());
   }
 
   void OutputContext::progressFlush() const

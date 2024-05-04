@@ -33,20 +33,10 @@
 
 #include "cs/Logging/Progress.h"
 
+#include "cs/Core/Convert.h"
 #include "cs/Math/Numeric.h"
 
 namespace cs {
-
-  namespace impl_progress {
-
-    constexpr auto MAX_INT_SIZE = maxab_v<std::size_t,int>;
-
-    inline int toInt(const std::size_t in)
-    {
-      return static_cast<int>(std::min(in, MAX_INT_SIZE));
-    }
-
-  } // namespace impl_progress
 
   ////// public //////////////////////////////////////////////////////////////
 
@@ -84,8 +74,6 @@ namespace cs {
 
   void Progress::setProgressValue(const std::size_t val) const
   {
-    using namespace impl_progress;
-
     constexpr std::size_t HUNDRED = 100;
     constexpr std::size_t    ZERO =   0;
 
@@ -99,7 +87,7 @@ namespace cs {
       const int       width = int(countDigits(span));
 
       fprintf(_file, "Progress: %3d%% (%*d/%d)\n",
-              toInt(pct), width, toInt(pos), toInt(span));
+              toSigned<int>(pct), width, toSigned<int>(pos), toSigned<int>(span));
     }
   }
 
