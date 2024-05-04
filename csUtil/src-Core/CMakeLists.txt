@@ -5,6 +5,7 @@ list(APPEND csCore_HEADERS
   include/cs/Core/CharUtil.h
   include/cs/Core/Constants.h
   include/cs/Core/Container.h
+  include/cs/Core/Convert.h
   include/cs/Core/CRC.h
   include/cs/Core/CRTPbase.h
   include/cs/Core/Endian.h

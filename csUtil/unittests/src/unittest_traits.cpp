@@ -3,9 +3,22 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <cs/Core/Convert.h>
 #include <cs/Text/PrintUtil.h>
 
 namespace test_maxab {
+
+  TEST_CASE("Convert to signed/unsigned.", "[convert]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    REQUIRE( cs::toSigned<int16_t,uint16_t>(0)      == int16_t{0} );
+    REQUIRE( cs::toSigned<int16_t,uint16_t>(7)      == int16_t{7} );
+    REQUIRE( cs::toSigned<int16_t,uint16_t>(0xFFFF) == int16_t{0x7FFF} );
+
+    REQUIRE( cs::toUnsigned<uint16_t,int>(-1)         == uint16_t{0} );
+    REQUIRE( cs::toUnsigned<uint16_t,int>(7)          == uint16_t{7} );
+    REQUIRE( cs::toUnsigned<uint16_t,int>(0x7FFFFFFF) == uint16_t{0xFFFF} );
+  }
 
   TEST_CASE("Maximum positive value of types A and B.", "[maxab]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;

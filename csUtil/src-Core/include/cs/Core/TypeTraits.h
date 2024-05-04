@@ -354,6 +354,15 @@ namespace cs {
   template<typename T>
   using element_of_ptr_t = typename std::remove_cvref_t<T>::element_type;
 
+  ////// Cast to Base in const Context ///////////////////////////////////////
+
+  template<typename Base, typename Derived>
+  requires std::is_base_of_v<Base,Derived>
+  Base *base_cast(const Derived *derived)
+  {
+    return const_cast<Base*>(dynamic_cast<const Base*>(derived));
+  }
+
   ////// Pointer Conversions /////////////////////////////////////////////////
 
   inline const char *CSTR(const char8_t *s,
