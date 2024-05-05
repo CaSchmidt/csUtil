@@ -5,7 +5,6 @@
 #include <QtCore/QThread>
 #include <QtWidgets/QApplication>
 
-#include <cs/Logging/IProgress.h>
 #include <cs/Logging/WProgressLogger.h>
 
 ////// Constants /////////////////////////////////////////////////////////////

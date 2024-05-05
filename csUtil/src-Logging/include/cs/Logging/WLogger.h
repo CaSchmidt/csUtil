@@ -33,27 +33,29 @@
 
 #include <QtWidgets/QTextBrowser>
 
-#include <cs/Logging/ILogger.h>
+#include <cs/Logging/AbstractLogger.h>
 
 namespace cs {
 
   class CS_UTIL_EXPORT WLogger
       : public QTextBrowser
-      , public ILogger {
+      , public AbstractLogger {
     Q_OBJECT
   public:
     WLogger(QWidget *parent = nullptr);
     ~WLogger();
+
+    LoggerPtr logger() const;
 
     void logFlush() const;
 
     void logText(const std::u8string_view& sv) const;
 
     void logWarning(const std::u8string_view& sv) const;
-    void logWarning(const int lineno, const std::u8string_view& sv) const;
+    void logWarning(const std::size_t lineno, const std::u8string_view& sv) const;
 
     void logError(const std::u8string_view& sv) const;
-    void logError(const int lineno, const std::u8string_view& sv) const;
+    void logError(const std::size_t lineno, const std::u8string_view& sv) const;
 
   private slots:
     void impl_logText(const QString& s);

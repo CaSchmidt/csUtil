@@ -66,13 +66,18 @@ namespace cs {
 
   WLogger::WLogger(QWidget *parent)
     : QTextBrowser(parent)
-    , ILogger()
   {
     setReadOnly(true);
   }
 
   WLogger::~WLogger()
   {
+  }
+
+  LoggerPtr WLogger::logger() const
+  {
+    return LoggerPtr(base_cast<AbstractLogger>(this),
+                     NoDeleteLoggerPtr());
   }
 
   void WLogger::logFlush() const
@@ -92,9 +97,9 @@ namespace cs {
     impl_log::invokeLogWarning(const_cast<WLogger*>(this), s);
   }
 
-  void WLogger::logWarning(const int lineno, const std::u8string_view& sv) const
+  void WLogger::logWarning(const std::size_t lineno, const std::u8string_view& sv) const
   {
-    const QString s = tr("WARNING:%1: %2").arg(lineno).arg(toQString(sv));
+    const QString s = tr("WARNING(L%1): %2").arg(lineno).arg(toQString(sv));
     impl_log::invokeLogWarning(const_cast<WLogger*>(this), s);
   }
 
@@ -104,9 +109,9 @@ namespace cs {
     impl_log::invokeLogError(const_cast<WLogger*>(this), s);
   }
 
-  void WLogger::logError(const int lineno, const std::u8string_view& sv) const
+  void WLogger::logError(const std::size_t lineno, const std::u8string_view& sv) const
   {
-    const QString s = tr("ERROR:%1: %2").arg(lineno).arg(toQString(sv));
+    const QString s = tr("ERROR(L%1): %2").arg(lineno).arg(toQString(sv));
     impl_log::invokeLogError(const_cast<WLogger*>(this), s);
   }
 

@@ -37,21 +37,14 @@
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QProgressBar>
 
-#include <cs/Core/csutil_config.h>
+#include <cs/Logging/AbstractLogger.h>
+#include <cs/Logging/AbstractProgress.h>
 
 class QDialogButtonBox;
 
 namespace cs {
 
-  class ILogger;
-  class IProgress;
   class WLogger;
-
-  namespace impl_prog {
-    class IProgressImpl;
-  } // namespace impl_prog
-
-  using ProgressPtr = std::unique_ptr<impl_prog::IProgressImpl>;
 
   class CS_UTIL_EXPORT WProgressLogger : public QDialog {
     Q_OBJECT
@@ -59,8 +52,8 @@ namespace cs {
     WProgressLogger(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
     ~WProgressLogger();
 
-    const ILogger *logger() const;
-    const IProgress *progress() const;
+    LoggerPtr logger() const;
+    ProgressPtr progress() const;
 
     template<typename T>
     void setFutureWatcher(QFutureWatcher<T> *watcher);
@@ -78,7 +71,6 @@ namespace cs {
 
     QDialogButtonBox *_buttonBox{nullptr};
     WLogger          *_logger{nullptr};
-    ProgressPtr       _progress{nullptr};
     QProgressBar     *_progressBar{nullptr};
 
   signals:

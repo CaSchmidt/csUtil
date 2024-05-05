@@ -36,7 +36,7 @@
 
 #include "cs/Logging/WProgressLogger.h"
 
-#include "cs/Logging/IProgress.h"
+#include "cs/Core/Convert.h"
 #include "cs/Logging/WLogger.h"
 #include "cs/Qt/DialogButtonBox.h"
 #include "cs/Qt/FilterCancel.h"
@@ -48,14 +48,14 @@ namespace cs {
 
   namespace impl_prog {
 
-    class IProgressImpl : public IProgress {
+    class ProgressWrapper : public AbstractProgress {
     public:
-      IProgressImpl(QProgressBar *bar) noexcept
+      ProgressWrapper(QProgressBar *bar) noexcept
         : _bar{bar}
       {
       }
 
-      ~IProgressImpl() noexcept
+      ~ProgressWrapper() noexcept
       {
       }
 
@@ -70,20 +70,21 @@ namespace cs {
         setProgressValue(0);
       }
 
-      void setProgressRange(const int min, const int max) const
+      void setProgressRange(const std::size_t min, const std::size_t max) const
       {
         QMetaObject::invokeMethod(_bar, "setRange", Qt::AutoConnection,
-                                  Q_ARG(int, min), Q_ARG(int, max));
+                                  Q_ARG(int, toSigned<int>(min)),
+                                  Q_ARG(int, toSigned<int>(max)));
       }
 
-      void setProgressValue(const int val) const
+      void setProgressValue(const std::size_t val) const
       {
         QMetaObject::invokeMethod(_bar, "setValue", Qt::AutoConnection,
-                                  Q_ARG(int, val));
+                                  Q_ARG(int, toSigned<int>(val)));
       }
 
     private:
-      IProgressImpl() noexcept = delete;
+      ProgressWrapper() noexcept = delete;
 
       QProgressBar *_bar;
     };
@@ -96,8 +97,6 @@ namespace cs {
     : QDialog(parent, f)
   {
     setupUi();
-
-    _progress = std::make_unique<impl_prog::IProgressImpl>(_progressBar);
 
     // User Interface ////////////////////////////////////////////////////////
 
@@ -124,14 +123,14 @@ namespace cs {
   {
   }
 
-  const ILogger *WProgressLogger::logger() const
+  LoggerPtr WProgressLogger::logger() const
   {
-    return _logger;
+    return _logger->logger();
   }
 
-  const IProgress *WProgressLogger::progress() const
+  ProgressPtr WProgressLogger::progress() const
   {
-    return _progress.get();
+    return std::make_shared<impl_prog::ProgressWrapper>(_progressBar);
   }
 
   ////// public slots ////////////////////////////////////////////////////////
