@@ -29,6 +29,11 @@ macro(cs_test target)
       PRIVATE -Wall
     )
   endif()
+  if(MSVC)
+    target_compile_options(${target}
+      PRIVATE /wd4251
+    )
+  endif()
 endmacro()
 
 ### Tests ####################################################################

@@ -40,6 +40,11 @@ macro(cs_unittest target)
       PRIVATE -Wall
     )
   endif()
+  if(MSVC)
+    target_compile_options(${target}
+      PRIVATE /wd4251
+    )
+  endif()
   add_test(NAME ${target} COMMAND ${target})
 endmacro()
 
