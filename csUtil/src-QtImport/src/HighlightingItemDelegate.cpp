@@ -29,9 +29,7 @@
 
 #include "QtCreator/HighlightingItemDelegate.h"
 
-#ifndef _L1C
-# define _L1C(c)  QChar::fromLatin1(c)
-#endif
+#include "cs/Core/QStringUtil.h"
 
 constexpr int kMinimumLineNumberDigits = 6;
 
@@ -103,7 +101,7 @@ namespace QtCreator {
 
   void HighlightingItemDelegate::setTabWidth(int width)
   {
-    m_tabString = QString(qMax(width, 1), _L1C(' '));
+    m_tabString = QString(qMax(width, 1), cs::L1C(' '));
     emit tabWidthChanged(tabWidth());
   }
 
@@ -125,7 +123,7 @@ namespace QtCreator {
     const QString lineText = QString::number(lineNumber);
     const int minimumLineNumberDigits = qMax(kMinimumLineNumberDigits, lineText.count());
     const int fontWidth =
-        painter->fontMetrics().horizontalAdvance(QString(minimumLineNumberDigits, _L1C('0')));
+        painter->fontMetrics().horizontalAdvance(QString(minimumLineNumberDigits, cs::L1C('0')));
     const int lineNumberAreaWidth = lineNumberAreaHorizontalPadding + fontWidth
         + lineNumberAreaHorizontalPadding;
     QRect lineNumberAreaRect(rect);
@@ -164,7 +162,7 @@ namespace QtCreator {
     QString text = index.model()->data(index, Qt::DisplayRole).toString();
     // show number of subresults in displayString
     if (index.model()->hasChildren(index))
-      text += QStringLiteral(" (") + QString::number(index.model()->rowCount(index)) + _L1C(')');
+      text += QStringLiteral(" (") + QString::number(index.model()->rowCount(index)) + cs::L1C(')');
 
     QVector<int> searchTermStarts =
         index.model()->data(index, int(HighlightingItemRole::StartColumn)).value<QVector<int>>();
@@ -172,14 +170,14 @@ namespace QtCreator {
         index.model()->data(index, int(HighlightingItemRole::Length)).value<QVector<int>>();
 
     if (searchTermStarts.isEmpty()) {
-      drawDisplay(painter, option, rect, text.replace(_L1C('\t'), m_tabString), {});
+      drawDisplay(painter, option, rect, text.replace(cs::L1C('\t'), m_tabString), {});
       return;
     }
 
     // replace tabs with searchTerm bookkeeping
     const int tabDiff = m_tabString.size() - 1;
     for (int i = 0; i < text.length(); i++) {
-      if (text.at(i) != _L1C('\t'))
+      if (text.at(i) != cs::L1C('\t'))
         continue;
 
       text.replace(i, 1, m_tabString);
@@ -217,7 +215,7 @@ namespace QtCreator {
   // copied from QItemDelegate for drawDisplay
   static QString replaceNewLine(QString text)
   {
-    static const QChar nl = _L1C('\n');
+    static const QChar nl = cs::L1C('\n');
     for (int i = 0; i < text.count(); ++i)
       if (text.at(i) == nl)
         text[i] = QChar::LineSeparator;

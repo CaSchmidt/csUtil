@@ -84,7 +84,8 @@ if(ENABLE_QT AND ENABLE_PLOT)
   cs_test(test_plot src/test_plot.cpp)
 endif()
 
-if(ENABLE_QT AND ENABLE_QTCREATOR)
+if(ENABLE_QT AND ENABLE_QTIMPORT)
+  cs_test(test_codeeditor src/test_codeeditor.cpp)
   cs_test(test_highlight include/ProxyDelegate.h src/ProxyDelegate.cpp src/test_highlight.cpp)
 endif()
 

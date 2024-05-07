@@ -31,6 +31,6 @@
 
 #include "cs/Core/csutil_config.h"
 
-CS_UTIL_EXPORT void main_qtcreator()
+CS_UTIL_EXPORT void main_qtimport()
 {
 }

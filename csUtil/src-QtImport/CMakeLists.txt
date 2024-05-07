@@ -1,17 +1,19 @@
-list(APPEND csQtCreator_HEADERS
+list(APPEND csQtImport_HEADERS
   include/QtCreator/HighlightingItemDelegate.h
+  include/QtExamples/CodeEditor.h
   )
 
-list(APPEND csQtCreator_SOURCES
+list(APPEND csQtImport_SOURCES
+  src/CodeEditor.cpp
   src/HighlightingItemDelegate.cpp
-  src/main_qtcreator.cpp
+  src/main_qtimport.cpp
   )
 
 ### csUtil ###################################################################
 
 target_sources(csUtil
-  PRIVATE ${csQtCreator_HEADERS}
-  PRIVATE ${csQtCreator_SOURCES}
+  PRIVATE ${csQtImport_HEADERS}
+  PRIVATE ${csQtImport_SOURCES}
   )
 
 target_include_directories(csUtil
