@@ -31,6 +31,9 @@ option(ENABLE_UNICODE "Build Unicode module" OFF)
 option(ENABLE_TESTS "Enable tests" OFF)
 option(ENABLE_UNITTESTS "Enable unit tests" OFF)
 
+# Build Tools?
+option(ENABLE_TOOLS "Enable tools" OFF)
+
 # Qt support
 option(ENABLE_QT "Enable support for Qt" OFF)
 
@@ -159,4 +162,10 @@ endif()
 
 if(ENABLE_UNITTESTS)
   add_subdirectory(unittests)
+endif()
+
+### Tools ####################################################################
+
+if(ENABLE_TOOLS)
+  add_subdirectory(tools)
 endif()
