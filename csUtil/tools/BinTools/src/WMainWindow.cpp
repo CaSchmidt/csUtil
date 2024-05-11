@@ -29,8 +29,12 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <cs/Qt/Widget.h>
+
 #include "WMainWindow.h"
 #include "ui_WMainWindow.h"
+
+#include "WTabPageBase.h"
 
 ////// public ////////////////////////////////////////////////////////////////
 
@@ -44,9 +48,30 @@ WMainWindow::WMainWindow(QWidget *parent, Qt::WindowFlags flags)
 
   connect(ui->quitAction, &QAction::triggered,
           this, &WMainWindow::close);
+
+  connect(ui->newTabAction, &QAction::triggered,
+          this, &WMainWindow::newTab);
+
+  connect(ui->tabWidget, &QTabWidget::tabCloseRequested,
+          this, &WMainWindow::removeTab);
 }
 
 WMainWindow::~WMainWindow()
 {
   delete ui;
+}
+
+////// private slots /////////////////////////////////////////////////////////
+
+void WMainWindow::newTab()
+{
+  ui->tabWidget->addTab(new WTabPageBase, QStringLiteral("Tab"));
+}
+
+void WMainWindow::removeTab(const int index)
+{
+  cs::WidgetPtr widget(ui->tabWidget->widget(index));
+  if( widget ) {
+    ui->tabWidget->removeTab(index);
+  }
 }

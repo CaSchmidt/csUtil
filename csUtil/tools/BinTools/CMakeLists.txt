@@ -6,10 +6,12 @@ list(APPEND BinTools_FORMS
 
 list(APPEND BinTools_HEADERS
   include/WMainWindow.h
+  include/WTabPageBase.h
 )
 
 list(APPEND BinTools_SOURCES
   src/WMainWindow.cpp
+  src/WTabPageBase.cpp
   src/main.cpp
 )
 

@@ -31,22 +31,11 @@
 
 #pragma once
 
-#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QWidget>
 
-namespace Ui {
-  class WMainWindow;
-} // namespace Ui
-
-class WMainWindow : public QMainWindow {
+class WTabPageBase : public QWidget {
   Q_OBJECT
 public:
-  WMainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
-  ~WMainWindow();
-
-private slots:
-  void newTab();
-  void removeTab(const int index);
-
-private:
-  Ui::WMainWindow *ui{nullptr};
+  WTabPageBase(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
+  ~WTabPageBase();
 };

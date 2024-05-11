@@ -29,24 +29,15 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#pragma once
+#include "WTabPageBase.h"
 
-#include <QtWidgets/QMainWindow>
+////// public ////////////////////////////////////////////////////////////////
 
-namespace Ui {
-  class WMainWindow;
-} // namespace Ui
+WTabPageBase::WTabPageBase(QWidget *parent, Qt::WindowFlags flags)
+  : QWidget(parent, flags)
+{
+}
 
-class WMainWindow : public QMainWindow {
-  Q_OBJECT
-public:
-  WMainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
-  ~WMainWindow();
-
-private slots:
-  void newTab();
-  void removeTab(const int index);
-
-private:
-  Ui::WMainWindow *ui{nullptr};
-};
+WTabPageBase::~WTabPageBase()
+{
+}
