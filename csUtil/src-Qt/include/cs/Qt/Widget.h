@@ -31,6 +31,8 @@
 
 #pragma once
 
+#include <memory>
+
 #include <QtWidgets/QWidget>
 
 #include <cs/Core/csutil_config.h>
@@ -38,6 +40,8 @@
 class QAbstractItemView;
 
 namespace cs {
+
+  using WidgetPtr = std::unique_ptr<QWidget>;
 
   template<typename T>
   inline T *findParentWidget(QWidget *widget)
