@@ -31,6 +31,8 @@
 
 #pragma once
 
+#include <memory>
+
 #include <QtWidgets/QMainWindow>
 
 namespace Ui {
@@ -48,5 +50,5 @@ private slots:
   void removeTab(const int index);
 
 private:
-  Ui::WMainWindow *ui{nullptr};
+  std::unique_ptr<Ui::WMainWindow> ui;
 };

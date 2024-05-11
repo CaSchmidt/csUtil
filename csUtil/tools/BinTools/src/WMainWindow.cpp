@@ -40,7 +40,7 @@
 
 WMainWindow::WMainWindow(QWidget *parent, Qt::WindowFlags flags)
   : QMainWindow(parent, flags)
-  , ui{new Ui::WMainWindow}
+  , ui(new Ui::WMainWindow)
 {
   ui->setupUi(this);
 
@@ -58,7 +58,6 @@ WMainWindow::WMainWindow(QWidget *parent, Qt::WindowFlags flags)
 
 WMainWindow::~WMainWindow()
 {
-  delete ui;
 }
 
 ////// private slots /////////////////////////////////////////////////////////
