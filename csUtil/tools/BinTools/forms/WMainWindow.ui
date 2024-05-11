@@ -58,7 +58,7 @@
     <property name="title">
      <string>&amp;Window</string>
     </property>
-    <addaction name="newTabAction"/>
+    <addaction name="newEncoderAction"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Window"/>
@@ -72,9 +72,12 @@
     <string>Ctrl+Q</string>
    </property>
   </action>
-  <action name="newTabAction">
+  <action name="newEncoderAction">
    <property name="text">
-    <string>&amp;New Tab</string>
+    <string>New &amp;Encoder</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
    </property>
   </action>
  </widget>

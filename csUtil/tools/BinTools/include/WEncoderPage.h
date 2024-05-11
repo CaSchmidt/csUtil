@@ -29,49 +29,22 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <cs/Qt/Widget.h>
+#pragma once
 
-#include "WMainWindow.h"
-#include "ui_WMainWindow.h"
+#include <memory>
 
-#include "WEncoderPage.h"
+#include "WTabPageBase.h"
 
-////// public ////////////////////////////////////////////////////////////////
+namespace Ui {
+  class WEncoderPage;
+} // namespace Ui
 
-WMainWindow::WMainWindow(QWidget *parent, Qt::WindowFlags flags)
-  : QMainWindow(parent, flags)
-  , ui{new Ui::WMainWindow}
-{
-  ui->setupUi(this);
+class WEncoderPage : public WTabPageBase {
+  Q_OBJECT
+public:
+  WEncoderPage(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
+  ~WEncoderPage();
 
-  // Signals & Slots /////////////////////////////////////////////////////////
-
-  connect(ui->quitAction, &QAction::triggered,
-          this, &WMainWindow::close);
-
-  connect(ui->newEncoderAction, &QAction::triggered,
-          this, &WMainWindow::newEncoderTab);
-
-  connect(ui->tabWidget, &QTabWidget::tabCloseRequested,
-          this, &WMainWindow::removeTab);
-}
-
-WMainWindow::~WMainWindow()
-{
-  delete ui;
-}
-
-////// private slots /////////////////////////////////////////////////////////
-
-void WMainWindow::newEncoderTab()
-{
-  ui->tabWidget->addTab(new WEncoderPage, QStringLiteral("Encoder"));
-}
-
-void WMainWindow::removeTab(const int index)
-{
-  cs::WidgetPtr widget(ui->tabWidget->widget(index));
-  if( widget ) {
-    ui->tabWidget->removeTab(index);
-  }
-}
+private:
+  std::unique_ptr<Ui::WEncoderPage> ui;
+};

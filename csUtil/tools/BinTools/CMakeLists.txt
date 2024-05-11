@@ -1,15 +1,18 @@
 ### Project ##################################################################
 
 list(APPEND BinTools_FORMS
+  forms/WEncoderPage.ui
   forms/WMainWindow.ui
 )
 
 list(APPEND BinTools_HEADERS
+  include/WEncoderPage.h
   include/WMainWindow.h
   include/WTabPageBase.h
 )
 
 list(APPEND BinTools_SOURCES
+  src/WEncoderPage.cpp
   src/WMainWindow.cpp
   src/WTabPageBase.cpp
   src/main.cpp
