@@ -46,6 +46,7 @@ public:
   ~WMainWindow();
 
 private slots:
+  void closeCurrentTab();
   void newEncoderTab();
   void removeTab(const int index);
 

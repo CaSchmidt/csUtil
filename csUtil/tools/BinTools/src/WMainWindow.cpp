@@ -51,6 +51,8 @@ WMainWindow::WMainWindow(QWidget *parent, Qt::WindowFlags flags)
 
   connect(ui->newEncoderAction, &QAction::triggered,
           this, &WMainWindow::newEncoderTab);
+  connect(ui->closeTabAction, &QAction::triggered,
+          this, &WMainWindow::closeCurrentTab);
 
   connect(ui->tabWidget, &QTabWidget::tabCloseRequested,
           this, &WMainWindow::removeTab);
@@ -61,6 +63,14 @@ WMainWindow::~WMainWindow()
 }
 
 ////// private slots /////////////////////////////////////////////////////////
+
+void WMainWindow::closeCurrentTab()
+{
+  const int index = ui->tabWidget->currentIndex();
+  if( index >= 0 ) {
+    removeTab(index);
+  }
+}
 
 void WMainWindow::newEncoderTab()
 {
