@@ -36,6 +36,7 @@
 #include <cs/Core/CharUtil.h>
 #include <cs/Lexer/Lexer.h>
 #include <cs/Lexer/ParseException.h>
+#include <cs/Logging/AbstractLogger.h>
 
 namespace cs {
 
@@ -54,7 +55,7 @@ namespace cs {
     {
     }
 
-    bool parse(String input)
+    bool parse(String input, const LoggerPtr& logger)
     {
       _currentToken.reset();
       _lookAheadToken.reset();
@@ -62,7 +63,9 @@ namespace cs {
       _names = TokenNamesBase::make();
 
       if( !initialize() ) {
-        fprintf(stderr, "ERROR: initialize()\n"); // TODO
+        if( logger ) {
+          logger->logError(u8"initialize()");
+        }
         return false;
       }
 
@@ -72,9 +75,9 @@ namespace cs {
       try {
         start();
       } catch( const parse_exception::base_exception& ex ) {
-        fprintf(stderr, "ERROR:%d: %s\n",
-                static_cast<int>(ex.line()),
-                ex.what()); // TODO
+        if( logger ) {
+          logger->logError(ex.line(), UTF8(ex.what()));
+        }
         return false;
       }
 

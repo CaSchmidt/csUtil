@@ -36,6 +36,7 @@
 #include <algorithm>
 #include <charconv>
 
+#include <cs/Logging/Logger.h>
 #include <cs/Text/PrintFormat.h>
 #include <cs/Text/PrintUtil.h>
 
@@ -130,7 +131,7 @@ void test_parser()
                "a[7:4]@16,"
                "a[3:0]@20,"
                "b[9:6]@4"
-               "}\n");
+               "}\n", cs::Logger::make());
 
   std::for_each(parser.result.cbegin(), parser.result.cend(), test_engine);
 }
