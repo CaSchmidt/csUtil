@@ -56,6 +56,10 @@ namespace flags {
     REQUIRE(  bits == (Bit2 | Bit3) );
     REQUIRE( !bits.testAny(Bit0 | Bit1) );
     REQUIRE(  bits.testAll(Bit2 | Bit3) );
+
+    bits.toggle(Bit2 | Bit3);
+    print(bits);
+    REQUIRE( !bits );
   }
 
 } // namespace flags
