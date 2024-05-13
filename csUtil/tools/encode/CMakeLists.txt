@@ -20,6 +20,12 @@ add_library(encode STATIC)
 
 format_output_name(encode "encode")
 
+if(MSVC)
+  target_compile_options(encode
+    PRIVATE /wd4251
+  )
+endif()
+
 target_include_directories(encode
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
