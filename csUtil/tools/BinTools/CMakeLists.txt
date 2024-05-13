@@ -6,12 +6,14 @@ list(APPEND BinTools_FORMS
 )
 
 list(APPEND BinTools_HEADERS
+  include/global.h
   include/WEncoderPage.h
   include/WMainWindow.h
   include/WTabPageBase.h
 )
 
 list(APPEND BinTools_SOURCES
+  src/global.cpp
   src/WEncoderPage.cpp
   src/WMainWindow.cpp
   src/WTabPageBase.cpp
@@ -28,6 +30,12 @@ target_compile_definitions(BinTools
   PRIVATE QT_NO_CAST_FROM_ASCII
   PRIVATE QT_NO_CAST_TO_ASCII
 )
+
+if(MSVC)
+  target_compile_options(BinTools
+    PRIVATE /wd4251
+  )
+endif()
 
 target_include_directories(BinTools
   PRIVATE ${CMAKE_CURRENT_BINARY_DIR}

@@ -29,63 +29,12 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <cs/Qt/Widget.h>
+#pragma once
 
-#include "WMainWindow.h"
-#include "ui_WMainWindow.h"
+#include <cs/Logging/AbstractLogger.h>
 
-#include "global.h"
-#include "WEncoderPage.h"
+namespace global {
 
-////// public ////////////////////////////////////////////////////////////////
+  extern cs::LoggerPtr logger;
 
-WMainWindow::WMainWindow(QWidget *parent, Qt::WindowFlags flags)
-  : QMainWindow(parent, flags)
-  , ui(new Ui::WMainWindow)
-{
-  ui->setupUi(this);
-
-  // Global Logger ///////////////////////////////////////////////////////////
-
-  global::logger = ui->logBrowser->logger();
-
-  // Signals & Slots /////////////////////////////////////////////////////////
-
-  connect(ui->quitAction, &QAction::triggered,
-          this, &WMainWindow::close);
-
-  connect(ui->newEncoderAction, &QAction::triggered,
-          this, &WMainWindow::newEncoderTab);
-  connect(ui->closeTabAction, &QAction::triggered,
-          this, &WMainWindow::closeCurrentTab);
-
-  connect(ui->tabWidget, &QTabWidget::tabCloseRequested,
-          this, &WMainWindow::removeTab);
-}
-
-WMainWindow::~WMainWindow()
-{
-}
-
-////// private slots /////////////////////////////////////////////////////////
-
-void WMainWindow::closeCurrentTab()
-{
-  const int index = ui->tabWidget->currentIndex();
-  if( index >= 0 ) {
-    removeTab(index);
-  }
-}
-
-void WMainWindow::newEncoderTab()
-{
-  ui->tabWidget->addTab(new WEncoderPage, QStringLiteral("Encoder"));
-}
-
-void WMainWindow::removeTab(const int index)
-{
-  cs::WidgetPtr widget(ui->tabWidget->widget(index));
-  if( widget ) {
-    ui->tabWidget->removeTab(index);
-  }
-}
+} // namespace global
