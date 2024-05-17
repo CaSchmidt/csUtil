@@ -34,55 +34,93 @@
 #include <algorithm>
 
 #include <cs/Core/Bit.h>
+#include <cs/Core/Buffer.h>
+#include <cs/Core/Container.h>
 #include <cs/Core/Endian.h>
 #include <cs/Core/Pointer.h>
 
 namespace cs {
 
-  template<typename T> requires is_integral_v<T>
+  template<typename T> requires is_arithmetic_v<T>
   void toBytesBE(void *data, const std::size_t sizData,
-                 T value)
+                 const T value)
   {
-    constexpr T MASK = makeBitMask<T>(sizeof(byte_t)*8);
+    // (1) Sanitize Destination //////////////////////////////////////////////
 
     if( !Pointer::isValidRange(data, sizData) ) {
       return;
     }
     byte_t *dest = reinterpret_cast<byte_t*>(data);
+
+    // (2) Conversion ////////////////////////////////////////////////////////
 
     const std::size_t numBytes = std::min(sizData, sizeof(T));
     if( numBytes == sizeof(T) ) {
       *reinterpret_cast<T*>(&dest[0]) = toBigEndian(value);
 
     } else {
+      using ConvT = typename IntegralOfSize<sizeof(T)>::unsigned_type;
+
+      constexpr ConvT MASK = makeBitMask<ConvT>(sizeof(byte_t)*8);
+
+      ConvT conv = *reinterpret_cast<const ConvT*>(&value);
       for(std::size_t i = numBytes; i > 0; /* cf. data[] */) {
-        dest[--i] = byte_t(value & MASK);
-        value >>= 8;
+        dest[--i] = static_cast<byte_t>(conv & MASK);
+        conv >>= 8;
       }
     }
   }
 
-  template<typename T> requires is_integral_v<T>
-  void toBytesLE(void *data, const std::size_t sizData,
-                 T value)
+  template<typename T>
+  inline Buffer toBytesBE(const T value, const std::size_t count = sizeof(T))
   {
-    constexpr T MASK = makeBitMask<T>(sizeof(byte_t)*8);
+    Buffer result;
+    if( !resize(result, count, 0) ) {
+      return Buffer();
+    }
+    toBytesBE(result.data(), result.size(), value);
+    return result;
+  }
+
+  template<typename T> requires is_arithmetic_v<T>
+  void toBytesLE(void *data, const std::size_t sizData,
+                 const T value)
+  {
+    // (1) Sanitize Destination //////////////////////////////////////////////
 
     if( !Pointer::isValidRange(data, sizData) ) {
       return;
     }
     byte_t *dest = reinterpret_cast<byte_t*>(data);
 
+    // (2) Conversion ////////////////////////////////////////////////////////
+
     const std::size_t numBytes = std::min(sizData, sizeof(T));
     if( numBytes == sizeof(T) ) {
       *reinterpret_cast<T*>(&dest[0]) = toLittleEndian(value);
 
     } else {
+      using ConvT = typename IntegralOfSize<sizeof(T)>::unsigned_type;
+
+      constexpr ConvT MASK = makeBitMask<ConvT>(sizeof(byte_t)*8);
+
+      ConvT conv = *reinterpret_cast<const ConvT*>(&value);
       for(std::size_t i = 0; i < numBytes; /* cf. data[] */) {
-        dest[i++] = byte_t(value & MASK);
-        value >>= 8;
+        dest[i++] = byte_t(conv & MASK);
+        conv >>= 8;
       }
     }
+  }
+
+  template<typename T>
+  inline Buffer toBytesLE(const T value, const std::size_t count = sizeof(T))
+  {
+    Buffer result;
+    if( !resize(result, count, 0) ) {
+      return Buffer();
+    }
+    toBytesLE(result.data(), result.size(), value);
+    return result;
   }
 
 } // namespace cs
