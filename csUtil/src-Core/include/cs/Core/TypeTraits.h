@@ -286,9 +286,22 @@ namespace cs {
 
   ////// Miscellaneous Transformations ///////////////////////////////////////
 
-  template<typename T>
-  using safe_underlying_type_t =
-  std::enable_if_t<std::is_enum_v<T>,std::underlying_type_t<T>>;
+  /*
+   * NOTE:
+   * "SFINAE not happening with std::underlying_type"; cf.
+   * https://stackoverflow.com/questions/36568050/sfinae-not-happening-with-stdunderlying-type
+   */
+
+  template<typename T, typename ResultT = void, bool = std::is_enum_v<T>>
+  struct safe_underlying_type : std::underlying_type<T> {};
+
+  template<typename T, typename ResultT>
+  struct safe_underlying_type<T,ResultT,false> {
+    using type = ResultT;
+  };
+
+  template<typename T, typename ResultT = void>
+  using safe_underlying_type_t = typename safe_underlying_type<T,ResultT,std::is_enum_v<T>>::type;
 
   ////// Constants ///////////////////////////////////////////////////////////
 

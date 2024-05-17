@@ -50,9 +50,9 @@ namespace cs {
 
   template<typename EnumT>
   using is_flags = std::bool_constant<
-  std::is_enum_v<EnumT>                              &&
-  std::is_unsigned_v<safe_underlying_type_t<EnumT>>  &&
-  is_flags_enabled_v<EnumT>
+  is_flags_enabled_v<EnumT>  &&
+  std::is_enum_v<EnumT>      &&
+  std::is_unsigned_v<safe_underlying_type_t<EnumT>>
   >;
 
   template<typename EnumT>
