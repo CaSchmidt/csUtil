@@ -6,6 +6,7 @@ list(APPEND BinTools_FORMS
 )
 
 list(APPEND BinTools_HEADERS
+  include/Encoder/EncodeResultModel.h
   include/Encoder/WEncoderPage.h
   include/global.h
   include/WMainWindow.h
@@ -13,6 +14,7 @@ list(APPEND BinTools_HEADERS
 )
 
 list(APPEND BinTools_SOURCES
+  src/Encoder/EncodeResultModel.cpp
   src/Encoder/WEncoderPage.cpp
   src/global.cpp
   src/WMainWindow.cpp
