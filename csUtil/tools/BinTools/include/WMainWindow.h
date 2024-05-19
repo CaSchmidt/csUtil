@@ -42,7 +42,7 @@ namespace Ui {
 class WMainWindow : public QMainWindow {
   Q_OBJECT
 public:
-  WMainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
+  WMainWindow(QWidget *parent = nullptr, const Qt::WindowFlags flags = Qt::WindowFlags());
   ~WMainWindow();
 
 private slots:

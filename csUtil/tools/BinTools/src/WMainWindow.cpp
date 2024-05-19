@@ -34,14 +34,14 @@
 #include "WMainWindow.h"
 #include "ui_WMainWindow.h"
 
+#include "Encoder/WEncoderPage.h"
 #include "global.h"
-#include "WEncoderPage.h"
 
 ////// public ////////////////////////////////////////////////////////////////
 
-WMainWindow::WMainWindow(QWidget *parent, Qt::WindowFlags flags)
+WMainWindow::WMainWindow(QWidget *parent, const Qt::WindowFlags flags)
   : QMainWindow(parent, flags)
-  , ui(new Ui::WMainWindow)
+  , ui(std::make_unique<Ui::WMainWindow>())
 {
   ui->setupUi(this);
 

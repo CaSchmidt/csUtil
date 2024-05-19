@@ -29,18 +29,64 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include "WEncoderPage.h"
+#include <cs/Core/QStringUtil.h>
+
+#include <Encode/Parser.h>
+
+#include "Encoder/WEncoderPage.h"
 #include "ui_WEncoderPage.h"
+
+#include "global.h"
+
+////// Private ///////////////////////////////////////////////////////////////
+
+namespace impl_encoder {
+
+  struct EncoderPage {
+    using value_type = uint64_t;
+
+    using Parser = Encode::Parser<value_type>;
+
+    EncoderPage() noexcept = default;
+
+    Parser parser;
+  };
+
+} // namespace impl_encoder
 
 ////// public ////////////////////////////////////////////////////////////////
 
-WEncoderPage::WEncoderPage(QWidget *parent, Qt::WindowFlags flags)
+WEncoderPage::WEncoderPage(QWidget *parent, const Qt::WindowFlags flags)
   : WTabPageBase(parent, flags)
-  , ui(new Ui::WEncoderPage)
+  , ui(std::make_unique<Ui::WEncoderPage>())
+  , d(new impl_encoder::EncoderPage)
 {
   ui->setupUi(this);
+
+  // Signals & Slots /////////////////////////////////////////////////////////
+
+  connect(ui->clearButton, &QPushButton::clicked,
+          this, &WEncoderPage::clearVariables);
+  connect(ui->encodeButton, &QPushButton::clicked,
+          this, &WEncoderPage::encode);
 }
 
 WEncoderPage::~WEncoderPage()
 {
+}
+
+////// private slots /////////////////////////////////////////////////////////
+
+void WEncoderPage::clearVariables()
+{
+}
+
+void WEncoderPage::encode()
+{
+  const std::string input = cs::toString(cs::toUtf8String(ui->editorWidget->toPlainText()));
+
+  const bool ok = d->parser.parse(input, global::logger);
+  if( !ok ) {
+    return;
+  }
 }

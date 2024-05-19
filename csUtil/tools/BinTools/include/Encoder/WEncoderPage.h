@@ -39,12 +39,23 @@ namespace Ui {
   class WEncoderPage;
 } // namespace Ui
 
+namespace impl_encoder {
+  struct EncoderPage;
+} // namespace impl_encoder
+
+using EncoderPageData = std::unique_ptr<impl_encoder::EncoderPage>;
+
 class WEncoderPage : public WTabPageBase {
   Q_OBJECT
 public:
-  WEncoderPage(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
+  WEncoderPage(QWidget *parent = nullptr, const Qt::WindowFlags flags = Qt::WindowFlags());
   ~WEncoderPage();
+
+private slots:
+  void clearVariables();
+  void encode();
 
 private:
   std::unique_ptr<Ui::WEncoderPage> ui;
+  EncoderPageData d;
 };

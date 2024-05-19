@@ -6,15 +6,15 @@ list(APPEND BinTools_FORMS
 )
 
 list(APPEND BinTools_HEADERS
+  include/Encoder/WEncoderPage.h
   include/global.h
-  include/WEncoderPage.h
   include/WMainWindow.h
   include/WTabPageBase.h
 )
 
 list(APPEND BinTools_SOURCES
+  src/Encoder/WEncoderPage.cpp
   src/global.cpp
-  src/WEncoderPage.cpp
   src/WMainWindow.cpp
   src/WTabPageBase.cpp
   src/main.cpp
