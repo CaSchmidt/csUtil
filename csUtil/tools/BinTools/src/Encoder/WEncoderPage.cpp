@@ -36,7 +36,7 @@
 #include "Encoder/WEncoderPage.h"
 #include "ui_WEncoderPage.h"
 
-#include "Encoder/EncodeResultModel.h"
+#include "Encoder/EncodeResultsModel.h"
 #include "global.h"
 
 ////// Private ///////////////////////////////////////////////////////////////
@@ -48,11 +48,11 @@ namespace impl_encoder {
 
     EncoderPage() noexcept = default;
 
-    EncodeResultModel *model{nullptr};
+    EncodeResultsModel *model{nullptr};
     Parser parser;
   };
 
-  static_assert( std::is_same_v<EncoderPage::Parser::value_type,EncodeResultModel::value_type> );
+  static_assert( std::is_same_v<EncoderPage::Parser::value_type,EncodeResultsModel::value_type> );
 
 } // namespace impl_encoder
 
@@ -67,7 +67,7 @@ WEncoderPage::WEncoderPage(QWidget *parent, const Qt::WindowFlags flags)
 
   // Data Models /////////////////////////////////////////////////////////////
 
-  d->model = new EncodeResultModel(ui->resultsView);
+  d->model = new EncodeResultsModel(ui->resultsView);
   ui->resultsView->setModel(d->model);
 
   // Signals & Slots /////////////////////////////////////////////////////////
@@ -104,6 +104,6 @@ void WEncoderPage::encode()
 
   d->model->clear();
   for(const EnginePtr& engine : d->parser.result) {
-    d->model->add(engine, store, ui->msbFirstCheck->isChecked());
+    d->model->addResult(engine, store, ui->msbFirstCheck->isChecked());
   }
 }

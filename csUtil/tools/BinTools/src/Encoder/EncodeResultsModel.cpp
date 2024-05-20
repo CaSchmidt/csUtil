@@ -35,26 +35,26 @@
 #include <cs/Convert/Serialize.h>
 #include <cs/Core/QStringUtil.h>
 
-#include "Encoder/EncodeResultModel.h"
+#include "Encoder/EncodeResultsModel.h"
 
 ////// public ////////////////////////////////////////////////////////////////
 
-EncodeResultModel::EncodeResultModel(QObject *parent)
+EncodeResultsModel::EncodeResultsModel(QObject *parent)
   : QAbstractTableModel(parent)
 {
 }
 
-EncodeResultModel::~EncodeResultModel()
+EncodeResultsModel::~EncodeResultsModel()
 {
 }
 
-int EncodeResultModel::columnCount(const QModelIndex& /*parent*/) const
+int EncodeResultsModel::columnCount(const QModelIndex& /*parent*/) const
 {
   return NumColumns;
 }
 
-QVariant EncodeResultModel::data(const QModelIndex& index,
-                                 const int role) const
+QVariant EncodeResultsModel::data(const QModelIndex& index,
+                                  const int role) const
 {
   if( !index.isValid() ) {
     return QVariant();
@@ -74,9 +74,9 @@ QVariant EncodeResultModel::data(const QModelIndex& index,
   return QVariant();
 }
 
-QVariant EncodeResultModel::headerData(const int section,
-                                       const Qt::Orientation orientation,
-                                       const int role) const
+QVariant EncodeResultsModel::headerData(const int section,
+                                        const Qt::Orientation orientation,
+                                        const int role) const
 {
   if( role == Qt::DisplayRole ) {
     if(        orientation == Qt::Horizontal ) {
@@ -92,29 +92,29 @@ QVariant EncodeResultModel::headerData(const int section,
   return QVariant();
 }
 
-int EncodeResultModel::rowCount(const QModelIndex& /*parent*/) const
+int EncodeResultsModel::rowCount(const QModelIndex& /*parent*/) const
 {
   return static_cast<int>(_results.size());
 }
 
-void EncodeResultModel::clear()
+void EncodeResultsModel::clear()
 {
   beginResetModel();
   _results.clear();
   endResetModel();
 }
 
-bool EncodeResultModel::add(const EnginePtr& engine, const Store& store, const bool is_msb)
+bool EncodeResultsModel::addResult(const EnginePtr& engine, const Store& store, const bool is_msb)
 {
   if( !engine  ||  !engine->isValid() ) {
     return false;
   }
 
   const value_type value = engine->compose(store);
-  const cs::Buffer buffer = is_msb
+  const cs::Buffer valBuffer = is_msb
       ? cs::toBytesBE(value, engine->numBits()/8)
       : cs::toBytesLE(value, engine->numBits()/8);
-  const std::string valString = cs::toString(buffer, ' ', true);
+  const std::string valString = cs::toString(valBuffer, ' ', true);
 
   const QString  first = cs::toQString(cs::toUtf8String(engine->text()));
   const QString second = cs::toQString(cs::toUtf8String(valString));

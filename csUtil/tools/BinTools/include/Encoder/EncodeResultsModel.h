@@ -37,7 +37,7 @@
 
 #include <QtCore/QAbstractTableModel>
 
-class EncodeResultModel : public QAbstractTableModel {
+class EncodeResultsModel : public QAbstractTableModel {
   Q_OBJECT
 public:
   using EnginePtr = Encode::EnginePtr<uint64_t>;
@@ -52,8 +52,8 @@ public:
     NumColumns
   };
 
-  EncodeResultModel(QObject *parent = nullptr);
-  ~EncodeResultModel();
+  EncodeResultsModel(QObject *parent = nullptr);
+  ~EncodeResultsModel();
 
   int columnCount(const QModelIndex& parent = QModelIndex()) const;
   QVariant data(const QModelIndex& index, const int role = Qt::DisplayRole) const;
@@ -62,7 +62,7 @@ public:
   int rowCount(const QModelIndex& parent = QModelIndex()) const;
 
   void clear();
-  bool add(const EnginePtr& engine, const Store& store, const bool is_msb);
+  bool addResult(const EnginePtr& engine, const Store& store, const bool is_msb);
 
 private:
   using Result = std::pair<QString,QString>;
