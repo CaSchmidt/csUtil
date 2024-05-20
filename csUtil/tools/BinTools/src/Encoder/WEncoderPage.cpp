@@ -37,6 +37,7 @@
 #include "ui_WEncoderPage.h"
 
 #include "Encoder/EncodeResultsModel.h"
+#include "Encoder/EncodeVariablesModel.h"
 #include "global.h"
 
 ////// Private ///////////////////////////////////////////////////////////////
@@ -48,11 +49,14 @@ namespace impl_encoder {
 
     EncoderPage() noexcept = default;
 
-    Parser parser;
-    EncodeResultsModel *results{nullptr};
+    Parser                   parser;
+    EncodeResultsModel     *results{nullptr};
+    EncodeVariablesModel *variables{nullptr};
   };
 
   static_assert( std::is_same_v<EncoderPage::Parser::value_type,EncodeResultsModel::value_type> );
+
+  static_assert( std::is_same_v<EncoderPage::Parser::value_type,EncodeVariablesModel::value_type> );
 
 } // namespace impl_encoder
 
@@ -70,6 +74,9 @@ WEncoderPage::WEncoderPage(QWidget *parent, const Qt::WindowFlags flags)
   d->results = new EncodeResultsModel(ui->resultsView);
   ui->resultsView->setModel(d->results);
 
+  d->variables = new EncodeVariablesModel(ui->variablesView);
+  ui->variablesView->setModel(d->variables);
+
   // Signals & Slots /////////////////////////////////////////////////////////
 
   connect(ui->clearButton, &QPushButton::clicked,
@@ -86,12 +93,15 @@ WEncoderPage::~WEncoderPage()
 
 void WEncoderPage::clearVariables()
 {
+  d->variables->clear();
 }
 
 void WEncoderPage::encode()
 {
   using EnginePtr = impl_encoder::EncoderPage::Parser::EnginePtr;
   using     Store = impl_encoder::EncoderPage::Parser::Engine::Store;
+
+  d->results->clear();
 
   const std::string input = cs::toString(cs::toUtf8String(ui->editorWidget->toPlainText()));
 
@@ -100,9 +110,12 @@ void WEncoderPage::encode()
     return;
   }
 
-  const Store store; // TODO
+  for(const EnginePtr& engine : d->parser.result) {
+    d->variables->addVariables(engine);
+  }
 
-  d->results->clear();
+  const Store store = d->variables->store();
+
   for(const EnginePtr& engine : d->parser.result) {
     d->results->addResult(engine, store, ui->msbFirstCheck->isChecked());
   }
