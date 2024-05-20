@@ -32,6 +32,7 @@
 #include <cstdio>
 #include <cstdlib>
 
+#include <QtGui/QFontDatabase>
 #include <QtWidgets/QApplication>
 
 #include <cs/Qt/Widget.h>
@@ -41,6 +42,8 @@
 int main(int argc, char **argv)
 {
   QApplication app(argc, argv);
+
+  QFontDatabase::addApplicationFont(QStringLiteral(":/fonts/SourceCodePro-Regular.ttf"));
 
   cs::WidgetPtr w = std::make_unique<WMainWindow>();
   w->show();

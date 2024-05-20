@@ -33,6 +33,8 @@
 
 #include <Encode/Parser.h>
 
+#include <QtGui/QFontDatabase>
+
 #include "Encoder/WEncoderPage.h"
 #include "ui_WEncoderPage.h"
 
@@ -68,6 +70,14 @@ WEncoderPage::WEncoderPage(QWidget *parent, const Qt::WindowFlags flags)
   , d(std::make_unique<impl_encoder::EncoderPage>())
 {
   ui->setupUi(this);
+
+  // Font ////////////////////////////////////////////////////////////////////
+
+  const QFontDatabase db;
+  const QFont font = db.font(QStringLiteral("Source Code Pro"),
+                             QStringLiteral("Regular"),
+                             12);
+  ui->editorWidget->setFont(font);
 
   // Data Models /////////////////////////////////////////////////////////////
 
