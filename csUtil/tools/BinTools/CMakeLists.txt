@@ -1,5 +1,9 @@
 ### Project ##################################################################
 
+list(APPEND BinTools_FILES
+  resources/resources.qrc
+)
+
 list(APPEND BinTools_FORMS
   forms/WEncoderPage.ui
   forms/WMainWindow.ui
@@ -47,6 +51,7 @@ target_include_directories(BinTools
 )
 
 target_sources(BinTools
+  PRIVATE ${BinTools_FILES}
   PRIVATE ${BinTools_FORMS}
   PRIVATE ${BinTools_HEADERS}
   PRIVATE ${BinTools_SOURCES}
