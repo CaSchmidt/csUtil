@@ -48,8 +48,8 @@ namespace impl_encoder {
 
     EncoderPage() noexcept = default;
 
-    EncodeResultsModel *model{nullptr};
     Parser parser;
+    EncodeResultsModel *results{nullptr};
   };
 
   static_assert( std::is_same_v<EncoderPage::Parser::value_type,EncodeResultsModel::value_type> );
@@ -61,14 +61,14 @@ namespace impl_encoder {
 WEncoderPage::WEncoderPage(QWidget *parent, const Qt::WindowFlags flags)
   : WTabPageBase(parent, flags)
   , ui(std::make_unique<Ui::WEncoderPage>())
-  , d(new impl_encoder::EncoderPage)
+  , d(std::make_unique<impl_encoder::EncoderPage>())
 {
   ui->setupUi(this);
 
   // Data Models /////////////////////////////////////////////////////////////
 
-  d->model = new EncodeResultsModel(ui->resultsView);
-  ui->resultsView->setModel(d->model);
+  d->results = new EncodeResultsModel(ui->resultsView);
+  ui->resultsView->setModel(d->results);
 
   // Signals & Slots /////////////////////////////////////////////////////////
 
@@ -102,8 +102,8 @@ void WEncoderPage::encode()
 
   const Store store; // TODO
 
-  d->model->clear();
+  d->results->clear();
   for(const EnginePtr& engine : d->parser.result) {
-    d->model->addResult(engine, store, ui->msbFirstCheck->isChecked());
+    d->results->addResult(engine, store, ui->msbFirstCheck->isChecked());
   }
 }

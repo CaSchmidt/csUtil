@@ -74,6 +74,18 @@ QVariant EncodeResultsModel::data(const QModelIndex& index,
   return QVariant();
 }
 
+Qt::ItemFlags EncodeResultsModel::flags(const QModelIndex& index) const
+{
+  if( !index.isValid() ) {
+    return Qt::NoItemFlags;
+  }
+
+  Qt::ItemFlags flags = QAbstractTableModel::flags(index);
+  flags |= Qt::ItemIsSelectable;
+
+  return flags;
+}
+
 QVariant EncodeResultsModel::headerData(const int section,
                                         const Qt::Orientation orientation,
                                         const int role) const
@@ -89,6 +101,7 @@ QVariant EncodeResultsModel::headerData(const int section,
       return section + 1;
     }
   } // Qt::ItemDataRole
+
   return QVariant();
 }
 

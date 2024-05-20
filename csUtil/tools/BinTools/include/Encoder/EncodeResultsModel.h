@@ -41,10 +41,9 @@ class EncodeResultsModel : public QAbstractTableModel {
   Q_OBJECT
 public:
   using EnginePtr = Encode::EnginePtr<uint64_t>;
+  using     Store = cs::element_of_ptr_t<EnginePtr>::Store;
 
   using value_type = cs::element_of_ptr_t<EnginePtr>::value_type;
-
-  using Store = cs::element_of_ptr_t<EnginePtr>::Store;
 
   enum Columns : int {
     COL_Engine = 0,
@@ -57,6 +56,7 @@ public:
 
   int columnCount(const QModelIndex& parent = QModelIndex()) const;
   QVariant data(const QModelIndex& index, const int role = Qt::DisplayRole) const;
+  Qt::ItemFlags flags(const QModelIndex& index = QModelIndex()) const;
   QVariant headerData(const int section, const Qt::Orientation orientation,
                       const int role = Qt::DisplayRole) const;
   int rowCount(const QModelIndex& parent = QModelIndex()) const;
