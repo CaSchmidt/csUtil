@@ -33,9 +33,13 @@
 
 #include <QtWidgets/QWidget>
 
+class QDomNode;
+
 class WTabPageBase : public QWidget {
   Q_OBJECT
 public:
-  WTabPageBase(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
+  WTabPageBase(QWidget *parent = nullptr, const Qt::WindowFlags flags = Qt::WindowFlags());
   ~WTabPageBase();
+
+  virtual void save(QDomNode& parent) const;
 };

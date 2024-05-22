@@ -33,11 +33,15 @@
 
 ////// public ////////////////////////////////////////////////////////////////
 
-WTabPageBase::WTabPageBase(QWidget *parent, Qt::WindowFlags flags)
+WTabPageBase::WTabPageBase(QWidget *parent, const Qt::WindowFlags flags)
   : QWidget(parent, flags)
 {
 }
 
 WTabPageBase::~WTabPageBase()
+{
+}
+
+void WTabPageBase::save(QDomNode& /*parent*/) const
 {
 }
