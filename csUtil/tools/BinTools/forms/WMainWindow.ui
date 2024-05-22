@@ -61,6 +61,7 @@
     <addaction name="newEncoderAction"/>
     <addaction name="separator"/>
     <addaction name="closeTabAction"/>
+    <addaction name="closeAllTabsAction"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Window"/>
@@ -120,10 +121,18 @@
   </action>
   <action name="closeTabAction">
    <property name="text">
-    <string>Close &amp;Tab</string>
+    <string>Close &amp;tab</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+W</string>
+   </property>
+  </action>
+  <action name="closeAllTabsAction">
+   <property name="text">
+    <string>Close &amp;all tabs</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+W</string>
    </property>
   </action>
  </widget>

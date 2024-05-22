@@ -164,7 +164,7 @@
           <item>
            <widget class="QCheckBox" name="msbFirstCheck">
             <property name="text">
-             <string>MSB</string>
+             <string>MSB first</string>
             </property>
            </widget>
           </item>
