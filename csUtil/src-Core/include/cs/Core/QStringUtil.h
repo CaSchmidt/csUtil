@@ -120,7 +120,13 @@ namespace cs {
         : std::filesystem::path();
   }
 
-  inline QString toQString(const std::filesystem::path& p)
+  /*
+   * NOTE:
+   * std::filesystem::path can be implicitly constructed from std::string,
+   * counteracting the Unicode-aware toQString() functions above!
+   *
+   */
+  inline QString toQStringFromPath(const std::filesystem::path& p)
   {
     return !p.empty()
         ? QString::fromStdU16String(p.generic_u16string())
