@@ -29,34 +29,29 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#pragma once
+#include <QtWidgets/QTabWidget>
+#include <QtXml/QDomDocument>
 
-#include <memory>
+#include "WTabPageBase.h"
+#include "XML_io.h"
+#include "XML_tags.h"
 
-#include <QtWidgets/QMainWindow>
+QString xmlWrite(const QTabWidget *tabWidget)
+{
+  QDomDocument doc;
 
-namespace Ui {
-  class WMainWindow;
-} // namespace Ui
+  QDomProcessingInstruction pi = doc.createProcessingInstruction(XML_pitarget, XML_pidata);
+  doc.appendChild(pi);
 
-class WMainWindow : public QMainWindow {
-  Q_OBJECT
-public:
-  WMainWindow(QWidget *parent = nullptr, const Qt::WindowFlags flags = Qt::WindowFlags());
-  ~WMainWindow();
+  QDomElement xml_root = doc.createElement(XML_BinTools);
+  doc.appendChild(xml_root);
 
-private slots:
-  void closeAllTabs();
-  void closeCurrentTab();
-  void newEncoderTab();
-  void open();
-  void removeTab(const int index);
-  void save();
-  void saveAs();
+  for(int i = 0; i < tabWidget->count(); i++) {
+    const WTabPageBase *page = dynamic_cast<const WTabPageBase*>(tabWidget->widget(i));
+    if( page != nullptr ) {
+      page->save(xml_root);
+    }
+  }
 
-private:
-  QString getFileName(const bool is_save, const QString& recent = QString());
-
-  std::unique_ptr<Ui::WMainWindow> ui;
-  QString _sessionFileName;
-};
+  return doc.toString(2);
+}

@@ -34,6 +34,7 @@
 #include <Encode/Parser.h>
 
 #include <QtGui/QFontDatabase>
+#include <QtXml/QDomDocument>
 
 #include "Encoder/WEncoderPage.h"
 #include "ui_WEncoderPage.h"
@@ -41,6 +42,7 @@
 #include "Encoder/EncodeResultsModel.h"
 #include "Encoder/EncodeVariablesModel.h"
 #include "global.h"
+#include "XML_tags.h"
 
 ////// Private ///////////////////////////////////////////////////////////////
 
@@ -97,6 +99,14 @@ WEncoderPage::WEncoderPage(QWidget *parent, const Qt::WindowFlags flags)
 
 WEncoderPage::~WEncoderPage()
 {
+}
+
+void WEncoderPage::save(QDomNode& parent) const
+{
+  QDomDocument doc = parent.ownerDocument();
+
+  QDomElement xml_page = doc.createElement(XML_Encode);
+  parent.appendChild(xml_page);
 }
 
 ////// private slots /////////////////////////////////////////////////////////

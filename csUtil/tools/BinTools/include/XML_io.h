@@ -31,32 +31,8 @@
 
 #pragma once
 
-#include <memory>
+#include <QtCore/QString>
 
-#include <QtWidgets/QMainWindow>
+class QTabWidget;
 
-namespace Ui {
-  class WMainWindow;
-} // namespace Ui
-
-class WMainWindow : public QMainWindow {
-  Q_OBJECT
-public:
-  WMainWindow(QWidget *parent = nullptr, const Qt::WindowFlags flags = Qt::WindowFlags());
-  ~WMainWindow();
-
-private slots:
-  void closeAllTabs();
-  void closeCurrentTab();
-  void newEncoderTab();
-  void open();
-  void removeTab(const int index);
-  void save();
-  void saveAs();
-
-private:
-  QString getFileName(const bool is_save, const QString& recent = QString());
-
-  std::unique_ptr<Ui::WMainWindow> ui;
-  QString _sessionFileName;
-};
+QString xmlWrite(const QTabWidget *tabWidget);

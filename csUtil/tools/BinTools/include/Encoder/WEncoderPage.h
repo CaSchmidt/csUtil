@@ -51,6 +51,8 @@ public:
   WEncoderPage(QWidget *parent = nullptr, const Qt::WindowFlags flags = Qt::WindowFlags());
   ~WEncoderPage();
 
+  void save(QDomNode& parent) const;
+
 private slots:
   void clearVariables();
   void encode();

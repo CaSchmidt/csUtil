@@ -1,3 +1,8 @@
+### Dependencies #############################################################
+
+find_package(Qt5Widgets 5.12 REQUIRED)
+find_package(Qt5Xml 5.12 REQUIRED)
+
 ### Project ##################################################################
 
 list(APPEND BinTools_FILES
@@ -16,6 +21,8 @@ list(APPEND BinTools_HEADERS
   include/global.h
   include/WMainWindow.h
   include/WTabPageBase.h
+  include/XML_io.h
+  include/XML_tags.h
 )
 
 list(APPEND BinTools_SOURCES
@@ -25,6 +32,7 @@ list(APPEND BinTools_SOURCES
   src/global.cpp
   src/WMainWindow.cpp
   src/WTabPageBase.cpp
+  src/XML_io.cpp
   src/main.cpp
 )
 
@@ -81,4 +89,5 @@ endif()
 
 target_link_libraries(BinTools
   PRIVATE encode
+  PRIVATE Qt5::Xml
 )

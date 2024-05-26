@@ -29,6 +29,10 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <QtCore/QFileInfo>
+#include <QtWidgets/QFileDialog>
+
+#include <cs/Qt/FileIO.h>
 #include <cs/Qt/Widget.h>
 
 #include "WMainWindow.h"
@@ -36,6 +40,7 @@
 
 #include "Encoder/WEncoderPage.h"
 #include "global.h"
+#include "XML_io.h"
 
 ////// public ////////////////////////////////////////////////////////////////
 
@@ -51,6 +56,12 @@ WMainWindow::WMainWindow(QWidget *parent, const Qt::WindowFlags flags)
 
   // Signals & Slots /////////////////////////////////////////////////////////
 
+  connect(ui->openAction, &QAction::triggered,
+          this, &WMainWindow::open);
+  connect(ui->saveAction, &QAction::triggered,
+          this, &WMainWindow::save);
+  connect(ui->saveAsAction, &QAction::triggered,
+          this, &WMainWindow::saveAs);
   connect(ui->quitAction, &QAction::triggered,
           this, &WMainWindow::close);
 
@@ -86,7 +97,11 @@ void WMainWindow::closeCurrentTab()
 
 void WMainWindow::newEncoderTab()
 {
-  ui->tabWidget->addTab(new WEncoderPage, QStringLiteral("Encoder"));
+  ui->tabWidget->addTab(new WEncoderPage, tr("Encoder"));
+}
+
+void WMainWindow::open()
+{
 }
 
 void WMainWindow::removeTab(const int index)
@@ -95,4 +110,43 @@ void WMainWindow::removeTab(const int index)
   if( widget ) {
     ui->tabWidget->removeTab(index);
   }
+}
+
+void WMainWindow::save()
+{
+  const QString filename = _sessionFileName.isEmpty()
+      ? getFileName(true)
+      : std::move(_sessionFileName);
+  if( filename.isEmpty() ) {
+    return;
+  }
+
+  const QString content = xmlWrite(ui->tabWidget);
+  if( !cs::writeUtf8Text(filename, content) ) {
+    return;
+  }
+
+  _sessionFileName = filename;
+}
+
+void WMainWindow::saveAs()
+{
+  const QString filename = getFileName(true, _sessionFileName);
+  if( !filename.isEmpty() ) {
+    _sessionFileName = filename;
+    save();
+  }
+}
+
+////// private ///////////////////////////////////////////////////////////////
+
+QString WMainWindow::getFileName(const bool is_save, const QString& recent)
+{
+  const QString filter(tr("BinTools session (*.xsession)"));
+
+  const QString dir = QFileInfo(recent).canonicalPath();
+
+  return is_save
+      ? QFileDialog::getSaveFileName(this, tr("Save as"), dir, filter)
+      : QFileDialog::getOpenFileName(this, tr("Open"), dir, filter);
 }

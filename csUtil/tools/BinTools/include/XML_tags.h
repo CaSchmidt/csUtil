@@ -31,32 +31,7 @@
 
 #pragma once
 
-#include <memory>
-
-#include <QtWidgets/QMainWindow>
-
-namespace Ui {
-  class WMainWindow;
-} // namespace Ui
-
-class WMainWindow : public QMainWindow {
-  Q_OBJECT
-public:
-  WMainWindow(QWidget *parent = nullptr, const Qt::WindowFlags flags = Qt::WindowFlags());
-  ~WMainWindow();
-
-private slots:
-  void closeAllTabs();
-  void closeCurrentTab();
-  void newEncoderTab();
-  void open();
-  void removeTab(const int index);
-  void save();
-  void saveAs();
-
-private:
-  QString getFileName(const bool is_save, const QString& recent = QString());
-
-  std::unique_ptr<Ui::WMainWindow> ui;
-  QString _sessionFileName;
-};
+#define XML_BinTools  QStringLiteral("BinToolsSession")
+#define XML_Encode    QStringLiteral("EncoderPage")
+#define XML_pidata    QStringLiteral("version=\"1.0\" encoding=\"UTF-8\"")
+#define XML_pitarget  QStringLiteral("xml")
