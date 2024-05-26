@@ -2,6 +2,7 @@ list(APPEND csQt_HEADERS
   include/cs/Qt/AbstractTreeItem.h
   include/cs/Qt/Clipboard.h
   include/cs/Qt/DialogButtonBox.h
+  include/cs/Qt/FileIO.h
   include/cs/Qt/FilterCancel.h
   include/cs/Qt/ImageTip.h
   include/cs/Qt/ItemModel.h
@@ -16,6 +17,7 @@ list(APPEND csQt_SOURCES
   src/AbstractTreeItem.cpp
   src/Clipboard.cpp
   src/DialogButtonBox.cpp
+  src/FileIO.cpp
   src/FilterCancel.cpp
   src/ImageTip.cpp
   src/ItemModel.cpp
