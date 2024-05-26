@@ -92,9 +92,9 @@ QVariant EncodeVariablesModel::headerData(const int section, const Qt::Orientati
   if( role == Qt::DisplayRole ) {
     if(        orientation == Qt::Horizontal ) {
       if(        section == COL_Variable ) {
-        return QStringLiteral("Variable");
+        return tr("Variable");
       } else if( section == COL_Value ) {
-        return QStringLiteral("Value");
+        return tr("Value");
       }
     } else if( orientation == Qt::Vertical ) {
       return section + 1;

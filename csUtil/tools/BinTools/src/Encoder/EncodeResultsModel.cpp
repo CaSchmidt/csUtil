@@ -93,9 +93,9 @@ QVariant EncodeResultsModel::headerData(const int section,
   if( role == Qt::DisplayRole ) {
     if(        orientation == Qt::Horizontal ) {
       if(        section == COL_Engine ) {
-        return QStringLiteral("Engine");
+        return tr("Engine");
       } else if( section == COL_Result ) {
-        return QStringLiteral("Result");
+        return tr("Result");
       }
     } else if( orientation == Qt::Vertical ) {
       return section + 1;
