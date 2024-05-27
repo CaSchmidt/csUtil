@@ -31,7 +31,13 @@
 
 #pragma once
 
-#define XML_BinTools  QStringLiteral("BinToolsSession")
-#define XML_Encode    QStringLiteral("EncoderPage")
-#define XML_pidata    QStringLiteral("version=\"1.0\" encoding=\"UTF-8\"")
-#define XML_pitarget  QStringLiteral("xml")
+#define XML_BinTools   QStringLiteral("BinToolsSession")
+#define XML_Editor     QStringLiteral("Editor")
+#define XML_Encode     QStringLiteral("EncoderPage")
+#define XML_MSBfirst   QStringLiteral("MSBfirst")
+#define XML_Name       QStringLiteral("Name")
+#define XML_pidata     QStringLiteral("version=\"1.0\" encoding=\"UTF-8\"")
+#define XML_pitarget   QStringLiteral("xml")
+#define XML_Value      QStringLiteral("Value")
+#define XML_Variable   QStringLiteral("Variable")
+#define XML_Variables  QStringLiteral("Variables")

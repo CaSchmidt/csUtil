@@ -30,6 +30,7 @@
 *****************************************************************************/
 
 #include <cs/Core/QStringUtil.h>
+#include <cs/Qt/XML.h>
 
 #include <Encode/Parser.h>
 
@@ -107,6 +108,23 @@ void WEncoderPage::save(QDomNode& parent) const
 
   QDomElement xml_page = doc.createElement(XML_Encode);
   parent.appendChild(xml_page);
+
+  cs::xmlAppend(xml_page, XML_Editor, ui->editorWidget->toPlainText());
+
+  QDomElement xml_variables = doc.createElement(XML_Variables);
+  xml_page.appendChild(xml_variables);
+
+  const auto store = d->variables->store();
+  for(const auto& variable : store) {
+    QDomElement xml_variable = doc.createElement(XML_Variable);
+    xml_variables.appendChild(xml_variable);
+
+    const QString name = cs::toQString(cs::toUtf8String(variable.first));
+    cs::xmlAppend(xml_variable, XML_Name, name);
+    cs::xmlAppend(xml_variable, XML_Value, variable.second);
+  }
+
+  cs::xmlAppend(xml_page, XML_MSBfirst, ui->msbFirstCheck->isChecked());
 }
 
 ////// private slots /////////////////////////////////////////////////////////
