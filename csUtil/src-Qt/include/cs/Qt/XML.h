@@ -31,9 +31,8 @@
 
 #pragma once
 
-#include <QtCore/QString>
-
 #include <cs/Core/csutil_config.h>
+#include <cs/Core/QStringUtil.h>
 
 class QDomNode;
 
@@ -44,5 +43,12 @@ namespace cs {
 
   void CS_UTIL_EXPORT xmlAppend(QDomNode& parent, const QString& name,
                                 const bool value);
+
+  template<typename T>
+  inline void xmlAppend(QDomNode& parent, const QString& name,
+                        const T value)
+  {
+    xmlAppend(parent, name, toQString<T>(value));
+  }
 
 } // namespace cs
