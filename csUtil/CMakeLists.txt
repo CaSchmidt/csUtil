@@ -39,6 +39,7 @@ option(ENABLE_QT "Enable support for Qt" OFF)
 
 if(ENABLE_QT)
   find_package(Qt5Widgets 5.12 REQUIRED)
+  find_package(Qt5Xml 5.12 REQUIRED)
 endif()
 
 ### Target ###################################################################
@@ -69,6 +70,7 @@ if(ENABLE_QT)
 
   target_link_libraries(csUtil
     PUBLIC Qt5::Widgets
+    PUBLIC Qt5::Xml
   )
 
   set_target_properties(csUtil PROPERTIES

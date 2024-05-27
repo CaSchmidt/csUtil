@@ -11,6 +11,7 @@ list(APPEND csQt_HEADERS
   include/cs/Qt/TreeModel.h
   include/cs/Qt/Widget.h
   include/cs/Qt/WListEditor.h
+  include/cs/Qt/XML.h
   )
 
 list(APPEND csQt_SOURCES
@@ -25,6 +26,7 @@ list(APPEND csQt_SOURCES
   src/TreeModel.cpp
   src/Widget.cpp
   src/WListEditor.cpp
+  src/XML.cpp
   )
 
 ### csUtil ###################################################################
