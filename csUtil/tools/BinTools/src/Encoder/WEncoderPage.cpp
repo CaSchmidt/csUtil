@@ -106,8 +106,7 @@ void WEncoderPage::save(QDomNode& parent) const
 {
   QDomDocument doc = parent.ownerDocument();
 
-  QDomElement xml_page = doc.createElement(XML_Encode);
-  parent.appendChild(xml_page);
+  QDomNode xml_page = cs::xmlAppend(parent, XML_Page, {XML_type, XML_Encoder});
 
   cs::xmlAppend(xml_page, XML_Editor, ui->editorWidget->toPlainText());
 
@@ -121,7 +120,8 @@ void WEncoderPage::save(QDomNode& parent) const
 
     const QString name = cs::toQString(cs::toUtf8String(variable.first));
     cs::xmlAppend(xml_variable, XML_Name, name);
-    cs::xmlAppend(xml_variable, XML_Value, variable.second);
+    cs::xmlAppend(xml_variable, XML_Value,
+                  QStringLiteral("0x%1").arg(cs::toQString(variable.second, 16).toUpper()));
   }
 
   cs::xmlAppend(xml_page, XML_MSBfirst, ui->msbFirstCheck->isChecked());
