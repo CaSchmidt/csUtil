@@ -35,11 +35,36 @@
 
 namespace cs {
 
-  void CS_UTIL_EXPORT xmlAppend(QDomNode& parent, const QString& name,
-                                const QString& value)
+  QDomNode CS_UTIL_EXPORT xmlAppend(QDomNode& parent, const QString& name,
+                                    const XmlAttributes& attributes)
+  {
+    QDomDocument doc = parent.ownerDocument();
+
+    QDomElement xml_elem = doc.createElement(name);
+    parent.appendChild(xml_elem);
+
+    for(const XmlAttribute& attribute : attributes) {
+      if( attribute.first.isEmpty() ) {
+        continue;
+      }
+
+      xml_elem.setAttribute(attribute.first, attribute.second);
+    }
+
+    return xml_elem;
+  }
+
+  QDomNode CS_UTIL_EXPORT xmlAppend(QDomNode& parent, const QString& name,
+                                    const XmlAttribute& attribute)
+  {
+    return xmlAppend(parent, name, XmlAttributes{attribute});
+  }
+
+  QDomNode CS_UTIL_EXPORT xmlAppend(QDomNode& parent, const QString& name,
+                                    const QString& value)
   {
     if( parent.isNull() ) {
-      return;
+      return QDomNode();
     }
 
     QDomDocument doc = parent.ownerDocument();
@@ -49,14 +74,16 @@ namespace cs {
 
     QDomText xml_text = doc.createTextNode(value);
     xml_elem.appendChild(xml_text);
+
+    return xml_elem;
   }
 
-  void CS_UTIL_EXPORT xmlAppend(QDomNode& parent, const QString& name,
-                                const bool value)
+  QDomNode CS_UTIL_EXPORT xmlAppend(QDomNode& parent, const QString& name,
+                                    const bool value)
   {
-    xmlAppend(parent, name, value
-              ? QStringLiteral("true")
-              : QStringLiteral("false"));
+    return xmlAppend(parent, name, value
+                     ? QStringLiteral("true")
+                     : QStringLiteral("false"));
   }
 
 } // namespace cs

@@ -31,24 +31,47 @@
 
 #pragma once
 
+#include <list>
+#include <utility>
+
+#include <QtXml/QDomNode>
+
 #include <cs/Core/csutil_config.h>
 #include <cs/Core/QStringUtil.h>
 
-class QDomNode;
-
 namespace cs {
 
-  void CS_UTIL_EXPORT xmlAppend(QDomNode& parent, const QString& name,
-                                const QString& value);
+  using XmlAttribute = std::pair<QString,QString>;
 
-  void CS_UTIL_EXPORT xmlAppend(QDomNode& parent, const QString& name,
-                                const bool value);
+  using XmlAttributes = std::list<XmlAttribute>;
+
+  QDomNode CS_UTIL_EXPORT xmlAppend(QDomNode& parent, const QString& name,
+                                    const XmlAttributes& attributes);
+
+  QDomNode CS_UTIL_EXPORT xmlAppend(QDomNode& parent, const QString& name,
+                                    const XmlAttribute& attribute);
+
+  QDomNode CS_UTIL_EXPORT xmlAppend(QDomNode& parent, const QString& name,
+                                    const QString& value);
+
+  QDomNode CS_UTIL_EXPORT xmlAppend(QDomNode& parent, const QString& name,
+                                    const bool value);
 
   template<typename T>
-  inline void xmlAppend(QDomNode& parent, const QString& name,
-                        const T value)
+  inline if_integral_t<T,QDomNode> xmlAppend(QDomNode& parent, const QString& name,
+                                             const T value,
+                                             const int base = 10)
   {
-    xmlAppend(parent, name, toQString<T>(value));
+    return xmlAppend(parent, name, toQString<T>(value, base));
+  }
+
+  template<typename T>
+  inline if_real_t<T,QDomNode> xmlAppend(QDomNode& parent, const QString& name,
+                                         const T value,
+                                         const char fmt = 'g',
+                                         const int prec = 6)
+  {
+    return xmlAppend(parent, name, toQString<T>(value, fmt, prec));
   }
 
 } // namespace cs
