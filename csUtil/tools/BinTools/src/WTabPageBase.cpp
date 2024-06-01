@@ -42,6 +42,11 @@ WTabPageBase::~WTabPageBase()
 {
 }
 
+bool WTabPageBase::load(const QDomNode& /*node*/)
+{
+  return true;
+}
+
 void WTabPageBase::save(QDomNode& /*parent*/) const
 {
 }

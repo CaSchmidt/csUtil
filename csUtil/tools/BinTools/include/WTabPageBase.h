@@ -41,5 +41,6 @@ public:
   WTabPageBase(QWidget *parent = nullptr, const Qt::WindowFlags flags = Qt::WindowFlags());
   ~WTabPageBase();
 
+  virtual bool load(const QDomNode& node);
   virtual void save(QDomNode& parent) const;
 };
