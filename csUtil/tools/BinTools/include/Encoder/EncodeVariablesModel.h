@@ -67,6 +67,7 @@ public:
 
   void clear();
   bool addVariables(const EnginePtr& engine);
+  void set(const Store& store);
   Store store() const;
 
 private:

@@ -145,10 +145,6 @@ void EncodeVariablesModel::clear()
 
 bool EncodeVariablesModel::addVariables(const EnginePtr& engine)
 {
-  constexpr auto lambda_cmp = [](const Variable& lhs, const Variable& rhs) -> bool {
-    return lhs.first < rhs.first;
-  };
-
   if( !engine ) {
     return false;
   }
@@ -159,18 +155,30 @@ bool EncodeVariablesModel::addVariables(const EnginePtr& engine)
     return false;
   }
 
-  beginResetModel();
-  _variables.clear();
-  _variables.reserve(count);
-
-  for(const Store::value_type& var : store) {
-    _variables.emplace_back(cs::toQString(cs::toUtf8String(var.first)), var.second);
-  }
-
-  std::sort(_variables.begin(), _variables.end(), lambda_cmp);
-  endResetModel();
+  set(store);
 
   return true;
+}
+
+void EncodeVariablesModel::set(const Store& store)
+{
+  constexpr auto lambda_cmp = [](const Variable& lhs, const Variable& rhs) -> bool {
+    return lhs.first < rhs.first;
+  };
+
+  beginResetModel();
+  _variables.clear();
+
+  if( !store.empty() ) {
+    _variables.reserve(store.size());
+
+    for(const Store::value_type& var : store) {
+      _variables.emplace_back(cs::toQString(cs::toUtf8String(var.first)), var.second);
+    }
+
+    std::sort(_variables.begin(), _variables.end(), lambda_cmp);
+  } // !store.empty()
+  endResetModel();
 }
 
 EncodeVariablesModel::Store EncodeVariablesModel::store() const
