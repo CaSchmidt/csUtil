@@ -71,6 +71,8 @@ WMainWindow::WMainWindow(QWidget *parent, const Qt::WindowFlags flags)
           this, &WMainWindow::closeCurrentTab);
   connect(ui->closeAllTabsAction, &QAction::triggered,
           this, &WMainWindow::closeAllTabs);
+  connect(ui->clearOutputAction, &QAction::triggered,
+          ui->logBrowser, &cs::WLogger::clear);
 
   connect(ui->tabWidget, &QTabWidget::tabCloseRequested,
           this, &WMainWindow::removeTab);

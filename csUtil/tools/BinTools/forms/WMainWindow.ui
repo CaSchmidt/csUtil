@@ -67,6 +67,8 @@
     <addaction name="separator"/>
     <addaction name="closeTabAction"/>
     <addaction name="closeAllTabsAction"/>
+    <addaction name="separator"/>
+    <addaction name="clearOutputAction"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Window"/>
@@ -159,6 +161,11 @@
   <action name="saveAsAction">
    <property name="text">
     <string>Save &amp;as...</string>
+   </property>
+  </action>
+  <action name="clearOutputAction">
+   <property name="text">
+    <string>C&amp;lear output</string>
    </property>
   </action>
  </widget>
