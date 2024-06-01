@@ -150,6 +150,9 @@ namespace cs {
   template<typename T>
   inline constexpr bool is_arithmetic_v = is_arithmetic<T>::value;
 
+  template<typename T, typename ResultT = T>
+  using if_arithmetic_t = std::enable_if_t<is_arithmetic_v<T>,ResultT>;
+
   // Character Category //////////////////////////////////////////////////////
 
   template<typename T>
