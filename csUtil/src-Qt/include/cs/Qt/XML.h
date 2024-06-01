@@ -80,15 +80,55 @@ namespace cs {
 
   // Implementation - Read ///////////////////////////////////////////////////
 
+  namespace impl_xml {
+
+    template<typename T>
+    inline if_boolean_t<T> conv(const QString& text)
+    {
+      return text.trimmed().compare(QStringLiteral("true"), Qt::CaseInsensitive) == 0;
+    }
+
+    template<typename T>
+    inline if_integral_t<T> conv(const QString& text)
+    {
+      return toValue<T>(text, nullptr, 0);
+    }
+
+    template<typename T>
+    inline if_same_t<T,QString> conv(const QString& text)
+    {
+      return text;
+    }
+
+    template<typename T>
+    inline T toValue(const QDomNode& node, const QString& name, const T& defValue)
+    {
+      const QDomElement elem = node.toElement();
+      if( elem.isNull()  ||  elem.tagName() != name ) {
+        return defValue;
+      }
+
+      return conv<T>(elem.text());
+    }
+
+  } // namespace impl_xml
+
   template<typename T>
   inline if_boolean_t<T> xmlToValue(const QDomNode& node, const QString& name)
   {
-    const QDomElement elem = node.toElement();
+    return impl_xml::toValue<bool>(node, name, false);
+  }
 
-    return
-        !elem.isNull()  &&
-        elem.tagName() == name  &&
-        elem.text().trimmed().compare(QStringLiteral("true"), Qt::CaseInsensitive) == 0;
+  template<typename T>
+  inline if_integral_t<T> xmlToValue(const QDomNode& node, const QString& name)
+  {
+    return impl_xml::toValue<T>(node, name, 0);
+  }
+
+  template<typename T>
+  inline if_same_t<T,QString> xmlToValue(const QDomNode& node, const QString& name)
+  {
+    return impl_xml::toValue<QString>(node, name, QString());
   }
 
 } // namespace cs
