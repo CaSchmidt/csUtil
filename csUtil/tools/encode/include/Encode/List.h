@@ -60,11 +60,9 @@ namespace Encode {
   inline size_t initialize(VariableStore<T>& store, const FieldList<T>& fields,
                            const T initValue = 0, const bool keep_values = false)
   {
-    const VariableStore<T> old = keep_values
-        ? std::move(store)
-        : VariableStore<T>();
-
-    store.clear();
+    if( !keep_values ) {
+      store.clear();
+    }
 
     size_t cntField = 0;
     for(const FieldPtr<T>& field : fields) {
@@ -73,16 +71,18 @@ namespace Encode {
       }
 
       const std::string name = field->name();
-      if( name.empty()  ||  store.contains(name) ) {
+      if( name.empty() ) {
         continue;
       }
 
-      store[name] = keep_values  &&  old.contains(name)
-          ? old.at(name)
-          : initValue;
+      if( store.contains(name)  &&  keep_values ) {
+        continue;
+      }
+
+      store[name] = initValue;
 
       cntField++;
-    }
+    } // For each Field
 
     return cntField;
   }
