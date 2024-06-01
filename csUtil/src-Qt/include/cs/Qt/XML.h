@@ -34,16 +34,20 @@
 #include <list>
 #include <utility>
 
-#include <QtXml/QDomNode>
+#include <QtXml/QDomElement>
 
 #include <cs/Core/csutil_config.h>
 #include <cs/Core/QStringUtil.h>
 
 namespace cs {
 
+  // Types ///////////////////////////////////////////////////////////////////
+
   using XmlAttribute = std::pair<QString,QString>;
 
   using XmlAttributes = std::list<XmlAttribute>;
+
+  // Implementation - Create /////////////////////////////////////////////////
 
   QDomNode CS_UTIL_EXPORT xmlAppend(QDomNode& parent, const QString& name,
                                     const XmlAttributes& attributes);
@@ -72,6 +76,19 @@ namespace cs {
                                          const int prec = 6)
   {
     return xmlAppend(parent, name, toQString<T>(value, fmt, prec));
+  }
+
+  // Implementation - Read ///////////////////////////////////////////////////
+
+  template<typename T>
+  inline if_boolean_t<T> xmlToValue(const QDomNode& node, const QString& name)
+  {
+    const QDomElement elem = node.toElement();
+
+    return
+        !elem.isNull()  &&
+        elem.tagName() == name  &&
+        elem.text().trimmed().compare(QStringLiteral("true"), Qt::CaseInsensitive) == 0;
   }
 
 } // namespace cs

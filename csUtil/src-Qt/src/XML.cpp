@@ -35,6 +35,8 @@
 
 namespace cs {
 
+  // Implementation - Create /////////////////////////////////////////////////
+
   QDomNode CS_UTIL_EXPORT xmlAppend(QDomNode& parent, const QString& name,
                                     const XmlAttributes& attributes)
   {
