@@ -32,9 +32,40 @@
 #include <QtWidgets/QTabWidget>
 #include <QtXml/QDomDocument>
 
-#include "WTabPageBase.h"
+#include "Encoder/WEncoderPage.h"
 #include "XML_io.h"
 #include "XML_tags.h"
+
+bool xmlRead(QTabWidget *tabWidget, const QString& content)
+{
+  if( content.isEmpty() ) {
+    return false;
+  }
+
+  QDomDocument doc;
+  if( !doc.setContent(content) ) {
+    return false;
+  }
+
+  const QDomElement xml_root = doc.firstChildElement(XML_BinTools);
+  if( xml_root.isNull() ) {
+    return false;
+  }
+
+  for(QDomElement xml_page = xml_root.firstChildElement(XML_Page);
+      !xml_page.isNull();
+      xml_page = xml_page.nextSiblingElement(XML_Page)) {
+    TabPagePtr page;
+
+    page = WEncoderPage::make();
+    if( page  &&  page->load(xml_page) ) {
+      tabWidget->addTab(page.release(), WEncoderPage::label());
+      continue;
+    }
+  }
+
+  return true;
+}
 
 QString xmlWrite(const QTabWidget *tabWidget)
 {

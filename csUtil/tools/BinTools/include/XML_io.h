@@ -35,4 +35,6 @@
 
 class QTabWidget;
 
+bool xmlRead(QTabWidget *tabWidget, const QString& content);
+
 QString xmlWrite(const QTabWidget *tabWidget);

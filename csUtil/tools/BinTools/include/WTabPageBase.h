@@ -31,9 +31,13 @@
 
 #pragma once
 
+#include <memory>
+
 #include <QtWidgets/QWidget>
 
 class QDomNode;
+
+using TabPagePtr = std::unique_ptr<class WTabPageBase>;
 
 class WTabPageBase : public QWidget {
   Q_OBJECT

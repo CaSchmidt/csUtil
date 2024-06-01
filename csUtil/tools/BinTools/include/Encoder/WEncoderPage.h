@@ -47,11 +47,21 @@ using EncoderPageData = std::unique_ptr<impl_encoder::EncoderPage>;
 
 class WEncoderPage : public WTabPageBase {
   Q_OBJECT
+
+  struct ctor_tag {
+    ctor_tag() noexcept = default;
+  };
 public:
-  WEncoderPage(QWidget *parent = nullptr, const Qt::WindowFlags flags = Qt::WindowFlags());
+  WEncoderPage(QWidget *parent = nullptr, const Qt::WindowFlags flags = Qt::WindowFlags(),
+               const ctor_tag& = ctor_tag());
   ~WEncoderPage();
 
+  bool load(const QDomNode& node);
   void save(QDomNode& parent) const;
+
+  static QString label();
+
+  static TabPagePtr make(QWidget *parent = nullptr, const Qt::WindowFlags flags = Qt::WindowFlags());
 
 private slots:
   void clearVariables();

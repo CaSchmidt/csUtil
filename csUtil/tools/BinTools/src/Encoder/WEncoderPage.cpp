@@ -67,7 +67,7 @@ namespace impl_encoder {
 
 ////// public ////////////////////////////////////////////////////////////////
 
-WEncoderPage::WEncoderPage(QWidget *parent, const Qt::WindowFlags flags)
+WEncoderPage::WEncoderPage(QWidget *parent, const Qt::WindowFlags flags, const ctor_tag&)
   : WTabPageBase(parent, flags)
   , ui(std::make_unique<Ui::WEncoderPage>())
   , d(std::make_unique<impl_encoder::EncoderPage>())
@@ -102,8 +102,53 @@ WEncoderPage::~WEncoderPage()
 {
 }
 
+bool WEncoderPage::load(const QDomNode& node)
+{
+  const QDomElement xml_page = node.toElement();
+  if( xml_page.isNull()  ||
+      xml_page.tagName() != XML_Page  ||
+      xml_page.attribute(XML_type) != XML_Encoder ) {
+    return false;
+  }
+
+  ui->editorWidget->setPlainText(cs::xmlToValue<QString>(xml_page.firstChildElement(XML_Editor),
+                                                         XML_Editor));
+
+  ui->msbFirstCheck->setChecked(cs::xmlToValue<bool>(xml_page.firstChildElement(XML_MSBfirst),
+                                                     XML_MSBfirst));
+
+  EncodeVariablesModel::Store store;
+  {
+    const QDomElement xml_variables = xml_page.firstChildElement(XML_Variables);
+
+    for(QDomElement xml_variable = xml_variables.firstChildElement(XML_Variable);
+        !xml_variable.isNull();
+        xml_variable = xml_variable.nextSiblingElement(XML_Variable)) {
+      using value_type = impl_encoder::EncoderPage::Parser::value_type;
+
+      const auto  name = cs::xmlToValue<QString>(xml_variable.firstChildElement(XML_Name),
+                                                 XML_Name);
+      const auto value = cs::xmlToValue<value_type>(xml_variable.firstChildElement(XML_Value),
+                                                    XML_Value);
+
+      if( name.isEmpty() ) {
+        continue;
+      }
+
+      store.emplace(cs::toString(cs::toUtf8String(name)), value);
+    } // For each Variable
+  }
+  d->variables->set(store);
+
+  return true;
+}
+
 void WEncoderPage::save(QDomNode& parent) const
 {
+  if( parent.isNull() ) {
+    return;
+  }
+
   QDomDocument doc = parent.ownerDocument();
 
   QDomNode xml_page = cs::xmlAppend(parent, XML_Page, {XML_type, XML_Encoder});
@@ -157,4 +202,16 @@ void WEncoderPage::encode()
   for(const EnginePtr& engine : d->parser.result) {
     d->results->addResult(engine, store, ui->msbFirstCheck->isChecked());
   }
+}
+
+////// public static /////////////////////////////////////////////////////////
+
+QString WEncoderPage::label()
+{
+  return tr("Encoder");
+}
+
+TabPagePtr WEncoderPage::make(QWidget *parent, const Qt::WindowFlags flags)
+{
+  return std::make_unique<WEncoderPage>(parent, flags);
 }

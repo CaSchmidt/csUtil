@@ -99,11 +99,25 @@ void WMainWindow::closeCurrentTab()
 
 void WMainWindow::newEncoderTab()
 {
-  ui->tabWidget->addTab(new WEncoderPage, tr("Encoder"));
+  ui->tabWidget->addTab(WEncoderPage::make().release(), WEncoderPage::label());
 }
 
 void WMainWindow::open()
 {
+  const QString filename = getFileName(false, _sessionFileName);
+  if( filename.isEmpty() ) {
+    return;
+  }
+
+  const QString content = cs::readUtf8Text(filename);
+  if( content.isEmpty() ) {
+    return;
+  }
+
+  closeAllTabs();
+  xmlRead(ui->tabWidget, content);
+
+  _sessionFileName = filename;
 }
 
 void WMainWindow::removeTab(const int index)
