@@ -33,7 +33,7 @@
 
 #include "cs/CLI/IOption.h"
 
-#include "cs/Text/Print.h"
+#include "cs/Text/PrintUtil.h"
 #include "cs/Text/StringUtil.h"
 
 namespace cs {

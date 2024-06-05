@@ -31,7 +31,7 @@
 
 #include "cs/CLI/Options.h"
 
-#include "cs/Text/Print.h"
+#include "cs/Text/PrintUtil.h"
 
 namespace cs {
 

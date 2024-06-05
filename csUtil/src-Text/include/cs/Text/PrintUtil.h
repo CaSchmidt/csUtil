@@ -33,37 +33,70 @@
 
 #include <iostream>
 #include <sstream>
+#include <syncstream>
 
 #include <cs/Text/Print.h>
 
 namespace cs {
 
+  // Print to narrow character stream ////////////////////////////////////////
+
   template<typename ...Args>
-  void print(const char *fmt, Args&&... args)
+  void print(std::ostream& stream, const std::string_view& fmt, Args&&... args)
   {
-    print(std::cout, fmt, std::forward<Args>(args)...);
+    print<char>(stream, fmt, std::forward<Args>(args)...);
   }
 
   template<typename ...Args>
-  void println(const char *fmt, Args&&... args)
+  void print(const std::string_view& fmt, Args&&... args)
   {
-    println(std::cout, fmt, std::forward<Args>(args)...);
+    std::osyncstream scout(std::cout);
+    print(scout, fmt, std::forward<Args>(args)...);
   }
+
+  template<typename ...Args>
+  void println(std::ostream& stream, const std::string_view& fmt, Args&&... args)
+  {
+    println<char>(stream, fmt, std::forward<Args>(args)...);
+  }
+
+  template<typename ...Args>
+  void println(const std::string_view& fmt, Args&&... args)
+  {
+    std::osyncstream scout(std::cout);
+    println(scout, fmt, std::forward<Args>(args)...);
+  }
+
+  // Print to string - Generic implementation ////////////////////////////////
 
   template<typename CharT, typename ...Args>
-  std::basic_string<CharT> sprint(const CharT *fmt, Args&&... args)
+  std::basic_string<CharT> sprint(const std::basic_string_view<CharT>& fmt, Args&&... args)
   {
     std::basic_ostringstream<CharT> s;
-    print(s, fmt, std::forward<Args>(args)...);
+    print<CharT>(s, fmt, std::forward<Args>(args)...);
     return s.str();
   }
 
   template<typename CharT, typename ...Args>
-  std::basic_string<CharT> sprintln(const CharT *fmt, Args&&... args)
+  std::basic_string<CharT> sprintln(const std::basic_string_view<CharT>& fmt, Args&&... args)
   {
     std::basic_ostringstream<CharT> s;
-    println(s, fmt, std::forward<Args>(args)...);
+    println<CharT>(s, fmt, std::forward<Args>(args)...);
     return s.str();
+  }
+
+  // Print to narrow character string ////////////////////////////////////////
+
+  template<typename ...Args>
+  std::string sprint(const std::string_view& fmt, Args&&... args)
+  {
+    return sprint<char>(fmt, std::forward<Args>(args)...);
+  }
+
+  template<typename ...Args>
+  std::string sprintln(const std::string_view& fmt, Args&&... args)
+  {
+    return sprintln<char>(fmt, std::forward<Args>(args)...);
   }
 
 } // namespace cs

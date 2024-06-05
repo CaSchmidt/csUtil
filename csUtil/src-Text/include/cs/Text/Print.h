@@ -31,41 +31,32 @@
 
 #pragma once
 
-#include <algorithm>
 #include <ostream>
 #include <utility>
-
-#include <cs/Core/CharUtil.h>
-#include <cs/Core/Range.h>
 
 namespace cs {
 
   namespace impl_print {
 
     template<typename CharT>
-    requires is_char_v<CharT>
-    void print(std::basic_ostream<CharT>& stream, const CharT *first, const CharT *last)
+    void print(std::basic_ostream<CharT>& stream, const std::basic_string_view<CharT>& view)
     {
-      const std::size_t max = strlen(first, last);
-      if( max > 0 ) {
-        stream.write(first, max);
-      }
+      stream << view;
     }
 
     template<typename CharT, typename T, typename ...Args>
-    requires is_char_v<CharT>
-    void print(std::basic_ostream<CharT>& stream, const CharT *first, const CharT *last,
+    void print(std::basic_ostream<CharT>& stream, const std::basic_string_view<CharT>& view,
                T value, Args&&... args)
     {
-      const CharT *hit = std::find(first, last, glyph<CharT>::pct);
-      if( hit == last ) {
-        print(stream, first, last);
+      const auto hitpos = view.find(static_cast<CharT>('%'));
+      if( hitpos == std::basic_string_view<CharT>::npos ) {
+        print(stream, view);
         return;
       }
 
-      print(stream, first, hit);
+      print(stream, view.substr(0, hitpos));
       stream << value;
-      print(stream, hit + 1, last, std::forward<Args>(args)...);
+      print(stream, view.substr(hitpos + 1), std::forward<Args>(args)...);
     }
 
   } // namespace impl_print
@@ -73,15 +64,13 @@ namespace cs {
   ////// User Interface //////////////////////////////////////////////////////
 
   template<typename CharT, typename ...Args>
-  requires is_char_v<CharT>
-  void print(std::basic_ostream<CharT>& stream, const CharT *fmt, Args&&... args)
+  void print(std::basic_ostream<CharT>& stream, const std::basic_string_view<CharT>& fmt, Args&&... args)
   {
-    impl_print::print(stream, fmt, fmt + strlen(fmt), std::forward<Args>(args)...);
+    impl_print::print(stream, fmt, std::forward<Args>(args)...);
   }
 
   template<typename CharT, typename ...Args>
-  requires is_char_v<CharT>
-  void println(std::basic_ostream<CharT>& stream, const CharT *fmt, Args&&... args)
+  void println(std::basic_ostream<CharT>& stream, const std::basic_string_view<CharT>& fmt, Args&&... args)
   {
     print(stream, fmt, std::forward<Args>(args)...);
     stream << std::endl;

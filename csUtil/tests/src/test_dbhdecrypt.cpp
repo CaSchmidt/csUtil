@@ -9,6 +9,7 @@
 #include <list>
 
 #include <cs/Convert/BufferUtil.h>
+#include <cs/Core/CharUtil.h>
 #include <cs/Core/Endian.h>
 #include <cs/Crypto/BlockCipher.h>
 #include <cs/Crypto/Hash.h>
