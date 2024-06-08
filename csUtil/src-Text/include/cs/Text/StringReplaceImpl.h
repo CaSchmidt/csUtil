@@ -31,25 +31,46 @@
 
 #pragma once
 
+#include <algorithm>
 #include <string>
-
-#include <cs/Core/TypeTraits.h>
 
 namespace cs {
 
+  ////// Replace character in string... //////////////////////////////////////
+
+  template<typename CharT>
+  void replaceAll(std::basic_string<CharT>& str,
+                  const CharT before,
+                  const CharT after)
+  {
+    std::replace(str.begin(), str.end(), before, after);
+  }
+
+  ////// Replace character matching predicate in string... ///////////////////
+
+  template<typename CharT, typename UnaryPred>
+  void replaceAll(std::basic_string<CharT>& str,
+                  UnaryPred pred,
+                  const CharT after)
+  {
+    std::replace_if(str.begin(), str.end(), pred, after);
+  }
+
+  ////// Replace pattern in string... ////////////////////////////////////////
+
   namespace impl_string {
 
-    template<typename T> requires is_char_v<T>
-    inline void replaceAll(std::basic_string<T>& str,
-                           const T *pat, const std::size_t maxpat,
-                           const T *txt, const std::size_t maxtxt)
+    template<typename CharT>
+    inline void replaceAll(std::basic_string<CharT>& str,
+                           const std::basic_string_view<CharT>& before,
+                           const std::basic_string_view<CharT>& after)
     {
-      constexpr auto NPOS = std::basic_string<T>::npos;
+      constexpr auto NPOS = std::basic_string<CharT>::npos;
 
       for(std::size_t pos = 0;
-          (pos = str.find(pat, pos, maxpat)) != NPOS;
-          pos += maxtxt) {
-        str.replace(pos, maxpat, txt, maxtxt);
+          (pos = str.find(before, pos)) != NPOS;
+          pos += after.size()) {
+        str.replace(pos, before.size(), after);
       }
     }
 

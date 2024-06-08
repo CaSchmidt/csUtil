@@ -31,6 +31,8 @@
 
 #pragma once
 
+#include <memory>
+
 #include <cs/Core/Container.h>
 #include <cs/Core/Flags.h>
 #include <cs/Text/StringReplaceImpl.h>
@@ -200,63 +202,44 @@ namespace cs {
   ////// Replace character/predicate with character... ///////////////////////
 
   inline void replaceAll(std::string& str,
-                         const char pat,
-                         const char txt)
+                         const char before,
+                         const char after)
   {
-    if( !str.empty() ) {
-      replaceAll(str.data(), str.size(),
-                 pat,
-                 txt);
-    }
+    replaceAll<char>(str, before, after);
   }
 
   inline void replaceAll(std::wstring& str,
-                         const wchar_t pat,
-                         const wchar_t txt)
+                         const wchar_t before,
+                         const wchar_t after)
   {
-    if( !str.empty() ) {
-      replaceAll(str.data(), str.size(),
-                 pat,
-                 txt);
-    }
+    replaceAll<wchar_t>(str, before, after);
   }
 
-  template<typename PredFunc>
+  template<typename UnaryPred>
   inline void replaceAll(std::string& str,
-                         PredFunc func,
-                         const char txt,
-                         if_char_predicate_t<PredFunc,char> * = nullptr)
+                         UnaryPred pred,
+                         const char after)
   {
-    if( !str.empty() ) {
-      replaceAll(str.data(), str.size(),
-                 func,
-                 txt);
-    }
+    replaceAll<char>(str, pred, after);
   }
 
   ////// Replace character/pattern with text... //////////////////////////////
 
   inline void replaceAll(std::string& str,
-                         const char pat,
-                         const std::string_view& txt)
+                         const char before,
+                         const std::string_view& after)
   {
-    if( !str.empty()  &&
-        !txt.empty() ) {
-      impl_string::replaceAll(str,
-                              &pat, 1,
-                              txt.data(), txt.size());
+    if( !str.empty()  &&  !after.empty() ) {
+      impl_string::replaceAll<char>(str, std::string_view(std::addressof(before), 1), after);
     }
   }
 
   inline void replaceAll(std::string& str,
-                         const std::string_view& pat,
-                         const std::string_view& txt)
+                         const std::string_view& before,
+                         const std::string_view& after)
   {
-    if( !str.empty()  &&
-        str.size() >= pat.size()  &&  !txt.empty() ) {
-      impl_string::replaceAll(str,
-                              pat.data(), pat.size(),
-                              txt.data(), txt.size());
+    if( !str.empty()  &&  str.size() >= before.size()  &&  !after.empty() ) {
+      impl_string::replaceAll<char>(str, before, after);
     }
   }
 
