@@ -38,53 +38,6 @@
 
 namespace cs {
 
-  namespace impl_string {
-
-    constexpr std::size_t TWO = 2;
-
-  } // namespace impl_string
-
-  ////// String begins with hexadecimal base... //////////////////////////////
-
-  namespace impl_string {
-
-    template<typename T> requires is_char_v<T>
-    inline bool isHexBase(const T *first, const T *last)
-    {
-      return
-          first + TWO <= last         &&
-          first[0] == glyph<T>::zero  &&
-          (first[1] == glyph<T>::x  ||  first[1] == glyph<T>::X);
-    }
-
-  } // namespace impl_string
-
-  template<typename T> requires is_char_v<T>
-  inline bool isHexBase_s(const T *str, const std::size_t len)
-  {
-    const std::size_t max = strlen(str, len);
-
-    return max > 0
-        ? impl_string::isHexBase(str, str + max)
-        : false;
-  }
-
-  template<typename T> requires is_char_v<T>
-  inline bool isHexBase(const T *str, const std::size_t len)
-  {
-    return impl_string::isHexBase(str, str + len);
-  }
-
-  template<typename T> requires is_char_v<T>
-  inline bool isHexBase(const T *str)
-  {
-    const std::size_t max = strlen(str);
-
-    return max > 0
-        ? impl_string::isHexBase(str, str + max)
-        : false;
-  }
-
   ////// String is hexadecimal string... /////////////////////////////////////
 
   namespace impl_string {
@@ -159,46 +112,6 @@ namespace cs {
 
     return max > 0
         ? impl_string::isIdent(str, str + max)
-        : false;
-  }
-
-  ////// String begins with octal base... ////////////////////////////////////
-
-  namespace impl_string {
-
-    template<typename T> requires is_char_v<T>
-    inline bool isOctBase(const T *first, const T *last)
-    {
-      return
-          first < last  &&
-          first[0] == glyph<T>::zero;
-    }
-
-  } // namespace impl_string
-
-  template<typename T> requires is_char_v<T>
-  inline bool isOctBase_s(const T *str, const std::size_t len)
-  {
-    const std::size_t max = strlen(str, len);
-
-    return max > 0
-        ? impl_string::isOctBase(str, str + max)
-        : false;
-  }
-
-  template<typename T> requires is_char_v<T>
-  inline bool isOctBase(const T *str, const std::size_t len)
-  {
-    return impl_string::isOctBase(str, str + len);
-  }
-
-  template<typename T> requires is_char_v<T>
-  inline bool isOctBase(const T *str)
-  {
-    const std::size_t max = strlen(str);
-
-    return max > 0
-        ? impl_string::isOctBase(str, str + max)
         : false;
   }
 
