@@ -39,6 +39,7 @@
 #include <cs/Text/StringQueryImpl.h>
 #include <cs/Text/StringReplaceImpl.h>
 #include <cs/Text/StringSplitImpl.h>
+#include <cs/Text/StringUtilImpl.h>
 
 namespace cs {
 
@@ -65,19 +66,7 @@ namespace cs {
 
   inline void shrink(std::string& str, const bool reclaim = false)
   {
-    if( str.empty() ) {
-      return;
-    }
-
-    try {
-      const std::size_t len = strlen(str.data(), str.size());
-      str.resize(len);
-      if( reclaim ) {
-        str.shrink_to_fit();
-      }
-    } catch( ... ) {
-      str.clear();
-    }
+    impl_string::shrink<char>(str, reclaim);
   }
 
   ////// String contains character/pattern/predicate... //////////////////////
