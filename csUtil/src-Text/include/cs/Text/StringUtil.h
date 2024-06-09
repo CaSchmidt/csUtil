@@ -97,7 +97,7 @@ namespace cs {
   template<typename UnaryPred>
   inline bool contains(const std::string_view& text,
                        UnaryPred pred,
-                       if_char_predicate_t<UnaryPred,char> * = nullptr)
+                       if_unary_predicate_t<UnaryPred,char> * = nullptr)
   {
     return impl_string::contains<char,UnaryPred>(text, pred);
   }
@@ -105,7 +105,7 @@ namespace cs {
   template<typename UnaryPred>
   inline bool contains(const std::wstring_view& text,
                        UnaryPred pred,
-                       if_char_predicate_t<UnaryPred,wchar_t> * = nullptr)
+                       if_unary_predicate_t<UnaryPred,wchar_t> * = nullptr)
   {
     return impl_string::contains<wchar_t,UnaryPred>(text, pred);
   }
@@ -170,7 +170,7 @@ namespace cs {
   template<typename PredFunc>
   inline void removeAll(std::string& str,
                         PredFunc func,
-                        if_char_predicate_t<PredFunc,char> * = nullptr)
+                        if_unary_predicate_t<PredFunc,char> * = nullptr)
   {
     if( !str.empty() ) {
       removeAll(str.data(), str.size(),

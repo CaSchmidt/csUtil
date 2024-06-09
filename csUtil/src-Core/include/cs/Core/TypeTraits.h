@@ -379,6 +379,19 @@ namespace cs {
     return const_cast<Base*>(dynamic_cast<const Base*>(derived));
   }
 
+  ////// Unary Predicate /////////////////////////////////////////////////////
+
+  template<typename Pred, typename T>
+  struct is_unary_predicate : std::bool_constant<
+      std::is_invocable_r_v<bool,Pred,std::add_const_t<T>>
+      > {};
+
+  template<typename Pred, typename T>
+  inline constexpr bool is_unary_predicate_v = is_unary_predicate<Pred,T>::value;
+
+  template<typename Pred, typename T, typename ResultT = T>
+  using if_unary_predicate_t = std::enable_if_t<is_unary_predicate_v<Pred,T>,ResultT>;
+
   ////// Pointer Conversions /////////////////////////////////////////////////
 
   inline const char *CSTR(const char8_t *s,
