@@ -35,6 +35,7 @@
 
 #include <cs/Core/Container.h>
 #include <cs/Core/Flags.h>
+#include <cs/Text/StringQueryImpl.h>
 #include <cs/Text/StringReplaceImpl.h>
 #include <cs/Text/StringSplitImpl.h>
 
@@ -80,49 +81,42 @@ namespace cs {
 
   ////// String contains character/pattern/predicate... //////////////////////
 
-  inline bool contains(const std::string_view& str,
-                       const char pat)
+  inline bool contains(const std::string_view& text,
+                       const char pattern)
   {
-    return !str.empty()  &&  contains(str.data(), str.size(),
-                                      pat);
+    return impl_string::contains<char>(text, pattern);
   }
 
-  inline bool contains(const std::string_view& str,
-                       const std::string_view& pat,
+  inline bool contains(const std::string_view& text,
+                       const std::string_view& pattern,
                        const bool ignoreCase = false)
   {
-    return !str.empty()  &&  contains(str.data(), str.size(),
-                                      pat.data(), pat.size(),
-                                      ignoreCase);
+    return impl_string::contains<char>(text, pattern, ignoreCase);
   }
 
-  template<typename PredFunc>
-  inline bool contains(const std::string_view& str,
-                       PredFunc func,
-                       if_char_predicate_t<PredFunc,char> * = nullptr)
+  template<typename UnaryPred>
+  inline bool contains(const std::string_view& text,
+                       UnaryPred pred,
+                       if_char_predicate_t<UnaryPred,char> * = nullptr)
   {
-    return !str.empty()  &&  contains(str.data(), str.size(),
-                                      func);
+    return impl_string::contains<char,UnaryPred>(text, pred);
   }
 
-  template<typename PredFunc>
-  inline bool contains(const std::wstring_view& str,
-                       PredFunc func,
-                       if_char_predicate_t<PredFunc,wchar_t> * = nullptr)
+  template<typename UnaryPred>
+  inline bool contains(const std::wstring_view& text,
+                       UnaryPred pred,
+                       if_char_predicate_t<UnaryPred,wchar_t> * = nullptr)
   {
-    return !str.empty()  &&  contains(str.data(), str.size(),
-                                      func);
+    return impl_string::contains<wchar_t,UnaryPred>(text, pred);
   }
 
   ////// String ends with pattern... /////////////////////////////////////////
 
-  inline bool endsWith(const std::string_view& str,
-                       const std::string_view& pat,
+  inline bool endsWith(const std::string_view& text,
+                       const std::string_view& pattern,
                        const bool ignoreCase = false)
   {
-    return !str.empty()  &&  endsWith(str.data(), str.size(),
-                                      pat.data(), pat.size(),
-                                      ignoreCase);
+    return impl_string::endsWith<char>(text, pattern, ignoreCase);
   }
 
   ////// Strings are equal... ////////////////////////////////////////////////
@@ -131,9 +125,7 @@ namespace cs {
                      const std::string_view& b,
                      const bool ignoreCase = false)
   {
-    return !a.empty()  &&  equals(a.data(), a.size(),
-                                  b.data(), b.size(),
-                                  ignoreCase);
+    return impl_string::equals<char>(a, b, ignoreCase);
   }
 
   ////// String classification... ////////////////////////////////////////////
@@ -289,13 +281,11 @@ namespace cs {
 
   ////// String starts with pattern... ///////////////////////////////////////
 
-  inline bool startsWith(const std::string_view& str,
-                         const std::string_view& pat,
+  inline bool startsWith(const std::string_view& text,
+                         const std::string_view& pattern,
                          const bool ignoreCase = false)
   {
-    return !str.empty()  &&  startsWith(str.data(), str.size(),
-                                        pat.data(), pat.size(),
-                                        ignoreCase);
+    return impl_string::startsWith<char>(text, pattern, ignoreCase);
   }
 
   ////// Case conversion... //////////////////////////////////////////////////
