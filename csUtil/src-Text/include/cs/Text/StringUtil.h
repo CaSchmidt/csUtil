@@ -35,6 +35,7 @@
 
 #include <cs/Core/Container.h>
 #include <cs/Core/Flags.h>
+#include <cs/Text/StringClassifyImpl.h>
 #include <cs/Text/StringQueryImpl.h>
 #include <cs/Text/StringReplaceImpl.h>
 #include <cs/Text/StringSplitImpl.h>
@@ -130,19 +131,19 @@ namespace cs {
 
   ////// String classification... ////////////////////////////////////////////
 
-  inline bool isHexString(const std::string_view& str)
+  inline bool isHexString(const std::string_view& text)
   {
-    return !str.empty()  &&  isHexString(str.data(), str.size());
+    return impl_string::isHexString<char>(text);
   }
 
-  inline bool isIdent(const std::string_view& str)
+  inline bool isIdent(const std::string_view& text)
   {
-    return !str.empty()  &&  isIdent(str.data(), str.size());
+    return impl_string::isIdent<char>(text);
   }
 
-  inline bool isSpace(const std::string_view& str)
+  inline bool isSpace(const std::string_view& text)
   {
-    return !str.empty()  &&  isSpace(str.data(), str.size());
+    return impl_string::isSpace<char>(text);
   }
 
   ////// Remove character/pattern/predicate from string... ///////////////////

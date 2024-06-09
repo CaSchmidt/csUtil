@@ -35,7 +35,7 @@
 #include "cs/Core/Constants.h"
 #include "cs/Core/Container.h"
 #include "cs/Core/Pointer.h"
-#include "cs/Text/StringAlgorithm.h"
+#include "cs/Text/StringUtil.h"
 
 namespace cs {
 
@@ -57,20 +57,20 @@ namespace cs {
 
   ////// Public //////////////////////////////////////////////////////////////
 
-  CS_UTIL_EXPORT Buffer toBuffer(const char *str, const std::size_t lenStr)
+  CS_UTIL_EXPORT Buffer toBuffer(const std::string_view& str)
   {
     using k = Konst<std::size_t>;
 
-    if( !isHexString(str, lenStr) ) {
+    if( !isHexString(str) ) {
       return Buffer();
     }
 
     Buffer result;
-    if( !resize(result, (lenStr + k::ONE)/k::TWO) ) {
+    if( !resize(result, (str.size() + k::ONE)/k::TWO) ) {
       return Buffer();
     }
 
-    const std::size_t i0 = result.size() != lenStr/k::TWO
+    const std::size_t i0 = result.size() != str.size()/k::TWO
         ? 1
         : 0;
 

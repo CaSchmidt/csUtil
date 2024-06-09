@@ -114,9 +114,11 @@ namespace stringutil {
 
     REQUIRE(  cs::isHexString("0123456789abcdefABCDEF") );
     REQUIRE( !cs::isHexString("0123456789abcdefABCDEFx") );
+    REQUIRE( !cs::isHexString("") );
 
     REQUIRE(  cs::isIdent("_") );
     REQUIRE( !cs::isIdent("0") );
+    REQUIRE( !cs::isIdent("") );
 
     REQUIRE(  cs::isIdent("_azAZ09") );
     REQUIRE(  cs::isIdent("azAZ09_") );
@@ -127,6 +129,7 @@ namespace stringutil {
 
     REQUIRE(  cs::isSpace(" \f\n\r\t\v") );
     REQUIRE( !cs::isSpace(" \f\n\r\t\v-") );
+    REQUIRE( !cs::isSpace("") );
 
     // StringUtil.h
 

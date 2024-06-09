@@ -9,22 +9,12 @@ namespace cs {
 
   ////// Implementation //////////////////////////////////////////////////////
 
-  CS_UTIL_EXPORT Buffer toBuffer(const char *str, const std::size_t lenStr);
+  CS_UTIL_EXPORT Buffer toBuffer(const std::string_view& str);
 
   CS_UTIL_EXPORT std::string toString(const void *data, const std::size_t sizData,
                                       const char sep = '\0', const bool is_upper = false);
 
   ////// Helper //////////////////////////////////////////////////////////////
-
-  inline Buffer toBuffer(const std::string& s)
-  {
-    return toBuffer(s.data(), s.size());
-  }
-
-  inline Buffer toBuffer(const std::string_view& view)
-  {
-    return toBuffer(view.data(), view.size());
-  }
 
   inline std::string toString(const void *data, const std::size_t sizData,
                               const bool is_upper)

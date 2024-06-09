@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <string_view>
 
 #include <cs/Core/CharUtil.h>
@@ -57,6 +58,34 @@ namespace cs {
     inline bool isOctBase(const std::basic_string_view<CharT>& text)
     {
       return !text.empty()  &&  text[0] == glyph<CharT>::zero;
+    }
+
+    ////// String is hexadecimal string... ///////////////////////////////////
+
+    template<typename CharT>
+    inline bool isHexString(const std::basic_string_view<CharT>& text)
+    {
+      return !text.empty()  &&
+          std::all_of(text.begin(), text.end(), lambda_is_hex<CharT>());
+    }
+
+    ////// String is C-style identifier... ///////////////////////////////////
+
+    template<typename CharT>
+    inline bool isIdent(const std::basic_string_view<CharT>& text)
+    {
+      return !text.empty()            &&
+          isIdentFirst(text.front())  &&
+          std::all_of(++text.begin(), text.end(), lambda_is_ident<CharT>());
+    }
+
+    ////// String contains only whitespace... ////////////////////////////////
+
+    template<typename CharT>
+    inline bool isSpace(const std::basic_string_view<CharT>& text)
+    {
+      return !text.empty()  &&
+          std::all_of(text.begin(), text.end(), lambda_is_space<CharT>());
     }
 
   } // namespace impl_string
