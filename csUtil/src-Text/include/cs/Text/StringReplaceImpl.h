@@ -67,6 +67,10 @@ namespace cs {
     {
       constexpr auto NPOS = std::basic_string<CharT>::npos;
 
+      if( str.empty()  ||  str.size() < before.size()  ||  after.empty() ) {
+        return;
+      }
+
       for(std::size_t pos = 0;
           (pos = str.find(before, pos)) != NPOS;
           pos += after.size()) {

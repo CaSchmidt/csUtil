@@ -211,18 +211,14 @@ namespace cs {
                          const char before,
                          const std::string_view& after)
   {
-    if( !str.empty()  &&  !after.empty() ) {
-      impl_string::replaceAll<char>(str, std::string_view(std::addressof(before), 1), after);
-    }
+    impl_string::replaceAll<char>(str, std::string_view(std::addressof(before), 1), after);
   }
 
   inline void replaceAll(std::string& str,
                          const std::string_view& before,
                          const std::string_view& after)
   {
-    if( !str.empty()  &&  str.size() >= before.size()  &&  !after.empty() ) {
-      impl_string::replaceAll<char>(str, before, after);
-    }
+    impl_string::replaceAll<char>(str, before, after);
   }
 
   ////// Replace consecutive whitespace with single space... /////////////////
