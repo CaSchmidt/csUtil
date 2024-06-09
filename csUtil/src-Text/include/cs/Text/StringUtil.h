@@ -205,14 +205,14 @@ namespace cs {
                          const char before,
                          const char after)
   {
-    replaceAll<char>(str, before, after);
+    impl_string::replaceAll<char>(str, before, after);
   }
 
   inline void replaceAll(std::wstring& str,
                          const wchar_t before,
                          const wchar_t after)
   {
-    replaceAll<wchar_t>(str, before, after);
+    impl_string::replaceAll<wchar_t>(str, before, after);
   }
 
   template<typename UnaryPred>
@@ -220,7 +220,7 @@ namespace cs {
                          UnaryPred pred,
                          const char after)
   {
-    replaceAll<char>(str, pred, after);
+    impl_string::replaceAll<char,UnaryPred>(str, pred, after);
   }
 
   ////// Replace character/pattern with text... //////////////////////////////

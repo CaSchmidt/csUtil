@@ -36,29 +36,29 @@
 
 namespace cs {
 
-  ////// Replace character in string... //////////////////////////////////////
-
-  template<typename CharT>
-  void replaceAll(std::basic_string<CharT>& str,
-                  const CharT before,
-                  const CharT after)
-  {
-    std::replace(str.begin(), str.end(), before, after);
-  }
-
-  ////// Replace character matching predicate in string... ///////////////////
-
-  template<typename CharT, typename UnaryPred>
-  void replaceAll(std::basic_string<CharT>& str,
-                  UnaryPred pred,
-                  const CharT after)
-  {
-    std::replace_if(str.begin(), str.end(), pred, after);
-  }
-
-  ////// Replace pattern in string... ////////////////////////////////////////
-
   namespace impl_string {
+
+    ////// Replace character in string... ////////////////////////////////////
+
+    template<typename CharT>
+    void replaceAll(std::basic_string<CharT>& str,
+                    const CharT before,
+                    const CharT after)
+    {
+      std::replace(str.begin(), str.end(), before, after);
+    }
+
+    ////// Replace character matching predicate in string... /////////////////
+
+    template<typename CharT, typename UnaryPred>
+    void replaceAll(std::basic_string<CharT>& str,
+                    UnaryPred pred,
+                    const CharT after)
+    {
+      std::replace_if(str.begin(), str.end(), pred, after);
+    }
+
+    ////// Replace pattern in string... //////////////////////////////////////
 
     template<typename CharT>
     inline void replaceAll(std::basic_string<CharT>& str,
