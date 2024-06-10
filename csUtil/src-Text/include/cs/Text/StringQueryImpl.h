@@ -32,20 +32,12 @@
 #pragma once
 
 #include <algorithm>
-#include <string_view>
+
+#include <cs/Text/StringUtilImpl.h>
 
 namespace cs {
 
   namespace impl_string {
-
-    ////// Helper ////////////////////////////////////////////////////////////
-
-    template<typename CharT>
-    inline bool isTextPattern(const std::basic_string_view<CharT>& text,
-                              const std::basic_string_view<CharT>& pattern)
-    {
-      return !text.empty()  &&  text.size() >= pattern.size();
-    }
 
     ////// String contains character... //////////////////////////////////////
 
