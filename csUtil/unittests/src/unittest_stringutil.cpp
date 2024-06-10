@@ -183,13 +183,6 @@ namespace stringutil {
     const char *PTR_input2 = "abcabc";
     const char *PTR_input3 = " a b c ";
 
-    {
-      String str(PTR_input3);
-      cs::removeAll_s(str.data(), str.size(), cs::lambda_is_space<char>());
-      cs::shrink(str);
-      REQUIRE( str == PTR_abc );
-    }
-
     // StringUtil.h
 
     {

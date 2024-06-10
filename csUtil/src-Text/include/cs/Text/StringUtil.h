@@ -138,36 +138,24 @@ namespace cs {
 
   ////// Remove character/pattern/predicate from string... ///////////////////
 
-  inline void removeAll(std::string& str,
-                        const char pat)
+  inline void removeAll(std::string& text,
+                        const char pattern)
   {
-    if( !str.empty() ) {
-      removeAll(str.data(), str.size(),
-                pat);
-      shrink(str);
-    }
+    impl_string::removeAll<char>(text, std::basic_string_view(std::addressof(pattern), 1));
   }
 
-  inline void removeAll(std::string& str,
-                        const std::string_view& pat)
+  inline void removeAll(std::string& text,
+                        const std::string_view& pattern)
   {
-    if( !str.empty() ) {
-      removeAll(str.data(), str.size(),
-                pat.data(), pat.size());
-      shrink(str);
-    }
+    impl_string::removeAll<char>(text, pattern);
   }
 
-  template<typename PredFunc>
-  inline void removeAll(std::string& str,
-                        PredFunc func,
-                        if_unary_predicate_t<PredFunc,char> * = nullptr)
+  template<typename UnaryPred>
+  inline void removeAll(std::string& text,
+                        UnaryPred pred,
+                        if_unary_predicate_t<UnaryPred,char> * = nullptr)
   {
-    if( !str.empty() ) {
-      removeAll(str.data(), str.size(),
-                func);
-      shrink(str);
-    }
+    impl_string::removeAll<char,UnaryPred>(text, pred);
   }
 
   ////// Remove Trailing Zeros from Fixed-Notation Floating-Point String... //

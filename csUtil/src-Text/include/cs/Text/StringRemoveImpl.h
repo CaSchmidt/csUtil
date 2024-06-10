@@ -33,11 +33,46 @@
 
 #include <algorithm>
 #include <iterator>
-#include <string>
+
+#include <cs/Text/StringUtilImpl.h>
 
 namespace cs {
 
   namespace impl_string {
+
+    ////// Remove pattern from string... /////////////////////////////////////
+
+    template<typename CharT>
+    inline void removeAll(std::basic_string<CharT>& text,
+                          const std::basic_string_view<CharT>& pattern)
+    {
+      using size_type = typename std::basic_string<CharT>::size_type;
+
+      constexpr auto NPOS = std::basic_string<CharT>::npos;
+
+      if( !isTextPattern<CharT>(text, pattern) ) {
+        return;
+      }
+
+      for(size_type hit = 0; (hit = text.find(pattern, hit)) != NPOS; ) {
+        text.erase(hit, pattern.size());
+      }
+    }
+
+    ////// Remove characters matching predicate from string... ///////////////
+
+    template<typename CharT, typename UnaryPred>
+    inline void removeAll(std::basic_string<CharT>& text,
+                          UnaryPred pred)
+    {
+      using CIter = typename std::basic_string<CharT>::const_iterator;
+
+      for(CIter hit = text.cbegin(); (hit = std::find_if(hit, text.cend(), pred)) != text.cend(); ) {
+        text.erase(hit);
+      }
+    }
+
+    ////// Remove trailing zeros from Fixed-Notation Floating-Point string ///
 
     template<typename CharT>
     inline void removeTrailingZeros(std::basic_string<CharT>& text,
