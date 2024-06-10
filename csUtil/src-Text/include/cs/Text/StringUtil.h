@@ -37,6 +37,7 @@
 #include <cs/Core/Flags.h>
 #include <cs/Text/StringClassifyImpl.h>
 #include <cs/Text/StringQueryImpl.h>
+#include <cs/Text/StringRemoveImpl.h>
 #include <cs/Text/StringReplaceImpl.h>
 #include <cs/Text/StringSplitImpl.h>
 #include <cs/Text/StringUtilImpl.h>
@@ -171,14 +172,10 @@ namespace cs {
 
   ////// Remove Trailing Zeros from Fixed-Notation Floating-Point String... //
 
-  inline void removeTrailingZeros(std::string& str,
+  inline void removeTrailingZeros(std::string& text,
                                   const bool removeDot = true)
   {
-    if( !str.empty() ) {
-      removeTrailingZeros(str.data(), str.size(),
-                          removeDot);
-      shrink(str);
-    }
+    impl_string::removeTrailingZeros<char>(text, removeDot);
   }
 
   ////// Replace character/predicate with character... ///////////////////////

@@ -7,6 +7,7 @@ list(APPEND csText_HEADERS
   include/cs/Text/StringAlgorithm.h
   include/cs/Text/StringClassifyImpl.h
   include/cs/Text/StringQueryImpl.h
+  include/cs/Text/StringRemoveImpl.h
   include/cs/Text/StringReplaceImpl.h
   include/cs/Text/StringSplitImpl.h
   include/cs/Text/StringUtil.h

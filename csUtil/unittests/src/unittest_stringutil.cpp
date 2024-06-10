@@ -214,73 +214,65 @@ namespace stringutil {
   TEST_CASE("Remove trailing zeros.", "[removeTrailingZeros]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
-    const char *PTR_90     = "90";
-    const char *PTR_90p    = "90.";
-    const char *PTR_90p0   = "90.0";
-    const char *PTR_90p9   = "90.9";
-    const char *PTR_90p90  = "90.90";
-    const char *PTR_90p000 = "90.000";
-    const char *PTR_90p009 = "90.009";
-    const char *PTR_90p900 = "90.900";
-    const char *PTR_90p0e0 = "90.0e0";
-    const char *PTR_90p0E0 = "90.0E0";
-    const char *PTR_90p999 = "90.999";
-
     // StringUtil.h
 
     String s;
 
-    s = PTR_90;
+    s = "90";
     cs::removeTrailingZeros(s);
-    REQUIRE( s == PTR_90 );
+    REQUIRE( s == "90" );
 
-    s = PTR_90p0e0;
+    s = "90.0e0";
     cs::removeTrailingZeros(s);
-    REQUIRE( s == PTR_90p0e0 );
+    REQUIRE( s == "90.0e0" );
 
-    s = PTR_90p0E0;
+    s = "90.0E0";
     cs::removeTrailingZeros(s);
-    REQUIRE( s == PTR_90p0E0 );
+    REQUIRE( s == "90.0E0" );
 
-    s = PTR_90p999;
+    s = "90.999";
     cs::removeTrailingZeros(s);
-    REQUIRE( s == PTR_90p999 );
+    REQUIRE( s == "90.999" );
 
-    s = PTR_90p;
+    s = "90.";
     cs::removeTrailingZeros(s);
-    REQUIRE( s == PTR_90 );
+    REQUIRE( s == "90" );
 
-    s = PTR_90p0;
+    s = "90.0";
     cs::removeTrailingZeros(s);
-    REQUIRE( s == PTR_90 );
+    REQUIRE( s == "90" );
 
-    s = PTR_90p000;
+    s = "90.000";
     cs::removeTrailingZeros(s);
-    REQUIRE( s == PTR_90 );
+    REQUIRE( s == "90" );
 
-    s = PTR_90p009;
+    s = "90.009";
     cs::removeTrailingZeros(s);
-    REQUIRE( s == PTR_90p009 );
+    REQUIRE( s == "90.009" );
 
-    s = PTR_90p90;
+    s = "90.090";
     cs::removeTrailingZeros(s);
-    REQUIRE( s == PTR_90p9 );
+    REQUIRE( s == "90.09" );
 
-    s = PTR_90p900;
+    s = "90.90";
     cs::removeTrailingZeros(s);
-    REQUIRE( s == PTR_90p9 );
+    REQUIRE( s == "90.9" );
 
-    s = PTR_90p;
+    s = "90.900";
+    cs::removeTrailingZeros(s);
+    REQUIRE( s == "90.9" );
+
+    s = "90.";
     cs::removeTrailingZeros(s, false);
-    REQUIRE( s == PTR_90p );
+    REQUIRE( s == "90." );
 
-    s = PTR_90p0;
+    s = "90.0";
     cs::removeTrailingZeros(s, false);
-    REQUIRE( s == PTR_90p );
+    REQUIRE( s == "90." );
 
-    s = PTR_90p000;
+    s = "90.000";
     cs::removeTrailingZeros(s, false);
-    REQUIRE( s == PTR_90p );
+    REQUIRE( s == "90." );
   }
 
   TEST_CASE("Replace part(s) of string.", "[replaceAll]") {
