@@ -10,6 +10,7 @@ list(APPEND csText_HEADERS
   include/cs/Text/StringRemoveImpl.h
   include/cs/Text/StringReplaceImpl.h
   include/cs/Text/StringSplitImpl.h
+  include/cs/Text/StringStyleImpl.h
   include/cs/Text/StringUtil.h
   include/cs/Text/StringUtilImpl.h
   include/cs/Text/StringValue.h

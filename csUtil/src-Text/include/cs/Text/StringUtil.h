@@ -35,11 +35,13 @@
 
 #include <cs/Core/Container.h>
 #include <cs/Core/Flags.h>
+#include <cs/Text/StringAlgorithm.h>
 #include <cs/Text/StringClassifyImpl.h>
 #include <cs/Text/StringQueryImpl.h>
 #include <cs/Text/StringRemoveImpl.h>
 #include <cs/Text/StringReplaceImpl.h>
 #include <cs/Text/StringSplitImpl.h>
+#include <cs/Text/StringStyleImpl.h>
 #include <cs/Text/StringUtilImpl.h>
 
 namespace cs {
@@ -208,18 +210,15 @@ namespace cs {
 
   ////// Replace consecutive whitespace with single space... /////////////////
 
-  inline void simplify(std::string& str)
+  inline void simplify(std::string& text)
   {
-    if( !str.empty() ) {
-      simplify(str.data(), str.size());
-      shrink(str);
-    }
+    impl_string::simplify<char>(text);
   }
 
-  inline std::string toSimplified(std::string str)
+  inline std::string toSimplified(std::string text)
   {
-    simplify(str);
-    return str;
+    simplify(text);
+    return text;
   }
 
   ////// Split string at character/pattern... ////////////////////////////////
@@ -289,18 +288,15 @@ namespace cs {
 
   ////// Remove whitespace from begin & end... ///////////////////////////////
 
-  inline void trim(std::string& str)
+  inline void trim(std::string& text)
   {
-    if( !str.empty() ) {
-      trim(str.data(), str.size());
-      shrink(str);
-    }
+    impl_string::trim<char>(text);
   }
 
-  inline std::string toTrimmed(std::string str)
+  inline std::string toTrimmed(std::string text)
   {
-    trim(str);
-    return str;
+    trim(text);
+    return text;
   }
 
   ////// Narrowing/Widening of strings... ////////////////////////////////////
