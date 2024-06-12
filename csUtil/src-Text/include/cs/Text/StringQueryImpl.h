@@ -64,13 +64,15 @@ namespace cs {
                          const std::basic_string_view<CharT>& pattern,
                          const bool ignoreCase)
     {
+      constexpr auto NPOS = std::basic_string_view<CharT>::npos;
+
       if( !isTextPattern<CharT>(text, pattern) ) {
         return false;
       }
 
       return ignoreCase
           ? std::search(text.begin(), text.end(), pattern.begin(), pattern.end(), lambda_eqI<CharT>()) != text.end()
-          : std::search(text.begin(), text.end(), pattern.begin(), pattern.end()) != text.end();
+          : text.find(pattern) != NPOS;
     }
 
     ////// String ends with pattern... ///////////////////////////////////////
