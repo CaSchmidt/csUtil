@@ -223,30 +223,22 @@ namespace cs {
 
   ////// Split string at character/pattern... ////////////////////////////////
 
-  inline std::list<std::string> split(const std::string_view& str,
-                                      const char pat,
+  inline std::list<std::string> split(const std::string_view& text,
+                                      const char pattern,
                                       const SplitFlags flags = SplitFlag::None)
   {
-    if( !str.empty() ) {
-      return impl_string::split(str.data(), str.data() + str.size(),
-                                pat,
-                                flags.testAny(SplitFlag::SkipEmpty),
-                                flags.testAny(SplitFlag::Trim));
-    }
-    return std::list<std::string>();
+    return impl_string::split<char>(text, std::string_view(std::addressof(pattern), 1),
+                                    flags.testAny(SplitFlag::SkipEmpty),
+                                    flags.testAny(SplitFlag::Trim));
   }
 
-  inline std::list<std::string> split(const std::string_view& str,
-                                      const std::string_view& pat,
+  inline std::list<std::string> split(const std::string_view& text,
+                                      const std::string_view& pattern,
                                       const SplitFlags flags = SplitFlag::None)
   {
-    if( !str.empty()  &&  str.size() >= pat.size() ) {
-      return impl_string::split(str.data(), str.data() + str.size(),
-                                pat.data(), pat.size(),
-                                flags.testAny(SplitFlag::SkipEmpty),
-                                flags.testAny(SplitFlag::Trim));
-    }
-    return std::list<std::string>();
+    return impl_string::split<char>(text, pattern,
+                                    flags.testAny(SplitFlag::SkipEmpty),
+                                    flags.testAny(SplitFlag::Trim));
   }
 
   ////// String starts with pattern... ///////////////////////////////////////

@@ -32,68 +32,54 @@
 #pragma once
 
 #include <list>
-#include <string>
 
-#include <cs/Text/StringAlgorithm.h>
+#include <cs/Text/StringStyleImpl.h>
+#include <cs/Text/StringUtilImpl.h>
 
 namespace cs {
 
   namespace impl_string {
 
-    template<typename T> requires is_char_v<T>
-    inline void extract(std::list<std::basic_string<T>>& result,
-                        const T *first, const T *last,
-                        const bool skipEmpty, const bool doTrim)
+    template<typename CharT>
+    inline void extract(std::list<std::basic_string<CharT>>& result,
+                        const std::basic_string_view<CharT>& text,
+                        const std::size_t from, const std::size_t hit,
+                        const bool do_skip_empty, const bool do_trim)
     {
-      const std::size_t len = strlen(first, last);
-      std::basic_string<T> part = len > 0
-          ? std::basic_string<T>(first, len)
-          : std::basic_string<T>();
+      std::basic_string<CharT> part = from < hit
+          ? std::basic_string<CharT>(text.substr(from, hit - from))
+          : std::basic_string<CharT>();
 
-      if( doTrim  &&  !part.empty() ) {
-        ::cs::trim(part.data(), part.size());
-        part.resize(strlen(part.data(), part.size()));
+      if( do_trim ) {
+        trim(part);
       }
 
-      if( skipEmpty  &&  part.empty() ) {
+      if( do_skip_empty  &&  part.empty() ) {
         return;
       }
 
       result.push_back(std::move(part));
     }
 
-    template<typename T> requires is_char_v<T>
-    inline std::list<std::basic_string<T>> split(const T *first, const T *last,
-                                                 const T *pat, const std::size_t maxpat,
-                                                 const bool skipEmpty, const bool doTrim)
+    template<typename CharT>
+    inline std::list<std::basic_string<CharT>> split(const std::basic_string_view<CharT>& text,
+                                                     const std::basic_string_view<CharT>& pattern,
+                                                     const bool do_skip_empty, const bool do_trim)
     {
-      std::list<std::basic_string<T>> result;
+      constexpr auto NPOS = std::basic_string_view<CharT>::npos;
 
-      const T *from = first;
-      for(const T *hit = nullptr;
-          (hit = std::search(from, last, pat, pat + maxpat)) != last;
-          from = hit + maxpat) {
-        extract(result, from, hit, skipEmpty, doTrim);
+      std::list<std::basic_string<CharT>> result;
+
+      if( !isTextPattern<CharT>(text, pattern) ) {
+        return result;
       }
-      extract(result, from, last, skipEmpty, doTrim);
 
-      return result;
-    }
-
-    template<typename T> requires is_char_v<T>
-    inline std::list<std::basic_string<T>> split(const T *first, const T *last,
-                                                 const T& pat,
-                                                 const bool skipEmpty, const bool doTrim)
-    {
-      std::list<std::basic_string<T>> result;
-
-      const T *from = first;
-      for(const T *hit = nullptr;
-          (hit = std::find(from, last, pat)) != last;
-          from = hit + 1) {
-        extract(result, from, hit, skipEmpty, doTrim);
+      std::size_t from = 0;
+      for(std::size_t hit = 0; (hit = text.find(pattern, from)) != NPOS;
+          from = hit + pattern.size()) {
+        extract<CharT>(result, text, from, hit, do_skip_empty, do_trim);
       }
-      extract(result, from, last, skipEmpty, doTrim);
+      extract<CharT>(result, text, from, text.size(), do_skip_empty, do_trim);
 
       return result;
     }
