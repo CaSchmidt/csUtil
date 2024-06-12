@@ -19,6 +19,7 @@ list(APPEND csText_HEADERS
 
 list(APPEND csText_SOURCES
   src/main_text.cpp
+  src/StringUtil.cpp
   src/TextIO.cpp
 )
 

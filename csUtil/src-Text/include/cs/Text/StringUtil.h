@@ -31,18 +31,17 @@
 
 #pragma once
 
+#include <list>
 #include <memory>
+
+#include <cs/Core/csutil_config.h>
 
 #include <cs/Core/Container.h>
 #include <cs/Core/Flags.h>
 #include <cs/Text/StringAlgorithm.h>
-#include <cs/Text/StringClassifyImpl.h>
 #include <cs/Text/StringQueryImpl.h>
 #include <cs/Text/StringRemoveImpl.h>
 #include <cs/Text/StringReplaceImpl.h>
-#include <cs/Text/StringSplitImpl.h>
-#include <cs/Text/StringStyleImpl.h>
-#include <cs/Text/StringUtilImpl.h>
 
 namespace cs {
 
@@ -67,10 +66,7 @@ namespace cs {
 
   ////// Length Functions ////////////////////////////////////////////////////
 
-  inline void shrink(std::string& str, const bool reclaim = false)
-  {
-    impl_string::shrink<char>(str, reclaim);
-  }
+  void CS_UTIL_EXPORT shrink(std::string& str, const bool reclaim = false);
 
   ////// String contains character/pattern/predicate... //////////////////////
 
@@ -123,20 +119,11 @@ namespace cs {
 
   ////// String classification... ////////////////////////////////////////////
 
-  inline bool isHexString(const std::string_view& text)
-  {
-    return impl_string::isHexString<char>(text);
-  }
+  bool CS_UTIL_EXPORT isHexString(const std::string_view& text);
 
-  inline bool isIdent(const std::string_view& text)
-  {
-    return impl_string::isIdent<char>(text);
-  }
+  bool CS_UTIL_EXPORT isIdent(const std::string_view& text);
 
-  inline bool isSpace(const std::string_view& text)
-  {
-    return impl_string::isSpace<char>(text);
-  }
+  bool CS_UTIL_EXPORT isSpace(const std::string_view& text);
 
   ////// Remove character/pattern/predicate from string... ///////////////////
 
@@ -210,36 +197,19 @@ namespace cs {
 
   ////// Replace consecutive whitespace with single space... /////////////////
 
-  inline void simplify(std::string& text)
-  {
-    impl_string::simplify<char>(text);
-  }
+  void CS_UTIL_EXPORT simplify(std::string& text);
 
-  inline std::string toSimplified(std::string text)
-  {
-    simplify(text);
-    return text;
-  }
+  std::string CS_UTIL_EXPORT toSimplified(std::string text);
 
   ////// Split string at character/pattern... ////////////////////////////////
 
-  inline std::list<std::string> split(const std::string_view& text,
-                                      const char pattern,
-                                      const SplitFlags flags = SplitFlag::None)
-  {
-    return impl_string::split<char>(text, std::string_view(std::addressof(pattern), 1),
-                                    flags.testAny(SplitFlag::SkipEmpty),
-                                    flags.testAny(SplitFlag::Trim));
-  }
+  std::list<std::string> CS_UTIL_EXPORT split(const std::string_view& text,
+                                              const char pattern,
+                                              const SplitFlags flags = SplitFlag::None);
 
-  inline std::list<std::string> split(const std::string_view& text,
-                                      const std::string_view& pattern,
-                                      const SplitFlags flags = SplitFlag::None)
-  {
-    return impl_string::split<char>(text, pattern,
-                                    flags.testAny(SplitFlag::SkipEmpty),
-                                    flags.testAny(SplitFlag::Trim));
-  }
+  std::list<std::string> CS_UTIL_EXPORT split(const std::string_view& text,
+                                              const std::string_view& pattern,
+                                              const SplitFlags flags = SplitFlag::None);
 
   ////// String starts with pattern... ///////////////////////////////////////
 
@@ -280,16 +250,9 @@ namespace cs {
 
   ////// Remove whitespace from begin & end... ///////////////////////////////
 
-  inline void trim(std::string& text)
-  {
-    impl_string::trim<char>(text);
-  }
+  void CS_UTIL_EXPORT trim(std::string& text);
 
-  inline std::string toTrimmed(std::string text)
-  {
-    trim(text);
-    return text;
-  }
+  std::string CS_UTIL_EXPORT toTrimmed(std::string text);
 
   ////// Narrowing/Widening of strings... ////////////////////////////////////
 
