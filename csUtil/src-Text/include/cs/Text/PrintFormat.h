@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include <cs/Text/StringAlgorithm.h>
+#include <cs/Text/StringUtil.h>
 #include <cs/Text/StringValue.h>
 
 namespace cs {
@@ -127,9 +127,7 @@ namespace cs {
 
     std::string str = right(toString<T,false>(value, 16), width, '0');
 
-    if( !str.empty() ) {
-      toUpper(str.data(), str.size());
-    }
+    toUpper(str);
 
     if constexpr( RECLAIM ) {
       impl_strval::shrink(str, RECLAIM);

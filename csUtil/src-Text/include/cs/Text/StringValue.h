@@ -147,7 +147,7 @@ namespace cs {
 
     *(result.ptr) = '\0';
 
-    shrink(str, RECLAIM);
+    impl_strval::shrink(str, RECLAIM);
 
     // Done! /////////////////////////////////////////////////////////////////
 

@@ -35,6 +35,8 @@
 
 #include <cs/Text/StringUtilImpl.h>
 
+#include <cs/Core/CharUtil.h>
+
 namespace cs {
 
   namespace impl_string {

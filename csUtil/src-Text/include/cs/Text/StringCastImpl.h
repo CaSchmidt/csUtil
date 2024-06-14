@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2022, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2024, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -32,48 +32,43 @@
 #pragma once
 
 #include <algorithm>
+#include <string>
 
 #include <cs/Core/CharUtil.h>
-#include <cs/Core/Range.h>
+#include <cs/Core/Container.h>
 
 namespace cs {
 
-  ////// Skip leading whitespace /////////////////////////////////////////////
-
   namespace impl_string {
 
-    template<typename T> requires is_char_v<T>
-    inline const T *skipSpace(const T *first, const T *last)
+    template<typename NCharT, typename WCharT>
+    inline std::basic_string<NCharT> toNarrow(const std::basic_string_view<WCharT>& text)
     {
-      return std::find_if_not(first, last, lambda_is_space<T>());
+      std::basic_string<NCharT> result;
+
+      if( text.empty()  ||  !resize(result, text.size()) ) {
+        return std::basic_string<NCharT>();
+      }
+
+      std::transform(text.begin(), text.end(), result.begin(), lambda_narrow<NCharT,WCharT>());
+
+      return result;
+    }
+
+    template<typename WCharT, typename NCharT>
+    inline std::basic_string<WCharT> toWide(const std::basic_string_view<NCharT>& text)
+    {
+      std::basic_string<WCharT> result;
+
+      if( text.empty()  ||  !resize(result, text.size()) ) {
+        return std::basic_string<WCharT>();
+      }
+
+      std::transform(text.begin(), text.end(), result.begin(), lambda_widen<WCharT,NCharT>());
+
+      return result;
     }
 
   } // namespace impl_string
-
-  template<typename T> requires is_char_v<T>
-  inline const T *skipSpace_s(const T *str, const std::size_t len)
-  {
-    const std::size_t max = strlen(str, len);
-
-    return max > 0
-        ? impl_string::skipSpace(str, str + max)
-        : nullptr;
-  }
-
-  template<typename T> requires is_char_v<T>
-  inline const T *skipSpace(const T *str, const std::size_t len)
-  {
-    return impl_string::skipSpace(str, str + len);
-  }
-
-  template<typename T> requires is_char_v<T>
-  inline const T *skipSpace(const T *str)
-  {
-    const std::size_t max = strlen(str);
-
-    return max > 0
-        ? impl_string::skipSpace(str, str + max)
-        : nullptr;
-  }
 
 } // namespace cs

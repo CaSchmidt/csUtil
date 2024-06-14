@@ -1,5 +1,5 @@
 /****************************************************************************
-** Copyright (c) 2022, Carsten Schmidt. All rights reserved.
+** Copyright (c) 2024, Carsten Schmidt. All rights reserved.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions
@@ -32,48 +32,30 @@
 #pragma once
 
 #include <algorithm>
+#include <string>
 
 #include <cs/Core/CharUtil.h>
-#include <cs/Core/Range.h>
 
 namespace cs {
 
-  ////// Skip leading whitespace /////////////////////////////////////////////
-
   namespace impl_string {
 
-    template<typename T> requires is_char_v<T>
-    inline const T *skipSpace(const T *first, const T *last)
+    ////// Convert to lower case... //////////////////////////////////////////
+
+    template<typename CharT>
+    inline void lower(std::basic_string<CharT>& text)
     {
-      return std::find_if_not(first, last, lambda_is_space<T>());
+      std::for_each(text.begin(), text.end(), lambda_to_lower<CharT>());
+    }
+
+    ////// Convert to upper case... //////////////////////////////////////////
+
+    template<typename CharT>
+    inline void upper(std::basic_string<CharT>& text)
+    {
+      std::for_each(text.begin(), text.end(), lambda_to_upper<CharT>());
     }
 
   } // namespace impl_string
-
-  template<typename T> requires is_char_v<T>
-  inline const T *skipSpace_s(const T *str, const std::size_t len)
-  {
-    const std::size_t max = strlen(str, len);
-
-    return max > 0
-        ? impl_string::skipSpace(str, str + max)
-        : nullptr;
-  }
-
-  template<typename T> requires is_char_v<T>
-  inline const T *skipSpace(const T *str, const std::size_t len)
-  {
-    return impl_string::skipSpace(str, str + len);
-  }
-
-  template<typename T> requires is_char_v<T>
-  inline const T *skipSpace(const T *str)
-  {
-    const std::size_t max = strlen(str);
-
-    return max > 0
-        ? impl_string::skipSpace(str, str + max)
-        : nullptr;
-  }
 
 } // namespace cs

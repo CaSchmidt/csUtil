@@ -31,6 +31,8 @@
 
 #include "cs/Text/StringUtil.h"
 
+#include "cs/Text/StringCaseImpl.h"
+#include "cs/Text/StringCastImpl.h"
 #include "cs/Text/StringClassifyImpl.h"
 #include "cs/Text/StringSplitImpl.h"
 
@@ -51,6 +53,31 @@ namespace cs {
   bool CS_UTIL_EXPORT isSpace(const std::string_view& text)
   {
     return impl_string::isSpace<char>(text);
+  }
+
+  // lower() /////////////////////////////////////////////////////////////////
+
+  void CS_UTIL_EXPORT lower(std::string& text)
+  {
+    impl_string::lower<char>(text);
+  }
+
+  std::string CS_UTIL_EXPORT toLower(std::string text)
+  {
+    lower(text);
+    return text;
+  }
+
+  // narrow() ////////////////////////////////////////////////////////////////
+
+  std::string CS_UTIL_EXPORT toString(const std::u16string_view& text)
+  {
+    return impl_string::toNarrow<char,char16_t>(text);
+  }
+
+  std::string CS_UTIL_EXPORT toString(const std::wstring_view& text)
+  {
+    return impl_string::toNarrow<char,wchar_t>(text);
   }
 
   // shrink() ////////////////////////////////////////////////////////////////
@@ -104,6 +131,31 @@ namespace cs {
   {
     trim(text);
     return text;
+  }
+
+  // upper() /////////////////////////////////////////////////////////////////
+
+  void CS_UTIL_EXPORT upper(std::string& text)
+  {
+    impl_string::upper<char>(text);
+  }
+
+  std::string CS_UTIL_EXPORT toUpper(std::string text)
+  {
+    upper(text);
+    return text;
+  }
+
+  // widen() /////////////////////////////////////////////////////////////////
+
+  std::u16string CS_UTIL_EXPORT toUtf16String(const std::string_view& text)
+  {
+    return impl_string::toWide<char16_t,char>(text);
+  }
+
+  std::wstring CS_UTIL_EXPORT toWString(const std::string_view& text)
+  {
+    return impl_string::toWide<wchar_t,char>(text);
   }
 
 } // namespace cs

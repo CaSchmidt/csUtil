@@ -36,9 +36,7 @@
 
 #include <cs/Core/csutil_config.h>
 
-#include <cs/Core/Container.h>
 #include <cs/Core/Flags.h>
-#include <cs/Text/StringAlgorithm.h>
 #include <cs/Text/StringQueryImpl.h>
 #include <cs/Text/StringRemoveImpl.h>
 #include <cs/Text/StringReplaceImpl.h>
@@ -222,31 +220,13 @@ namespace cs {
 
   ////// Case conversion... //////////////////////////////////////////////////
 
-  inline void lower(std::string& str)
-  {
-    if( !str.empty() ) {
-      toLower(str.data(), str.size());
-    }
-  }
+  void CS_UTIL_EXPORT lower(std::string& text);
 
-  inline std::string toLower(std::string str)
-  {
-    lower(str);
-    return str;
-  }
+  std::string CS_UTIL_EXPORT toLower(std::string text);
 
-  inline void upper(std::string& str)
-  {
-    if( !str.empty() ) {
-      toUpper(str.data(), str.size());
-    }
-  }
+  void CS_UTIL_EXPORT upper(std::string& text);
 
-  inline std::string toUpper(std::string str)
-  {
-    upper(str);
-    return str;
-  }
+  std::string CS_UTIL_EXPORT toUpper(std::string text);
 
   ////// Remove whitespace from begin & end... ///////////////////////////////
 
@@ -256,53 +236,13 @@ namespace cs {
 
   ////// Narrowing/Widening of strings... ////////////////////////////////////
 
-  inline std::string toString(const std::u16string_view& str)
-  {
-    std::string result;
-    if( str.empty()  ||  !resize(result, str.size()) ) {
-      return std::string();
-    }
+  std::string CS_UTIL_EXPORT toString(const std::u16string_view& text);
 
-    impl_string::narrow(result.data(), str.data(), str.data() + str.size());
+  std::string CS_UTIL_EXPORT toString(const std::wstring_view& text);
 
-    return result;
-  }
+  std::u16string CS_UTIL_EXPORT toUtf16String(const std::string_view& text);
 
-  inline std::string toString(const std::wstring_view& str)
-  {
-    std::string result;
-    if( str.empty()  ||  !resize(result, str.size()) ) {
-      return std::string();
-    }
-
-    impl_string::narrow(result.data(), str.data(), str.data() + str.size());
-
-    return result;
-  }
-
-  inline std::u16string toUtf16String(const std::string_view& str)
-  {
-    std::u16string result;
-    if( str.empty()  ||  !resize(result, str.size()) ) {
-      return std::u16string();
-    }
-
-    impl_string::widen(result.data(), str.data(), str.data() + str.size());
-
-    return result;
-  }
-
-  inline std::wstring toWString(const std::string_view& str)
-  {
-    std::wstring result;
-    if( str.empty()  ||  !resize(result, str.size()) ) {
-      return std::wstring();
-    }
-
-    impl_string::widen(result.data(), str.data(), str.data() + str.size());
-
-    return result;
-  }
+  std::wstring CS_UTIL_EXPORT toWString(const std::string_view& text);
 
   ////// Type conversion... //////////////////////////////////////////////////
 
