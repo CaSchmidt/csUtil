@@ -13,100 +13,63 @@ namespace stringutil {
   using String     = std::string;
   using StringList = std::list<String>;
 
-  const char *PTR_abcd = "abcd";
-  const char *PTR_abc  = "abc";
-  const char *PTR_bcd  = "bcd";
-
-  const char *PTR_ABCD = "ABCD";
-  const char *PTR_ABC  = "ABC";
-  const char *PTR_BCD  = "BCD";
-
-  const char *PTR_tainted = "abc\0e";
-
-  const char *PTR_null = nullptr;
-
   TEST_CASE("Length of a string.", "[strlen]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
+    const char *PTR_abcd    = "abcd";
+    const char *PTR_null    = nullptr;
+    const char *PTR_tainted = "abc\0e";
+
     REQUIRE( cs::strlen(&PTR_abcd[0], &PTR_abcd[4]) == 4 );
-    REQUIRE( cs::strlen(PTR_abcd) == 4 );
-    REQUIRE( cs::strlen(PTR_abcd, 4) == 4 );
+    REQUIRE( cs::strlen("abcd") == 4 );
+    REQUIRE( cs::strlen("abcd", 4) == 4 );
 
     REQUIRE( cs::strlen(&PTR_tainted[0], &PTR_tainted[5]) == 3 );
     REQUIRE( cs::strlen(PTR_tainted) == 3 );
     REQUIRE( cs::strlen(PTR_tainted, 5) == 3 );
 
     REQUIRE( cs::strlen(PTR_null) == 0 );
-    REQUIRE( cs::strlen(PTR_abc, 0) == 0 );
-    REQUIRE( cs::strlen(PTR_abc, cs::MAX_SIZE_T) == 0 );
+    REQUIRE( cs::strlen("abc", 0) == 0 );
+    REQUIRE( cs::strlen("abc", cs::MAX_SIZE_T) == 0 );
     REQUIRE( cs::strlen(PTR_null, 0) == 0 );
     REQUIRE( cs::strlen(PTR_null, cs::MAX_SIZE_T) == 0 );
-    REQUIRE( cs::strlen(PTR_abc, PTR_null) == 0 );
-    REQUIRE( cs::strlen(PTR_null, PTR_abc) == 0 );
+    REQUIRE( cs::strlen("abc", PTR_null) == 0 );
+    REQUIRE( cs::strlen(PTR_null, "abc") == 0 );
   }
 
   TEST_CASE("String contains pattern.", "[contains]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
-    REQUIRE(  cs::contains(PTR_abcd, 'a') );
-    REQUIRE( !cs::contains(PTR_abcd, 'A') );
-    REQUIRE(  cs::contains(PTR_ABCD, "BC") );
-    REQUIRE( !cs::contains(PTR_ABCD, "bc") );
-    REQUIRE(  cs::contains(PTR_ABCD, "bc", true) );
+    REQUIRE(  cs::contains("abcd", 'a') );
+    REQUIRE( !cs::contains("abcd", 'A') );
+    REQUIRE(  cs::contains("ABCD", "BC") );
+    REQUIRE( !cs::contains("ABCD", "bc") );
+    REQUIRE(  cs::contains("ABCD", "bc", true) );
     REQUIRE(  cs::contains("Hello, World!", cs::lambda_is_space<char>()) );
-    REQUIRE( !cs::contains(PTR_abcd, cs::lambda_is_space<char>()) );
-
-    // StringUtil.h
-
-    REQUIRE(  cs::contains(String(PTR_abcd), 'b') );
-    REQUIRE( !cs::contains(String(PTR_abcd), 'B') );
-    REQUIRE(  cs::contains(String(PTR_abcd), "bc") );
-    REQUIRE( !cs::contains(String(PTR_abcd), "BC") );
-    REQUIRE(  cs::contains(PTR_abcd, String("BC"), true) );
-    REQUIRE(  cs::contains(String("Hello, World!"), cs::lambda_is_space<char>()) );
-    REQUIRE( !cs::contains(String(PTR_abcd), cs::lambda_is_space<char>()) );
+    REQUIRE( !cs::contains("abcd", cs::lambda_is_space<char>()) );
   }
 
   TEST_CASE("String ends with pattern.", "[endsWith]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
-    REQUIRE(  cs::endsWith(PTR_abcd, PTR_bcd) );
-    REQUIRE( !cs::endsWith(PTR_abcd, PTR_BCD) );
-    REQUIRE(  cs::endsWith(PTR_abcd, PTR_BCD, true) );
+    REQUIRE(  cs::endsWith("abcd", "bcd") );
+    REQUIRE( !cs::endsWith("abcd", "BCD") );
+    REQUIRE(  cs::endsWith("abcd", "BCD", true) );
 
-    REQUIRE(  cs::endsWith(PTR_ABCD, PTR_BCD) );
-    REQUIRE( !cs::endsWith(PTR_ABCD, PTR_bcd) );
-    REQUIRE(  cs::endsWith(PTR_ABCD, PTR_bcd, true) );
+    REQUIRE(  cs::endsWith("ABCD", "BCD") );
+    REQUIRE( !cs::endsWith("ABCD", "bcd") );
+    REQUIRE(  cs::endsWith("ABCD", "bcd", true) );
 
-    REQUIRE( !cs::endsWith(PTR_bcd, PTR_abcd) );
-
-    // StringUtil.h
-
-    REQUIRE(  cs::endsWith(String(PTR_abcd), PTR_bcd) );
-    REQUIRE( !cs::endsWith(String(PTR_abcd), PTR_BCD) );
-    REQUIRE(  cs::endsWith(String(PTR_abcd), PTR_BCD, true) );
-
-    REQUIRE(  cs::endsWith(PTR_ABCD, String(PTR_BCD)) );
-    REQUIRE( !cs::endsWith(String(PTR_ABCD), PTR_bcd) );
-    REQUIRE(  cs::endsWith(String(PTR_ABCD), PTR_bcd, true) );
-
-    REQUIRE( !cs::endsWith(String(PTR_bcd), PTR_abcd) );
+    REQUIRE( !cs::endsWith("bcd", "abcd") );
   }
 
   TEST_CASE("Two strings are equal.", "[equals]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
-    REQUIRE(  cs::equals(PTR_abc, PTR_abc) );
-    REQUIRE( !cs::equals(PTR_abc, PTR_ABC) );
-    REQUIRE(  cs::equals(PTR_abc, PTR_ABC, true) );
-    REQUIRE( !cs::equals(PTR_abc, PTR_abcd) );
-
-    // StringUtil.h
-
-    REQUIRE(  cs::equals(String(PTR_abc), PTR_abc) );
-    REQUIRE( !cs::equals(PTR_abc, String(PTR_ABC)) );
-    REQUIRE(  cs::equals(String(PTR_abc), PTR_ABC, true) );
-    REQUIRE( !cs::equals(String(PTR_abc), PTR_abcd) );
+    REQUIRE(  cs::equals("abc", "abc") );
+    REQUIRE( !cs::equals("abc", "ABC") );
+    REQUIRE(  cs::equals("abc", "ABC", true) );
+    REQUIRE( !cs::equals("abc", "abcd") );
   }
 
   TEST_CASE("Classify string's contents.", "[classify]") {
@@ -130,24 +93,6 @@ namespace stringutil {
     REQUIRE(  cs::isSpace(" \f\n\r\t\v") );
     REQUIRE( !cs::isSpace(" \f\n\r\t\v-") );
     REQUIRE( !cs::isSpace("") );
-
-    // StringUtil.h
-
-    REQUIRE(  cs::isHexString(String("0123456789abcdefABCDEF")) );
-    REQUIRE( !cs::isHexString(String("0123456789abcdefABCDEFx")) );
-
-    REQUIRE(  cs::isIdent(String("_")) );
-    REQUIRE( !cs::isIdent(String("0")) );
-
-    REQUIRE(  cs::isIdent(String("_azAZ09")) );
-    REQUIRE(  cs::isIdent(String("azAZ09_")) );
-    REQUIRE(  cs::isIdent(String("AZ09_az")) );
-    REQUIRE( !cs::isIdent(String("09_azAZ")) );
-    REQUIRE( !cs::isIdent(String("_azAZ09-")) );
-    REQUIRE( !cs::isIdent(String("_-azAZ09")) );
-
-    REQUIRE(  cs::isSpace(String(" \f\n\r\t\v")) );
-    REQUIRE( !cs::isSpace(String(" \f\n\r\t\v-")) );
   }
 
   TEST_CASE("Detect digets in various radices.", "[isDigit]") {
@@ -183,31 +128,27 @@ namespace stringutil {
     const char *PTR_input2 = "abcabc";
     const char *PTR_input3 = " a b c ";
 
-    // StringUtil.h
-
     {
       String str(PTR_input1);
       cs::removeAll(str, '.');
-      REQUIRE( str == PTR_abcd );
+      REQUIRE( str == "abcd" );
     }
 
     {
       String str(PTR_input2);
-      cs::removeAll(str, PTR_abc);
+      cs::removeAll(str, "abc");
       REQUIRE( str.size() == 0 );
     }
 
     {
       String str(PTR_input3);
       cs::removeAll(str, cs::lambda_is_space<char>());
-      REQUIRE( str == PTR_abc );
+      REQUIRE( str == "abc" );
     }
   }
 
   TEST_CASE("Remove trailing zeros.", "[removeTrailingZeros]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
-
-    // StringUtil.h
 
     String s;
 
@@ -274,8 +215,6 @@ namespace stringutil {
     const char *PTR_input1 = " abc abc ";
     const char *PTR_input2 = "abcabc";
 
-    // StringUtil.h
-
     {
       String str(PTR_input2);
       cs::replaceAll(str, 'c', 'x');
@@ -310,16 +249,13 @@ namespace stringutil {
   TEST_CASE("Simplification of a string.", "[simplify]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
-    // StringUtil.h
-
-    REQUIRE( cs::toSimplified(String("\fa\nb\rc\td\v")) == "a b c d" );
-    REQUIRE( cs::toSimplified(String(PTR_abcd)) == PTR_abcd );
+    REQUIRE( cs::toSimplified("\fa\nb\rc\td\v") == "a b c d" );
+    REQUIRE( cs::toSimplified("abcd") == "abcd" );
+    REQUIRE( cs::toSimplified(String()).empty() );
   }
 
   TEST_CASE("Split string at delimiter.", "[split]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
-
-    // StringUtil.h
 
     const char *PTR_split1 = "/abc//ABC/";
 
@@ -335,9 +271,9 @@ namespace stringutil {
 
       REQUIRE(  result.size() == 5 );
       REQUIRE(  std::next(result.begin(), 0)->empty() );
-      REQUIRE( *std::next(result.begin(), 1) == PTR_abc );
+      REQUIRE( *std::next(result.begin(), 1) == "abc" );
       REQUIRE(  std::next(result.begin(), 2)->empty() );
-      REQUIRE( *std::next(result.begin(), 3) == PTR_ABC );
+      REQUIRE( *std::next(result.begin(), 3) == "ABC" );
       REQUIRE(  std::next(result.begin(), 4)->empty() );
     }
 
@@ -345,8 +281,8 @@ namespace stringutil {
       const StringList result = cs::split(PTR_split1, '/', cs::SplitFlag::SkipEmpty);
 
       REQUIRE(  result.size() == 2 );
-      REQUIRE( *std::next(result.begin(), 0) == PTR_abc );
-      REQUIRE( *std::next(result.begin(), 1) == PTR_ABC );
+      REQUIRE( *std::next(result.begin(), 0) == "abc" );
+      REQUIRE( *std::next(result.begin(), 1) == "ABC" );
     }
 
     const char *PTR_split2 = "..abc....ABC..";
@@ -356,9 +292,9 @@ namespace stringutil {
 
       REQUIRE(  result.size() == 5 );
       REQUIRE(  std::next(result.begin(), 0)->empty() );
-      REQUIRE( *std::next(result.begin(), 1) == PTR_abc );
+      REQUIRE( *std::next(result.begin(), 1) == "abc" );
       REQUIRE(  std::next(result.begin(), 2)->empty() );
-      REQUIRE( *std::next(result.begin(), 3) == PTR_ABC );
+      REQUIRE( *std::next(result.begin(), 3) == "ABC" );
       REQUIRE(  std::next(result.begin(), 4)->empty() );
     }
 
@@ -366,8 +302,8 @@ namespace stringutil {
       const StringList result = cs::split(PTR_split2, "..", cs::SplitFlag::SkipEmpty);
 
       REQUIRE(  result.size() == 2 );
-      REQUIRE( *std::next(result.begin(), 0) == PTR_abc );
-      REQUIRE( *std::next(result.begin(), 1) == PTR_ABC );
+      REQUIRE( *std::next(result.begin(), 0) == "abc" );
+      REQUIRE( *std::next(result.begin(), 1) == "ABC" );
     }
 
     const char *PTR_split3 = "\v: abc\t:\rABC\n:\f";
@@ -377,8 +313,8 @@ namespace stringutil {
 
       REQUIRE(  result.size() == 4 );
       REQUIRE(  std::next(result.begin(), 0)->empty() );
-      REQUIRE( *std::next(result.begin(), 1) == PTR_abc );
-      REQUIRE( *std::next(result.begin(), 2) == PTR_ABC );
+      REQUIRE( *std::next(result.begin(), 1) == "abc" );
+      REQUIRE( *std::next(result.begin(), 2) == "ABC" );
       REQUIRE(  std::next(result.begin(), 3)->empty() );
     }
   }
@@ -386,60 +322,44 @@ namespace stringutil {
   TEST_CASE("String starts with pattern.", "[startsWith]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
-    REQUIRE(  cs::startsWith(PTR_abcd, PTR_abc) );
-    REQUIRE( !cs::startsWith(PTR_abcd, PTR_ABC) );
-    REQUIRE(  cs::startsWith(PTR_abcd, PTR_ABC, true) );
+    REQUIRE(  cs::startsWith("abcd", "abc") );
+    REQUIRE( !cs::startsWith("abcd", "ABC") );
+    REQUIRE(  cs::startsWith("abcd", "ABC", true) );
 
-    REQUIRE(  cs::startsWith(PTR_ABCD, PTR_ABC) );
-    REQUIRE( !cs::startsWith(PTR_ABCD, PTR_abc) );
-    REQUIRE(  cs::startsWith(PTR_ABCD, PTR_abc, true) );
+    REQUIRE(  cs::startsWith("ABCD", "ABC") );
+    REQUIRE( !cs::startsWith("ABCD", "abc") );
+    REQUIRE(  cs::startsWith("ABCD", "abc", true) );
 
-    REQUIRE( !cs::startsWith(PTR_abc, PTR_abcd) );
-
-    // StringUtil.h
-
-    REQUIRE(  cs::startsWith(String(PTR_abcd), PTR_abc) );
-    REQUIRE( !cs::startsWith(String(PTR_abcd), PTR_ABC) );
-    REQUIRE(  cs::startsWith(String(PTR_abcd), PTR_ABC, true) );
-
-    REQUIRE(  cs::startsWith(PTR_ABCD, String(PTR_ABC)) );
-    REQUIRE( !cs::startsWith(String(PTR_ABCD), PTR_abc) );
-    REQUIRE(  cs::startsWith(String(PTR_ABCD), PTR_abc, true) );
-
-    REQUIRE( !cs::startsWith(String(PTR_abc), PTR_abcd) );
+    REQUIRE( !cs::startsWith("abc", "abcd") );
   }
 
   TEST_CASE("Convert to lower case.", "[toLower]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
-    // StringUtil.h
-
     {
-      String str(PTR_ABCD);
+      String str("ABCD");
       cs::lower(str);
-      REQUIRE( str == PTR_abcd );
+      REQUIRE( str == "abcd" );
     }
   }
 
   TEST_CASE("Convert to upper case.", "[toUpper]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
-    // StringUtil.h
-
     {
-      String str(PTR_abcd);
+      String str("abcd");
       cs::upper(str);
-      REQUIRE( str == PTR_ABCD );
+      REQUIRE( str == "ABCD" );
     }
   }
 
   TEST_CASE("Trim string.", "[trim]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
-    // StringUtil.h
-
-    REQUIRE( cs::toTrimmed(String("\nabc\r")) == PTR_abc );
-    REQUIRE( cs::toTrimmed(String(PTR_abc)) == PTR_abc );
+    REQUIRE( cs::toTrimmed("\nabc\r") == "abc" );
+    REQUIRE( cs::toTrimmed("abc") == "abc" );
+    REQUIRE( cs::toTrimmed("\t\v\f\n\r ").empty() );
+    REQUIRE( cs::toTrimmed(String()).empty() );
   }
 
   TEST_CASE("Narrowing/Widening of strings.", "[narrowwiden]") {
