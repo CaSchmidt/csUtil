@@ -32,7 +32,6 @@
 #pragma once
 
 #include <list>
-#include <memory>
 
 #include <cs/Core/csutil_config.h>
 
@@ -68,18 +67,12 @@ namespace cs {
 
   ////// String contains character/pattern/predicate... //////////////////////
 
-  inline bool contains(const std::string_view& text,
-                       const char pattern)
-  {
-    return impl_string::contains<char>(text, pattern);
-  }
+  bool CS_UTIL_EXPORT contains(const std::string_view& text,
+                               const char pattern);
 
-  inline bool contains(const std::string_view& text,
-                       const std::string_view& pattern,
-                       const bool ignoreCase = false)
-  {
-    return impl_string::contains<char>(text, pattern, ignoreCase);
-  }
+  bool CS_UTIL_EXPORT contains(const std::string_view& text,
+                               const std::string_view& pattern,
+                               const bool ignoreCase = false);
 
   template<typename UnaryPred>
   inline bool contains(const std::string_view& text,
@@ -99,21 +92,15 @@ namespace cs {
 
   ////// String ends with pattern... /////////////////////////////////////////
 
-  inline bool endsWith(const std::string_view& text,
-                       const std::string_view& pattern,
-                       const bool ignoreCase = false)
-  {
-    return impl_string::endsWith<char>(text, pattern, ignoreCase);
-  }
+  bool CS_UTIL_EXPORT endsWith(const std::string_view& text,
+                               const std::string_view& pattern,
+                               const bool ignoreCase = false);
 
   ////// Strings are equal... ////////////////////////////////////////////////
 
-  inline bool equals(const std::string_view& a,
-                     const std::string_view& b,
-                     const bool ignoreCase = false)
-  {
-    return impl_string::equals<char>(a, b, ignoreCase);
-  }
+  bool CS_UTIL_EXPORT equals(const std::string_view& a,
+                             const std::string_view& b,
+                             const bool ignoreCase = false);
 
   ////// String classification... ////////////////////////////////////////////
 
@@ -125,17 +112,11 @@ namespace cs {
 
   ////// Remove character/pattern/predicate from string... ///////////////////
 
-  inline void removeAll(std::string& text,
-                        const char pattern)
-  {
-    impl_string::removeAll<char>(text, std::basic_string_view(std::addressof(pattern), 1));
-  }
+  void CS_UTIL_EXPORT removeAll(std::string& text,
+                                const char pattern);
 
-  inline void removeAll(std::string& text,
-                        const std::string_view& pattern)
-  {
-    impl_string::removeAll<char>(text, pattern);
-  }
+  void CS_UTIL_EXPORT removeAll(std::string& text,
+                                const std::string_view& pattern);
 
   template<typename UnaryPred>
   inline void removeAll(std::string& text,
@@ -147,27 +128,18 @@ namespace cs {
 
   ////// Remove Trailing Zeros from Fixed-Notation Floating-Point String... //
 
-  inline void removeTrailingZeros(std::string& text,
-                                  const bool removeDot = true)
-  {
-    impl_string::removeTrailingZeros<char>(text, removeDot);
-  }
+  void CS_UTIL_EXPORT removeTrailingZeros(std::string& text,
+                                          const bool removeDot = true);
 
   ////// Replace character/predicate with character... ///////////////////////
 
-  inline void replaceAll(std::string& str,
-                         const char before,
-                         const char after)
-  {
-    impl_string::replaceAll<char>(str, before, after);
-  }
+  void CS_UTIL_EXPORT replaceAll(std::string& str,
+                                 const char before,
+                                 const char after);
 
-  inline void replaceAll(std::wstring& str,
-                         const wchar_t before,
-                         const wchar_t after)
-  {
-    impl_string::replaceAll<wchar_t>(str, before, after);
-  }
+  void CS_UTIL_EXPORT replaceAll(std::wstring& str,
+                                 const wchar_t before,
+                                 const wchar_t after);
 
   template<typename UnaryPred>
   inline void replaceAll(std::string& str,
@@ -179,19 +151,13 @@ namespace cs {
 
   ////// Replace character/pattern with text... //////////////////////////////
 
-  inline void replaceAll(std::string& str,
-                         const char before,
-                         const std::string_view& after)
-  {
-    impl_string::replaceAll<char>(str, std::string_view(std::addressof(before), 1), after);
-  }
+  void CS_UTIL_EXPORT replaceAll(std::string& str,
+                                 const char before,
+                                 const std::string_view& after);
 
-  inline void replaceAll(std::string& str,
-                         const std::string_view& before,
-                         const std::string_view& after)
-  {
-    impl_string::replaceAll<char>(str, before, after);
-  }
+  void CS_UTIL_EXPORT replaceAll(std::string& str,
+                                 const std::string_view& before,
+                                 const std::string_view& after);
 
   ////// Replace consecutive whitespace with single space... /////////////////
 
@@ -211,12 +177,9 @@ namespace cs {
 
   ////// String starts with pattern... ///////////////////////////////////////
 
-  inline bool startsWith(const std::string_view& text,
-                         const std::string_view& pattern,
-                         const bool ignoreCase = false)
-  {
-    return impl_string::startsWith<char>(text, pattern, ignoreCase);
-  }
+  bool CS_UTIL_EXPORT startsWith(const std::string_view& text,
+                                 const std::string_view& pattern,
+                                 const bool ignoreCase = false);
 
   ////// Case conversion... //////////////////////////////////////////////////
 

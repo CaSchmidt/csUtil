@@ -29,6 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <memory>
+
 #include "cs/Text/StringUtil.h"
 
 #include "cs/Text/StringCaseImpl.h"
@@ -38,7 +40,40 @@
 
 namespace cs {
 
-  // isClass() ///////////////////////////////////////////////////////////////
+  // contains() //////////////////////////////////////////////////////////////
+
+  bool CS_UTIL_EXPORT contains(const std::string_view& text,
+                               const char pattern)
+  {
+    return impl_string::contains<char>(text, pattern);
+  }
+
+  bool CS_UTIL_EXPORT contains(const std::string_view& text,
+                               const std::string_view& pattern,
+                               const bool ignoreCase)
+  {
+    return impl_string::contains<char>(text, pattern, ignoreCase);
+  }
+
+  // endsWith() //////////////////////////////////////////////////////////////
+
+  bool CS_UTIL_EXPORT endsWith(const std::string_view& text,
+                               const std::string_view& pattern,
+                               const bool ignoreCase)
+  {
+    return impl_string::endsWith<char>(text, pattern, ignoreCase);
+  }
+
+  // equals() ////////////////////////////////////////////////////////////////
+
+  bool CS_UTIL_EXPORT equals(const std::string_view& a,
+                             const std::string_view& b,
+                             const bool ignoreCase)
+  {
+    return impl_string::equals<char>(a, b, ignoreCase);
+  }
+
+  // is...() /////////////////////////////////////////////////////////////////
 
   bool CS_UTIL_EXPORT isHexString(const std::string_view& text)
   {
@@ -80,6 +115,58 @@ namespace cs {
     return impl_string::toNarrow<char,wchar_t>(text);
   }
 
+  // removeAll() /////////////////////////////////////////////////////////////
+
+  void CS_UTIL_EXPORT removeAll(std::string& text,
+                                const char pattern)
+  {
+    impl_string::removeAll<char>(text, std::basic_string_view(std::addressof(pattern), 1));
+  }
+
+  void CS_UTIL_EXPORT removeAll(std::string& text,
+                                const std::string_view& pattern)
+  {
+    impl_string::removeAll<char>(text, pattern);
+  }
+
+  // removeTrailingZeros() ///////////////////////////////////////////////////
+
+  void CS_UTIL_EXPORT removeTrailingZeros(std::string& text,
+                                          const bool removeDot)
+  {
+    impl_string::removeTrailingZeros<char>(text, removeDot);
+  }
+
+  // replaceAll() ////////////////////////////////////////////////////////////
+
+  void CS_UTIL_EXPORT replaceAll(std::string& str,
+                                 const char before,
+                                 const char after)
+  {
+    impl_string::replaceAll<char>(str, before, after);
+  }
+
+  void CS_UTIL_EXPORT replaceAll(std::wstring& str,
+                                 const wchar_t before,
+                                 const wchar_t after)
+  {
+    impl_string::replaceAll<wchar_t>(str, before, after);
+  }
+
+  void CS_UTIL_EXPORT replaceAll(std::string& str,
+                                 const char before,
+                                 const std::string_view& after)
+  {
+    impl_string::replaceAll<char>(str, std::string_view(std::addressof(before), 1), after);
+  }
+
+  void CS_UTIL_EXPORT replaceAll(std::string& str,
+                                 const std::string_view& before,
+                                 const std::string_view& after)
+  {
+    impl_string::replaceAll<char>(str, before, after);
+  }
+
   // shrink() ////////////////////////////////////////////////////////////////
 
   void CS_UTIL_EXPORT shrink(std::string& str, const bool reclaim)
@@ -118,6 +205,15 @@ namespace cs {
     return impl_string::split<char>(text, pattern,
                                     flags.testAny(SplitFlag::SkipEmpty),
                                     flags.testAny(SplitFlag::Trim));
+  }
+
+  // startsWith() ////////////////////////////////////////////////////////////
+
+  bool CS_UTIL_EXPORT startsWith(const std::string_view& text,
+                                 const std::string_view& pattern,
+                                 const bool ignoreCase)
+  {
+    return impl_string::startsWith<char>(text, pattern, ignoreCase);
   }
 
   // trim() //////////////////////////////////////////////////////////////////
