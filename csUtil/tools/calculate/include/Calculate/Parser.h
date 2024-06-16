@@ -71,12 +71,18 @@ namespace Calculate {
 
     static std::string fixInput(const std::string& text)
     {
+      constexpr auto NPOS = std::string::npos;
+
       std::string input;
 
-      const auto lines = cs::split(text, '\n', cs::SplitFlag::SkipEmpty);
+      const auto lines = cs::split(text, '\n');
       for(std::string line : lines) {
         cs::simplify(line);
         line += '\n';
+
+        if( !cs::isSpace(line)  &&  line.find('=') == NPOS ) {
+          // TODO
+        }
 
         input += line;
       }
