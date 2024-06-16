@@ -89,7 +89,7 @@ namespace Calculate {
     {
       using ctx = cs::LexerContext<char>;
 
-      _lexer.addScanner(ctx::CharLiteralScanner::make("+-.*/%()"));
+      _lexer.addScanner(ctx::CharLiteralScanner::make("+-.*/%()~"));
       _lexer.addScanner(ctx::CIdentifierScanner::make(TOK_Identifier));
       _lexer.addScanner(ctx::CIntegralScanner<value_type>::make(TOK_Integral, true));
 
@@ -144,6 +144,9 @@ namespace Calculate {
       } else if( isLookAhead('-') ) {
         scan();
         return minus(parsePrimary());
+      } else if( isLookAhead('~') ) {
+        scan();
+        return ~parsePrimary();
       } else {
         return parsePrimary();
       }
