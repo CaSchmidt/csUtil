@@ -42,7 +42,7 @@
 
 int main(int /*argc*/, char ** /*argv*/)
 {
-  using Parser = Calculate::Parser<uint32_t>;
+  using Parser = Calculate::Parser<uint16_t>;
 
   Parser parser;
 

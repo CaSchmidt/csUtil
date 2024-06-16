@@ -144,10 +144,10 @@ namespace Calculate {
 
     value_type parseUnary()
     {
-      if(        isLookAhead('+') ) {
+      if(        isLookAhead('+')  &&  !_have_insn ) {
         scan();
         return parsePrimary();
-      } else if( isLookAhead('-') ) {
+      } else if( isLookAhead('-')  &&  !_have_insn ) {
         scan();
         return minus(parsePrimary());
       } else if( isLookAhead('~') ) {
@@ -160,12 +160,74 @@ namespace Calculate {
       return 0; // fall-through; can never be reached!
     }
 
+    bool isMultiplicative()
+    {
+      return
+          isLookAhead('*')  ||
+          isLookAhead('/')  ||
+          isLookAhead('%');
+    }
+
+    value_type parseMultiplicative()
+    {
+      value_type result = parseUnary();
+
+      while( isMultiplicative() ) {
+        scan();
+        const char insn = _currentToken->id(); // instruction
+        _have_insn = true;
+
+        const value_type op = parseUnary(); // operand
+
+        if(        insn == '*' ) {
+          result *= op;
+        } else if( insn == '/' ) {
+          result /= op;
+        } else if( insn == '%' ) {
+          result %= op;
+        }
+      }
+
+      return result;
+    }
+
+    bool isAdditive()
+    {
+      return
+          isLookAhead('+')  ||
+          isLookAhead('-');
+    }
+
+    value_type parseAdditive()
+    {
+      value_type result = parseMultiplicative();
+
+      while( isAdditive() ) {
+        scan();
+        const char insn = _currentToken->id();
+        _have_insn = true;
+
+        const value_type op = parseMultiplicative();
+
+        if(        insn == '+' ) {
+          result += op;
+        } else if( insn == '-' ) {
+          result -= op;
+        }
+      }
+
+      return result;
+    }
+
     value_type parseExpr()
     {
-      return parseUnary();
+      _have_insn = false;
+      return parseAdditive();
     }
 
   private:
+    bool _have_insn{false};
+
     constexpr value_type minus(const value_type x)
     {
       constexpr value_type ONE = 1;
