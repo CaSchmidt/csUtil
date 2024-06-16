@@ -69,6 +69,21 @@ namespace Calculate {
     Parser() noexcept = default;
     ~Parser() noexcept = default;
 
+    static std::string fixInput(const std::string& text)
+    {
+      std::string input;
+
+      const auto lines = cs::split(text, '\n', cs::SplitFlag::SkipEmpty);
+      for(std::string line : lines) {
+        cs::simplify(line);
+        line += '\n';
+
+        input += line;
+      }
+
+      return input;
+    }
+
   protected:
     bool initialize()
     {

@@ -42,17 +42,16 @@
 
 int main(int /*argc*/, char ** /*argv*/)
 {
-  Calculate::Parser<uint32_t> parser;
+  using Parser = Calculate::Parser<uint32_t>;
+
+  Parser parser;
 
   cs::print("input> ");
 
   std::string input;
   std::cin >> input;
 
-  cs::trim(input);
-  input += "\n";
-
-  parser.parse(input, cs::Logger::make());
+  parser.parse(Parser::fixInput(input), cs::Logger::make());
 
   return EXIT_SUCCESS;
 }
