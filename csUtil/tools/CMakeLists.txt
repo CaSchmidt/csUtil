@@ -1,3 +1,4 @@
+add_subdirectory(calculate)
 add_subdirectory(encode)
 add_subdirectory(encodecli)
 
