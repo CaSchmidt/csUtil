@@ -251,6 +251,7 @@ namespace stringutil {
 
     REQUIRE( cs::toSimplified("\fa\nb\rc\td\v") == "a b c d" );
     REQUIRE( cs::toSimplified("abcd") == "abcd" );
+    REQUIRE( cs::toSimplified("\t\v\f\n\r ").empty() );
     REQUIRE( cs::toSimplified(String()).empty() );
   }
 
