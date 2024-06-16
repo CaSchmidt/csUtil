@@ -30,3 +30,25 @@ target_sources(calculate
 )
 
 target_link_libraries(calculate PUBLIC csUtil)
+
+### Target CLI ###############################################################
+
+add_executable(calculatecli
+  src/main_calculatecli.cpp
+)
+
+format_output_name(calculatecli "calculatecli")
+
+target_include_directories(calculatecli
+  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+set_target_properties(calculatecli PROPERTIES
+  CXX_STANDARD 20
+  CXX_STANDARD_REQUIRED ON
+  CXX_EXTENSIONS OFF
+)
+
+target_link_libraries(calculatecli
+  PRIVATE calculate
+)

@@ -34,6 +34,9 @@
 #include <cs/Lexer/Context.h>
 #include <cs/Lexer/AbstractParser.h>
 
+#include <cs/Text/PrintFormat.h> // TODO
+#include <cs/Text/PrintUtil.h>
+
 namespace Calculate {
 
   enum CalculateTokens : cs::tokenid_t {
@@ -55,6 +58,96 @@ namespace Calculate {
     const char *name(const cs::tokenid_t id) const;
 
     static cs::TokenNamesPtr make();
+  };
+
+  template<typename T>
+  requires std::is_unsigned_v<T>
+  class Parser : public cs::AbstractParser<char> {
+  public:
+    using value_type = T;
+
+    Parser() noexcept = default;
+    ~Parser() noexcept = default;
+
+  protected:
+    bool initialize()
+    {
+      using ctx = cs::LexerContext<char>;
+
+      _lexer.addScanner(ctx::CharLiteralScanner::make("+-.*/%()"));
+      _lexer.addScanner(ctx::CIdentifierScanner::make(TOK_Identifier));
+      _lexer.addScanner(ctx::CIntegralScanner<value_type>::make(TOK_Integral, true));
+
+      _lexer.setFlags(cs::LexerFlag::ScanLF);
+
+      _names = CalculateTokenNames::make();
+
+      return true;
+    }
+
+    void start()
+    {
+      { // TODO
+        const value_type result = parseExpr();
+
+        cs::println("result = % (0x%)", result, cs::hexf(result));
+
+        check('\n');
+      } // TODO
+
+      check(cs::TOK_EndOfInput);
+    }
+
+    value_type parsePrimary()
+    {
+      if(        isLookAhead(TOK_Identifier) ) {
+        scan();
+        return 0;
+
+      } else if( isLookAhead(TOK_Integral) ) {
+        scan();
+        return currentValue<value_type>();
+
+      } else if( isLookAhead('(') ) {
+        scan();
+        const value_type result = parseExpr();
+        check(')');
+        return result;
+
+      }
+
+      throwUnexpectedToken(_lookAheadToken);
+
+      return 0;
+    }
+
+    value_type parseUnary()
+    {
+      if(        isLookAhead('+') ) {
+        scan();
+        return parsePrimary();
+      } else if( isLookAhead('-') ) {
+        scan();
+        return minus(parsePrimary());
+      } else {
+        return parsePrimary();
+      }
+
+      return 0; // fall-through; can never be reached!
+    }
+
+    value_type parseExpr()
+    {
+      return parseUnary();
+    }
+
+  private:
+    constexpr value_type minus(const value_type x)
+    {
+      constexpr value_type ONE = 1;
+
+      return ~x + ONE;
+    }
   };
 
 } // namespace Calculate
