@@ -84,7 +84,7 @@ endif() # ENABLE_QT
 
 if(MSVC)
   target_compile_options(csUtil
-    PRIVATE /wd4251
+    PUBLIC /wd4251
   )
 endif()
 

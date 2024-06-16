@@ -42,12 +42,6 @@ target_compile_definitions(BinTools
   PRIVATE QT_NO_CAST_TO_ASCII
 )
 
-if(MSVC)
-  target_compile_options(BinTools
-    PRIVATE /wd4251
-  )
-endif()
-
 target_include_directories(BinTools
   PRIVATE ${CMAKE_CURRENT_BINARY_DIR}
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include

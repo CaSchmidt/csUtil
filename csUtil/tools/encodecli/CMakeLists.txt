@@ -10,12 +10,6 @@ add_executable(encodecli)
 
 format_output_name(encodecli "encodecli")
 
-if(MSVC)
-  target_compile_options(encodecli
-    PRIVATE /wd4251
-  )
-endif()
-
 target_include_directories(encodecli
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
