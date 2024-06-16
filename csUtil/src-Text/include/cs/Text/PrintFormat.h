@@ -127,7 +127,7 @@ namespace cs {
 
     std::string str = right(toString<T,false>(value, 16), width, '0');
 
-    toUpper(str);
+    upper(str);
 
     if constexpr( RECLAIM ) {
       impl_strval::shrink(str, RECLAIM);
