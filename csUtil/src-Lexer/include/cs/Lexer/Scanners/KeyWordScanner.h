@@ -31,32 +31,67 @@
 
 #pragma once
 
-#include <cs/Lexer/Lexer.h>
-#include <cs/Lexer/Scanners/CharLiteral.h>
-#include <cs/Lexer/Scanners/CIdentifier.h>
-#include <cs/Lexer/Scanners/CIntegral.h>
-#include <cs/Lexer/Scanners/CReal.h>
-#include <cs/Lexer/Scanners/CString.h>
-#include <cs/Lexer/Scanners/KeyWordScanner.h>
+#include <list>
+#include <memory>
+#include <utility>
+
+#include <cs/Lexer/Scanner.h>
 
 namespace cs {
 
   template<typename CharT>
-  struct LexerContext {
-    using char_type = CharT;
+  class KeyWordScanner : public IScanner<CharT> {
+  private:
+    struct ctor_tag {
+      ctor_tag() noexcept = default;
+    };
 
-    using Lexer = Lexer<char_type>;
+  public:
+    using typename IScanner<CharT>::StringView;
+    using typename IScanner<CharT>::char_type;
 
-    template<typename T>
-    using CIntegralScanner = CIntegralScanner<char_type,T>;
+    using String = std::basic_string<CharT>;
 
-    template<typename T>
-    using CRealScanner = CRealScanner<char_type,T>;
+    using KeyWord  = std::pair<tokenid_t,String>;
+    using KeyWords = std::list<KeyWord>;
 
-    using CharLiteralScanner = CharLiteralScanner<char_type>;
-    using CIdentifierScanner = CIdentifierScanner<char_type>;
-    using CStringScanner     = CStringScanner<char_type>;
-    using KeyWordScanner     = KeyWordScanner<char_type>;
+    KeyWordScanner(const ctor_tag& = ctor_tag()) noexcept
+    {
+    }
+
+    ~KeyWordScanner() noexcept
+    {
+    }
+
+    bool addWord(KeyWord word)
+    {
+      if( word.first < TOK_User  ||  word.second.empty() ) {
+        return false;
+      }
+
+      _words.push_back(std::move(word));
+
+      return true;
+    }
+
+    TokenPtr scan(const StringView& input) const
+    {
+      for(const KeyWord& word : _words) {
+        if( input.starts_with(word.second) ) {
+          return TokenBase::make(word.first, word.second.size());
+        }
+      }
+
+      return TokenPtr();
+    }
+
+    static ScannerPtr<CharT> make()
+    {
+      return std::make_unique<KeyWordScanner<CharT>>();
+    }
+
+  private:
+    KeyWords _words;
   };
 
 } // namespace cs
