@@ -47,6 +47,12 @@ namespace Calculate {
       return "Identifier";
     } else if( id == TOK_Integral ) {
       return "Integral";
+    } else if( id == TOK_ShiftLeft ) {
+      return "<<";
+    } else if( id == TOK_ShiftRight ) {
+      return ">>";
+    } else if( id == TOK_ShiftRightArithmetic ) {
+      return ">>>";
     }
     return cs::TokenNamesBase::name(id);
   }

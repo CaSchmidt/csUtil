@@ -41,7 +41,10 @@ namespace Calculate {
 
   enum CalculateTokens : cs::tokenid_t {
     TOK_Identifier = cs::Token::make_userid(1),
-    TOK_Integral
+    TOK_Integral,
+    TOK_ShiftLeft,
+    TOK_ShiftRight,
+    TOK_ShiftRightArithmetic
   };
 
   class CalculateTokenNames : public cs::TokenNamesBase {
@@ -98,6 +101,12 @@ namespace Calculate {
       _lexer.addScanner(ctx::CharLiteralScanner::make("+-.*/%()~"));
       _lexer.addScanner(ctx::CIdentifierScanner::make(TOK_Identifier));
       _lexer.addScanner(ctx::CIntegralScanner<value_type>::make(TOK_Integral, true));
+
+      auto keys = ctx::KeyWordScanner::make();
+      cs::derived_cast<ctx::KeyWordScanner>(keys)->addWord({TOK_ShiftRightArithmetic, ">>>"});
+      cs::derived_cast<ctx::KeyWordScanner>(keys)->addWord({TOK_ShiftLeft, "<<"});
+      cs::derived_cast<ctx::KeyWordScanner>(keys)->addWord({TOK_ShiftRight, ">>"});
+      _lexer.addScanner(std::move(keys));
 
       _lexer.setFlags(cs::LexerFlag::ScanLF);
 
@@ -219,10 +228,38 @@ namespace Calculate {
       return result;
     }
 
+    bool isShift()
+    {
+      return
+          isLookAhead(TOK_ShiftLeft)  ||
+          isLookAhead(TOK_ShiftRight);
+    }
+
+    value_type parseShift()
+    {
+      value_type result = parseAdditive();
+
+      while( isShift() ) {
+        scan();
+        const auto insn = _currentToken->id();
+        _have_insn = true;
+
+        const value_type op = parseAdditive();
+
+        if(        insn == TOK_ShiftLeft ) {
+          result <<= op;
+        } else if( insn == TOK_ShiftRight ) {
+          result >>= op;
+        }
+      }
+
+      return result;
+    }
+
     value_type parseExpr()
     {
       _have_insn = false;
-      return parseAdditive();
+      return parseShift();
     }
 
   private:
