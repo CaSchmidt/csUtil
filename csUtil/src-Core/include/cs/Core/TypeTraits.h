@@ -379,6 +379,24 @@ namespace cs {
     return const_cast<Base*>(dynamic_cast<const Base*>(derived));
   }
 
+  ////// Cast to Derived (Implementation) Type from Smart Pointer ////////////
+
+  template<typename Derived, typename SmartPtr>
+  requires std::is_base_of_v<typename SmartPtr::element_type,Derived>
+  Derived *derived_cast(SmartPtr& p,
+                        typename SmartPtr::element_type * = nullptr)
+  {
+    return dynamic_cast<Derived*>(p.get());
+  }
+
+  template<typename Derived, typename SmartPtr>
+  requires std::is_base_of_v<typename SmartPtr::element_type,Derived>
+  const Derived *derived_cast(const SmartPtr& p,
+                              typename SmartPtr::element_type * = nullptr)
+  {
+    return dynamic_cast<const Derived*>(p.get());
+  }
+
   ////// Unary Predicate /////////////////////////////////////////////////////
 
   template<typename Pred, typename T>
