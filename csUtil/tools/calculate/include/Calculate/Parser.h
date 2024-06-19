@@ -98,7 +98,7 @@ namespace Calculate {
     {
       using ctx = cs::LexerContext<char>;
 
-      _lexer.addScanner(ctx::CharLiteralScanner::make("+-.*/%()~"));
+      _lexer.addScanner(ctx::CharLiteralScanner::make("+-.*/%()~&^|"));
       _lexer.addScanner(ctx::CIdentifierScanner::make(TOK_Identifier));
       _lexer.addScanner(ctx::CIntegralScanner<value_type>::make(TOK_Integral, true));
 
@@ -256,10 +256,58 @@ namespace Calculate {
       return result;
     }
 
+    value_type parseBitAnd()
+    {
+      value_type result = parseShift();
+
+      while( isLookAhead('&') ) {
+        scan();
+        _have_insn = true;
+
+        const value_type op = parseShift();
+
+        result &= op;
+      }
+
+      return result;
+    }
+
+    value_type parseBitXor()
+    {
+      value_type result = parseBitAnd();
+
+      while( isLookAhead('^') ) {
+        scan();
+        _have_insn = true;
+
+        const value_type op = parseBitAnd();
+
+        result ^= op;
+      }
+
+      return result;
+    }
+
+    value_type parseBitOr()
+    {
+      value_type result = parseBitXor();
+
+      while( isLookAhead('|') ) {
+        scan();
+        _have_insn = true;
+
+        const value_type op = parseBitXor();
+
+        result |= op;
+      }
+
+      return result;
+    }
+
     value_type parseExpr()
     {
       _have_insn = false;
-      return parseShift();
+      return parseBitOr();
     }
 
   private:
