@@ -72,7 +72,7 @@ namespace Calculate {
     Parser() noexcept = default;
     ~Parser() noexcept = default;
 
-    static std::string fixInput(const std::string& text)
+    static std::string fixInput(const std::string_view& text)
     {
       constexpr auto NPOS = std::string::npos;
 

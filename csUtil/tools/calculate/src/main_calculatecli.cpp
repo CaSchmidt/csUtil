@@ -32,13 +32,19 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include <iostream>
-
 #include <cs/Logging/Logger.h>
 #include <cs/Text/PrintFormat.h>
 #include <cs/Text/PrintUtil.h>
 
 #include <Calculate/Parser.h>
+
+void print(const std::string& text)
+{
+  for(std::size_t i = 0; i < text.size(); i++) {
+    cs::print(" 0x%", cs::hexf(uint8_t(text[i])));
+  }
+  cs::println("");
+}
 
 int main(int /*argc*/, char ** /*argv*/)
 {
@@ -48,8 +54,9 @@ int main(int /*argc*/, char ** /*argv*/)
 
   cs::print("input> ");
 
-  std::string input;
-  std::cin >> input;
+  std::string input(128, ' ');
+  std::cin.get(input.data(), input.size());
+  input.resize(std::char_traits<char>::length(input.data()));
 
   parser.parse(Parser::fixInput(input), cs::Logger::make());
 
