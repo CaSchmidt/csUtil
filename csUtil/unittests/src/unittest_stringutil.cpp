@@ -42,11 +42,17 @@ namespace stringutil {
 
     REQUIRE(  cs::contains("abcd", 'a') );
     REQUIRE( !cs::contains("abcd", 'A') );
+    REQUIRE( !cs::contains(String(), 'a') );
+
     REQUIRE(  cs::contains("ABCD", "BC") );
     REQUIRE( !cs::contains("ABCD", "bc") );
     REQUIRE(  cs::contains("ABCD", "bc", true) );
+    REQUIRE( !cs::contains(String(), "bc") );
+    REQUIRE( !cs::contains("ABCD", String()) );
+
     REQUIRE(  cs::contains("Hello, World!", cs::lambda_is_space<char>()) );
     REQUIRE( !cs::contains("abcd", cs::lambda_is_space<char>()) );
+    REQUIRE( !cs::contains(String(), cs::lambda_is_space<char>()) );
   }
 
   TEST_CASE("String ends with pattern.", "[endsWith]") {
@@ -61,6 +67,9 @@ namespace stringutil {
     REQUIRE(  cs::endsWith("ABCD", "bcd", true) );
 
     REQUIRE( !cs::endsWith("bcd", "abcd") );
+
+    REQUIRE( !cs::endsWith(String(), "bcd") );
+    REQUIRE( !cs::endsWith("abcd", String()) );
   }
 
   TEST_CASE("Two strings are equal.", "[equals]") {
@@ -70,6 +79,9 @@ namespace stringutil {
     REQUIRE( !cs::equals("abc", "ABC") );
     REQUIRE(  cs::equals("abc", "ABC", true) );
     REQUIRE( !cs::equals("abc", "abcd") );
+
+    REQUIRE( !cs::equals(String(), "abc") );
+    REQUIRE( !cs::equals("abc", String()) );
   }
 
   TEST_CASE("Classify string's contents.", "[classify]") {
@@ -77,11 +89,11 @@ namespace stringutil {
 
     REQUIRE(  cs::isHexString("0123456789abcdefABCDEF") );
     REQUIRE( !cs::isHexString("0123456789abcdefABCDEFx") );
-    REQUIRE( !cs::isHexString("") );
+    REQUIRE( !cs::isHexString(String()) );
 
     REQUIRE(  cs::isIdent("_") );
     REQUIRE( !cs::isIdent("0") );
-    REQUIRE( !cs::isIdent("") );
+    REQUIRE( !cs::isIdent(String()) );
 
     REQUIRE(  cs::isIdent("_azAZ09") );
     REQUIRE(  cs::isIdent("azAZ09_") );
@@ -92,7 +104,7 @@ namespace stringutil {
 
     REQUIRE(  cs::isSpace(" \f\n\r\t\v") );
     REQUIRE( !cs::isSpace(" \f\n\r\t\v-") );
-    REQUIRE( !cs::isSpace("") );
+    REQUIRE( !cs::isSpace(String()) );
   }
 
   TEST_CASE("Detect digets in various radices.", "[isDigit]") {
@@ -121,7 +133,7 @@ namespace stringutil {
     REQUIRE( !cs::isOctDigit('8') );
   }
 
-  TEST_CASE("Remove patterns string.", "[removeAll]") {
+  TEST_CASE("Remove patterns in string.", "[removeAll]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
     const char *PTR_input1 = ".ab.cd.";
@@ -318,6 +330,24 @@ namespace stringutil {
       REQUIRE( *std::next(result.begin(), 2) == "ABC" );
       REQUIRE(  std::next(result.begin(), 3)->empty() );
     }
+
+    {
+      const StringList result = cs::split(String(), ' ');
+
+      REQUIRE( result.empty() );
+    }
+
+    {
+      const StringList result = cs::split(String(), "..");
+
+      REQUIRE( result.empty() );
+    }
+
+    {
+      const StringList result = cs::split("abc", String());
+
+      REQUIRE( result.empty() );
+    }
   }
 
   TEST_CASE("String starts with pattern.", "[startsWith]") {
@@ -332,26 +362,23 @@ namespace stringutil {
     REQUIRE(  cs::startsWith("ABCD", "abc", true) );
 
     REQUIRE( !cs::startsWith("abc", "abcd") );
+
+    REQUIRE( !cs::startsWith(String(), "abc") );
+    REQUIRE( !cs::startsWith("abcd", String()) );
   }
 
   TEST_CASE("Convert to lower case.", "[toLower]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
-    {
-      String str("ABCD");
-      cs::lower(str);
-      REQUIRE( str == "abcd" );
-    }
+    REQUIRE( cs::toLower("ABCD") == "abcd" );
+    REQUIRE( cs::toLower(String()).empty() );
   }
 
   TEST_CASE("Convert to upper case.", "[toUpper]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
-    {
-      String str("abcd");
-      cs::upper(str);
-      REQUIRE( str == "ABCD" );
-    }
+    REQUIRE( cs::toUpper("abcd") == "ABCD" );
+    REQUIRE( cs::toUpper(String()).empty() );
   }
 
   TEST_CASE("Trim string.", "[trim]") {
