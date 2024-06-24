@@ -231,8 +231,9 @@ namespace Calculate {
     bool isShift()
     {
       return
-          isLookAhead(TOK_ShiftLeft)  ||
-          isLookAhead(TOK_ShiftRight);
+          isLookAhead(TOK_ShiftLeft)   ||
+          isLookAhead(TOK_ShiftRight)  ||
+          isLookAhead(TOK_ShiftRightArithmetic);
     }
 
     value_type parseShift()
@@ -250,6 +251,8 @@ namespace Calculate {
           result <<= op;
         } else if( insn == TOK_ShiftRight ) {
           result >>= op;
+        } else if( insn == TOK_ShiftRightArithmetic ) {
+          result = shiftRightArithmetic(result, op);
         }
       }
 
@@ -311,13 +314,31 @@ namespace Calculate {
     }
 
   private:
+    static constexpr value_type ZERO = 0;
+    static constexpr value_type  ONE = 1;
+
     bool _have_insn{false};
 
     constexpr value_type minus(const value_type x)
     {
-      constexpr value_type ONE = 1;
-
       return ~x + ONE;
+    }
+
+    constexpr value_type shiftRightArithmetic(const value_type x, const value_type shift)
+    {
+      constexpr value_type BITS = sizeof(value_type)*8;
+      constexpr value_type  MAX = std::numeric_limits<value_type>::max();
+      constexpr value_type  MSB = ONE << (BITS - ONE);
+
+      if( shift >= BITS ) {
+        return 0;
+      }
+
+      const value_type shr = x >> shift;
+
+      return (x & MSB) != ZERO
+          ? (shr | (MAX << (BITS - shift)))
+          : shr;
     }
   };
 
