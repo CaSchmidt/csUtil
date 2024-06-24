@@ -43,7 +43,7 @@ namespace cs {
     inline bool isTextPattern(const std::basic_string_view<CharT>& text,
                               const std::basic_string_view<CharT>& pattern)
     {
-      return !text.empty()  &&  text.size() >= pattern.size();
+      return !pattern.empty()  &&  pattern.size() <= text.size();
     }
 
     template<typename CharT>
