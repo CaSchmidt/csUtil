@@ -81,10 +81,10 @@ namespace Calculate {
       const auto lines = cs::split(text, '\n');
       for(std::string line : lines) {
         cs::simplify(line);
-        line += '\n';
+        line += '\n'; // 'line' is not empty!
 
         if( !cs::isSpace(line)  &&  line.find('=') == NPOS ) {
-          // TODO
+          line.insert(0, "= ");
         }
 
         input += line;
@@ -98,7 +98,7 @@ namespace Calculate {
     {
       using ctx = cs::LexerContext<char>;
 
-      _lexer.addScanner(ctx::CharLiteralScanner::make("+-.*/%()~&^|"));
+      _lexer.addScanner(ctx::CharLiteralScanner::make("+-.*/%()~&^|="));
       _lexer.addScanner(ctx::CIdentifierScanner::make(TOK_Identifier));
       _lexer.addScanner(ctx::CIntegralScanner<value_type>::make(TOK_Integral, true));
 
@@ -117,13 +117,13 @@ namespace Calculate {
 
     void start()
     {
-      { // TODO
-        const value_type result = parseExpr();
-
-        cs::println("result = % (0x%)", result, cs::hexf(result));
+      while( isFirstAssignment()  ||  isLookAhead('\n') ) {
+        if( isFirstAssignment() ) {
+          parseAssignment();
+        }
 
         check('\n');
-      } // TODO
+      }
 
       check(cs::TOK_EndOfInput);
     }
@@ -311,6 +311,27 @@ namespace Calculate {
     {
       _have_insn = false;
       return parseBitOr();
+    }
+
+    bool isFirstAssignment() const
+    {
+      return
+          isLookAhead(TOK_Identifier)  ||
+          isLookAhead('=');
+    }
+
+    void parseAssignment()
+    {
+      if( isLookAhead(TOK_Identifier) ) {
+        scan();
+        // TODO: retrieve value
+      }
+
+      check('=');
+
+      const value_type result = parseExpr();
+
+      cs::println("result = % (0x%)", result, cs::hexf(result)); // TODO
     }
 
   private:
