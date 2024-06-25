@@ -35,6 +35,7 @@
 #include <cs/Logging/Logger.h>
 #include <cs/Text/PrintFormat.h>
 #include <cs/Text/PrintUtil.h>
+#include <cs/Text/TextIO.h>
 
 #include <Calculate/Parser.h>
 
@@ -54,9 +55,7 @@ int main(int /*argc*/, char ** /*argv*/)
 
   cs::print("input> ");
 
-  std::string input(128, ' ');
-  std::cin.get(input.data(), input.size());
-  input.resize(std::char_traits<char>::length(input.data()));
+  const std::string input = cs::readInput(std::cin);
 
   parser.parse(Parser::fixInput(input), cs::Logger::make());
 

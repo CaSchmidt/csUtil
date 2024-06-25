@@ -32,6 +32,7 @@
 #pragma once
 
 #include <filesystem>
+#include <istream>
 #include <list>
 
 #include <cs/Core/csutil_config.h>
@@ -53,6 +54,9 @@ CS_ENABLE_FLAGS(cs::LineFlag);
 namespace cs {
 
   using LineFlags = Flags<LineFlag>;
+
+  CS_UTIL_EXPORT std::string readInput(std::istream& stream,
+                                       const std::size_t count = 128, const char delim = '\n');
 
   CS_UTIL_EXPORT std::list<std::string> readLines(const std::filesystem::path& path,
                                                   const LineFlags flags = LineFlag::None);
