@@ -169,7 +169,7 @@ namespace Calculate {
       return 0; // fall-through; can never be reached!
     }
 
-    bool isMultiplicative()
+    bool isMultiplicative() const
     {
       return
           isLookAhead('*')  ||
@@ -200,7 +200,7 @@ namespace Calculate {
       return result;
     }
 
-    bool isAdditive()
+    bool isAdditive() const
     {
       return
           isLookAhead('+')  ||
@@ -228,7 +228,7 @@ namespace Calculate {
       return result;
     }
 
-    bool isShift()
+    bool isShift() const
     {
       return
           isLookAhead(TOK_ShiftLeft)   ||
