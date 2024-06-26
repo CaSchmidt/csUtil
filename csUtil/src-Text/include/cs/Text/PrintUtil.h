@@ -48,23 +48,53 @@ namespace cs {
   }
 
   template<typename ...Args>
-  void print(const std::string_view& fmt, Args&&... args)
-  {
-    std::osyncstream scout(std::cout);
-    print(scout, fmt, std::forward<Args>(args)...);
-  }
-
-  template<typename ...Args>
   void println(std::ostream& stream, const std::string_view& fmt, Args&&... args)
   {
     println<char>(stream, fmt, std::forward<Args>(args)...);
   }
 
+  // Print to synchronized standard streams //////////////////////////////////
+
+  template<typename ...Args>
+  void print(const std::string_view& fmt, Args&&... args)
+  {
+    std::osyncstream syncstrm(std::cout);
+    print(syncstrm, fmt, std::forward<Args>(args)...);
+  }
+
   template<typename ...Args>
   void println(const std::string_view& fmt, Args&&... args)
   {
-    std::osyncstream scout(std::cout);
-    println(scout, fmt, std::forward<Args>(args)...);
+    std::osyncstream syncstrm(std::cout);
+    println(syncstrm, fmt, std::forward<Args>(args)...);
+  }
+
+  template<typename ...Args>
+  void printerr(const std::string_view& fmt, Args&&... args)
+  {
+    std::osyncstream syncstrm(std::cerr);
+    print(syncstrm, fmt, std::forward<Args>(args)...);
+  }
+
+  template<typename ...Args>
+  void printerrln(const std::string_view& fmt, Args&&... args)
+  {
+    std::osyncstream syncstrm(std::cerr);
+    println(syncstrm, fmt, std::forward<Args>(args)...);
+  }
+
+  template<typename ...Args>
+  void printlog(const std::string_view& fmt, Args&&... args)
+  {
+    std::osyncstream syncstrm(std::clog);
+    print(syncstrm, fmt, std::forward<Args>(args)...);
+  }
+
+  template<typename ...Args>
+  void printlogln(const std::string_view& fmt, Args&&... args)
+  {
+    std::osyncstream syncstrm(std::clog);
+    println(syncstrm, fmt, std::forward<Args>(args)...);
   }
 
   // Print to string - Generic implementation ////////////////////////////////
