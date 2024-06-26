@@ -47,6 +47,14 @@ void print(const std::string& text)
   cs::println("");
 }
 
+template<typename T>
+void print(const std::unordered_map<std::string,T>& variables)
+{
+  for(const auto& var : variables) {
+    cs::println("% = % (0x%)", var.first, var.second, cs::hexf(var.second));
+  }
+}
+
 int main(int /*argc*/, char ** /*argv*/)
 {
   using Parser = Calculate::Parser<uint16_t>;
@@ -55,9 +63,11 @@ int main(int /*argc*/, char ** /*argv*/)
 
   cs::print("input> ");
 
-  const std::string input = cs::readInput(std::cin);
+  const std::string input = cs::readStream(std::cin);
 
   parser.parse(Parser::fixInput(input), cs::Logger::make());
+
+  print<Parser::value_type>(parser.variables);
 
   return EXIT_SUCCESS;
 }

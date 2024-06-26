@@ -31,11 +31,12 @@
 
 #pragma once
 
+#include <list>
+#include <unordered_map>
+
 #include <cs/Lexer/Context.h>
 #include <cs/Lexer/AbstractParser.h>
-
-#include <cs/Text/PrintFormat.h> // TODO
-#include <cs/Text/PrintUtil.h>
+#include <cs/Text/StringUtil.h>
 
 namespace Calculate {
 
@@ -68,6 +69,9 @@ namespace Calculate {
   class Parser : public cs::AbstractParser<char> {
   public:
     using value_type = T;
+
+    using Identifier = std::basic_string<char>;
+    using  Variables = std::unordered_map<Identifier,value_type>;
 
     Parser() noexcept = default;
     ~Parser() noexcept = default;
@@ -132,7 +136,7 @@ namespace Calculate {
     {
       if(        isLookAhead(TOK_Identifier) ) {
         scan();
-        return 0;
+        return getVariable(currentValue<Identifier>());
 
       } else if( isLookAhead(TOK_Integral) ) {
         scan();
@@ -322,16 +326,20 @@ namespace Calculate {
 
     void parseAssignment()
     {
-      if( isLookAhead(TOK_Identifier) ) {
+      const bool is_ident = isLookAhead(TOK_Identifier);
+      if( is_ident ) {
         scan();
-        // TODO: retrieve value
       }
+
+      const Identifier assignee = is_ident
+          ? currentValue<Identifier>()
+          : Identifier("ans");
 
       check('=');
 
       const value_type result = parseExpr();
 
-      cs::println("result = % (0x%)", result, cs::hexf(result)); // TODO
+      variables[assignee] = result;
     }
 
   private:
@@ -361,6 +369,29 @@ namespace Calculate {
           ? (shr | (MAX << (BITS - shift)))
           : shr;
     }
+
+  public:
+    value_type getVariable(const Identifier& name,
+                           const value_type defValue = 0) const
+    {
+      return !name.empty()  &&  variables.find(name) != variables.cend()
+          ? variables.at(name)
+          : defValue;
+    }
+
+    std::list<Identifier> listVariables() const
+    {
+      std::list<Identifier> result;
+
+      for(const typename Variables::value_type& var : variables) {
+        result.push_back(var.first);
+      }
+      result.sort();
+
+      return result;
+    }
+
+    Variables variables;
   };
 
 } // namespace Calculate
