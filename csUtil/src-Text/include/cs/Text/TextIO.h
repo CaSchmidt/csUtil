@@ -55,11 +55,11 @@ namespace cs {
 
   using LineFlags = Flags<LineFlag>;
 
-  CS_UTIL_EXPORT std::string readInput(std::istream& stream,
-                                       const std::size_t count = 128, const char delim = '\n');
-
   CS_UTIL_EXPORT std::list<std::string> readLines(const std::filesystem::path& path,
                                                   const LineFlags flags = LineFlag::None);
+
+  CS_UTIL_EXPORT std::string readStream(std::istream& stream,
+                                        const std::size_t count = 128, const char delim = '\n');
 
   CS_UTIL_EXPORT std::string readTextFile(const std::filesystem::path& path,
                                           bool *ok = nullptr);

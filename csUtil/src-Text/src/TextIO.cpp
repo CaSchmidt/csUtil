@@ -42,9 +42,9 @@ namespace cs {
   namespace impl_textio {
 
     template<typename CharT>
-    inline std::basic_string<CharT> readInput(std::basic_istream<CharT>& stream,
-                                              const std::size_t count,
-                                              const CharT delim)
+    inline std::basic_string<CharT> readStream(std::basic_istream<CharT>& stream,
+                                               const std::size_t count,
+                                               const CharT delim)
     {
       using String = std::basic_string<CharT>;
       using Traits = std::char_traits<CharT>;
@@ -63,12 +63,6 @@ namespace cs {
   } // namespace impl_textio
 
   ////// Public //////////////////////////////////////////////////////////////
-
-  CS_UTIL_EXPORT std::string readInput(std::istream& stream,
-                                       const std::size_t count, const char delim)
-  {
-    return impl_textio::readInput<char>(stream, count, delim);
-  }
 
   CS_UTIL_EXPORT std::list<std::string> readLines(const std::filesystem::path& path,
                                                   const LineFlags flags)
@@ -92,6 +86,12 @@ namespace cs {
     }
 
     return lines;
+  }
+
+  CS_UTIL_EXPORT std::string readStream(std::istream& stream,
+                                        const std::size_t count, const char delim)
+  {
+    return impl_textio::readStream<char>(stream, count, delim);
   }
 
   CS_UTIL_EXPORT std::string readTextFile(const std::filesystem::path& path,
