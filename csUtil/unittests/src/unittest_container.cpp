@@ -6,6 +6,8 @@
 #include <functional>
 #include <iterator>
 #include <list>
+#include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <catch2/catch_test_macros.hpp>
@@ -17,14 +19,18 @@ namespace container {
 
   using Greater = std::greater<void>;
 
+  using   key_type = std::string;
   using  size_type = std::size_t;
   using value_type = int;
 
-  using List   = std::list<value_type>;
-  using Vector = std::vector<value_type>;
+  using KeyValue = std::pair<key_type,value_type>;
+  using List     = std::list<value_type>;
+  using Map      = std::unordered_map<key_type,value_type>;
+  using MultiMap = std::unordered_multimap<key_type,value_type>;
+  using Vector   = std::vector<value_type>;
 
   template<typename C>
-  inline value_type get(const C& c, const std::ptrdiff_t n)
+  inline typename C::value_type get(const C& c, const std::ptrdiff_t n)
   {
     return *std::next(c.cbegin(), n);
   }
@@ -34,6 +40,76 @@ namespace container {
   {
     return C{3, 1, 2};
   }
+
+  // Key-Value Store /////////////////////////////////////////////////////////
+
+  key_type extractor(const KeyValue& kv)
+  {
+    return kv.first;
+  }
+
+  void print(const KeyValue& kv)
+  {
+    cs::println("%: %", kv.first, kv.second);
+  }
+
+  ////////////////////////////////////////////////////////////////////////////
+
+  TEST_CASE("Extract elements from containers.", "[extract]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    MultiMap m;
+    m.insert({"a", 11});
+    m.insert({"c", 32});
+    m.insert({"b", 21});
+    m.insert({"a", 12});
+    m.insert({"c", 31});
+    m.insert({"b", 22});
+
+    std::for_each(m.cbegin(), m.cend(), print);
+
+    {
+      const auto keys = cs::toList<std::list>(m.cbegin(), m.cend(), extractor);
+
+      REQUIRE( keys.size() == m.size() );
+      REQUIRE( get(keys, 0) == "a" );
+      REQUIRE( get(keys, 1) == "a" );
+      REQUIRE( get(keys, 2) == "c" );
+      REQUIRE( get(keys, 3) == "c" );
+      REQUIRE( get(keys, 4) == "b" );
+      REQUIRE( get(keys, 5) == "b" );
+    }
+
+    {
+      const auto keys = cs::toList<std::list>(m.cbegin(), m.cend(), extractor, true);
+
+      REQUIRE( keys.size() == m.size() );
+      REQUIRE( get(keys, 0) == "a" );
+      REQUIRE( get(keys, 1) == "a" );
+      REQUIRE( get(keys, 2) == "b" );
+      REQUIRE( get(keys, 3) == "b" );
+      REQUIRE( get(keys, 4) == "c" );
+      REQUIRE( get(keys, 5) == "c" );
+    }
+
+    {
+      const auto keys = cs::toList<std::list>(m.cbegin(), m.cend(), extractor, false, true);
+
+      REQUIRE( keys.size() == 3 );
+      REQUIRE( get(keys, 0) == "a" );
+      REQUIRE( get(keys, 1) == "b" );
+      REQUIRE( get(keys, 2) == "c" );
+    }
+
+    {
+      const auto keys = cs::toList<std::vector>(m.cbegin(), m.cend(), extractor, false, true);
+
+      REQUIRE( keys.size() == 3 );
+      REQUIRE( get(keys, 0) == "a" );
+      REQUIRE( get(keys, 1) == "b" );
+      REQUIRE( get(keys, 2) == "c" );
+    }
+  } // TEST_CASE
 
   TEST_CASE("Reserve capacity of containers.", "[reserve]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
@@ -53,7 +129,7 @@ namespace container {
       cs::println("capacity = %", v.capacity());
       REQUIRE( v.capacity() >= SIZE );
     }
-  }
+  } // TEST_CASE
 
   TEST_CASE("Sort containers.", "[sort]") {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
@@ -93,6 +169,6 @@ namespace container {
       REQUIRE( get(v, 1) == 2 );
       REQUIRE( get(v, 2) == 1 );
     }
-  }
+  } // TEST_CASE
 
 } // namespace container

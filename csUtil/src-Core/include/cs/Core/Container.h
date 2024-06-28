@@ -32,6 +32,7 @@
 #pragma once
 
 #include <algorithm>
+#include <iterator>
 #include <type_traits>
 #include <utility>
 
@@ -166,6 +167,41 @@ namespace cs {
       container.pop_front();
     } catch( ... ) {
       return defValue;
+    }
+
+    return result;
+  }
+
+  // List (extracted) Elements of Container... ///////////////////////////////
+
+  template<template<typename ...> typename C, typename IterT, typename Extract>
+  inline auto toList(IterT first, IterT last, Extract extract,
+                     const bool do_sort = false, const bool do_unique = false)
+  {
+    using    diff_type = typename std::iterator_traits<IterT>::difference_type;
+    using   value_type = typename std::iterator_traits<IterT>::value_type;
+    using extract_type = std::invoke_result_t<Extract,value_type>;
+
+    using List = C<extract_type>;
+
+    const std::size_t count = std::max<diff_type>(0, std::distance(first, last));
+
+    if( count == 0 ) {
+      return List();
+    }
+
+    List result;
+    cs::reserve(result, count);
+
+    std::transform(first, last, std::back_inserter(result), std::forward<Extract>(extract));
+
+    if( do_sort  ||  do_unique ) {
+      cs::sort(result);
+    }
+
+    if( do_unique ) {
+      const auto junk = std::unique(result.begin(), result.end());
+      result.erase(junk, result.end());
     }
 
     return result;
