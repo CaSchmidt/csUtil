@@ -69,7 +69,7 @@ namespace container {
     std::for_each(m.cbegin(), m.cend(), print);
 
     {
-      const auto keys = cs::toList<std::list>(m.cbegin(), m.cend(), extractor);
+      const auto keys = cs::toSequence<std::list>(m.cbegin(), m.cend(), extractor);
 
       REQUIRE( keys.size() == m.size() );
       REQUIRE( get(keys, 0) == "a" );
@@ -81,7 +81,7 @@ namespace container {
     }
 
     {
-      const auto keys = cs::toList<std::list>(m.cbegin(), m.cend(), extractor, true);
+      const auto keys = cs::toSequence<std::list>(m.cbegin(), m.cend(), extractor, true);
 
       REQUIRE( keys.size() == m.size() );
       REQUIRE( get(keys, 0) == "a" );
@@ -93,7 +93,7 @@ namespace container {
     }
 
     {
-      const auto keys = cs::toList<std::list>(m.cbegin(), m.cend(), extractor, false, true);
+      const auto keys = cs::toSequence<std::list>(m.cbegin(), m.cend(), extractor, false, true);
 
       REQUIRE( keys.size() == 3 );
       REQUIRE( get(keys, 0) == "a" );
@@ -102,7 +102,7 @@ namespace container {
     }
 
     {
-      const auto keys = cs::toList<std::vector>(m.cbegin(), m.cend(), extractor, false, true);
+      const auto keys = cs::toSequence<std::vector>(m.cbegin(), m.cend(), extractor, false, true);
 
       REQUIRE( keys.size() == 3 );
       REQUIRE( get(keys, 0) == "a" );

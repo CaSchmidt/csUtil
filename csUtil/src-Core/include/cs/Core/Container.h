@@ -34,7 +34,6 @@
 #include <algorithm>
 #include <iterator>
 #include <type_traits>
-#include <utility>
 
 namespace cs {
 
@@ -175,28 +174,28 @@ namespace cs {
   // List (extracted) Elements of Container... ///////////////////////////////
 
   template<template<typename ...> typename C, typename IterT, typename Extract>
-  inline auto toList(IterT first, IterT last, Extract extract,
-                     const bool do_sort = false, const bool do_unique = false)
+  inline auto toSequence(IterT first, IterT last, Extract extract,
+                         const bool do_sort = false, const bool do_unique = false)
   {
     using    diff_type = typename std::iterator_traits<IterT>::difference_type;
     using   value_type = typename std::iterator_traits<IterT>::value_type;
     using extract_type = std::invoke_result_t<Extract,value_type>;
 
-    using List = C<extract_type>;
+    using Sequence = C<extract_type>;
 
     const std::size_t count = std::max<diff_type>(0, std::distance(first, last));
 
     if( count == 0 ) {
-      return List();
+      return Sequence();
     }
 
-    List result;
-    cs::reserve(result, count);
+    Sequence result;
+    reserve(result, count);
 
-    std::transform(first, last, std::back_inserter(result), std::forward<Extract>(extract));
+    std::transform(first, last, std::back_inserter(result), extract);
 
     if( do_sort  ||  do_unique ) {
-      cs::sort(result);
+      sort(result);
     }
 
     if( do_unique ) {
