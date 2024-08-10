@@ -39,7 +39,7 @@ namespace cs {
 
   namespace impl_win32 {
 
-    using win32fp_type = decltype(LARGE_INTEGER().QuadPart);
+    using win32fp_type = decltype(std::declval<LARGE_INTEGER>().QuadPart);
 
     inline bool checkSeekOffset(const File::offset_type offset)
     {
@@ -182,7 +182,7 @@ namespace cs {
   std::filesystem::path File::path() const
   {
     if( !isOpen() ) {
-      return std::u8string();
+      return std::filesystem::path();
     }
     return _impl->path;
   }
