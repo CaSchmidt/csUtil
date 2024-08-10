@@ -43,29 +43,28 @@ namespace bufferedreader {
     reader.reset();
     REQUIRE( !reader.isEmpty() );
 
-    std::string_view view;
-
     // Line 1
-    REQUIRE( reader.getLine(&view, &input) );
-    REQUIRE( view.empty() );
+    const std::string line1 = reader.getLine(input);
+    REQUIRE( line1.empty() );
     // Line 2
-    REQUIRE( reader.getLine(&view, &input) );
-    REQUIRE( view == "01234567" );
+    const std::string line2 = reader.getLine(input);
+    REQUIRE( line2 == "01234567" );
     // Line 3.1 (NOTE: Line DOES NOT fit into buffer!)
-    REQUIRE( reader.getLine(&view, &input) );
-    REQUIRE( view == "0123456789ABCDEF" );
+    const std::string line31 = reader.getLine(input);
+    REQUIRE( line31 == "0123456789ABCDEF" );
     // Line 3.2
-    REQUIRE( reader.getLine(&view, &input) );
-    REQUIRE( view.empty() );
+    const std::string line32 = reader.getLine(input);
+    REQUIRE( line32.empty() );
     // Line 4
-    REQUIRE( reader.getLine(&view, &input) );
-    REQUIRE( view.empty() );
+    const std::string line4 = reader.getLine(input);
+    REQUIRE( line4.empty() );
     // Line 5
-    REQUIRE( reader.getLine(&view, &input) );
-    REQUIRE( view == "01234567" );
-    // Line 6 (NOTE: NOT returned!)
-    REQUIRE( !reader.getLine(&view, &input) );
-    REQUIRE( view.empty() );
+    const std::string line5 = reader.getLine(input);
+    REQUIRE( line5 == "01234567" );
+    // Line 6
+    const std::string line6 = reader.getLine(input);
+    REQUIRE( line6.empty() );
+    REQUIRE( input.atEnd() );
   }
 
 } // namespace bufferedreader

@@ -40,7 +40,7 @@ namespace cs {
 
   ////// public //////////////////////////////////////////////////////////////
 
-  BufferedReader::BufferedReader(const std::size_t sizeBuffer) noexcept
+  BufferedReader::BufferedReader(const size_type sizeBuffer) noexcept
     : _buffer{}
   {
     reset();
@@ -61,18 +61,9 @@ namespace cs {
     _idxData = _numData = 0;
   }
 
-  bool BufferedReader::getLine(std::string_view *view, const AbstractIODevice *dev,
-                               const char sep)
+  std::string BufferedReader::getLine(const AbstractIODevice& dev, const char sep)
   {
     static_assert( sizeof(byte_type) == sizeof(char) );
-
-    // (0) Sanity Check //////////////////////////////////////////////////////
-
-    if( view == nullptr  ||  dev == nullptr ) {
-      return false;
-    }
-
-    *view = std::string_view{};
 
     // (1) Fill buffer if it is not (yet) filled OR fully consumed. //////////
 
@@ -81,12 +72,12 @@ namespace cs {
     }
 
     if( _numData < ONE ) {
-      return false;
+      return std::string();
     }
 
     // (2) Scan Data Buffer //////////////////////////////////////////////////
 
-    std::size_t hit = scanData(sep);
+    size_type hit = scanData(sep);
     if( hit == _numData ) {
       syncBuffer(dev);
       hit = scanData(sep);
@@ -94,15 +85,20 @@ namespace cs {
 
     // (3) Create Data View //////////////////////////////////////////////////
 
+    std::string result;
     if( hit - _idxData >= ONE ) {
-      *view = std::string_view{cbeginDataAs<char>(), hit - _idxData};
+      try {
+        result.assign(cbeginDataAs<char>(), hit - _idxData);
+      } catch(...) {
+        return std::string();
+      }
     }
 
     // (4) Advance Index /////////////////////////////////////////////////////
 
     _idxData = std::min(hit + ONE, _numData);
 
-    return true;
+    return result;
   }
 
   ////// private /////////////////////////////////////////////////////////////
@@ -127,13 +123,13 @@ namespace cs {
     return _buffer.data() + _numData;
   }
 
-  void BufferedReader::fillBuffer(const AbstractIODevice *dev)
+  void BufferedReader::fillBuffer(const AbstractIODevice& dev)
   {
-    _numData = dev->read(_buffer.data(), _buffer.size());
+    _numData = dev.read(_buffer.data(), _buffer.size());
     _idxData = 0;
   }
 
-  void BufferedReader::syncBuffer(const AbstractIODevice *dev)
+  void BufferedReader::syncBuffer(const AbstractIODevice& dev)
   {
     // (1) Copy Unconsumed Data //////////////////////////////////////////////
 
@@ -146,11 +142,11 @@ namespace cs {
     // (2) Fill Buffer ///////////////////////////////////////////////////////
 
     if( _numData < _buffer.size() ) {
-      _numData += dev->read(endData(), _buffer.size() - _numData);
+      _numData += dev.read(endData(), _buffer.size() - _numData);
     }
   }
 
-  std::size_t BufferedReader::scanData(const byte_type sep) const
+  BufferedReader::size_type BufferedReader::scanData(const byte_type sep) const
   {
     return std::distance(_buffer.data(),
                          std::find(cbeginData(), cendData(), sep));

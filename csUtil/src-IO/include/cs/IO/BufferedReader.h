@@ -41,19 +41,19 @@ namespace cs {
   class CS_UTIL_EXPORT BufferedReader {
   public:
     using byte_type = Buffer::value_type;
+    using size_type = Buffer::size_type;
 
-    BufferedReader(const std::size_t sizeBuffer = 128*1024) noexcept;
+    BufferedReader(const size_type sizeBuffer = 128*1024) noexcept;
     ~BufferedReader() noexcept;
 
     bool isEmpty() const;
 
     void reset();
 
-    bool getLine(std::string_view *view, const AbstractIODevice *dev,
-                 const char sep = '\n');
+    std::string getLine(const AbstractIODevice& dev, const char sep = '\n');
 
   private:
-    static constexpr std::size_t ONE = 1;
+    static constexpr size_type ONE = 1;
 
     byte_type *beginData();
     byte_type *endData();
@@ -67,14 +67,14 @@ namespace cs {
       return reinterpret_cast<const T*>(cbeginData());
     }
 
-    void fillBuffer(const AbstractIODevice *dev);
-    void syncBuffer(const AbstractIODevice *dev);
+    void fillBuffer(const AbstractIODevice& dev);
+    void syncBuffer(const AbstractIODevice& dev);
 
-    std::size_t scanData(const byte_type sep) const;
+    size_type scanData(const byte_type sep) const;
 
     Buffer _buffer{};
-    std::size_t _idxData{0};
-    std::size_t _numData{0};
+    size_type _idxData{0};
+    size_type _numData{0};
   };
 
 } // namespace cs
