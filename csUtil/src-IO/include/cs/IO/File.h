@@ -77,6 +77,8 @@ namespace cs {
 
     offset_type size() const;
 
+    bool atEnd() const;
+
     std::size_t read(void *data, const std::size_t sizData) const;
     std::size_t write(const void *data, const std::size_t sizData) const;
 

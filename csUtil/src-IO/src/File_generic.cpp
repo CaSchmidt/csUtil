@@ -35,6 +35,11 @@
 
 namespace cs {
 
+  bool File::atEnd() const
+  {
+    return tell() == size();
+  }
+
   Buffer File::readAll() const
   {
     constexpr offset_type MAX_OFFSET = maxab_v<offset_type,std::size_t>;
