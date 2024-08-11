@@ -124,14 +124,14 @@ endif()
 
 if(ENABLE_QT)
   add_subdirectory(src-Qt)
-endif()
 
-if(ENABLE_QT AND ENABLE_PLOT)
-  add_subdirectory(src-Plot)
-endif()
+  if(ENABLE_PLOT)
+    add_subdirectory(src-Plot)
+  endif()
 
-if(ENABLE_QT AND ENABLE_QTIMPORT)
-  add_subdirectory(src-QtImport)
+  if(ENABLE_QTIMPORT)
+    add_subdirectory(src-QtImport)
+  endif()
 endif()
 
 if(ENABLE_UNICODE)
