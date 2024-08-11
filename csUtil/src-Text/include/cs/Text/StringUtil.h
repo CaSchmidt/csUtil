@@ -245,6 +245,13 @@ namespace cs {
         : std::u8string();
   }
 
+  inline std::u8string_view toUtf8StringView(const std::string_view& str)
+  {
+    return !str.empty()
+        ? std::u8string_view(UTF8(str.data()), str.size())
+        : std::u8string_view();
+  }
+
   inline std::u16string toUtf16String(const std::wstring_view& str)
   {
     return !str.empty()
