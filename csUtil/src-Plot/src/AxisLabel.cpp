@@ -36,31 +36,12 @@
 
 #include "cs/Core/Constants.h"
 #include "cs/Core/Container.h"
+#include "cs/Core/QStringUtil.h"
 #include "cs/Math/Math.h"
 #include "cs/Text/StringUtil.h"
+#include "cs/Text/StringValue.h"
 
 namespace plot {
-
-  namespace impl_axislabel {
-
-    inline std::chars_format makeFormat(const PlotAxisLabelFormat& alf)
-    {
-      const char fmt = std::get<0>(alf);
-      if(        fmt == 'f'  ||  fmt == 'F' ) {
-        return std::chars_format::fixed;
-      } else if( fmt == 'e'  ||  fmt == 'E' ) {
-        return std::chars_format::scientific;
-      }
-      return std::chars_format::general;
-    }
-
-    inline int makePrecision(const PlotAxisLabelFormat& alf)
-    {
-      const int prec = std::get<1>(alf);
-      return std::max<int>(1, prec);
-    }
-
-  } // namespace impl_axislabel
 
   AxisLabelValues computeLabelValues(const double min, const double max,
                                      const std::size_t numIntervals)
@@ -106,7 +87,7 @@ namespace plot {
     // (4) Generate Labels ///////////////////////////////////////////////////
 
     AxisLabelValues result;
-    if( !cs::resize(&result, size_type(m::intgr(labelSpan/step)) + 1) ) {
+    if( !cs::resize(result, size_type(m::intgr(labelSpan/step)) + 1) ) {
       return AxisLabelValues{};
     }
     for(size_type i = 0; i < result.size(); i++) {
@@ -118,23 +99,13 @@ namespace plot {
 
   QString formatLabelValue(const double value, const PlotAxisLabelFormat& alf)
   {
-    const std::chars_format fmt = impl_axislabel::makeFormat(alf);
-    const int              prec = impl_axislabel::makePrecision(alf);
+    const char fmt = std::get<0>(alf);
+    const int prec = std::get<1>(alf);
 
-    std::array<char,128> buffer;
-    buffer.fill('\0');
+    std::string str = cs::toString(value, fmt, prec);
+    cs::removeTrailingZeros(str);
 
-    const auto [last, ec] =
-        std::to_chars(buffer.data(), buffer.data() + buffer.size(), value, fmt, prec);
-    {}
-
-    if( ec != std::errc{} ) {
-      return QString{};
-    }
-
-    cs::removeTrailingZeros(buffer.data(), const_cast<char*>(last));
-
-    return QString::fromLatin1(buffer.data(), std::distance(buffer.data(), last));
+    return cs::toQString(cs::toUtf8StringView(str));
   }
 
   AxisLabels formatLabelValues(const AxisLabelValues& values,
