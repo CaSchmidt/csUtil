@@ -2,14 +2,165 @@
 #include <cstdlib>
 #include <ctime>
 
+#include <algorithm>
+#include <filesystem>
+
 #include <QtWidgets/QApplication>
 
 #include <cs/Core/Constants.h>
+#include <cs/Core/Container.h>
+#include <cs/Core/QStringUtil.h>
+#include <cs/IO/BufferedReader.h>
+#include <cs/IO/File.h>
+#include <cs/System/FileSystem.h>
+#include <cs/Text/PrintUtil.h>
+#include <cs/Text/StringUtil.h>
+#include <cs/Text/StringValue.h>
 
 #include <Plot/PlotTheme.h>
 #include <Plot/PlotWidget.h>
 #include <Plot/Data/ConstantIntervalData.h>
 #include <Plot/Data/VectorData.h>
+
+namespace test_csv {
+
+  struct Column {
+    Column(const std::string& name = std::string())
+      : name(name)
+    {
+      constexpr std::size_t INIT_SIZE = 10000;
+
+      values.reserve(INIT_SIZE);
+    }
+
+    template<typename Func>
+    inline void apply(Func func)
+    {
+      std::for_each(values.begin(), values.end(), std::forward<Func>(func));
+    }
+
+    std::string name;
+    std::string unit;
+    std::vector<double> values;
+  };
+
+  using Columns = std::list<Column>;
+
+  using Series = std::list<plot::PlotSeriesDataPtr>;
+
+  using StringList = std::list<std::string>;
+
+  bool contains(const StringList& list, const std::string& value)
+  {
+    return std::find(list.cbegin(), list.cend(), value) != list.cend();
+  }
+
+  void makeTime(Column& column)
+  {
+    column.name = "Time";
+    column.unit = "s";
+    column.apply([](double& value) -> void {
+      value /= 1000;
+    });
+  }
+
+  void print(const Column& column)
+  {
+    cs::println("\"%\" [%] = { %, %, % }", column.name, column.unit,
+                column.values[0], column.values[1], column.values[2]);
+  }
+
+  void print(const Columns& columns)
+  {
+    std::for_each(columns.cbegin(), columns.cend(),
+                  [](const Column& column) -> void {
+      print(column); // NOTE: Use lambda to avoid error of function overload!
+    });
+  }
+
+  Series load(const std::filesystem::path& filename)
+  {
+    // Lines are 1-based!
+    constexpr std::size_t LINE_NAME  = 2;
+    constexpr std::size_t LINE_UNIT  = 3;
+    constexpr std::size_t LINE_VALUE = 4;
+
+    constexpr char SEP = ';';
+
+    if( !cs::isFile(filename) ) {
+      cs::printerrln("ERROR: File \"%\" not found!", filename);
+      return Series();
+    }
+
+    cs::File file;
+    if( !file.open(filename) ) {
+      cs::printerrln("ERROR: Unable to open file \"%\"!", filename);
+      return Series();
+    }
+
+    Columns columns;
+    cs::BufferedReader reader;
+    for(std::size_t lineno = 1; !file.atEnd(); lineno++) {
+      const std::string  line = reader.getLine(file);
+      const StringList fields = cs::split(line, SEP, cs::SplitFlag::Trim);
+
+      if( lineno == LINE_NAME ) {
+        for(const std::string& field : fields) {
+          columns.push_back(Column(field));
+        }
+
+      } else if( lineno == LINE_UNIT ) {
+        if( fields.size() != columns.size() ) {
+          cs::printerrln("ERROR: Invalid number of columns at line %!", lineno);
+          return Series();
+        }
+
+        auto colIter = columns.begin();
+        for(const std::string& field : fields) {
+          colIter->unit = field;
+          ++colIter;
+        }
+
+      } else if( lineno >= LINE_VALUE ) {
+        if( fields.size() != columns.size() ) {
+          cs::printerrln("ERROR: Invalid number of columns at line %!", lineno);
+          return Series();
+        }
+
+        auto colIter = columns.begin();
+        for(const std::string& field : fields) {
+          colIter->values.push_back(cs::toValue<double>(field));
+          ++colIter;
+        }
+
+      }
+    } // while( !file.atEnd() )
+
+    makeTime(columns.front());
+
+    // Debug
+    print(columns);
+
+    const Column time = cs::takeFirst(columns);
+
+    const StringList want{"Motordrehzahl", "Fahrzeuggeschwindigkeit", "Zuendwinkel Zylinder 1"};
+
+    Series result;
+    for(const Column& column : columns) {
+      if( !contains(want, column.name) ) {
+        continue;
+      }
+
+      const QString name = cs::toQString(cs::toUtf8StringView(column.name));
+      const QString unit = cs::toQString(cs::toUtf8StringView(column.unit));
+
+      result.push_back(plot::VectorData<double>::make(name, unit, time.values, column.values));
+    }
+
+    return result;
+  }
+
+} // namespace test_csv
 
 namespace test_signal {
 
@@ -175,6 +326,12 @@ int main(int argc, char **argv)
   plot->show();
   plot->resize(640, 480);
 
+#if 1
+  auto series = test_csv::load(cs::reparent(argv[0], "Recording_002.csv"));
+  for(const auto& s : series) {
+    plot->insert(s.get());
+  }
+#else
   PlotSeriesDataPtr sig1 = test_signal::generate(QStringLiteral("V"));
   PlotSeriesHandle h1 = plot->insert(sig1.get());
   PlotSeriesDataPtr sig2 = test_signal::generate(QStringLiteral("V"));
@@ -207,6 +364,7 @@ int main(int argc, char **argv)
   // h3.remove();
 
   // h3.activate();
+#endif
 
   const int result = app.exec();
   delete plot;
