@@ -39,20 +39,20 @@ namespace cs {
 
   namespace impl_fs {
 
-    inline void append(PathList *list, const fs::path& p, const PathListFlags flags)
+    inline void append(PathList& list, const fs::path& p, const PathListFlags flags)
     {
       if(        flags.testAny(PathListFlag::Directory)  &&  isDirectory(p) ) {
-        list->push_back(p);
+        list.push_back(p);
 
       } else if( flags.testAny(PathListFlag::File)  &&  isFile(p) ) {
         if(        flags.testAny(PathListFlag::SelectFilename) ) {
-          list->push_back(p.filename());
+          list.push_back(p.filename());
         } else if( flags.testAny(PathListFlag::SelectStem) ) {
-          list->push_back(p.stem());
+          list.push_back(p.stem());
         } else if( flags.testAny(PathListFlag::SelectExtension) ) {
-          list->push_back(p.extension());
+          list.push_back(p.extension());
         } else {
-          list->push_back(p);
+          list.push_back(p);
         }
 
       }
@@ -67,7 +67,7 @@ namespace cs {
     PathList result;
     try {
       for(const fs::path& p : list) {
-        impl_fs::append(&result, p, flags);
+        impl_fs::append(result, p, flags);
       }
     } catch(...) {
       return PathList{};
@@ -100,7 +100,7 @@ namespace cs {
         if( !flags.testAny(PathListFlag::AllTypes) ) {
           result.push_back(entry.path());
         } else {
-          impl_fs::append(&result, entry.path(), flags);
+          impl_fs::append(result, entry.path(), flags);
         }
       } // For Each Entry
 
@@ -118,6 +118,12 @@ namespace cs {
     return isDirectory(p)
         ? fs::directory_iterator{p, fs::directory_options::skip_permission_denied, ec}
         : fs::directory_iterator{};
+  }
+
+  CS_UTIL_EXPORT std::filesystem::path reparent(const std::filesystem::path& parent,
+                                                const std::filesystem::path& child)
+  {
+    return parent.parent_path() / child.filename();
   }
 
 } // namespace cs

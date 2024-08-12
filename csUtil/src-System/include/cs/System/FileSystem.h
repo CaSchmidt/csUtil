@@ -75,4 +75,7 @@ namespace cs {
 
   CS_UTIL_EXPORT std::filesystem::directory_iterator makeDirIter(const std::filesystem::path& p);
 
+  CS_UTIL_EXPORT std::filesystem::path reparent(const std::filesystem::path& parent,
+                                                const std::filesystem::path& child);
+
 } // namespace cs
