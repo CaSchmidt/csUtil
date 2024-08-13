@@ -215,7 +215,7 @@ namespace cs {
   inline bool intersects(const Interval<T>& a, const Interval<T>& b,
                          const T tol = 0)
   {
-    const Interval<T> intv = intersect(a, b);
+    const Interval<T> intv = intersect<T,SANITY_CHECK>(a, b);
 
     return intv.range() >= tol;
   }
