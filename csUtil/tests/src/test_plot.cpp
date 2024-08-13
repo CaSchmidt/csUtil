@@ -33,6 +33,11 @@ namespace test_csv {
       values.reserve(INIT_SIZE);
     }
 
+    bool isEmpty() const
+    {
+      return name.empty()  ||  values.empty();
+    }
+
     template<typename Func>
     inline void apply(Func func)
     {
@@ -55,13 +60,15 @@ namespace test_csv {
     return std::find(list.cbegin(), list.cend(), value) != list.cend();
   }
 
-  void makeTime(Column& column)
+  Column makeTime(Column column)
   {
     column.name = "Time";
     column.unit = "s";
     column.apply([](double& value) -> void {
       value /= 1000;
     });
+
+    return column;
   }
 
   void print(const Column& column)
@@ -104,17 +111,17 @@ namespace test_csv {
       const std::string  line = reader.getLine(file);
       const StringList fields = cs::split(line, SEP, cs::SplitFlag::Trim);
 
+      if( !columns.empty()  &&  fields.size() != columns.size() ) {
+        cs::printerrln("ERROR: Ignoring line % due to invalid number of columns!", lineno);
+        continue;
+      }
+
       if( lineno == LINE_NAME ) {
         for(const std::string& field : fields) {
           columns.push_back(Column(field));
         }
 
       } else if( lineno == LINE_UNIT ) {
-        if( fields.size() != columns.size() ) {
-          cs::printerrln("ERROR: Invalid number of columns at line %!", lineno);
-          return Series();
-        }
-
         auto colIter = columns.begin();
         for(const std::string& field : fields) {
           colIter->unit = field;
@@ -122,11 +129,6 @@ namespace test_csv {
         }
 
       } else if( lineno >= LINE_VALUE ) {
-        if( fields.size() != columns.size() ) {
-          cs::printerrln("ERROR: Invalid number of columns at line %!", lineno);
-          return Series();
-        }
-
         auto colIter = columns.begin();
         for(const std::string& field : fields) {
           colIter->values.push_back(cs::toValue<double>(field));
@@ -136,14 +138,12 @@ namespace test_csv {
       }
     } // while( !file.atEnd() )
 
-    makeTime(columns.front());
-
     // Debug
     print(columns);
 
-    const Column time = cs::takeFirst(columns);
+    const Column time = makeTime(cs::takeIndex(columns, 0));
 
-    const StringList want{"Motordrehzahl", "Fahrzeuggeschwindigkeit", "Zuendwinkel Zylinder 1"};
+    const StringList want{"Motordrehzahl", "Fahrzeuggeschwindigkeit", "Zündwinkel Zylinder 1"};
 
     Series result;
     for(const Column& column : columns) {
