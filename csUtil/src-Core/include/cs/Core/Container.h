@@ -171,6 +171,34 @@ namespace cs {
     return result;
   }
 
+  // takeIndex() Element of Container... /////////////////////////////////////
+
+  template<typename C>
+  inline typename C::value_type takeIndex(C& container,
+                                          const typename C::iterator::difference_type index,
+                                          const typename C::value_type defValue = typename C::value_type{})
+  {
+    using diff_type = typename C::iterator::difference_type;
+
+    constexpr diff_type ZERO = 0;
+
+    // TODO: Account for difference_type vs. size_type signedness?
+    if( index < ZERO  ||  index >= static_cast<diff_type>(container.size()) ) {
+      return defValue;
+    }
+
+    typename C::value_type result;
+    try {
+      auto iterIndex = std::next(container.begin(), index);
+      result = std::move(*iterIndex);
+      container.erase(iterIndex);
+    } catch(...) {
+      return defValue;
+    }
+
+    return result;
+  }
+
   // List (extracted) Elements of Container... ///////////////////////////////
 
   template<template<typename ...> typename C, typename IterT, typename Extract>
@@ -183,9 +211,11 @@ namespace cs {
 
     using Sequence = C<extract_type>;
 
+    constexpr std::size_t ZERO = 0;
+
     const std::size_t count = std::max<diff_type>(0, std::distance(first, last));
 
-    if( count == 0 ) {
+    if( count == ZERO ) {
       return Sequence();
     }
 
