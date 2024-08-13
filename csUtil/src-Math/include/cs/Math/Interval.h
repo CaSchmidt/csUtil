@@ -33,7 +33,6 @@
 
 #include <algorithm>
 
-#include <cs/Math/Compare.h>
 #include <cs/Core/Constants.h>
 
 namespace cs {
@@ -44,9 +43,13 @@ namespace cs {
 
     // Assignment ////////////////////////////////////////////////////////////
 
-    Interval(const value_type& _begin = 0, const value_type& _end = 0) noexcept
-      : begin{_begin}
-      , end{_end}
+    /*
+     * Bounded interval: [begin, end]
+     * Defaults to invalid null-interval.
+     */
+    Interval(const value_type begin = 0, const value_type end = 0) noexcept
+      : begin{begin}
+      , end{end}
     {
     }
 
@@ -73,6 +76,23 @@ namespace cs {
       return range() > k::ZERO;
     }
 
+    inline value_type center() const
+    {
+      return (begin + end)/k::TWO;
+    }
+
+    inline value_type radius() const
+    {
+      return (end - begin)/k::TWO;
+    }
+
+    /*
+     * cf. https://en.wikipedia.org/wiki/Interval_(mathematics)#Definitions_and_terminology
+     *
+     * diameter, length, measure, range, size, width
+     *
+     * NOTE: range() may return negative values to indicate invalid intervals!
+     */
     inline value_type range() const
     {
       return end - begin;
@@ -80,15 +100,14 @@ namespace cs {
 
     // Fixes /////////////////////////////////////////////////////////////////
 
-    inline void adjust(const value_type& range = Konst<value_type>::ONE)
+    inline void adjust(const value_type range = Konst<value_type>::ONE)
     {
-      const value_type hrange = range/k::TWO;
-      if( begin == end ) {
-        begin -= hrange;
-        end   += hrange;
-      } else if( end < begin ) {
-        begin = -hrange;
-        end   = +hrange;
+      if( isEmpty() ) {
+        const value_type c = center();
+        const value_type r = range/k::TWO;
+
+        begin = c - r;
+        end   = c + r;
       }
     }
 
@@ -107,16 +126,16 @@ namespace cs {
      * then clamping the normalized interval to [0,1].
      */
     inline Interval subset(const Interval& other,
-                           const value_type& norm = Konst<value_type>::ONE)
+                           const value_type norm = Konst<value_type>::ONE)
     {
       if( !isValid()  ||  !other.isValid()  ||  norm <= k::ZERO ) {
-        return Interval{};
+        return Interval();
       }
 
       const value_type from = std::clamp<value_type>(other.begin/norm, 0, 1);
       const value_type   to = std::clamp<value_type>(other.end/norm, 0, 1);
 
-      return Interval{begin + from*range(), begin + to*range()};
+      return Interval(begin + from*range(), begin + to*range());
     }
 
     // Update ////////////////////////////////////////////////////////////////
@@ -127,7 +146,7 @@ namespace cs {
       end   = k::MIN;
     }
 
-    inline void update(const value_type& x)
+    inline void update(const value_type x)
     {
       if( x < begin ) {
         begin = x;
@@ -170,30 +189,41 @@ namespace cs {
   {
     if constexpr( SANITY_CHECK ) {
       if( !a.isValid()  ||  !b.isValid() ) {
-        return Interval<T>{};
+        /*
+         * NOTE:
+         * Intentionally return an Interval<> with negative range() to prevent
+         * intersects() to consider a default constructed Interval<> as
+         * intersecting at tol == 0.
+         */
+        return Interval<T>(1, 0);
       }
     }
 
     const T begin = std::max(a.begin, b.begin);
     const T   end = std::min(a.end, b.end);
 
-    return Interval<T>{begin, end};
+    return Interval<T>(begin, end); // return possibly empty Interval<>
+  }
+
+  template<typename T>
+  inline Interval<T> operator&(const Interval<T>& a, const Interval<T>& b)
+  {
+    return intersect<T,true>(a, b);
   }
 
   template<typename T, bool SANITY_CHECK = true>
   inline bool intersects(const Interval<T>& a, const Interval<T>& b,
-                         const T& tol = Konst<T>::ZERO)
+                         const T tol = 0)
   {
-    if constexpr( SANITY_CHECK ) {
-      if( !a.isValid()  ||  !b.isValid() ) {
-        return false;
-      }
-    }
+    const Interval<T> intv = intersect(a, b);
 
-    const T begin = std::max(a.begin, b.begin);
-    const T   end = std::min(a.end, b.end);
+    return intv.range() >= tol;
+  }
 
-    return Compare<T>::less_equal(begin, end, tol);
+  template<typename T>
+  inline bool operator&&(const Interval<T>& a, const Interval<T>& b)
+  {
+    return intersects<T,true>(a, b, 0);
   }
 
   // Union ///////////////////////////////////////////////////////////////////
@@ -202,13 +232,19 @@ namespace cs {
   inline Interval<T> unite(const Interval<T>& a, const Interval<T>& b)
   {
     if( !intersects<T,SANITY_CHECK>(a, b, 0) ) {
-      return Interval<T>{};
+      return Interval<T>();
     }
 
     const T begin = std::min(a.begin, b.begin);
     const T   end = std::max(a.end, b.end);
 
-    return Interval<T>{begin, end};
+    return Interval<T>(begin, end);
+  }
+
+  template<typename T>
+  inline Interval<T> operator|(const Interval<T>& a, const Interval<T>& b)
+  {
+    return unite<T,true>(a, b);
   }
 
   template<typename T, bool SANITY_CHECK = true>
@@ -216,14 +252,20 @@ namespace cs {
   {
     if constexpr( SANITY_CHECK ) {
       if( !a.isValid()  ||  !b.isValid() ) {
-        return Interval<T>{};
+        return Interval<T>();
       }
     }
 
     const T begin = std::min(a.begin, b.begin);
     const T   end = std::max(a.end, b.end);
 
-    return Interval<T>{begin, end};
+    return Interval<T>(begin, end);
+  }
+
+  template<typename T>
+  inline Interval<T> operator^(const Interval<T>& a, const Interval<T>& b)
+  {
+    return uniteBounds<T,true>(a, b);
   }
 
 } // namespace cs

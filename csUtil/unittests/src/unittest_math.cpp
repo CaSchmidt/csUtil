@@ -5,6 +5,7 @@
 
 #include <cs/Core/Constants.h>
 #include <cs/Math/Compare.h>
+#include <cs/Math/Interval.h>
 #include <cs/Math/Saturate.h>
 
 namespace test_decomposition {
@@ -50,6 +51,68 @@ namespace test_exponentiation {
   }
 
 }
+
+namespace test_interval {
+
+  TEMPLATE_TEST_CASE("Interval operations & queries.", "[interval]", double, float) {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    using value_type = TestType;
+    using   Interval = cs::Interval<value_type>;
+
+    const Interval intv12(1, 2);
+    const Interval intv23(2, 3);
+    const Interval intv34(3, 4);
+
+    {
+      constexpr value_type C = 1.5;
+      constexpr value_type R = 0.5;
+
+      REQUIRE( intv12.center() == C );
+      REQUIRE( intv12.radius() == R );
+    }
+
+    { // Intersection
+      constexpr value_type TOL = 0.5;
+
+      const bool isIsect1223 = intv12  &&  intv23;
+      REQUIRE( isIsect1223 );
+
+      const bool isIsect1234 = intv12  &&  intv34;
+      REQUIRE( !isIsect1234 );
+
+      REQUIRE(  cs::intersects(intv12, Interval(1.5, 3), TOL) );
+      REQUIRE( !cs::intersects(intv12, Interval(1.75, 3), TOL) );
+      REQUIRE( !cs::intersects(intv12, intv23, TOL) );
+
+      REQUIRE( !cs::intersects(intv12, Interval()) );
+    }
+
+    { // Union
+      constexpr value_type TWO = 2;
+
+      const Interval u1223 = intv12 | intv23;
+      REQUIRE( u1223.range() == TWO );
+
+      const Interval u1234 = intv12 | intv34;
+      REQUIRE( !u1234.isValid() );
+
+      const Interval u122300 = u1223 | Interval();
+      REQUIRE( !u122300.isValid() );
+    }
+
+    { // Bounding Interval
+      const value_type THREE = 3;
+
+      const Interval b1234 = intv12 ^ intv34;
+      REQUIRE( b1234.range() == THREE );
+
+      const Interval b123400 = b1234 ^ Interval();
+      REQUIRE( !b123400.isValid() );
+    }
+  }
+
+} // namespace test_interval
 
 namespace test_rounding {
 
