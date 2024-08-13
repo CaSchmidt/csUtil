@@ -123,7 +123,11 @@ namespace cs {
   CS_UTIL_EXPORT std::filesystem::path reparent(const std::filesystem::path& parent,
                                                 const std::filesystem::path& child)
   {
-    return parent.parent_path() / child.filename();
+    return isFile(parent)
+        ? parent.parent_path() / child.filename()
+        : isDirectory(parent)
+          ? parent / child.filename()
+          : std::filesystem::path{};
   }
 
 } // namespace cs
