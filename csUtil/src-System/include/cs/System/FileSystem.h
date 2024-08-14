@@ -70,6 +70,8 @@ namespace cs {
 
   CS_UTIL_EXPORT bool isFile(const std::filesystem::path& p);
 
+  CS_UTIL_EXPORT std::chrono::system_clock::time_point lastWriteTime(const std::filesystem::path& p);
+
   CS_UTIL_EXPORT PathList list(const std::filesystem::path& p,
                                const PathListFlags flags = PathListFlag::None);
 

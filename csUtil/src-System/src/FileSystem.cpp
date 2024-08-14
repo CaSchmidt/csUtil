@@ -31,11 +31,14 @@
 
 #include "cs/System/FileSystem.h"
 
+#include "cs/System/Time.h"
+
 namespace cs {
 
   ////// Private /////////////////////////////////////////////////////////////
 
-  namespace fs = std::filesystem;
+  namespace chr = std::chrono;
+  namespace  fs = std::filesystem;
 
   namespace impl_fs {
 
@@ -86,6 +89,23 @@ namespace cs {
   {
     std::error_code ec;
     return !p.empty()  &&  fs::is_regular_file(p, ec);
+  }
+
+  CS_UTIL_EXPORT chr::system_clock::time_point lastWriteTime(const fs::path& p)
+  {
+    constexpr auto ERROR_VALUE = chr::system_clock::time_point{};
+
+    if( p.empty() ) {
+      return ERROR_VALUE;
+    }
+
+    std::error_code ec;
+    const chr::file_clock::time_point filtim = fs::last_write_time(p, ec);
+    if( ec != std::error_code{} ) {
+      return ERROR_VALUE;
+    }
+
+    return toSystemTime<chr::file_clock>(filtim);
   }
 
   CS_UTIL_EXPORT PathList list(const fs::path& p, const PathListFlags flags)
