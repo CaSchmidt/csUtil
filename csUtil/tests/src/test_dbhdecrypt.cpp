@@ -15,12 +15,13 @@
 #include <cs/Crypto/Hash.h>
 #include <cs/IO/File.h>
 #include <cs/Math/Numeric.h>
+#include <cs/System/FileSystem.h>
 #include <cs/Text/PrintUtil.h>
 
 #pragma warning (disable : 4996)
 
-namespace chrn = std::chrono;
-namespace fs   = std::filesystem;
+namespace chr = std::chrono;
+namespace  fs = std::filesystem;
 
 struct PlainInfo {
   PlainInfo(const std::string& key = std::string(),
@@ -104,19 +105,9 @@ PlainInfo decrypt(const std::string& keystr, const cs::Buffer& cipher)
 
 std::string fileModificationTime(const fs::path& p)
 {
-  std::error_code ec;
-  const fs::file_time_type file_time = fs::last_write_time(p, ec);
-  if( ec ) {
-    return std::string();
-  }
-
-#ifdef __GNUG__
-  const auto file_time_sys = chrn::file_clock::to_sys(file_time);
-#else
-  const auto file_time_sys = chrn::clock_cast<chrn::system_clock>(file_time);
-#endif
-  const auto file_time_loc = chrn::current_zone()->to_local(file_time_sys);
-  std::string s = std::format("{0:%d}-{0:%m}-{0:%Y} {0:%H}:{0:%M}:{0:%S}", file_time_loc);
+  const chr::system_clock::time_point filtim_sys = cs::lastWriteTime(p);
+  const auto filtim_loc = chr::current_zone()->to_local(filtim_sys);
+  std::string s = std::format("{0:%d}-{0:%m}-{0:%Y} {0:%H}:{0:%M}:{0:%S}", filtim_loc);
   const std::size_t posDot = s.rfind('.');
   if( posDot != std::string::npos ) {
     s.resize(posDot);
