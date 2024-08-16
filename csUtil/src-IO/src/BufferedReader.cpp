@@ -40,6 +40,8 @@ namespace cs {
 
   ////// public //////////////////////////////////////////////////////////////
 
+  static_assert( std::is_unsigned_v<BufferedReader::size_type> );
+
   BufferedReader::BufferedReader(const size_type sizeBuffer) noexcept
     : _buffer{}
   {
