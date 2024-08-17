@@ -73,7 +73,7 @@ namespace cs {
 
     const std::string text = readTextFile(path);
     if( text.empty() ) {
-      return std::list<std::string>{};
+      return std::list<std::string>();
     }
 
     const SplitFlags split_flags = flags.testAny(LineFlag::Trim)
@@ -103,16 +103,21 @@ namespace cs {
 
     File file;
     if( !file.open(path) ) {
-      return std::string{};
+      return std::string();
     }
     const Buffer buffer = file.readAll();
     file.close();
 
     if( buffer.empty() ) {
-      return std::string{};
+      return std::string();
     }
 
-    const std::string text(reinterpret_cast<const char*>(buffer.data()), buffer.size());
+    std::string text;
+    try {
+      text.assign(reinterpret_cast<const char*>(buffer.data()), buffer.size());
+    } catch( ... ) {
+      return std::string();
+    }
 
     if( ok != nullptr ) {
       *ok = true;
