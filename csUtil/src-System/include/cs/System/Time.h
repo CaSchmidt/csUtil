@@ -40,6 +40,8 @@
 
 namespace cs {
 
+  ////// std::chrono Helpers /////////////////////////////////////////////////
+
   template<typename, typename = void>
   struct is_clock_to_sys : std::false_type {};
 
@@ -63,6 +65,58 @@ namespace cs {
     const std::chrono::utc_clock::time_point utctim = ClockT::to_utc(clktim);
     return std::chrono::utc_clock::to_sys(utctim);
   }
+
+  ////// Time Value class ////////////////////////////////////////////////////
+
+  class CS_UTIL_EXPORT TimeVal {
+  public:
+    using microseconds = std::chrono::duration<int64_t,std::micro>;
+    using   value_type = microseconds::rep;
+
+    explicit TimeVal(const value_type value = 0) noexcept;
+
+    explicit TimeVal(const std::chrono::seconds secs,
+                     const std::chrono::microseconds usecs) noexcept;
+
+    TimeVal(const TimeVal&) noexcept = default;
+    TimeVal& operator=(const TimeVal&) noexcept = default;
+
+    TimeVal(TimeVal&&) noexcept = default;
+    TimeVal& operator=(TimeVal&&) noexcept = default;
+
+    ~TimeVal() noexcept = default;
+
+    TimeVal& operator-=(const TimeVal& other);
+    TimeVal& operator+=(const TimeVal& other);
+
+    static bool isValid(const std::chrono::seconds secs,
+                        const std::chrono::microseconds usecs);
+    bool isValid() const;
+
+    std::chrono::seconds secs() const;
+    std::chrono::microseconds usecs() const;
+
+    value_type value() const;
+
+  private:
+    microseconds _value{};
+  };
+
+  inline TimeVal operator-(const TimeVal& a, const TimeVal& b)
+  {
+    TimeVal result(a);
+    result -= b;
+    return result;
+  }
+
+  inline TimeVal operator+(const TimeVal& a, const TimeVal& b)
+  {
+    TimeVal result(a);
+    result += b;
+    return result;
+  }
+
+  ////// Useful Time Functions ///////////////////////////////////////////////
 
   CS_UTIL_EXPORT void sleep(const unsigned int secs);
 

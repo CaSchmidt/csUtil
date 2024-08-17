@@ -36,6 +36,8 @@
 
 namespace cs {
 
+  namespace chr = std::chrono;
+
   ////// Private /////////////////////////////////////////////////////////////
 
   namespace impl_time {
@@ -43,42 +45,103 @@ namespace cs {
     template<typename Clock, typename Duration>
     inline uint64_t getTickCount()
     {
-      const Duration now = std::chrono::duration_cast<Duration>(Clock::now().time_since_epoch());
+      const Duration now = chr::duration_cast<Duration>(Clock::now().time_since_epoch());
 
       return static_cast<uint64_t>(now.count());
     }
 
   } // namespace impl_time
 
+  ////// TimeVal - public ////////////////////////////////////////////////////
+
+  TimeVal::TimeVal(const value_type value) noexcept
+    : _value{value}
+  {
+  }
+
+  TimeVal::TimeVal(const std::chrono::seconds secs,
+                   const std::chrono::microseconds usecs) noexcept
+    : _value{microseconds::zero()}
+  {
+    if( isValid(secs, usecs) ) {
+      _value += chr::duration_cast<microseconds>(secs);
+      _value += chr::duration_cast<microseconds>(usecs);
+    }
+  }
+
+  TimeVal& TimeVal::operator-=(const TimeVal& other)
+  {
+    _value -= other._value;
+    return *this;
+  }
+
+  TimeVal& TimeVal::operator+=(const TimeVal& other)
+  {
+    _value += other._value;
+    return *this;
+  }
+
+  bool TimeVal::isValid(const std::chrono::seconds secs,
+                        const std::chrono::microseconds usecs)
+  {
+    constexpr auto    ZERO_s  = chr::seconds::zero();
+    constexpr auto    ZERO_us = chr::microseconds::zero();
+    constexpr auto MILLION_us = chr::microseconds{1000000};
+
+    return secs >= ZERO_s  &&  usecs >= ZERO_us  &&  usecs < MILLION_us;
+  }
+
+  bool TimeVal::isValid() const
+  {
+    return _value >= microseconds::zero();
+  }
+
+  std::chrono::seconds TimeVal::secs() const
+  {
+    return chr::duration_cast<chr::seconds>(_value);
+  }
+
+  std::chrono::microseconds TimeVal::usecs() const
+  {
+    const chr::seconds secs = chr::duration_cast<chr::seconds>(_value);
+
+    return chr::duration_cast<chr::microseconds>(_value) - chr::duration_cast<chr::microseconds>(secs);
+  }
+
+  TimeVal::value_type TimeVal::value() const
+  {
+    return _value.count();
+  }
+
   ////// Public //////////////////////////////////////////////////////////////
 
   CS_UTIL_EXPORT void sleep(const unsigned int secs)
   {
-    std::this_thread::sleep_for(std::chrono::seconds(secs));
+    std::this_thread::sleep_for(chr::seconds(secs));
   }
 
   CS_UTIL_EXPORT void msleep(const unsigned int millisecs)
   {
-    std::this_thread::sleep_for(std::chrono::milliseconds(millisecs));
+    std::this_thread::sleep_for(chr::milliseconds(millisecs));
   }
 
   CS_UTIL_EXPORT void usleep(const unsigned int microsecs)
   {
-    std::this_thread::sleep_for(std::chrono::microseconds(microsecs));
+    std::this_thread::sleep_for(chr::microseconds(microsecs));
   }
 
   CS_UTIL_EXPORT uint64_t tickCountMs()
   {
-    using    Clock = std::chrono::steady_clock;
-    using Duration = std::chrono::milliseconds;
+    using    Clock = chr::steady_clock;
+    using Duration = chr::milliseconds;
 
     return impl_time::getTickCount<Clock,Duration>();
   }
 
   CS_UTIL_EXPORT uint64_t tickCountUs()
   {
-    using    Clock = std::chrono::steady_clock;
-    using Duration = std::chrono::microseconds;
+    using    Clock = chr::steady_clock;
+    using Duration = chr::microseconds;
 
     return impl_time::getTickCount<Clock,Duration>();
   }

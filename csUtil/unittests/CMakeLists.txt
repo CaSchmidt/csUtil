@@ -100,6 +100,7 @@ cs_unittest(unittest_statistics src/unittest_statistics.cpp)
 cs_unittest(unittest_stringutil src/unittest_stringutil.cpp)
 cs_unittest(unittest_stringvalue src/unittest_stringvalue.cpp)
 cs_unittest(unittest_text src/unittest_text.cpp)
+cs_unittest(unittest_time src/unittest_time.cpp)
 cs_unittest(unittest_traits src/unittest_traits.cpp)
 cs_unittest(unittest_trie src/unittest_trie.cpp)
 
