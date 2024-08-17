@@ -51,10 +51,47 @@ namespace cs {
     virtual void logText(const std::u8string_view& msg) const = 0;
 
     virtual void logWarning(const std::u8string_view& msg) const = 0;
-    virtual void logWarning(const std::size_t lineno, const std::u8string_view& sv) const = 0;
+    virtual void logWarning(const std::size_t lineno, const std::u8string_view& msg) const = 0;
 
     virtual void logError(const std::u8string_view& msg) const = 0;
     virtual void logError(const std::size_t lineno, const std::u8string_view& msg) const = 0;
+
+    // Formatted Logging (requires PrintUtil.h & StringUtil.h) ///////////////
+
+    template<typename ...Args>
+    inline void logText(const std::string_view& fmt, Args&&... args)
+    {
+      const std::string msg = sprint(fmt, std::forward<Args>(args)...);
+      logText(toUtf8StringView(msg));
+    }
+
+    template<typename ...Args>
+    inline void logWarning(const std::string_view& fmt, Args&&... args)
+    {
+      const std::string msg = sprint(fmt, std::forward<Args>(args)...);
+      logWarning(toUtf8StringView(msg));
+    }
+
+    template<typename ...Args>
+    inline void logWarning(const std::size_t lineno, const std::string_view& fmt, Args&&... args)
+    {
+      const std::string msg = sprint(fmt, std::forward<Args>(args)...);
+      logWarning(lineno, toUtf8StringView(msg));
+    }
+
+    template<typename ...Args>
+    inline void logError(const std::string_view& fmt, Args&&... args)
+    {
+      const std::string msg = sprint(fmt, std::forward<Args>(args)...);
+      logError(toUtf8StringView(msg));
+    }
+
+    template<typename ...Args>
+    inline void logError(const std::size_t lineno, const std::string_view& fmt, Args&&... args)
+    {
+      const std::string msg = sprint(fmt, std::forward<Args>(args)...);
+      logError(lineno, toUtf8StringView(msg));
+    }
 
   protected:
     AbstractLogger() noexcept;
