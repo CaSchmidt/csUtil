@@ -32,6 +32,7 @@
 #include <cstdio>
 #include <cstdlib>
 
+#include <cs/Core/ByteArray.h>
 #include <cs/IO/BufferedReader.h>
 #include <cs/IO/File.h>
 #include <cs/System/FileSystem.h>
@@ -48,6 +49,7 @@
 struct LineInfo {
   LineInfo()
   {
+    data.fill(0);
   }
 
   bool isValid() const
@@ -56,9 +58,14 @@ struct LineInfo {
   }
 
   std::string device;
+  uint8_t     fdflags{0};
   canid_t     id{0};
   bool        is_canfd{false};
+  bool        is_rtr{false};
+  uint8_t     len{0};
   cs::TimeVal time{-1};
+
+  cs::ByteArray<CANFD_MAX_DLEN> data;
 };
 
 namespace parser {
@@ -68,21 +75,73 @@ namespace parser {
   using      seconds_t = chr::seconds::rep;
   using microseconds_t = chr::microseconds::rep;
 
-  using size_type = std::string::size_type;
+  using ConstStringIter = std::string::const_iterator;
 
-  constexpr size_type NPOS = std::string::npos;
-  constexpr size_type  ONE = 1;
-
-  std::string_view make_view(const std::string& str,
-                             const size_type beg, const size_type end)
+  constexpr auto lambda_is_space()
   {
-    return !str.empty()  &&  beg <= end  &&  end <= str.size()
-        ? std::string_view(str.data() + beg, end - beg)
-        : std::string_view();
+    return [](const char ch) -> bool {
+      return ch == ' ';
+    };
+  }
+
+  bool parseDevice(std::string& result, ConstStringIter& first, const ConstStringIter& last,
+                   const cs::LoggerPtr& logger, const std::size_t lineno)
+  {
+    const ConstStringIter begDev = std::find_if_not(first, last, lambda_is_space());
+    if( begDev == last ) {
+      logger->logError(lineno, u8"No device found!");
+      return false;
+    }
+
+    const ConstStringIter endDev = std::find(begDev, last, ' ');
+    if( endDev == last ) {
+      logger->logError(lineno, u8"Invalid device separator!");
+      return false;
+    }
+
+    first = endDev;
+
+    result.assign(begDev, endDev);
+
+    return true;
+  }
+
+  bool parseId(canid_t& result, ConstStringIter& first, const ConstStringIter& last,
+               const cs::LoggerPtr& logger, const std::size_t lineno)
+  {
+    const ConstStringIter begId = std::find_if_not(first, last, lambda_is_space());
+    if( begId == last ) {
+      logger->logError(lineno, u8"No ID found!");
+      return false;
+    }
+
+    const ConstStringIter endId = std::find(begId, last, '#');
+    if( endId == last ) {
+      logger->logError(lineno, u8"Invalid ID separator!");
+      return false;
+    }
+
+    bool ok = false;
+    const std::string_view idStr(begId, endId);
+    result = cs::toValue<canid_t>(idStr, &ok, 16);
+    if( !ok ) {
+      logger->logError(lineno, "Invalid ID string \"%\"!", idStr);
+      return false;
+    }
+
+    first = endId;
+    ++first; // NOTE: consider '#' part of the ID
+
+    return true;
   }
 
   cs::TimeVal parseTime(const std::string_view& str)
   {
+    using size_type = std::string_view::size_type;
+
+    constexpr size_type NPOS = std::string_view::npos;
+    constexpr size_type  ONE = 1;
+
     const cs::TimeVal ERROR_VAL(-1);
 
     const size_type idxDot = str.find('.');
@@ -105,78 +164,84 @@ namespace parser {
     return cs::TimeVal(secs, usecs);
   }
 
-  LineInfo parseLine(const cs::LoggerPtr& logger,
-                     const std::size_t lineno, const std::string& line)
+  bool parseTime(cs::TimeVal& result, ConstStringIter& first, const ConstStringIter& last,
+                 const cs::LoggerPtr& logger, const std::size_t lineno)
+  {
+    if( *first != '(' ) {
+      logger->logError(lineno, u8"Time stamp not found!");
+      return false;
+    }
+
+    ++first; // parse '('
+
+    const ConstStringIter endTim = std::find(first, last, ')');
+    if( endTim == last ) {
+      logger->logError(lineno, u8"Incomplete time stamp!");
+      return false;
+    }
+
+    const std::string_view timeStr(first, endTim);
+    result = parseTime(timeStr);
+    if( !result.isValid() ) {
+      logger->logError(lineno, "Invalid time stamp \"%\"!", timeStr);
+      return false;
+    }
+
+    first = endTim;
+    ++first; // parse ')'
+
+    return true;
+  }
+
+  LineInfo parseLine(ConstStringIter first, const ConstStringIter& last,
+                     const cs::LoggerPtr& logger, const std::size_t lineno)
   {
     LineInfo info;
-    bool ok = false;
 
     // (0) Sanity Check ////////////////////////////////////////////////////////
 
-    if( line.empty() ) {
+    if( first == last ) {
       logger->logWarning(lineno, u8"Ignoring empty line!");
       return LineInfo();
     }
 
-    if( line[0] != '(' ) {
-      logger->logWarning(lineno, "Ignoring line with invalid start sequence \"%\"!", line[0]);
+    if( *first != '(' ) {
+      logger->logWarning(lineno, "Ignoring line with invalid start sequence \"%\"!", *first);
       return LineInfo();
     }
 
     // (1) Time Stamp //////////////////////////////////////////////////////////
 
-    const size_type begTim = 1;
-    const size_type endTim = line.find(')', begTim);
-    if( endTim == NPOS ) {
-      logger->logError(lineno, u8"Incomplete time stamp!");
-      return LineInfo();
-    }
-
-    const std::string_view timeStr = make_view(line, begTim, endTim);
-    info.time = parseTime(timeStr);
-    if( !info.time.isValid() ) {
-      logger->logError(lineno, "Invalid time stamp \"%\"!", timeStr);
+    if( !parseTime(info.time, first, last, logger, lineno) ) {
       return LineInfo();
     }
 
     // (2) Device //////////////////////////////////////////////////////////////
 
-    const size_type begDev = line.find_first_not_of(' ', endTim + ONE);
-    if( begDev == NPOS ) {
-      logger->logError(lineno, u8"No device found!");
+    if( !parseDevice(info.device, first, last, logger, lineno) ) {
       return LineInfo();
     }
-
-    const size_type endDev = line.find(' ', begDev + ONE);
-    if( endDev == NPOS ) {
-      logger->logError(lineno, u8"Invalid device separator!");
-      return LineInfo();
-    }
-
-    info.device = line.substr(begDev, endDev - begDev);
 
     // (3) Message ID ////////////////////////////////////////////////////////
 
-    const size_type begId = line.find_first_not_of(' ', endDev + ONE);
-    if( begId == NPOS ) {
-      logger->logError(lineno, u8"No ID found!");
+    if( !parseId(info.id, first, last, logger, lineno) ) {
       return LineInfo();
     }
 
-    const size_type endId = line.find('#', begId + ONE);
-    if( endId == NPOS ) {
-      logger->logError(lineno, u8"Invalid ID separator!");
-      return LineInfo();
-    }
+    // (4) Message Type: CAN 2.0, RTR, CAN FD ////////////////////////////////
 
-    const std::string_view idStr = make_view(line, begId, endId);
-    info.id = cs::toValue<canid_t>(idStr, &ok, 16);
-    if( !ok ) {
-      logger->logError(lineno, "Invalid ID string \"%\"!", idStr);
-      return LineInfo();
+    // (5) Parse Data ////////////////////////////////////////////////////////
+
+    if( !info.is_rtr ) {
     }
 
     return info;
+  }
+
+  LineInfo parseLine(const cs::LoggerPtr& logger,
+                     const std::size_t lineno, const std::string& line)
+  {
+    return parseLine(line.begin(), line.end(), logger, lineno);
   }
 
 } // namespace parser
@@ -212,7 +277,7 @@ int main(int /*argc*/, char **argv)
                   info.time.secs(), info.time.usecs(), info.device, cs::hexf(info.id));
     }
 #endif
-  }
+  } // For Each Line
 
   return EXIT_SUCCESS;
 }
