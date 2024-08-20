@@ -32,7 +32,6 @@
 #pragma once
 
 #include <iostream>
-#include <sstream>
 #include <syncstream>
 
 #include <cs/Text/Print.h>
@@ -44,13 +43,13 @@ namespace cs {
   template<typename ...Args>
   void print(std::ostream& stream, const std::string_view& fmt, Args&&... args)
   {
-    print<char>(stream, fmt, std::forward<Args>(args)...);
+    impl_print::print<char,Args...>(stream, fmt, std::forward<Args>(args)...);
   }
 
   template<typename ...Args>
   void println(std::ostream& stream, const std::string_view& fmt, Args&&... args)
   {
-    println<char>(stream, fmt, std::forward<Args>(args)...);
+    impl_print::println<char,Args...>(stream, fmt, std::forward<Args>(args)...);
   }
 
   // Print to synchronized standard streams //////////////////////////////////
@@ -59,60 +58,42 @@ namespace cs {
   void print(const std::string_view& fmt, Args&&... args)
   {
     std::osyncstream syncstrm(std::cout);
-    print(syncstrm, fmt, std::forward<Args>(args)...);
+    impl_print::print<char,Args...>(syncstrm, fmt, std::forward<Args>(args)...);
   }
 
   template<typename ...Args>
   void println(const std::string_view& fmt, Args&&... args)
   {
     std::osyncstream syncstrm(std::cout);
-    println(syncstrm, fmt, std::forward<Args>(args)...);
+    impl_print::println<char,Args...>(syncstrm, fmt, std::forward<Args>(args)...);
   }
 
   template<typename ...Args>
   void printerr(const std::string_view& fmt, Args&&... args)
   {
     std::osyncstream syncstrm(std::cerr);
-    print(syncstrm, fmt, std::forward<Args>(args)...);
+    impl_print::print<char,Args...>(syncstrm, fmt, std::forward<Args>(args)...);
   }
 
   template<typename ...Args>
   void printerrln(const std::string_view& fmt, Args&&... args)
   {
     std::osyncstream syncstrm(std::cerr);
-    println(syncstrm, fmt, std::forward<Args>(args)...);
+    impl_print::println<char,Args...>(syncstrm, fmt, std::forward<Args>(args)...);
   }
 
   template<typename ...Args>
   void printlog(const std::string_view& fmt, Args&&... args)
   {
     std::osyncstream syncstrm(std::clog);
-    print(syncstrm, fmt, std::forward<Args>(args)...);
+    impl_print::print<char,Args...>(syncstrm, fmt, std::forward<Args>(args)...);
   }
 
   template<typename ...Args>
   void printlogln(const std::string_view& fmt, Args&&... args)
   {
     std::osyncstream syncstrm(std::clog);
-    println(syncstrm, fmt, std::forward<Args>(args)...);
-  }
-
-  // Print to string - Generic implementation ////////////////////////////////
-
-  template<typename CharT, typename ...Args>
-  std::basic_string<CharT> sprint(const std::basic_string_view<CharT>& fmt, Args&&... args)
-  {
-    std::basic_ostringstream<CharT> s;
-    print<CharT>(s, fmt, std::forward<Args>(args)...);
-    return s.str();
-  }
-
-  template<typename CharT, typename ...Args>
-  std::basic_string<CharT> sprintln(const std::basic_string_view<CharT>& fmt, Args&&... args)
-  {
-    std::basic_ostringstream<CharT> s;
-    println<CharT>(s, fmt, std::forward<Args>(args)...);
-    return s.str();
+    impl_print::println<char,Args...>(syncstrm, fmt, std::forward<Args>(args)...);
   }
 
   // Print to narrow character string ////////////////////////////////////////
@@ -120,13 +101,7 @@ namespace cs {
   template<typename ...Args>
   std::string sprint(const std::string_view& fmt, Args&&... args)
   {
-    return sprint<char>(fmt, std::forward<Args>(args)...);
-  }
-
-  template<typename ...Args>
-  std::string sprintln(const std::string_view& fmt, Args&&... args)
-  {
-    return sprintln<char>(fmt, std::forward<Args>(args)...);
+    return impl_print::sprint<char,Args...>(fmt, std::forward<Args>(args)...);
   }
 
 } // namespace cs

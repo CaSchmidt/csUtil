@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include <ostream>
+#include <sstream>
 #include <utility>
 
 namespace cs {
@@ -48,32 +48,38 @@ namespace cs {
     void print(std::basic_ostream<CharT>& stream, const std::basic_string_view<CharT>& view,
                T value, Args&&... args)
     {
-      const auto hitpos = view.find(static_cast<CharT>('%'));
-      if( hitpos == std::basic_string_view<CharT>::npos ) {
-        print(stream, view);
+      constexpr auto NPOS = std::basic_string_view<CharT>::npos;
+      constexpr auto  ONE = typename std::basic_string_view<CharT>::size_type{1};
+      constexpr auto  PCT = static_cast<CharT>('%');
+
+      const auto hitpos = view.find(PCT);
+      if( hitpos == NPOS ) {
+        print<CharT>(stream, view);
         return;
       }
 
-      print(stream, view.substr(0, hitpos));
+      print<CharT>(stream, view.substr(0, hitpos));
       stream << value;
-      print(stream, view.substr(hitpos + 1), std::forward<Args>(args)...);
+      print<CharT,Args...>(stream, view.substr(hitpos + ONE), std::forward<Args>(args)...);
+    }
+
+    template<typename CharT, typename ...Args>
+    void println(std::basic_ostream<CharT>& stream, const std::basic_string_view<CharT>& fmt,
+                 Args&&... args)
+    {
+      print<CharT,Args...>(stream, fmt, std::forward<Args>(args)...);
+      stream << std::endl;
+    }
+
+    template<typename CharT, typename ...Args>
+    std::basic_string<CharT> sprint(const std::basic_string_view<CharT>& fmt,
+                                    Args&& ...args)
+    {
+      std::basic_ostringstream<CharT> stream;
+      print<CharT,Args...>(stream, fmt, std::forward<Args>(args)...);
+      return stream.str();
     }
 
   } // namespace impl_print
-
-  ////// User Interface //////////////////////////////////////////////////////
-
-  template<typename CharT, typename ...Args>
-  void print(std::basic_ostream<CharT>& stream, const std::basic_string_view<CharT>& fmt, Args&&... args)
-  {
-    impl_print::print(stream, fmt, std::forward<Args>(args)...);
-  }
-
-  template<typename CharT, typename ...Args>
-  void println(std::basic_ostream<CharT>& stream, const std::basic_string_view<CharT>& fmt, Args&&... args)
-  {
-    print(stream, fmt, std::forward<Args>(args)...);
-    stream << std::endl;
-  }
 
 } // namespace cs
