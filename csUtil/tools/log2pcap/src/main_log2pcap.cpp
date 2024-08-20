@@ -35,6 +35,7 @@
 #include <cs/Core/ByteArray.h>
 #include <cs/IO/BufferedReader.h>
 #include <cs/IO/File.h>
+#include <cs/Math/Numeric.h>
 #include <cs/System/FileSystem.h>
 #include <cs/System/Time.h>
 #include <cs/Text/PrintFormat.h>
@@ -45,6 +46,8 @@
 #include <cs/Text/TextIO.h>
 
 #include "SocketCAN.h"
+
+using LineData = cs::ByteArray<CANFD_MAX_DLEN>;
 
 struct LineInfo {
   LineInfo()
@@ -57,6 +60,7 @@ struct LineInfo {
     return !device.empty()  &&  time.isValid();
   }
 
+  LineData    data;
   std::string device;
   uint8_t     fdflags{0};
   canid_t     id{0};
@@ -64,16 +68,9 @@ struct LineInfo {
   bool        is_rtr{false};
   uint8_t     len{0};
   cs::TimeVal time{-1};
-
-  cs::ByteArray<CANFD_MAX_DLEN> data;
 };
 
 namespace parser {
-
-  namespace chr = std::chrono;
-
-  using      seconds_t = chr::seconds::rep;
-  using microseconds_t = chr::microseconds::rep;
 
   using ConstStringIter = std::string::const_iterator;
 
@@ -84,12 +81,55 @@ namespace parser {
     };
   }
 
+  bool parseData(LineInfo& result, ConstStringIter& first, const ConstStringIter& last,
+                 const cs::LoggerPtr& logger, const std::size_t lineno)
+  {
+    constexpr std::size_t TWO = 2;
+
+    result.data.fill(0);
+
+    std::size_t count = 0;
+    for(; first != last; ++count, ++first) {
+      const bool is_even = cs::isEven(count);
+
+      if( !cs::isHexDigit(*first) ) {
+        if( is_even ) {
+          return true;
+        } else {
+          logger->logError(lineno, u8"Incomplete data!");
+          return false;
+        }
+
+      } else {
+        const std::size_t idxData = count/TWO;
+        if( idxData >= result.data.size() ) {
+          logger->logError(lineno, u8"Data buffer exceeded!");
+          return false;
+        }
+
+        result.data[idxData] |= cs::fromHexChar(*first);
+        if( is_even ) {
+          result.data[idxData] <<= 4;
+        } else {
+          result.len++;
+        }
+      }
+    } // For each character
+
+    if( cs::isOdd(count) ) {
+      logger->logError(lineno, u8"Incomplete data!");
+      return false;
+    }
+
+    return true;
+  }
+
   bool parseDevice(std::string& result, ConstStringIter& first, const ConstStringIter& last,
                    const cs::LoggerPtr& logger, const std::size_t lineno)
   {
     const ConstStringIter begDev = std::find_if_not(first, last, lambda_is_space());
     if( begDev == last ) {
-      logger->logError(lineno, u8"No device found!");
+      logger->logError(lineno, u8"Missing device declaration!");
       return false;
     }
 
@@ -111,7 +151,7 @@ namespace parser {
   {
     const ConstStringIter begId = std::find_if_not(first, last, lambda_is_space());
     if( begId == last ) {
-      logger->logError(lineno, u8"No ID found!");
+      logger->logError(lineno, u8"Missing message ID!");
       return false;
     }
 
@@ -137,6 +177,11 @@ namespace parser {
 
   cs::TimeVal parseTime(const std::string_view& str)
   {
+    namespace chr = std::chrono;
+
+    using      seconds_t = chr::seconds::rep;
+    using microseconds_t = chr::microseconds::rep;
+
     using size_type = std::string_view::size_type;
 
     constexpr size_type NPOS = std::string_view::npos;
@@ -168,7 +213,7 @@ namespace parser {
                  const cs::LoggerPtr& logger, const std::size_t lineno)
   {
     if( *first != '(' ) {
-      logger->logError(lineno, u8"Time stamp not found!");
+      logger->logError(lineno, u8"Missing time stamp!");
       return false;
     }
 
@@ -189,6 +234,64 @@ namespace parser {
 
     first = endTim;
     ++first; // parse ')'
+
+    return true;
+  }
+
+  bool parseType(LineInfo& result, ConstStringIter& first, const ConstStringIter& last,
+                 const cs::LoggerPtr& logger, const std::size_t lineno)
+  {
+    constexpr auto INVALID_HEXCHAR = std::numeric_limits<cs::byte_t>::max();
+
+    result.fdflags = 0;
+    result.is_canfd = false;
+    result.is_rtr = false;
+    result.len = 0;
+
+    // (1) Message Type //////////////////////////////////////////////////////
+
+    // NOTE: No message type for empty CAN 2.0 messages!
+    if( first == last ) {
+      return true;
+    }
+
+    if(        *first == '#' ) {
+      result.is_canfd = true;
+      ++first;
+
+    } else if( *first == 'R' ) {
+      result.is_rtr = true;
+      ++first;
+
+    } else if( cs::isHexDigit(*first) ) {
+      return true;
+
+    } else {
+      logger->logError(lineno, "Invalid message type \"%\"!", *first);
+      return false;
+
+    }
+
+    // (2) Message Extra /////////////////////////////////////////////////////
+
+    if( first == last ) {
+      logger->logError(lineno, u8"Missing message extra!");
+      return false;
+    }
+
+    const uint8_t extra = cs::fromHexChar(*first);
+    if( extra == INVALID_HEXCHAR ) {
+      logger->logError(lineno, "Invalid message extra \"%\"!", *first);
+      return false;
+    }
+
+    if(        result.is_canfd ) {
+      result.fdflags = extra;
+    } else if( result.is_rtr ) {
+      result.len = extra;
+    }
+
+    ++first;
 
     return true;
   }
@@ -230,9 +333,14 @@ namespace parser {
 
     // (4) Message Type: CAN 2.0, RTR, CAN FD ////////////////////////////////
 
+    if( !parseType(info, first, last, logger, lineno) ) {
+      return LineInfo();
+    }
+
     // (5) Parse Data ////////////////////////////////////////////////////////
 
-    if( !info.is_rtr ) {
+    if( !info.is_rtr  &&  !parseData(info, first, last, logger, lineno) ) {
+      return LineInfo();
     }
 
     return info;
@@ -271,10 +379,21 @@ int main(int /*argc*/, char **argv)
       continue;
     }
 
-#if 0
-    if( lineno <= 10 ) {
-      cs::println("%: %% % %", lineno,
-                  info.time.secs(), info.time.usecs(), info.device, cs::hexf(info.id));
+#if 1
+    if( lineno <= 40 ) {
+      cs::print("%: %% % %#", lineno,
+                info.time.secs(), info.time.usecs(), info.device, cs::hexf(info.id));
+      if( info.is_canfd ) {
+        cs::print("#%", cs::toHexChar<char,true>(info.fdflags));
+      }
+      if( info.is_rtr ) {
+        cs::print("R%", cs::toHexChar<char,true>(info.len));
+      } else {
+        for(uint8_t i = 0; i < info.len; i++) {
+          cs::print("%", cs::hexf(info.data[i], true));
+        }
+      }
+      cs::println("");
     }
 #endif
   } // For Each Line
