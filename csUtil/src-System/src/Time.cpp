@@ -69,6 +69,11 @@ namespace cs {
     }
   }
 
+  TimeVal::TimeVal(const std::chrono::system_clock::time_point& t) noexcept
+    : _value{chr::duration_cast<microseconds>(t.time_since_epoch())}
+  {
+  }
+
   TimeVal& TimeVal::operator-=(const TimeVal& other)
   {
     _value -= other._value;
