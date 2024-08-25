@@ -1,6 +1,7 @@
 ### Project ##################################################################
 
 list(APPEND log2pcap_HEADERS
+  include/PCAP.h
   include/SocketCAN.h
 )
 
