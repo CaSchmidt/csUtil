@@ -45,6 +45,7 @@
 #include <cs/Text/StringValue.h>
 #include <cs/Text/TextIO.h>
 
+#include "PCAP.h"
 #include "SocketCAN.h"
 
 using LineData = cs::ByteArray<CANFD_MAX_DLEN>;
@@ -67,12 +68,15 @@ struct LineInfo {
   bool        is_canfd{false};
   bool        is_rtr{false};
   uint8_t     len{0};
+  uint8_t     len8_dlc{0};
   cs::TimeVal time{-1};
 };
 
 namespace parser {
 
   using ConstStringIter = std::string::const_iterator;
+
+  constexpr auto INVALID_HEXCHAR = std::numeric_limits<cs::byte_t>::max();
 
   constexpr auto lambda_is_space()
   {
@@ -87,6 +91,7 @@ namespace parser {
     constexpr std::size_t TWO = 2;
 
     result.data.fill(0);
+    result.len = 0;
 
     std::size_t count = 0;
     for(; first != last; ++count, ++first) {
@@ -127,6 +132,8 @@ namespace parser {
   bool parseDevice(std::string& result, ConstStringIter& first, const ConstStringIter& last,
                    const cs::LoggerPtr& logger, const std::size_t lineno)
   {
+    result.clear();
+
     const ConstStringIter begDev = std::find_if_not(first, last, lambda_is_space());
     if( begDev == last ) {
       logger->logError(lineno, u8"Missing device declaration!");
@@ -175,6 +182,28 @@ namespace parser {
     return true;
   }
 
+  bool parseRawDLC(uint8_t& result, ConstStringIter& first, const ConstStringIter& last,
+                   const cs::LoggerPtr& logger, const std::size_t lineno)
+  {
+    result = 0;
+
+    if( first == last  ||  *first != '_' ) {
+      return true;
+    }
+
+    ++first; // Skip '_'
+
+    const uint8_t raw = cs::fromHexChar(*first);
+    if( raw == INVALID_HEXCHAR ) {
+      logger->logError(lineno, "Invalid raw DLC \"%\"!", *first);
+      return false;
+    }
+
+    ++first;
+
+    return true;
+  }
+
   cs::TimeVal parseTime(const std::string_view& str)
   {
     namespace chr = std::chrono;
@@ -212,6 +241,8 @@ namespace parser {
   bool parseTime(cs::TimeVal& result, ConstStringIter& first, const ConstStringIter& last,
                  const cs::LoggerPtr& logger, const std::size_t lineno)
   {
+    result = cs::TimeVal{-1};
+
     if( *first != '(' ) {
       logger->logError(lineno, u8"Missing time stamp!");
       return false;
@@ -241,8 +272,6 @@ namespace parser {
   bool parseType(LineInfo& result, ConstStringIter& first, const ConstStringIter& last,
                  const cs::LoggerPtr& logger, const std::size_t lineno)
   {
-    constexpr auto INVALID_HEXCHAR = std::numeric_limits<cs::byte_t>::max();
-
     result.fdflags = 0;
     result.is_canfd = false;
     result.is_rtr = false;
@@ -275,8 +304,12 @@ namespace parser {
     // (2) Message Extra /////////////////////////////////////////////////////
 
     if( first == last ) {
-      logger->logError(lineno, u8"Missing message extra!");
-      return false;
+      if( result.is_rtr ) {
+        return true;
+      } else {
+        logger->logError(lineno, u8"Missing message extra!");
+        return false;
+      }
     }
 
     const uint8_t extra = cs::fromHexChar(*first);
@@ -340,6 +373,12 @@ namespace parser {
     // (5) Parse Data ////////////////////////////////////////////////////////
 
     if( !info.is_rtr  &&  !parseData(info, first, last, logger, lineno) ) {
+      return LineInfo();
+    }
+
+    // (6) Parse Raw DLC /////////////////////////////////////////////////////
+
+    if( !info.is_rtr  &&  !parseRawDLC(info.len8_dlc, first, last, logger, lineno) ) {
       return LineInfo();
     }
 
