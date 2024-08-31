@@ -108,6 +108,11 @@ namespace cs {
     return toSystemTime<chr::file_clock>(filtim);
   }
 
+  CS_UTIL_EXPORT std::chrono::utc_clock::time_point lastWriteTimeUtc(const std::filesystem::path& p)
+  {
+    return chr::utc_clock::from_sys(lastWriteTime(p));
+  }
+
   CS_UTIL_EXPORT PathList list(const fs::path& p, const PathListFlags flags)
   {
     if( !isDirectory(p) ) {

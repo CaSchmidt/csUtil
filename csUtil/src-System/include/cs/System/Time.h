@@ -78,7 +78,8 @@ namespace cs {
     explicit TimeVal(const std::chrono::seconds secs,
                      const std::chrono::microseconds usecs) noexcept;
 
-    explicit TimeVal(const std::chrono::system_clock::time_point& t) noexcept;
+    explicit TimeVal(const std::chrono::system_clock::time_point& tp) noexcept;
+    explicit TimeVal(const std::chrono::utc_clock::time_point& tp) noexcept;
 
     TimeVal(const TimeVal&) noexcept = default;
     TimeVal& operator=(const TimeVal&) noexcept = default;
@@ -87,6 +88,8 @@ namespace cs {
     TimeVal& operator=(TimeVal&&) noexcept = default;
 
     ~TimeVal() noexcept = default;
+
+    explicit operator std::chrono::microseconds() const;
 
     TimeVal& operator-=(const TimeVal& other);
     TimeVal& operator+=(const TimeVal& other);
