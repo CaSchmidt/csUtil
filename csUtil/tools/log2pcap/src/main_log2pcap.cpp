@@ -31,6 +31,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <string>
 
 #include <cs/Core/ByteArray.h>
 #include <cs/IO/BufferedReader.h>
@@ -47,6 +48,9 @@
 
 #include "PCAP.h"
 #include "SocketCAN.h"
+
+namespace chr = std::chrono;
+namespace  fs = std::filesystem;
 
 using LineData = cs::ByteArray<CANFD_MAX_DLEN>;
 
@@ -71,6 +75,8 @@ struct LineInfo {
   uint8_t     len8_dlc{0};
   cs::TimeVal time{-1};
 };
+
+using LineInfos = std::list<LineInfo>;
 
 namespace parser {
 
@@ -385,23 +391,111 @@ namespace parser {
     return info;
   }
 
-  LineInfo parseLine(const cs::LoggerPtr& logger,
-                     const std::size_t lineno, const std::string& line)
+  LineInfo parseLine(const std::string& line,
+                     const cs::LoggerPtr& logger, const std::size_t lineno)
   {
     return parseLine(line.begin(), line.end(), logger, lineno);
   }
 
 } // namespace parser
 
+namespace writer {
+
+  bool writeHeader(const cs::File& file)
+  {
+    constexpr auto SIZE_HEADER = sizeof(pcap_hdr);
+
+    pcap_hdr header;
+    memset(&header, 0, SIZE_HEADER);
+
+    header.magic_number  = MAGIC_NUMBER;
+    header.version_major = VERSION_MAJOR;
+    header.version_minor = VERSION_MINOR;
+    header.snaplen       = CANFD_MTU;
+    header.network       = LINKTYPE_CAN_SOCKETCAN;
+
+    return file.write(&header, SIZE_HEADER) == SIZE_HEADER;
+  }
+
+  bool writeFD(const cs::File& file, const LineInfo& info)
+  {
+    constexpr auto SIZE_HEADER = sizeof(pcaprec_hdr);
+
+    pcaprec_hdr header;
+    memset(&header, 0, SIZE_HEADER);
+
+    header.ts_sec   = info.time.secs().count();
+    header.ts_usec  = info.time.usecs().count();
+    header.incl_len = CANFD_MTU;
+    header.orig_len = CANFD_MTU;
+
+    if( file.write(&header, SIZE_HEADER) != SIZE_HEADER ) {
+      return false;
+    }
+
+    canfd_frame frame;
+    memset(&frame, 0, CANFD_MTU);
+
+    frame.can_id = info.id;
+    frame.len    = info.len;
+    frame.flags  = info.fdflags;
+
+    for(uint8_t i = 0; i < frame.len; i++) {
+      frame.data[i] = info.data[i];
+    }
+
+    return file.write(&frame, CANFD_MTU) == CANFD_MTU;
+  }
+
+  void write(const fs::path& output, const LineInfos& infos, const std::string& device,
+             const cs::LoggerPtr& logger)
+  {
+    const cs::File::OpenFlags flags = cs::FileOpenFlag::Write | cs::FileOpenFlag::Truncate;
+    cs::File file;
+    if( !file.open(output, flags) ) {
+      logger->logError("Unable to open file \"%\"!", output);
+      return;
+    }
+
+    writeHeader(file); // TODO
+
+    for(const LineInfo& info : infos) {
+      if( info.device != device ) {
+        continue;
+      }
+
+      if( info.is_canfd ) {
+        writeFD(file, info); // TODO
+      }
+    }
+
+    file.close();
+  }
+
+} // namespace writer
+
+inline fs::path replaceExtension(fs::path p, const fs::path& ext)
+{
+  p.replace_extension(ext);
+  return p;
+}
+
 int main(int /*argc*/, char **argv)
 {
   cs::LoggerPtr logger = cs::Logger::make();
 
-  const std::filesystem::path input("test_a.log");
-  if( !cs::isFile(cs::reparent(argv[0], input)) ) {
+  const fs::path input = cs::reparent(argv[0], "test_a.log");
+  if( !cs::isFile(input) ) {
     logger->logError("Input % not found!", input);
     return EXIT_FAILURE;
   }
+
+  const chr::system_clock::time_point inputTime = cs::lastWriteTime(input);
+  const cs::TimeVal inputTimeVal(inputTime);
+  cs::println("%.% %", inputTimeVal.secs(), inputTimeVal.usecs(), inputTimeVal.value());
+
+  const fs::path output = replaceExtension(input, "pcap");
+  cs::println("% -> %", input, output);
 
   const std::list<std::string> lines = cs::readLines(input);
   if( lines.empty() ) {
@@ -409,16 +503,20 @@ int main(int /*argc*/, char **argv)
     return EXIT_FAILURE;
   }
 
+  LineInfos infos;
+
   std::size_t lineno = 0;
   for(const std::string& line : lines) {
     lineno += 1;
 
-    const LineInfo info = parser::parseLine(logger, lineno, line);
+    const LineInfo info = parser::parseLine(line, logger, lineno);
     if( !info.isValid() ) {
       continue;
     }
 
-#if 1
+    infos.push_back(info);
+
+#if 0
     if( lineno <= 40 ) {
       cs::print("%: %% % %#", lineno,
                 info.time.secs(), info.time.usecs(), info.device, cs::hexf(info.id));
@@ -436,6 +534,8 @@ int main(int /*argc*/, char **argv)
     }
 #endif
   } // For Each Line
+
+  writer::write(output, infos, "vcan0", logger);
 
   return EXIT_SUCCESS;
 }
