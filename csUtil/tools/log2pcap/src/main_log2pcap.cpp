@@ -31,6 +31,9 @@
 
 #include <cstdio>
 #include <cstdlib>
+
+#include <algorithm>
+#include <iterator>
 #include <string>
 
 #include <cs/Core/ByteArray.h>
@@ -70,6 +73,7 @@ struct LineInfo {
   uint8_t     fdflags{0};
   canid_t     id{0};
   bool        is_canfd{false};
+  bool        is_ext{false};
   bool        is_rtr{false};
   uint8_t     len{0};
   uint8_t     len8_dlc{0};
@@ -159,9 +163,14 @@ namespace parser {
     return true;
   }
 
-  bool parseId(canid_t& result, ConstStringIter& first, const ConstStringIter& last,
+  bool parseId(LineInfo& result, ConstStringIter& first, const ConstStringIter& last,
                const cs::LoggerPtr& logger, const std::size_t lineno)
   {
+    constexpr ConstStringIter::difference_type THREE = 3;
+
+    result.id = 0;
+    result.is_ext = false;
+
     const ConstStringIter begId = std::find_if_not(first, last, lambda_is_space());
     if( begId == last ) {
       logger->logError(lineno, u8"Missing message ID!");
@@ -176,11 +185,13 @@ namespace parser {
 
     bool ok = false;
     const std::string_view idStr(begId, endId);
-    result = cs::toValue<canid_t>(idStr, &ok, 16);
+    result.id = cs::toValue<canid_t>(idStr, &ok, 16);
     if( !ok ) {
       logger->logError(lineno, "Invalid ID string \"%\"!", idStr);
       return false;
     }
+
+    result.is_ext = std::distance(begId, endId) > THREE  ||  result.id > CAN_SFF_MASK;
 
     first = endId;
     ++first; // NOTE: consider '#' part of the ID
@@ -199,8 +210,8 @@ namespace parser {
 
     ++first; // Skip '_'
 
-    const uint8_t raw = cs::fromHexChar(*first);
-    if( raw == INVALID_HEXCHAR ) {
+    result = cs::fromHexChar(*first);
+    if( result == INVALID_HEXCHAR ) {
       logger->logError(lineno, "Invalid raw DLC \"%\"!", *first);
       return false;
     }
@@ -366,7 +377,7 @@ namespace parser {
 
     // (3) Message ID ////////////////////////////////////////////////////////
 
-    if( !parseId(info.id, first, last, logger, lineno) ) {
+    if( !parseId(info, first, last, logger, lineno) ) {
       return LineInfo();
     }
 
@@ -384,7 +395,7 @@ namespace parser {
 
     // (6) Parse Raw DLC /////////////////////////////////////////////////////
 
-    if( !info.is_rtr  &&  !parseRawDLC(info.len8_dlc, first, last, logger, lineno) ) {
+    if( !parseRawDLC(info.len8_dlc, first, last, logger, lineno) ) {
       return LineInfo();
     }
 
@@ -480,6 +491,28 @@ inline fs::path replaceExtension(fs::path p, const fs::path& ext)
   return p;
 }
 
+void print(const LineInfo& info)
+{
+  cs::print("%% % %#", info.time.secs(), info.time.usecs(), info.device, cs::hexf(info.id));
+  if( info.is_canfd ) {
+    cs::print("#%", cs::toHexChar<char,true>(info.fdflags));
+  }
+  if( info.is_rtr ) {
+    cs::print("R%", cs::toHexChar<char,true>(info.len));
+  } else {
+    for(uint8_t i = 0; i < info.len; i++) {
+      cs::print("%", cs::hexf(info.data[i], true));
+    }
+  }
+  cs::println("");
+}
+
+void printno(const std::size_t lineno, const LineInfo& info)
+{
+  cs::print("%: ", lineno);
+  print(info);
+}
+
 int main(int /*argc*/, char **argv)
 {
   cs::LoggerPtr logger = cs::Logger::make();
@@ -518,22 +551,14 @@ int main(int /*argc*/, char **argv)
 
 #if 0
     if( lineno <= 40 ) {
-      cs::print("%: %% % %#", lineno,
-                info.time.secs(), info.time.usecs(), info.device, cs::hexf(info.id));
-      if( info.is_canfd ) {
-        cs::print("#%", cs::toHexChar<char,true>(info.fdflags));
-      }
-      if( info.is_rtr ) {
-        cs::print("R%", cs::toHexChar<char,true>(info.len));
-      } else {
-        for(uint8_t i = 0; i < info.len; i++) {
-          cs::print("%", cs::hexf(info.data[i], true));
-        }
-      }
-      cs::println("");
+      printno(lineno, info);
     }
 #endif
   } // For Each Line
+
+#if 0
+  std::for_each(infos.cbegin(), std::next(infos.cbegin(), 40), print);
+#endif
 
   writer::write(output, infos, "vcan0", logger);
 
