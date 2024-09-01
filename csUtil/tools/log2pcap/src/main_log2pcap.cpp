@@ -424,10 +424,16 @@ namespace writer {
     pcap_hdr header;
     memset(&header, 0, SIZE_HEADER);
 
+    /*
+     * NOTE: cf. to the following link for the value of '.snaplen':
+     *
+     * https://www.wireshark.org/docs/wsug_html_chunked/AppToolstcpdump.html
+     */
+
     header.magic_number  = MAGIC_NUMBER;
     header.version_major = VERSION_MAJOR;
     header.version_minor = VERSION_MINOR;
-    header.snaplen       = CANFD_MTU;
+    header.snaplen       = 65535;
     header.network       = LINKTYPE_CAN_SOCKETCAN;
 
     return file.write(&header, SIZE_HEADER) == SIZE_HEADER;
@@ -498,6 +504,10 @@ namespace writer {
     frame.can_id = info.id;
     frame.len    = info.len;
     frame.flags  = info.fdflags;
+
+    if( info.is_ext ) {
+      frame.can_id |= CAN_EFF_FLAG;
+    }
 
     for(uint8_t i = 0; i < frame.len; i++) {
       frame.data[i] = info.data[i];
