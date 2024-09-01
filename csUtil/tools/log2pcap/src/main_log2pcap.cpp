@@ -68,6 +68,11 @@ struct LineInfo {
     return !device.empty()  &&  time.isValid();
   }
 
+  bool isLen8Dlc() const
+  {
+    return !is_canfd  &&  len == 8  &&  len8_dlc > 8;
+  }
+
   LineData    data;
   std::string device;
   uint8_t     fdflags{0};
@@ -428,6 +433,49 @@ namespace writer {
     return file.write(&header, SIZE_HEADER) == SIZE_HEADER;
   }
 
+  bool write(const cs::File& file, const LineInfo& info)
+  {
+    constexpr auto SIZE_HEADER = sizeof(pcaprec_hdr);
+
+    pcaprec_hdr header;
+    memset(&header, 0, SIZE_HEADER);
+
+    header.ts_sec   = info.time.secs().count();
+    header.ts_usec  = info.time.usecs().count();
+    header.incl_len = CAN_MTU;
+    header.orig_len = CAN_MTU;
+
+    if( file.write(&header, SIZE_HEADER) != SIZE_HEADER ) {
+      return false;
+    }
+
+    can_frame frame;
+    memset(&frame, 0, CAN_MTU);
+
+    frame.can_id = info.id;
+    frame.len    = info.len;
+
+    if( info.is_ext ) {
+      frame.can_id |= CAN_EFF_FLAG;
+    }
+
+    if( info.is_rtr ) {
+      frame.can_id |= CAN_RTR_FLAG;
+    }
+
+    if( info.isLen8Dlc() ) {
+      frame.len8_dlc = info.len8_dlc;
+    }
+
+    if( !info.is_rtr ) {
+      for(uint8_t i = 0; i < frame.len; i++) {
+        frame.data[i] = info.data[i];
+      }
+    }
+
+    return file.write(&frame, CAN_MTU) == CAN_MTU;
+  }
+
   bool writeFD(const cs::File& file, const LineInfo& info)
   {
     constexpr auto SIZE_HEADER = sizeof(pcaprec_hdr);
@@ -477,6 +525,8 @@ namespace writer {
 
       if( info.is_canfd ) {
         writeFD(file, info); // TODO
+      } else {
+        write(file, info); // TODO
       }
     }
 
@@ -493,10 +543,14 @@ inline fs::path replaceExtension(fs::path p, const fs::path& ext)
 
 void print(const LineInfo& info)
 {
-  cs::print("%% % %#", info.time.secs(), info.time.usecs(), info.device, cs::hexf(info.id));
+  cs::print("(%.%) % %#",
+            info.time.secs().count(), info.time.usecs().count(),
+            info.device, cs::hexf(info.id, info.is_ext));
+
   if( info.is_canfd ) {
     cs::print("#%", cs::toHexChar<char,true>(info.fdflags));
   }
+
   if( info.is_rtr ) {
     cs::print("R%", cs::toHexChar<char,true>(info.len));
   } else {
@@ -504,6 +558,11 @@ void print(const LineInfo& info)
       cs::print("%", cs::hexf(info.data[i], true));
     }
   }
+
+  if( info.isLen8Dlc() ) {
+    cs::print("_%", cs::toHexChar<char,true>(info.len8_dlc));
+  }
+
   cs::println("");
 }
 
