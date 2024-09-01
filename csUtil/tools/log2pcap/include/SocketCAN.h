@@ -40,9 +40,9 @@
 
 using canid_t = uint32_t;
 
-inline constexpr canid_t CAN_EFF_LAG = 0x80000000;
-inline constexpr canid_t CAN_RTR_LAG = 0x40000000;
-inline constexpr canid_t CAN_ERR_LAG = 0x20000000;
+inline constexpr canid_t CAN_EFF_FLAG = 0x80000000;
+inline constexpr canid_t CAN_RTR_FLAG = 0x40000000;
+inline constexpr canid_t CAN_ERR_FLAG = 0x20000000;
 
 inline constexpr canid_t CAN_SFF_MASK = 0x000007FF;
 inline constexpr canid_t CAN_EFF_MASK = 0x1FFFFFFF;
