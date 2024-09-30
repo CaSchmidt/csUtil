@@ -34,6 +34,7 @@
 #include <cstddef>
 
 #include <memory>
+#include <string>
 #include <string_view>
 
 #include <cs/Core/csutil_config.h>

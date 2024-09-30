@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include <string_view>
+#include <string>
 
 #include <cs/Core/Buffer.h>
 #include <cs/IO/AbstractIODevice.h>

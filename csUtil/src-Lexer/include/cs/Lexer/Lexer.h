@@ -32,6 +32,7 @@
 #pragma once
 
 #include <list>
+#include <string>
 
 #include <cs/Core/CharUtil.h>
 #include <cs/Core/Flags.h>
