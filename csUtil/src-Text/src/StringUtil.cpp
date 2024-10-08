@@ -129,6 +129,12 @@ namespace cs {
     impl_string::removeAll<char>(text, pattern);
   }
 
+  void CS_UTIL_EXPORT removeAll(std::wstring& text,
+                                const std::wstring_view& pattern)
+  {
+    impl_string::removeAll<wchar_t>(text, pattern);
+  }
+
   // removeTrailingZeros() ///////////////////////////////////////////////////
 
   void CS_UTIL_EXPORT removeTrailingZeros(std::string& text,
@@ -165,6 +171,13 @@ namespace cs {
                                  const std::string_view& after)
   {
     impl_string::replaceAll<char>(str, before, after);
+  }
+
+  void CS_UTIL_EXPORT replaceAll(std::wstring& str,
+                                 const std::wstring_view& before,
+                                 const std::wstring_view& after)
+  {
+    impl_string::replaceAll<wchar_t>(str, before, after);
   }
 
   // shrink() ////////////////////////////////////////////////////////////////

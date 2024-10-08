@@ -118,6 +118,9 @@ namespace cs {
   void CS_UTIL_EXPORT removeAll(std::string& text,
                                 const std::string_view& pattern);
 
+  void CS_UTIL_EXPORT removeAll(std::wstring& text,
+                                const std::wstring_view& pattern);
+
   template<typename UnaryPred>
   inline void removeAll(std::string& text,
                         UnaryPred pred,
@@ -158,6 +161,10 @@ namespace cs {
   void CS_UTIL_EXPORT replaceAll(std::string& str,
                                  const std::string_view& before,
                                  const std::string_view& after);
+
+  void CS_UTIL_EXPORT replaceAll(std::wstring& str,
+                                 const std::wstring_view& before,
+                                 const std::wstring_view& after);
 
   ////// Replace consecutive whitespace with single space... /////////////////
 
