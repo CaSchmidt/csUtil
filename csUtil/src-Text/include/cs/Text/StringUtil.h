@@ -206,13 +206,13 @@ namespace cs {
 
   ////// Narrowing/Widening of strings... ////////////////////////////////////
 
-  std::string CS_UTIL_EXPORT toString(const std::u16string_view& text);
+  std::string CS_UTIL_EXPORT narrow(const std::u16string_view& text);
 
-  std::string CS_UTIL_EXPORT toString(const std::wstring_view& text);
+  std::string CS_UTIL_EXPORT narrow(const std::wstring_view& text);
 
-  std::u16string CS_UTIL_EXPORT toUtf16String(const std::string_view& text);
+  std::u16string CS_UTIL_EXPORT widenUtf16(const std::string_view& text);
 
-  std::wstring CS_UTIL_EXPORT toWString(const std::string_view& text);
+  std::wstring CS_UTIL_EXPORT widen(const std::string_view& text);
 
   ////// Type conversion... //////////////////////////////////////////////////
 

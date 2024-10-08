@@ -42,7 +42,7 @@ namespace cs {
   namespace impl_string {
 
     template<typename NCharT, typename WCharT>
-    inline std::basic_string<NCharT> toNarrow(const std::basic_string_view<WCharT>& text)
+    inline std::basic_string<NCharT> narrow(const std::basic_string_view<WCharT>& text)
     {
       std::basic_string<NCharT> result;
 
@@ -56,7 +56,7 @@ namespace cs {
     }
 
     template<typename WCharT, typename NCharT>
-    inline std::basic_string<WCharT> toWide(const std::basic_string_view<NCharT>& text)
+    inline std::basic_string<WCharT> widen(const std::basic_string_view<NCharT>& text)
     {
       std::basic_string<WCharT> result;
 

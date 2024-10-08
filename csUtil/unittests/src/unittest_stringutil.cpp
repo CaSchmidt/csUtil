@@ -394,15 +394,15 @@ namespace stringutil {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
     { // narrow
-      REQUIRE( cs::toString(u"Hello, World!") == "Hello, World!" );
+      REQUIRE( cs::narrow(u"Hello, World!") == "Hello, World!" );
 
-      REQUIRE( cs::toString(L"Hello, World!") == "Hello, World!" );
+      REQUIRE( cs::narrow(L"Hello, World!") == "Hello, World!" );
     }
 
     { // widen
-      REQUIRE( cs::toUtf16String("Hello, World!") == u"Hello, World!" );
+      REQUIRE( cs::widenUtf16("Hello, World!") == u"Hello, World!" );
 
-      REQUIRE( cs::toWString("Hello, World!") == L"Hello, World!" );
+      REQUIRE( cs::widen("Hello, World!") == L"Hello, World!" );
     }
   } // TEST_CASE
 

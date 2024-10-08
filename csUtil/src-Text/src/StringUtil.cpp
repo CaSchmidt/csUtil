@@ -105,14 +105,14 @@ namespace cs {
 
   // narrow() ////////////////////////////////////////////////////////////////
 
-  std::string CS_UTIL_EXPORT toString(const std::u16string_view& text)
+  std::string CS_UTIL_EXPORT narrow(const std::u16string_view& text)
   {
-    return impl_string::toNarrow<char,char16_t>(text);
+    return impl_string::narrow<char,char16_t>(text);
   }
 
-  std::string CS_UTIL_EXPORT toString(const std::wstring_view& text)
+  std::string CS_UTIL_EXPORT narrow(const std::wstring_view& text)
   {
-    return impl_string::toNarrow<char,wchar_t>(text);
+    return impl_string::narrow<char,wchar_t>(text);
   }
 
   // removeAll() /////////////////////////////////////////////////////////////
@@ -257,14 +257,14 @@ namespace cs {
 
   // widen() /////////////////////////////////////////////////////////////////
 
-  std::u16string CS_UTIL_EXPORT toUtf16String(const std::string_view& text)
+  std::u16string CS_UTIL_EXPORT widenUtf16(const std::string_view& text)
   {
-    return impl_string::toWide<char16_t,char>(text);
+    return impl_string::widen<char16_t,char>(text);
   }
 
-  std::wstring CS_UTIL_EXPORT toWString(const std::string_view& text)
+  std::wstring CS_UTIL_EXPORT widen(const std::string_view& text)
   {
-    return impl_string::toWide<wchar_t,char>(text);
+    return impl_string::widen<wchar_t,char>(text);
   }
 
 } // namespace cs
