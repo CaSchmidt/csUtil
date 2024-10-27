@@ -22,3 +22,9 @@ target_sources(csUtil
 target_include_directories(csUtil
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
+
+if(MSVC)
+  target_compile_definitions(csUtil
+    PUBLIC _DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR
+  )
+endif()
