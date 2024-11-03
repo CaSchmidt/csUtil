@@ -625,7 +625,9 @@ int main(int /*argc*/, char **argv)
 #endif
   } // For Each Line
 
-#if 0
+#if 1
+  std::for_each(infos.cbegin(), infos.cend(), print);
+#else
   std::for_each(infos.cbegin(), std::next(infos.cbegin(), 40), print);
 #endif
 
