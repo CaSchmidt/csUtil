@@ -33,9 +33,11 @@
 
 #include <cstddef>
 
+#include <format>
 #include <memory>
 #include <string>
 #include <string_view>
+#include <utility>
 
 #include <cs/Core/csutil_config.h>
 
@@ -57,45 +59,83 @@ namespace cs {
     virtual void logError(const std::u8string_view& msg) const = 0;
     virtual void logError(const std::size_t lineno, const std::u8string_view& msg) const = 0;
 
-    // Formatted Logging (requires PrintUtil.h & StringUtil.h) ///////////////
+    // Formatted Logging /////////////////////////////////////////////////////
 
-    template<typename ...Args>
-    inline void logText(const std::string_view& fmt, Args&&... args)
+    template<typename Arg1, typename ...ArgN>
+    inline void logText(const std::u8string_view& fmt,
+                        Arg1&& arg1, ArgN&&... argn)
     {
-      const std::string msg = sprint(fmt, std::forward<Args>(args)...);
-      logText(toUtf8StringView(msg));
+      const std::string msg = format(fmt,
+                                     std::forward<Arg1>(arg1),
+                                     std::forward<ArgN>(argn)...);
+      logText(toUtf8View(msg));
     }
 
-    template<typename ...Args>
-    inline void logWarning(const std::string_view& fmt, Args&&... args)
+    template<typename Arg1, typename ...ArgN>
+    inline void logWarning(const std::u8string_view& fmt,
+                           Arg1&& arg1, ArgN&&... argn)
     {
-      const std::string msg = sprint(fmt, std::forward<Args>(args)...);
-      logWarning(toUtf8StringView(msg));
+      const std::string msg = format(fmt,
+                                     std::forward<Arg1>(arg1),
+                                     std::forward<ArgN>(argn)...);
+      logWarning(toUtf8View(msg));
     }
 
-    template<typename ...Args>
-    inline void logWarning(const std::size_t lineno, const std::string_view& fmt, Args&&... args)
+    template<typename Arg1, typename ...ArgN>
+    inline void logWarning(const std::size_t lineno, const std::u8string_view& fmt,
+                           Arg1&& arg1, ArgN&&... argn)
     {
-      const std::string msg = sprint(fmt, std::forward<Args>(args)...);
-      logWarning(lineno, toUtf8StringView(msg));
+      const std::string msg = format(fmt,
+                                     std::forward<Arg1>(arg1),
+                                     std::forward<ArgN>(argn)...);
+      logWarning(lineno, toUtf8View(msg));
     }
 
-    template<typename ...Args>
-    inline void logError(const std::string_view& fmt, Args&&... args)
+    template<typename Arg1, typename ...ArgN>
+    inline void logError(const std::u8string_view& fmt,
+                         Arg1&& arg1, ArgN&&... argn)
     {
-      const std::string msg = sprint(fmt, std::forward<Args>(args)...);
-      logError(toUtf8StringView(msg));
+      const std::string msg = format(fmt,
+                                     std::forward<Arg1>(arg1),
+                                     std::forward<ArgN>(argn)...);
+      logError(toUtf8View(msg));
     }
 
-    template<typename ...Args>
-    inline void logError(const std::size_t lineno, const std::string_view& fmt, Args&&... args)
+    template<typename Arg1, typename ...ArgN>
+    inline void logError(const std::size_t lineno, const std::u8string_view& fmt,
+                         Arg1&& arg1, ArgN&&... argn)
     {
-      const std::string msg = sprint(fmt, std::forward<Args>(args)...);
-      logError(lineno, toUtf8StringView(msg));
+      const std::string msg = format(fmt,
+                                     std::forward<Arg1>(arg1),
+                                     std::forward<ArgN>(argn)...);
+      logError(lineno, toUtf8View(msg));
     }
 
   protected:
     AbstractLogger() noexcept;
+
+    template<typename Arg1, typename ...ArgN>
+    inline std::string format(const std::u8string_view& fmt,
+                              Arg1&& arg1, ArgN&&... argn) const
+    {
+      return std::vformat(toView(fmt),
+                          std::make_format_args(std::forward<Arg1>(arg1),
+                                                std::forward<ArgN>(argn)...));
+    }
+
+    constexpr std::string_view toView(const std::u8string_view& view) const
+    {
+      return !view.empty()
+          ? std::string_view(reinterpret_cast<const char*>(view.data()), view.size())
+          : std::string_view();
+    }
+
+    constexpr std::u8string_view toUtf8View(const std::string_view& view) const
+    {
+      return !view.empty()
+          ? std::u8string_view(reinterpret_cast<const char8_t*>(view.data()), view.size())
+          : std::u8string_view();
+    }
 
   private:
     AbstractLogger(const AbstractLogger&) noexcept = delete;
