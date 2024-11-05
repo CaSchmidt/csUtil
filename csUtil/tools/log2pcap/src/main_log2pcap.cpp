@@ -39,13 +39,14 @@
 #include <cs/Core/ByteArray.h>
 #include <cs/IO/BufferedReader.h>
 #include <cs/IO/File.h>
+#include <cs/Logging/Logger.h>
 #include <cs/Math/Numeric.h>
 #include <cs/System/FileSystem.h>
+#include <cs/System/PathFormatter.h>
 #include <cs/System/Time.h>
 #include <cs/Text/PrintFormat.h>
 #include <cs/Text/PrintUtil.h>
 #include <cs/Text/StringUtil.h>
-#include <cs/Logging/Logger.h> // cf. Formatted Logging
 #include <cs/Text/StringValue.h>
 #include <cs/Text/TextIO.h>
 
@@ -192,7 +193,7 @@ namespace parser {
     const std::string_view idStr(begId, endId);
     result.id = cs::toValue<canid_t>(idStr, &ok, 16);
     if( !ok ) {
-      logger->logError(lineno, "Invalid ID string \"%\"!", idStr);
+      logger->logError(lineno, u8"Invalid ID string \"{}\"!", idStr);
       return false;
     }
 
@@ -217,7 +218,7 @@ namespace parser {
 
     result = cs::fromHexChar(*first);
     if( result == INVALID_HEXCHAR ) {
-      logger->logError(lineno, "Invalid raw DLC \"%\"!", *first);
+      logger->logError(lineno, u8"Invalid raw DLC \"{}\"!", *first);
       return false;
     }
 
@@ -281,7 +282,7 @@ namespace parser {
     const std::string_view timeStr(first, endTim);
     result = parseTime(timeStr);
     if( !result.isValid() ) {
-      logger->logError(lineno, "Invalid time stamp \"%\"!", timeStr);
+      logger->logError(lineno, u8"Invalid time stamp \"{}\"!", timeStr);
       return false;
     }
 
@@ -318,7 +319,7 @@ namespace parser {
       return true;
 
     } else {
-      logger->logError(lineno, "Invalid message type \"%\"!", *first);
+      logger->logError(lineno, u8"Invalid message type \"{}\"!", *first);
       return false;
 
     }
@@ -336,7 +337,7 @@ namespace parser {
 
     const uint8_t extra = cs::fromHexChar(*first);
     if( extra == INVALID_HEXCHAR ) {
-      logger->logError(lineno, "Invalid message extra \"%\"!", *first);
+      logger->logError(lineno, u8"Invalid message extra \"{}\"!", *first);
       return false;
     }
 
@@ -364,7 +365,7 @@ namespace parser {
     }
 
     if( *first != '(' ) {
-      logger->logWarning(lineno, "Ignoring line with invalid start sequence \"%\"!", *first);
+      logger->logWarning(lineno, u8"Ignoring line with invalid start sequence \"{}\"!", *first);
       return LineInfo();
     }
 
@@ -522,7 +523,7 @@ namespace writer {
     const cs::File::OpenFlags flags = cs::FileOpenFlag::Write | cs::FileOpenFlag::Truncate;
     cs::File file;
     if( !file.open(output, flags) ) {
-      logger->logError("Unable to open file \"%\"!", output);
+      logger->logError(u8"Unable to open file \"{}\"!", output);
       return;
     }
 
@@ -588,7 +589,7 @@ int main(int /*argc*/, char **argv)
 
   const fs::path input = cs::reparent(argv[0], "test_a.log");
   if( !cs::isFile(input) ) {
-    logger->logError("Input % not found!", input);
+    logger->logError(u8"Input \"{}\" not found!", input);
     return EXIT_FAILURE;
   }
 
@@ -601,7 +602,7 @@ int main(int /*argc*/, char **argv)
 
   const std::list<std::string> lines = cs::readLines(input);
   if( lines.empty() ) {
-    logger->logError("Unable to read input %!", input);
+    logger->logError(u8"Unable to read input \"{}\"!", input);
     return EXIT_FAILURE;
   }
 
