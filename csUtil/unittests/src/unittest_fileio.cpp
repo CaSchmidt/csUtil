@@ -7,10 +7,11 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <cs/IO/File.h>
+#include <cs/System/PathFormatter.h>
 #include <cs/Text/StringUtil.h>
 #include <cs/Text/TextIO.h>
 
-namespace fileio {
+namespace test_fileio {
 
   using String     = std::string;
   using StringList = std::list<String>;
@@ -75,4 +76,18 @@ namespace fileio {
     }
   }
 
-} // namespace fileio
+} // namespace test_fileio
+
+namespace test_path {
+
+  TEST_CASE("Formatting of std::filesystem::path.", "[format]") {
+    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+
+    const std::filesystem::path p("/path/to/file/filename.txt");
+
+    REQUIRE( std::format("{}", p.filename()) == "filename.txt" );
+
+    REQUIRE( std::format(L"{}", p.filename()) == L"filename.txt" );
+  }
+
+} // namespace test_path
