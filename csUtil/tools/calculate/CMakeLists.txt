@@ -19,7 +19,7 @@ target_include_directories(calculate
 )
 
 set_target_properties(calculate PROPERTIES
-  CXX_STANDARD 20
+  CXX_STANDARD 23
   CXX_STANDARD_REQUIRED ON
   CXX_EXTENSIONS OFF
 )
@@ -44,7 +44,7 @@ target_include_directories(calculatecli
 )
 
 set_target_properties(calculatecli PROPERTIES
-  CXX_STANDARD 20
+  CXX_STANDARD 23
   CXX_STANDARD_REQUIRED ON
   CXX_EXTENSIONS OFF
 )
