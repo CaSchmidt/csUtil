@@ -65,7 +65,7 @@ namespace cs {
     for(ConstOptionIter it = _options.cbegin(); it != _options.cend(); ++it) {
       const IOption *opt = it->second.get();
       if( !opt->isValid() ) {
-        println(output, "ERROR: Invalid value for option \"%\"!", opt->name());
+        ::cs::println(output, "ERROR: Invalid value for option \"%\"!", opt->name());
         return false;
       }
     }
@@ -93,7 +93,7 @@ namespace cs {
         have_arg = true;
 
         if( !opt->parse(arg) ) {
-          println(output, "ERROR: Invalid value for option \"%\"!", opt->name());
+          ::cs::println(output, "ERROR: Invalid value for option \"%\"!", opt->name());
           return false;
         }
 
@@ -101,7 +101,7 @@ namespace cs {
       } // For each option
 
       if( !have_arg ) {
-        println(output, "ERROR: Unknown argument \"%\"!", arg);
+        ::cs::println(output, "ERROR: Unknown argument \"%\"!", arg);
         return false;
       }
     } // For each argument
@@ -111,12 +111,12 @@ namespace cs {
 
   void Options::printUsage(int /*argc*/, char **argv, std::ostream& output) const
   {
-    println(output, "Usage: %", argv[0]);
-    println(output, "");
+    ::cs::println(output, "Usage: %", argv[0]);
+    ::cs::println(output, "");
     for(ConstOptionIter it = _options.cbegin(); it != _options.cend(); ++it) {
       it->second->printUsage(output);
     }
-    println(output, "");
+    ::cs::println(output, "");
   }
 
   void Options::setLongFormat(const bool on)

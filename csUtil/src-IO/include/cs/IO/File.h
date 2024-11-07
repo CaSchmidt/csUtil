@@ -55,7 +55,13 @@ CS_ENABLE_FLAGS(cs::FileOpenFlag);
 
 namespace cs {
 
-  using FileImplPtr = std::unique_ptr<class FileImpl>;
+  class FileImpl;
+
+  struct FileImplDeleter {
+    void operator()(FileImpl *impl) const;
+  };
+
+  using FileImplPtr = std::unique_ptr<FileImpl,FileImplDeleter>;
 
   class CS_UTIL_EXPORT File : public AbstractIODevice {
   public:

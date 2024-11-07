@@ -92,6 +92,11 @@ namespace cs {
   static_assert( sizeof(File::offset_type) >= sizeof(impl_win32::win32fp_type) );
   static_assert( std::is_unsigned_v<File::offset_type> );
 
+  void FileImplDeleter::operator()(FileImpl *impl) const
+  {
+    delete impl;
+  }
+
   ////// public //////////////////////////////////////////////////////////////
 
   File::File() noexcept
@@ -128,7 +133,7 @@ namespace cs {
     // (3) Allocate file handle //////////////////////////////////////////////
 
     try {
-      _impl = std::make_unique<FileImpl>();
+      _impl.reset(new FileImpl());
     } catch(...) {
       return false;
     }

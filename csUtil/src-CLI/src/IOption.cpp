@@ -98,26 +98,26 @@ namespace cs {
   void IOption::printUsage(std::ostream& output) const
   {
     if( isRequired() ) {
-      print(output, "    ");
+      ::cs::print(output, "    ");
     } else {
-      print(output, "  ? ");
+      ::cs::print(output, "  ? ");
     }
 
-    print(output, "%", _prefix);
+    ::cs::print(output, "%", _prefix);
 
     if( isValueOption() ) {
-      print(output, "<%>", impl_defaultValue());
+      ::cs::print(output, "<%>", impl_defaultValue());
     }
 
     if( !_help.empty() ) {
       const std::list<std::string> lines = split(_help, '\n');
       for(const std::string& line : lines) {
-        println(output, "");
-        print(output, "        %", line);
+        ::cs::println(output, "");
+        ::cs::print(output, "        %", line);
       }
     }
 
-    println(output, "");
+    ::cs::println(output, "");
   }
 
   bool IOption::isValidName(const char *s)
