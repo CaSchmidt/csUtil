@@ -29,7 +29,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include <algorithm>
+#include <print>
 
 #include "cs/Logging/Logger.h"
 
@@ -62,42 +62,27 @@ namespace cs {
 
   void Logger::logText(const std::u8string_view& msg) const
   {
-    if( !msg.empty() ) {
-      fprintf(_file, "%.*s\n",
-              toSigned<int>(msg.size()), CSTR(msg.data()));
-    }
+    std::println(_file, "{}", toView(msg));
   }
 
   void Logger::logWarning(const std::u8string_view& msg) const
   {
-    if( !msg.empty() ) {
-      fprintf(_file, "WARNING: %.*s\n",
-              cs::toSigned<int>(msg.size()), CSTR(msg.data()));
-    }
+    std::println(_file, "WARNING: {}", toView(msg));
   }
 
   void Logger::logWarning(const std::size_t lineno, const std::u8string_view& msg) const
   {
-    if( !msg.empty() ) {
-      fprintf(_file, "WARNING(L%d): %.*s\n", cs::toSigned<int>(lineno),
-              cs::toSigned<int>(msg.size()), CSTR(msg.data()));
-    }
+    std::println(_file, "WARNING(L{}): {}", lineno, toView(msg));
   }
 
   void Logger::logError(const std::u8string_view& msg) const
   {
-    if( !msg.empty() ) {
-      fprintf(_file, "ERROR: %.*s\n",
-              cs::toSigned<int>(msg.size()), CSTR(msg.data()));
-    }
+    std::println(_file, "ERROR: {}", toView(msg));
   }
 
   void Logger::logError(const std::size_t lineno, const std::u8string_view& msg) const
   {
-    if( !msg.empty() ) {
-      fprintf(_file, "ERROR(L%d): %.*s\n", cs::toSigned<int>(lineno),
-              cs::toSigned<int>(msg.size()), CSTR(msg.data()));
-    }
+    std::println(_file, "ERROR(L{}): {}", lineno, toView(msg));
   }
 
   LoggerPtr Logger::make(FILE *file, const bool is_owner)
