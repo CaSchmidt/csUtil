@@ -53,11 +53,6 @@ cs_test(test_test src/test_test.cpp)
 cs_test(test_trie src/test_trie.cpp)
 cs_test(test_wipe src/test_wipe.cpp)
 
-if(ENABLE_CHARCONV)
-  cs_test(test_charconv src/test_charconv.cpp)
-  cs_test(test_format src/test_format.cpp)
-endif()
-
 if(ENABLE_QT)
   cs_test(test_imagetip forms/imagetip.ui include/imagetip.h src/imagetip.cpp src/test_imagetip.cpp)
   cs_test(test_listeditor src/test_listeditor.cpp)

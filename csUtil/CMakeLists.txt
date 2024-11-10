@@ -21,8 +21,6 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src-Core/include/config/csutil_config
   ${CMAKE_CURRENT_BINARY_DIR}/include/cs/Core/csutil_config.h @ONLY
 )
 
-# Build Modules?
-option(ENABLE_CHARCONV "Build elementary string conversions module" OFF)
 option(ENABLE_PLOT "Build Plot module" OFF)
 option(ENABLE_QTIMPORT "Build QtImport module (cf. LICENSE)" OFF)
 option(ENABLE_UNICODE "Build Unicode module" OFF)
@@ -113,11 +111,6 @@ add_subdirectory(src-N4)
 add_subdirectory(src-System)
 add_subdirectory(src-Text)
 add_subdirectory(src-Trie)
-
-if(ENABLE_CHARCONV)
-  add_subdirectory(src-CharConv)
-  add_subdirectory(src-Format) # depends on CharConv
-endif()
 
 if(ENABLE_QT)
   add_subdirectory(src-Qt)
