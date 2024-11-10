@@ -16,15 +16,15 @@ list(APPEND csCrypto_SOURCES
 
 ### Dependencies #############################################################
 
-add_subdirectory(${csUtil_SOURCE_DIR}/3rdparty/md5
+add_subdirectory(${csUtil_SOURCE_DIR}/../3rdparty/md5
   ${csUtil_BINARY_DIR}/3rdparty/md5
 )
 
-add_subdirectory(${csUtil_SOURCE_DIR}/3rdparty/sha
+add_subdirectory(${csUtil_SOURCE_DIR}/../3rdparty/sha
   ${csUtil_BINARY_DIR}/3rdparty/sha
 )
 
-add_subdirectory(${csUtil_SOURCE_DIR}/3rdparty/siphash
+add_subdirectory(${csUtil_SOURCE_DIR}/../3rdparty/siphash
   ${csUtil_BINARY_DIR}/3rdparty/siphash
 )
 

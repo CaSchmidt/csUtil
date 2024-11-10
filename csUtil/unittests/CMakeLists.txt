@@ -1,7 +1,7 @@
 ### Dependencies #############################################################
 
-add_subdirectory(${csUtil_SOURCE_DIR}/3rdparty/Catch2-3.5.3
-  ${csUtil_BINARY_DIR}/3rdparty/Catch2-3.5.3
+add_subdirectory(${csUtil_SOURCE_DIR}/../3rdparty/Catch2-3.5.3
+  ${csUtil_BINARY_DIR}/3rdparty/Catch2
 )
 
 format_output_name(Catch2 "Catch2")

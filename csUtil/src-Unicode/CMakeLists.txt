@@ -9,8 +9,8 @@ list(APPEND csUnicode_SOURCES
 
 ### Dependencies #############################################################
 
-add_subdirectory(${csUtil_SOURCE_DIR}/3rdparty/icu-651
-  ${csUtil_BINARY_DIR}/3rdparty/icu-651
+add_subdirectory(${csUtil_SOURCE_DIR}/../3rdparty/ICU-65.1
+  ${csUtil_BINARY_DIR}/3rdparty/ICU
   )
 
 ### csUtil ###################################################################
