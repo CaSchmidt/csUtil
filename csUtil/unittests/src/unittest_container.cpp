@@ -6,6 +6,7 @@
 #include <functional>
 #include <iterator>
 #include <list>
+#include <print>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -13,7 +14,6 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <cs/Core/Container.h>
-#include <cs/Text/PrintUtil.h>
 
 namespace container {
 
@@ -50,7 +50,7 @@ namespace container {
 
   void print(const KeyValue& kv)
   {
-    cs::println("%: %", kv.first, kv.second);
+    std::println("{}: {}", kv.first, kv.second);
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -126,7 +126,7 @@ namespace container {
       Vector v;
 
       cs::reserve(v, SIZE);
-      cs::println("capacity = %", v.capacity());
+      std::println("capacity = {}", v.capacity());
       REQUIRE( v.capacity() >= SIZE );
     }
   } // TEST_CASE

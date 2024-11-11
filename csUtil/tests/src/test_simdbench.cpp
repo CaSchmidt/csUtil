@@ -1,7 +1,6 @@
-#include <cstdio>
 #include <cstdlib>
 
-#include <numeric>
+#include <print>
 #include <random>
 #include <vector>
 
@@ -9,7 +8,6 @@
 #include <cs/SIMD/SIMD.h>
 #include <cs/SIMD/SIMD128.h>
 #include <cs/System/Time.h>
-#include <cs/Text/PrintUtil.h>
 #include <cs/Text/StringValue.h>
 
 namespace util {
@@ -85,8 +83,8 @@ namespace util {
                           ? 1
                           : double(dur)/double(ref))*100.0;
 
-    cs::println("%(%,%) = %, %us, ratio = %%",
-                name, beg, end, sum, dur, cs::toString(rat, 'f', 2), '%');
+    std::println("{}({},{}) = {}, {}us, ratio = {}%",
+                 name, beg, end, sum, dur, cs::toString(rat, 'f', 2));
 
     return dur;
   }
@@ -114,8 +112,8 @@ namespace util {
                           ? 1
                           : double(dur)/double(ref))*100.0;
 
-    cs::println("%(%,%) = %, %us, ratio = %%",
-                name, beg, end, sum, dur, cs::toString(rat, 'f', 2), '%');
+    std::println("{}({},{}) = {}, {}us, ratio = {}%",
+                 name, beg, end, sum, dur, cs::toString(rat, 'f', 2));
 
     return dur;
   }
@@ -167,9 +165,9 @@ namespace simd_bench {
 
   void benchmark(const int sel = 0)
   {
-    cs::println("value_type = %%_t",
-                cs::is_real_v<value_type> ? "real" : "int",
-                sizeof(value_type)*8);
+    std::println("value_type = {}{}_t",
+                 cs::is_real_v<value_type> ? "real" : "int",
+                 sizeof(value_type)*8);
 
     constexpr size_type COUNT = cs::is_real32_v<value_type>
         ? 16'000'000

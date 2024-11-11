@@ -2,6 +2,7 @@
 #include <charconv>
 #include <iostream>
 #include <numeric>
+#include <print>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -10,7 +11,7 @@
 #include <cs/Core/Container.h>
 #include <cs/Crypto/CryptoUtil.h>
 #include <cs/IO/File.h>
-#include <cs/Text/PrintUtil.h>
+#include <cs/System/PathFormatter.h>
 #include <cs/Text/StringUtil.h>
 #include <cs/Text/TextIO.h>
 
@@ -117,7 +118,7 @@ namespace test_util {
       }
     } // for( lines )
 
-    cs::println("%: %/%", path.filename(), cntDigestsOK, cntMessages);
+    std::println("{}: {}/{}", path.filename(), cntDigestsOK, cntMessages);
 
     return cntDigestsOK == cntMessages;
   }
@@ -153,13 +154,13 @@ namespace test_util {
 
     const std::filesystem::path filename = "./test_1M.txt";
 
-    cs::println("Compute message digest of file %.", filename.filename());
+    std::println("Compute message digest of file {}.", filename.filename());
 
     // (1) Create Message ////////////////////////////////////////////////////
 
     const std::string message = makeMessage1M();
     if( message.empty() ) {
-      cs::println(std::cerr, "ERROR: Unable to create message!");
+      std::println(stderr, "ERROR: Unable to create message!");
       return false;
     }
 
@@ -168,12 +169,12 @@ namespace test_util {
     {
       cs::File output;
       if( !output.open(filename, cs::FileOpenFlag::Write) ) {
-        cs::println(std::cerr, "ERROR: Unable to create file %!", filename);
+        std::println(stderr, "ERROR: Unable to create file {}!", filename);
         return false;
       }
 
       if( output.write(message.data(), message.size()) != message.size() ) {
-        cs::println(std::cerr, "ERROR: Unable to write file %!", filename);
+        std::println(stderr, "ERROR: Unable to write file {}!", filename);
         return false;
       }
     }
@@ -182,13 +183,13 @@ namespace test_util {
 
     cs::File input;
     if( !input.open(filename) ) {
-      cs::println(std::cerr, "ERROR: Unable to open file %!", filename.filename());
+      std::println(stderr, "ERROR: Unable to open file {}!", filename.filename());
       return false;
     }
 
     const cs::Buffer digest = cs::sum(input, func, SIZ_TEMP);
     if( digest.empty() ) {
-      cs::println(std::cerr, "ERROR: Unable to hash file %!", filename.filename());
+      std::println(stderr, "ERROR: Unable to hash file {}!", filename.filename());
       return false;
     }
 

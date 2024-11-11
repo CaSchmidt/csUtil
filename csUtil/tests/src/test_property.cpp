@@ -1,12 +1,11 @@
-#include <cstdio>
 #include <cstdlib>
 
 #include <iostream>
+#include <print>
 #include <type_traits>
 
 #include <cs/Core/MixIn.h>
 #include <cs/Text/MixIn.h>
-#include <cs/Text/PrintUtil.h>
 
 ////// Property //////////////////////////////////////////////////////////////
 

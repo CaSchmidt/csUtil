@@ -29,9 +29,9 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include "cs/CLI/Options.h"
+#include <ostream>
 
-#include "cs/Text/PrintUtil.h"
+#include "cs/CLI/Options.h"
 
 namespace cs {
 
@@ -65,7 +65,7 @@ namespace cs {
     for(ConstOptionIter it = _options.cbegin(); it != _options.cend(); ++it) {
       const IOption *opt = it->second.get();
       if( !opt->isValid() ) {
-        ::cs::println(output, "ERROR: Invalid value for option \"%\"!", opt->name());
+        std::println(output, "ERROR: Invalid value for option \"{}\"!", opt->name());
         return false;
       }
     }
@@ -93,7 +93,7 @@ namespace cs {
         have_arg = true;
 
         if( !opt->parse(arg) ) {
-          ::cs::println(output, "ERROR: Invalid value for option \"%\"!", opt->name());
+          std::println(output, "ERROR: Invalid value for option \"{}\"!", opt->name());
           return false;
         }
 
@@ -101,7 +101,7 @@ namespace cs {
       } // For each option
 
       if( !have_arg ) {
-        ::cs::println(output, "ERROR: Unknown argument \"%\"!", arg);
+        std::println(output, "ERROR: Unknown argument \"{}\"!", arg);
         return false;
       }
     } // For each argument
@@ -111,12 +111,12 @@ namespace cs {
 
   void Options::printUsage(int /*argc*/, char **argv, std::ostream& output) const
   {
-    ::cs::println(output, "Usage: %", argv[0]);
-    ::cs::println(output, "");
+    std::println(output, "Usage: {}", argv[0]);
+    std::println(output, "");
     for(ConstOptionIter it = _options.cbegin(); it != _options.cend(); ++it) {
       it->second->printUsage(output);
     }
-    ::cs::println(output, "");
+    std::println(output, "");
   }
 
   void Options::setLongFormat(const bool on)

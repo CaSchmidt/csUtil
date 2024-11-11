@@ -1,15 +1,12 @@
-#include <cstdio>
-#include <cstdlib>
-
 #include <array>
 #include <iostream>
 #include <numeric>
+#include <print>
 
 #include <catch2/catch_template_test_macros.hpp>
 
 #include <cs/SIMD/SIMD.h>
 #include <cs/SIMD/SIMD128.h>
-#include <cs/Text/PrintUtil.h>
 
 namespace test_util {
 
@@ -34,9 +31,9 @@ namespace test_util {
     SIMD::store(a.data(), x);
 
     if( name != nullptr ) {
-      cs::print("% = ", name);
+      std::print("{} = ", name);
     }
-    cs::print("[ % % % % ]", a[0], a[1], a[2], a[3]);
+    std::print("[ {} {} {} {} ]", a[0], a[1], a[2], a[3]);
   }
 
 } // namespace test_util
@@ -105,9 +102,9 @@ namespace test_simd {
       const block_type result = SIMD::cmov(SIMD::cmp_lt(v1234, v2222), v9999, v1234);
 
       test_util::print<SIMD>(v1234, "input");
-      cs::print("  CMP_LT(2)  ");
+      std::print("  CMP_LT(2)  ");
       test_util::print<SIMD>(result, "result");
-      cs::println("");
+      std::println("");
 
       REQUIRE( test_util::equals<SIMD>(result, 9, 2, 3, 4) );
     }
@@ -116,9 +113,9 @@ namespace test_simd {
       const block_type result = SIMD::cmov(SIMD::cmp_eq(v1234, v2222), v9999, v1234);
 
       test_util::print<SIMD>(v1234, "input");
-      cs::print("  CMP_EQ(2)  ");
+      std::print("  CMP_EQ(2)  ");
       test_util::print<SIMD>(result, "result");
-      cs::println("");
+      std::println("");
 
       REQUIRE( test_util::equals<SIMD>(result, 1, 9, 3, 4) );
     }
@@ -127,9 +124,9 @@ namespace test_simd {
       const block_type result = SIMD::cmov(SIMD::cmp_gt(v1234, v2222), v9999, v1234);
 
       test_util::print<SIMD>(v1234, "input");
-      cs::print("  CMP_GT(2)  ");
+      std::print("  CMP_GT(2)  ");
       test_util::print<SIMD>(result, "result");
-      cs::println("");
+      std::println("");
 
       REQUIRE( test_util::equals<SIMD>(result, 1, 2, 9, 9) );
     }
@@ -146,11 +143,11 @@ namespace test_simd {
     {
       const block_type result = SIMD::abs(v0n12n3);
 
-      cs::print("abs(");
+      std::print("abs(");
       test_util::print<SIMD>(v0n12n3);
-      cs::print(") -> ");
+      std::print(") -> ");
       test_util::print<SIMD>(result);
-      cs::println("");
+      std::println("");
 
       REQUIRE( test_util::equals<SIMD>(result, 0, 1, 2, 3) );
     }
@@ -192,13 +189,13 @@ namespace test_simd {
     {
       const block_type result = SIMD::intrlvhi(v1234, v5678);
 
-      cs::print("intrlvhi(");
+      std::print("intrlvhi(");
       test_util::print<SIMD>(v1234);
-      cs::print(", ");
+      std::print(", ");
       test_util::print<SIMD>(v5678);
-      cs::print(") -> ");
+      std::print(") -> ");
       test_util::print<SIMD>(result);
-      cs::println("");
+      std::println("");
 
       REQUIRE( test_util::equals<SIMD>(result, 3, 7, 4, 8) );
     }
@@ -206,13 +203,13 @@ namespace test_simd {
     {
       const block_type result = SIMD::intrlvlo(v1234, v5678);
 
-      cs::print("intrlvlo(");
+      std::print("intrlvlo(");
       test_util::print<SIMD>(v1234);
-      cs::print(", ");
+      std::print(", ");
       test_util::print<SIMD>(v5678);
-      cs::print(") -> ");
+      std::print(") -> ");
       test_util::print<SIMD>(result);
-      cs::println("");
+      std::println("");
 
       REQUIRE( test_util::equals<SIMD>(result, 1, 5, 2, 6) );
     }

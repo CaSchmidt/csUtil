@@ -30,10 +30,10 @@
 *****************************************************************************/
 
 #include <algorithm>
+#include <print>
 
 #include "cs/CLI/IOption.h"
 
-#include "cs/Text/PrintUtil.h"
 #include "cs/Text/StringUtil.h"
 
 namespace cs {
@@ -98,26 +98,26 @@ namespace cs {
   void IOption::printUsage(std::ostream& output) const
   {
     if( isRequired() ) {
-      ::cs::print(output, "    ");
+      std::print(output, "    ");
     } else {
-      ::cs::print(output, "  ? ");
+      std::print(output, "  ? ");
     }
 
-    ::cs::print(output, "%", _prefix);
+    std::print(output, "{}", _prefix);
 
     if( isValueOption() ) {
-      ::cs::print(output, "<%>", impl_defaultValue());
+      std::print(output, "<{}>", impl_defaultValue());
     }
 
     if( !_help.empty() ) {
       const std::list<std::string> lines = split(_help, '\n');
       for(const std::string& line : lines) {
-        ::cs::println(output, "");
-        ::cs::print(output, "        %", line);
+        std::println(output, "");
+        std::print(output, "        {}", line);
       }
     }
 
-    ::cs::println(output, "");
+    std::println(output, "");
   }
 
   bool IOption::isValidName(const char *s)

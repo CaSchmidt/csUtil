@@ -1,6 +1,7 @@
 #include <array>
 #include <iostream>
 #include <numeric>
+#include <print>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -8,7 +9,6 @@
 #include <cs/Concurrent/MapReduce.h>
 #include <cs/System/Random.h>
 #include <cs/System/Time.h>
-#include <cs/Text/PrintUtil.h>
 
 inline constexpr std::size_t NUM_THREADS = 4;
 
@@ -329,7 +329,7 @@ namespace test_mapreduce {
           conc::mapReduceSorted<std::string>(NUM_THREADS,
                                              data.begin(), data.end(),
                                              &util::incTo, &util::reduce);
-      cs::println("reduced = %", reduced);
+      std::println("reduced = {}", reduced);
 
       REQUIRE( reduced == "2345678" );
     }
@@ -341,7 +341,7 @@ namespace test_mapreduce {
                                                        data.begin(), data.end(),
                                                        &util::incTo, &util::reduce);
       const std::string reduced = f.get();
-      cs::println("reduced = %", reduced);
+      std::println("reduced = {}", reduced);
 
       REQUIRE( reduced == "2345678" );
     }
@@ -364,13 +364,13 @@ namespace test_mapreduce {
           conc::mapReduceUnsorted<std::string>(NUM_THREADS,
                                                data.begin(), data.end(),
                                                &util::incTo, &util::reduce);
-      cs::println("reduced (unsorted) = %", unsorted);
+      std::println("reduced (unsorted) = {}", unsorted);
 
       REQUIRE( unsorted.size() == data.size() );
 
       std::string sorted(unsorted);
       std::sort(sorted.begin(), sorted.end());
-      cs::println("reduced (sorted) = %", sorted);
+      std::println("reduced (sorted) = {}", sorted);
 
       REQUIRE( sorted == "2345678" );
     }
@@ -382,13 +382,13 @@ namespace test_mapreduce {
                                                          data.begin(), data.end(),
                                                          &util::incTo, &util::reduce);
       const std::string unsorted = f.get();
-      cs::println("reduced (unsorted) = %", unsorted);
+      std::println("reduced (unsorted) = {}", unsorted);
 
       REQUIRE( unsorted.size() == data.size() );
 
       std::string sorted(unsorted);
       std::sort(sorted.begin(), sorted.end());
-      cs::println("reduced (sorted) = %", sorted);
+      std::println("reduced (sorted) = {}", sorted);
 
       REQUIRE( sorted == "2345678" );
     }

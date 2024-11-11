@@ -1,16 +1,16 @@
-#include <algorithm>
 #include <array>
-#include <charconv>
 #include <iostream>
+#include <print>
 
 #include <catch2/catch_test_macros.hpp>
 
 #include <cs/Convert/BufferUtil.h>
 #include <cs/Core/Container.h>
 #include <cs/Crypto/BlockCipher.h>
+#include <cs/System/PathFormatter.h>
 #include <cs/Text/StringUtil.h>
 #include <cs/Text/TextIO.h>
-#include <cs/Text/PrintUtil.h>
+
 #include "internal/AesNi.h"
 
 /*
@@ -101,9 +101,9 @@ namespace test_util {
       } // Valid Data
     } // For Each Line
 
-    cs::println("AES-%: %", algo->keySize()*8, filename.filename());
-    cs::println("decrypt: %/%", cntDecryptOK, cntDecrypt);
-    cs::println("encrypt: %/%", cntEncryptOK, cntEncrypt);
+    std::println("AES-{}: {}", algo->keySize()*8, filename.filename());
+    std::println("decrypt: {}/{}", cntDecryptOK, cntDecrypt);
+    std::println("encrypt: {}/{}", cntEncryptOK, cntEncrypt);
 
     return cntDecrypt == cntDecryptOK  &&  cntEncrypt ==  cntEncryptOK;
   }

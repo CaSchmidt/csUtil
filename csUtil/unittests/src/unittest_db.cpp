@@ -1,9 +1,9 @@
 #include <cstdio>
-#include <cstdlib>
 
 #include <iostream>
 
 #include <list>
+#include <print>
 #include <unordered_map>
 #include <vector>
 
@@ -11,7 +11,6 @@
 
 #include <cs/Core/ItemStoreUtil.h>
 #include <cs/Text/MixIn.h>
-#include <cs/Text/PrintUtil.h>
 #include <cs/Text/StringUtil.h>
 
 namespace util {
@@ -20,7 +19,7 @@ namespace util {
   void print(const DB_t& db,
              const typename DB_t::key_type& id)
   {
-    cs::println("find(%): %", id, db.find(id).toString());
+    std::println("find({}): {}", id, db.find(id).toString());
   }
 
   template<typename DB_t>
@@ -91,7 +90,7 @@ namespace db_integral {
     }
 
     { // create
-      cs::println("CRUD: create");
+      std::println("CRUD: create");
 
       REQUIRE( db.nextKey() == 1 );
       REQUIRE( db.add({db.nextKey(), "one"}) );
@@ -107,7 +106,7 @@ namespace db_integral {
     }
 
     { // read
-      cs::println("CRUD: read");
+      std::println("CRUD: read");
 
       constexpr key_type INVALID = 42;
       REQUIRE( db.find(INVALID).id() == 0 );
@@ -121,7 +120,7 @@ namespace db_integral {
     }
 
     { // update
-      cs::println("CRUD: update");
+      std::println("CRUD: update");
 
       const auto keys = db.listKeys<std::vector>();
       for(const key_type key : keys) {
@@ -134,7 +133,7 @@ namespace db_integral {
     }
 
     { // destroy
-      cs::println("CRUD: destroy");
+      std::println("CRUD: destroy");
 
       constexpr key_type ID = 2;
       REQUIRE( db.remove(ID) );
@@ -204,7 +203,7 @@ namespace db_string {
     }
 
     { // create
-      cs::println("CRUD: create");
+      std::println("CRUD: create");
 
       REQUIRE( db.add({"a", "one"}) );
 
@@ -217,7 +216,7 @@ namespace db_string {
     }
 
     { // read
-      cs::println("CRUD: read");
+      std::println("CRUD: read");
 
       REQUIRE( db.find(std::string()).id().empty() );
       util::print(db, std::string());
@@ -236,7 +235,7 @@ namespace db_string {
     }
 
     { // update
-      cs::println("CRUD: update");
+      std::println("CRUD: update");
 
       const auto keys = db.listKeys<std::vector>();
       for(const key_type& key : keys) {
@@ -249,7 +248,7 @@ namespace db_string {
     }
 
     { // destroy
-      cs::println("CRUD: destroy");
+      std::println("CRUD: destroy");
 
       const std::string ID("b");
       REQUIRE( db.remove(ID) );

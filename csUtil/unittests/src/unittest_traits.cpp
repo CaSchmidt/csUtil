@@ -1,10 +1,9 @@
-#include <cstdio>
-#include <cstdlib>
+#include <iostream>
+#include <print>
 
 #include <catch2/catch_test_macros.hpp>
 
 #include <cs/Core/Convert.h>
-#include <cs/Text/PrintUtil.h>
 
 namespace test_maxab {
 

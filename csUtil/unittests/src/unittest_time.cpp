@@ -1,12 +1,9 @@
-#include <cstdio>
-#include <cstdlib>
-
 #include <iostream>
+#include <print>
 
 #include <catch2/catch_test_macros.hpp>
 
 #include <cs/System/Time.h>
-#include <cs/Text/PrintUtil.h>
 
 namespace test_time {
 
@@ -24,7 +21,7 @@ namespace test_time {
     {
       const cs::TimeVal tv(3002001);
 
-      REQUIRE( cs::sprint("%%", tv.secs(), tv.usecs()) == "3s2001us" );
+      REQUIRE( std::format("{}{}", tv.secs(), tv.usecs()) == "3s2001us" );
     }
 
     {

@@ -2,11 +2,10 @@
 #include <cstdlib>
 
 #include <algorithm>
-#include <array>
 #include <filesystem>
 #include <format>
-#include <iostream>
 #include <list>
+#include <print>
 
 #include <cs/Convert/BufferUtil.h>
 #include <cs/Core/CharUtil.h>
@@ -16,7 +15,7 @@
 #include <cs/IO/File.h>
 #include <cs/Math/Numeric.h>
 #include <cs/System/FileSystem.h>
-#include <cs/Text/PrintUtil.h>
+#include <cs/System/PathFormatter.h>
 
 #pragma warning (disable : 4996)
 
@@ -167,13 +166,13 @@ int main(int argc, char **argv)
   }
 
   const std::string digest = md5hexhash(mtime);
-  cs::println("%", input.filename());
-  cs::println("MD5(\"%\"): %", mtime, digest);
-  cs::println("");
+  std::println("{}", input.filename());
+  std::println("MD5(\"{}\"): {}", mtime, digest);
+  std::println("");
 
   std::list<PlainInfo> infos;
   for(int i = 1; i <= 10000; i++) { // cf. dbh_crypter.exe
-    const std::string s = cs::sprint("%", i);
+    const std::string s = std::format("{}", i);
     const std::string keystr = mixhash(md5hexhash(s), digest);
 
     // cs::println("%: %", s, keystr);
@@ -189,7 +188,7 @@ int main(int argc, char **argv)
   infos.sort();
 
   for(const PlainInfo& info : infos) {
-    cs::println("<%>", info.plainstr);
+    std::println("<{}>", info.plainstr);
   }
 
   return EXIT_SUCCESS;
