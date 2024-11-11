@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <filesystem>
+#include <print>
 
 #include <QtWidgets/QApplication>
 
@@ -13,7 +14,7 @@
 #include <cs/IO/BufferedReader.h>
 #include <cs/IO/File.h>
 #include <cs/System/FileSystem.h>
-#include <cs/Text/PrintUtil.h>
+#include <cs/System/PathFormatter.h>
 #include <cs/Text/StringUtil.h>
 #include <cs/Text/StringValue.h>
 
@@ -73,8 +74,8 @@ namespace test_csv {
 
   void print(const Column& column)
   {
-    cs::println("\"%\" [%] = { %, %, % }", column.name, column.unit,
-                column.values[0], column.values[1], column.values[2]);
+    std::println("\"{}\" [{}] = ( {}, {}, {} )", column.name, column.unit,
+                 column.values[0], column.values[1], column.values[2]);
   }
 
   void print(const Columns& columns)
@@ -95,13 +96,13 @@ namespace test_csv {
     constexpr char SEP = ';';
 
     if( !cs::isFile(filename) ) {
-      cs::printerrln("ERROR: File \"%\" not found!", filename);
+      std::println(stderr, "ERROR: File \"{}\" not found!", filename);
       return Series();
     }
 
     cs::File file;
     if( !file.open(filename) ) {
-      cs::printerrln("ERROR: Unable to open file \"%\"!", filename);
+      std::println(stderr, "ERROR: Unable to open file \"{}\"!", filename);
       return Series();
     }
 
@@ -112,7 +113,7 @@ namespace test_csv {
       const StringList fields = cs::split(line, SEP, cs::SplitFlag::Trim);
 
       if( !columns.empty()  &&  fields.size() != columns.size() ) {
-        cs::printerrln("ERROR: Ignoring line % due to invalid number of columns!", lineno);
+        std::println(stderr, "ERROR: Ignoring line {} due to invalid number of columns!", lineno);
         continue;
       }
 
