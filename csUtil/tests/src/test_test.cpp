@@ -9,6 +9,7 @@
 #include <memory>
 #include <mutex>
 #include <numeric>
+#include <print>
 #include <queue>
 #include <random>
 #include <semaphore>
@@ -21,8 +22,6 @@
 #include <cs/Concurrent/ThreadPool.h>
 #include <cs/System/Random.h>
 #include <cs/System/Time.h>
-#include <cs/Text/PrintFormat.h>
-#include <cs/Text/PrintUtil.h>
 
 ////// ThreadPool ////////////////////////////////////////////////////////////
 
@@ -78,14 +77,14 @@ void worker_sync(const std::size_t id, const Pair& p,
 
   sync.wait(id);
 
-  fprintf(stdout, "#%d, sleeping %ds...\n", p.first, p.second);
+  std::println("#{}, sleeping {}s...", p.first, p.second);
   fflush(stdout);
 
   const uint64_t beg = cs::tickCountMs();
   cs::sleep(p.second);
   const uint64_t end = cs::tickCountMs();
 
-  cs::println("duration = %ms", end - beg);
+  std::println("duration = {}ms", end - beg);
 
   sync.notify_all(id + ONE);
 }

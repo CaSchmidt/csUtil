@@ -1,13 +1,11 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include <iostream>
+#include <print>
 
 #include <cs/Lexer/Context.h>
 #include <cs/Lexer/TokenUtil.h>
 #include <cs/Math/Numeric.h>
-#include <cs/Text/PrintFormat.h>
-#include <cs/Text/PrintUtil.h>
 #include <cs/Text/StringUtil.h>
 
 enum MyTokens : cs::tokenid_t {
@@ -27,16 +25,16 @@ void printText(const std::string_view& text,
   const std::size_t width = cs::countDigits(lines.size());
 
   if( !title.empty() ) {
-    cs::println("% =", title);
+    std::println("{} =", title);
   }
 
   std::size_t lineno = 1;
   for( const std::string& line : lines ) {
-    cs::println("%: >%<", cs::decf(lineno++, width), line);
+    std::println("{0:{1}}: >{2}<", lineno++, width, line);
   }
 
   if( !title.empty() ) {
-    cs::println("");
+    std::println("");
   }
 }
 
@@ -65,31 +63,31 @@ int main(int argc, char **argv)
       tok->id() != cs::TOK_EndOfInput;
       tok = lexer.nextToken()) {
     if( !tok ) {
-      cs::println("<nullptr>");
+      std::println("<nullptr>");
 
     } else if( tok->id() == cs::TOK_Unknown  &&  DISP_UNKNOWN ) {
-      cs::println("UNKNOWN(%,%): '%'",
-                  tok->line(),
-                  tok->column(),
-                  cs::Token::to_value<char>(tok));
+      std::println("UNKNOWN({},{}): '{}'",
+                   tok->line(),
+                   tok->column(),
+                   cs::Token::to_value<char>(tok));
 
     } else if( tok->id() == TOK_Identifier ) {
-      cs::println("IDENTIFIER(%,%): %",
-                  tok->line(),
-                  tok->column(),
-                  cs::Token::to_value<std::string>(tok));
+      std::println("IDENTIFIER({},{}): {}",
+                   tok->line(),
+                   tok->column(),
+                   cs::Token::to_value<std::string>(tok));
 
     } else if( tok->id() == TOK_String ) {
-      cs::println("STRING(%,%): \"%\"",
-                  tok->line(),
-                  tok->column(),
-                  cs::Token::to_value<std::string>(tok));
+      std::println("STRING({},{}): \"{}\"",
+                   tok->line(),
+                   tok->column(),
+                   cs::Token::to_value<std::string>(tok));
 
     } else if( tok->id() == TOK_UInt ) {
-      cs::println("INTEGRAL(%,%): %",
-                  tok->line(),
-                  tok->column(),
-                  cs::Token::to_value<unsigned>(tok));
+      std::println("INTEGRAL({},{}): {}",
+                   tok->line(),
+                   tok->column(),
+                   cs::Token::to_value<unsigned>(tok));
     }
   } // For each token
 

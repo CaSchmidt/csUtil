@@ -1,18 +1,15 @@
-#include <cstdio>
 #include <cstdlib>
 #include <cstdint>
 
-#include <iomanip>
-#include <iostream>
+#include <print>
 
 #include <cs/Core/Endian.h>
-#include <cs/Text/PrintFormat.h>
-#include <cs/Text/PrintUtil.h>
 
 template<typename T>
 void print(const T& from, const T& to)
 {
-  cs::println("0x% -> 0x%", cs::hexf(from, true), cs::hexf(to, true));
+  std::println("0x{0:0{2}X} -> 0x{1:0{2}X}",
+               from, to, sizeof(T)*2);
 }
 
 template<typename T>

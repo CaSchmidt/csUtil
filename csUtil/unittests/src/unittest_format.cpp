@@ -1,11 +1,11 @@
+#include <format>
 #include <iostream>
+#include <print>
 
 #include <catch2/catch_template_test_macros.hpp>
 
 #include <cs/Core/Constants.h>
 #include <cs/Core/Flags.h>
-#include <cs/Text/PrintFormat.h>
-#include <cs/Text/PrintUtil.h>
 
 enum class FormatFlag : unsigned {
   None  = 0,
@@ -188,7 +188,7 @@ namespace util {
     if constexpr( !OUTPUT ) {
       return;
     }
-    cs::println("%  <->  %", p.first, p.second);
+    std::println("{}  <->  {}", p.first, p.second);
   }
 
 } // namespace util
@@ -199,24 +199,19 @@ namespace test_align {
     std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
 
     constexpr size_type WIDTH = 4;
-    constexpr char       FILL = '.';
 
     { // left
-      REQUIRE( cs::left(std::string(), WIDTH, FILL).empty() );
-
-      REQUIRE( cs::left("x",     WIDTH, FILL) == "x..."  );
-      REQUIRE( cs::left("xxx",   WIDTH, FILL) == "xxx."  );
-      REQUIRE( cs::left("xxxx",  WIDTH, FILL) == "xxxx"  );
-      REQUIRE( cs::left("xxxxx", WIDTH, FILL) == "xxxxx" );
+      REQUIRE( std::format("{0:.<{1}}", "x",     WIDTH)     == "x..."  );
+      REQUIRE( std::format("{0:.<{1}}", "xxx",   WIDTH)   == "xxx."  );
+      REQUIRE( std::format("{0:.<{1}}", "xxxx",  WIDTH)  == "xxxx"  );
+      REQUIRE( std::format("{0:.<{1}}", "xxxxx", WIDTH) == "xxxxx" );
     }
 
     { // right
-      REQUIRE( cs::right(std::string(), WIDTH, FILL).empty() );
-
-      REQUIRE( cs::right(    "x", WIDTH, FILL) == "...x"  );
-      REQUIRE( cs::right(  "xxx", WIDTH, FILL) == ".xxx"  );
-      REQUIRE( cs::right( "xxxx", WIDTH, FILL) == "xxxx"  );
-      REQUIRE( cs::right("xxxxx", WIDTH, FILL) == "xxxxx" );
+      REQUIRE( std::format("{0:.>{1}}", "x",     WIDTH) == "...x"  );
+      REQUIRE( std::format("{0:.>{1}}", "xxx",   WIDTH) == ".xxx"  );
+      REQUIRE( std::format("{0:.>{1}}", "xxxx",  WIDTH) == "xxxx"  );
+      REQUIRE( std::format("{0:.>{1}}", "xxxxx", WIDTH) == "xxxxx" );
     }
   } // TEST_CASE
 
@@ -232,7 +227,7 @@ namespace test_hex {
         ? sizeof(T)*2
         : 0;
 
-    const std::string val_str = cs::hexf(value, fill_digits);
+    const std::string val_str = std::format("{0:0{1}X}", std::make_unsigned_t<T>(value), width);
     const std::string ref_str = util::make_hexstring(value, width, '0');
 
     return util::TwoStrings{val_str, ref_str};
@@ -289,7 +284,7 @@ namespace test_bin {
         ? sizeof(T)*8
         : 0;
 
-    const std::string val_str = cs::binf(value, fill_digits);
+    const std::string val_str = std::format("{0:0{1}b}", std::make_unsigned_t<T>(value), width);
     const std::string ref_str = util::make_binstring(value, width, '0');
 
     return util::TwoStrings{val_str, ref_str};
