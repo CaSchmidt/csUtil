@@ -1,6 +1,5 @@
 #include <algorithm>
 #include <charconv>
-#include <iostream>
 #include <numeric>
 #include <print>
 
@@ -205,7 +204,7 @@ namespace test_crc32 {
   constexpr cs::Hash::Function FUNC = cs::Hash::CRC32;
 
   TEST_CASE("Compute CRC-32 message digests.", "[crc32]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     const cs::Buffer digest_No1{0xCB, 0xF4, 0x39, 0x26};
     REQUIRE( test_digest(cs::Buffer{'1', '2', '3', '4', '5', '6', '7', '8', '9'},
@@ -249,7 +248,7 @@ namespace test_md5 {
   constexpr cs::Hash::Function FUNC = cs::Hash::MD5;
 
   TEST_CASE("Compute MD5 message digests.", "[md5]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     const cs::Buffer digest_No1{0xd4, 0x1d, 0x8c, 0xd9, 0x8f, 0x00, 0xb2, 0x04, 0xe9, 0x80, 0x09, 0x98, 0xec, 0xf8, 0x42, 0x7e};
     REQUIRE( test_digest("",
@@ -289,7 +288,7 @@ namespace test_sha1 {
   constexpr cs::Hash::Function FUNC = cs::Hash::SHA1;
 
   TEST_CASE("Compute SHA-1 message digests.", "[sha1]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     const cs::Buffer digest_No1{0xa9, 0x99, 0x3e, 0x36, 0x47, 0x06, 0x81, 0x6a, 0xba, 0x3e, 0x25, 0x71, 0x78, 0x50, 0xc2, 0x6c, 0x9c, 0xd0, 0xd8, 0x9d};
     REQUIRE( test_digest("abc",
@@ -334,7 +333,7 @@ namespace test_sha224 {
   constexpr cs::Hash::Function FUNC = cs::Hash::SHA224;
 
   TEST_CASE("Compute SHA-224 message digests.", "[sha224]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     const cs::Buffer digest_No1{0x23, 0x09, 0x7d, 0x22, 0x34, 0x05, 0xd8, 0x22, 0x86, 0x42, 0xa4, 0x77, 0xbd, 0xa2, 0x55, 0xb3, 0x2a, 0xad, 0xbc, 0xe4, 0xbd, 0xa0, 0xb3, 0xf7, 0xe3, 0x6c, 0x9d, 0xa7};
     REQUIRE( test_digest("abc",
@@ -379,7 +378,7 @@ namespace test_sha256 {
   constexpr cs::Hash::Function FUNC = cs::Hash::SHA256;
 
   TEST_CASE("Compute SHA-256 message digests.", "[sha256]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     const cs::Buffer digest_No1{0xba, 0x78, 0x16, 0xbf, 0x8f, 0x01, 0xcf, 0xea, 0x41, 0x41, 0x40, 0xde, 0x5d, 0xae, 0x22, 0x23, 0xb0, 0x03, 0x61, 0xa3, 0x96, 0x17, 0x7a, 0x9c, 0xb4, 0x10, 0xff, 0x61, 0xf2, 0x00, 0x15, 0xad};
     REQUIRE( test_digest("abc",
@@ -424,7 +423,7 @@ namespace test_sha384 {
   constexpr cs::Hash::Function FUNC = cs::Hash::SHA384;
 
   TEST_CASE("Compute SHA-384 message digests.", "[sha384]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     const cs::Buffer digest_No1{0xcb, 0x00, 0x75, 0x3f, 0x45, 0xa3, 0x5e, 0x8b, 0xb5, 0xa0, 0x3d, 0x69, 0x9a, 0xc6, 0x50, 0x07, 0x27, 0x2c, 0x32, 0xab, 0x0e, 0xde, 0xd1, 0x63, 0x1a, 0x8b, 0x60, 0x5a, 0x43, 0xff, 0x5b, 0xed, 0x80, 0x86, 0x07, 0x2b, 0xa1, 0xe7, 0xcc, 0x23, 0x58, 0xba, 0xec, 0xa1, 0x34, 0xc8, 0x25, 0xa7};
     REQUIRE( test_digest("abc",
@@ -469,7 +468,7 @@ namespace sha512 {
   constexpr cs::Hash::Function FUNC = cs::Hash::SHA512;
 
   TEST_CASE("Compute SHA-512 message digests.", "[sha512]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     const cs::Buffer digest_No1{0xdd, 0xaf, 0x35, 0xa1, 0x93, 0x61, 0x7a, 0xba, 0xcc, 0x41, 0x73, 0x49, 0xae, 0x20, 0x41, 0x31, 0x12, 0xe6, 0xfa, 0x4e, 0x89, 0xa9, 0x7e, 0xa2, 0x0a, 0x9e, 0xee, 0xe6, 0x4b, 0x55, 0xd3, 0x9a, 0x21, 0x92, 0x99, 0x2a, 0x27, 0x4f, 0xc1, 0xa8, 0x36, 0xba, 0x3c, 0x23, 0xa3, 0xfe, 0xeb, 0xbd, 0x45, 0x4d, 0x44, 0x23, 0x64, 0x3c, 0xe8, 0x0e, 0x2a, 0x9a, 0xc9, 0x4f, 0xa5, 0x4c, 0xa4, 0x9f};
     REQUIRE( test_digest("abc",
@@ -660,7 +659,7 @@ namespace siphash {
   }
 
   TEST_CASE("Compute SipHash-2-4-64 message digests.", "[siphash64]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     cs::ByteArray<64> input;
     std::iota(input.begin(), input.end(), 0);
@@ -681,7 +680,7 @@ namespace siphash {
   }
 
   TEST_CASE("Compute SipHash-2-4-128 message digests.", "[siphash128]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     cs::ByteArray<64> input;
     std::iota(input.begin(), input.end(), 0);

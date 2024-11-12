@@ -1,7 +1,4 @@
-#include <cstdio>
-#include <cstdlib>
-
-#include <iostream>
+#include <print>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -19,7 +16,7 @@ namespace lexer {
   using ctx = cs::LexerContext<char>;
 
   TEST_CASE("Scan character literals.", "[charliteral]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     ctx::Lexer lexer;
     lexer.addScanner(ctx::CharLiteralScanner::make("{}+-"));
@@ -44,7 +41,7 @@ namespace lexer {
   }
 
   TEST_CASE("Scan identifiers.", "[identifier]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     ctx::Lexer lexer;
     lexer.addScanner(ctx::CIdentifierScanner::make(TOK_Identifier));
@@ -68,7 +65,7 @@ namespace lexer {
   }
 
   TEST_CASE("Scan integral values.", "[integral]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     ctx::Lexer lexer;
     lexer.addScanner(ctx::CIntegralScanner<unsigned>::make(TOK_Integral, true));
@@ -104,7 +101,7 @@ namespace lexer {
   }
 
   TEST_CASE("Scan real values.", "[real]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     constexpr auto   _0p25  =  0x0.4p0;
     constexpr auto   _1p0   =  0x1.0p0;
@@ -164,7 +161,7 @@ namespace lexer {
   }
 
   TEST_CASE("Scan strings.", "[string]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     ctx::Lexer lexer;
     lexer.addScanner(ctx::CStringScanner::make(TOK_String));
@@ -185,7 +182,7 @@ namespace lexer {
   }
 
   TEST_CASE("Skip whitespace.", "[whitespace]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     ctx::Lexer lexer;
     lexer.setFlags(cs::LexerFlag::ScanHT | cs::LexerFlag::ScanLF);

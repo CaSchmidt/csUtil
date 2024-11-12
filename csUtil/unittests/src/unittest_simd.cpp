@@ -1,5 +1,4 @@
 #include <array>
-#include <iostream>
 #include <numeric>
 #include <print>
 
@@ -41,7 +40,7 @@ namespace test_util {
 namespace test_simd {
 
   TEMPLATE_TEST_CASE("Various SIMD algorithms.", "[simd]", double, float) {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     using real_T = TestType;
     using simd_T = cs::SIMD128<real_T>;
@@ -58,7 +57,7 @@ namespace test_simd {
   }
 
   TEMPLATE_TEST_CASE("Various SIMD algorithms (#2).", "[simd]", double, float) {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     using real_T = TestType;
     using simd_T = cs::SIMD128<real_T>;
@@ -74,7 +73,7 @@ namespace test_simd {
   }
 
   TEMPLATE_TEST_CASE("SIMD Arithmetic.", "[arithmetic]", int32_t, float) {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     using SIMD = cs::SIMD128<TestType>;
     using block_type = typename SIMD::block_type;
@@ -89,7 +88,7 @@ namespace test_simd {
   }
 
   TEMPLATE_TEST_CASE("SIMD Bit Operations.", "[bitops]", int32_t, float) {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     using SIMD = cs::SIMD128<TestType>;
     using block_type = typename SIMD::block_type;
@@ -133,7 +132,7 @@ namespace test_simd {
   }
 
   TEMPLATE_TEST_CASE("SIMD Absolute Value & Sign.", "[abs]", int32_t, float) {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     using SIMD = cs::SIMD128<TestType>;
     using block_type = typename SIMD::block_type;
@@ -178,7 +177,7 @@ namespace test_simd {
   }
 
   TEMPLATE_TEST_CASE("SIMD Shuffle Operations.", "[shuffle]", int32_t, float) {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     using SIMD = cs::SIMD128<TestType>;
     using block_type = typename SIMD::block_type;

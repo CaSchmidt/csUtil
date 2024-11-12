@@ -1,7 +1,4 @@
-#include <cstdio>
-#include <cstdlib>
-
-#include <iostream>
+#include <print>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -32,7 +29,7 @@ namespace test_crc8 {
   using namespace test_data;
 
   TEST_CASE("Crc_CalculateCRC8() results.", "[crc8]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     using CRC8 = cs::CRC<uint8_t,0x1D,0xFF,0xFF,true,true>;
     using crc_t = CRC8::value_type;
@@ -50,7 +47,7 @@ namespace test_crc8 {
   }
 
   TEST_CASE("Crc_CalculateCRC8H2F() results.", "[crc8]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     using CRC8 = cs::CRC<uint8_t,0x2F,0xFF,0xFF,true,true>;
     using crc_t = CRC8::value_type;
@@ -76,7 +73,7 @@ namespace test_crc16 {
   using namespace test_data;
 
   TEST_CASE("Crc_CalculateCRC16() results.", "[crc16]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     using CRC16 = cs::CRC<uint16_t,0x1021,0xFFFF,0x0,true,true>;
     using crc_t = CRC16::value_type;
@@ -94,7 +91,7 @@ namespace test_crc16 {
   }
 
   TEST_CASE("Crc_CalculateCRC16ARC() results.", "[crc16]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     using CRC16 = cs::CRC<uint16_t,0x8005,0x0,0x0>;
     using crc_t = CRC16::value_type;
@@ -120,7 +117,7 @@ namespace test_crc32 {
   using namespace test_data;
 
   TEST_CASE("Crc_CalculateCRC32() results.", "[crc32]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     using CRC32 = cs::CRC32;
     using crc_t = CRC32::value_type;
@@ -138,7 +135,7 @@ namespace test_crc32 {
   }
 
   TEST_CASE("Crc_CalculateCRC32P4() results.", "[crc32]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     using CRC32 = cs::CRC<uint32_t,0xF4ACFB13,0xFFFFFFFF,0xFFFFFFFF>;
     using crc_t = CRC32::value_type;
@@ -164,7 +161,7 @@ namespace test_crc64 {
   using namespace test_data;
 
   TEST_CASE("Crc_CalculateCRC64() results.", "[crc64]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     using CRC64 = cs::CRC<uint64_t,0x42F0E1EBA9EA3693,0xFFFFFFFFFFFFFFFF,0xFFFFFFFFFFFFFFFF>;
     using crc_t = CRC64::value_type;

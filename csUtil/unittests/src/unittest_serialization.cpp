@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include <iostream>
+#include <print>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -12,7 +12,7 @@
 namespace test_deserialize {
 
   TEST_CASE("Deserialize to signed integral value.", "[signed]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     cs::ByteArray<8> data;
 
@@ -82,7 +82,7 @@ namespace test_deserialize {
   }
 
   TEST_CASE("Deserialize to signed integral value with sign extension.", "[sign_extend]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     cs::ByteArray<8> data;
 
@@ -146,7 +146,7 @@ namespace test_deserialize {
   }
 
   TEST_CASE("Deserialize to unsigned integral value.", "[unsigned]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     cs::ByteArray<8> data;
 
@@ -229,7 +229,7 @@ namespace test_serialize {
   }
 
   TEST_CASE("Serialize to signed integral value.", "[signed]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     Buffer data;
 
@@ -305,7 +305,7 @@ namespace test_serialize {
   }
 
   TEST_CASE("Serialize to unsigned integral value.", "[unsigned]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     Buffer data;
 

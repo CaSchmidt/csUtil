@@ -1,5 +1,5 @@
 #include <algorithm>
-#include <iostream>
+#include <print>
 
 #include <catch2/catch_template_test_macros.hpp>
 
@@ -11,7 +11,7 @@
 namespace test_decomposition {
 
   TEMPLATE_TEST_CASE("Decomposition of floating point value.", "[decompose]", double, float) {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     using value_type = TestType;
     using m = cs::Math<value_type>;
@@ -32,7 +32,7 @@ namespace test_decomposition {
 namespace test_exponentiation {
 
   TEMPLATE_TEST_CASE("Exponentiation of floating point value.", "[exponent]", double, float) {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     using value_type = TestType;
     using cmp = cs::Compare<value_type>;
@@ -55,7 +55,7 @@ namespace test_exponentiation {
 namespace test_interval {
 
   TEMPLATE_TEST_CASE("Interval operations & queries.", "[interval]", double, float) {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     using value_type = TestType;
     using   Interval = cs::Interval<value_type>;
@@ -117,7 +117,7 @@ namespace test_interval {
 namespace test_rounding {
 
   TEMPLATE_TEST_CASE("Rounding of floating point value.", "[round]", double, float) {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     using value_type = TestType;
     using m = cs::Math<value_type>;
@@ -189,7 +189,7 @@ namespace test_saturate {
   }
 
   TEST_CASE("Saturated addition of integral values.", "[satadd]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     test_run<int8_t>(cs::saturate::add<int8_t>, add);
     test_run<int8_t>(cs::saturate::add_bl<int8_t>, add);
@@ -210,7 +210,7 @@ namespace test_saturate {
   }
 
   TEST_CASE("Saturated multiplication of integral values.", "[satmul]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     test_run<int8_t>(cs::saturate::mul<int8_t>, mul);
     test_run<uint8_t>(cs::saturate::mul<uint8_t>, mul);
@@ -229,7 +229,7 @@ namespace test_saturate {
   }
 
   TEST_CASE("Saturated subtraction of integral values.", "[satsub]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     test_run_1D<int8_t>(cs::saturate::dec<int8_t>, dec);
     test_run_1D<int8_t>(cs::saturate::dec_bl<int8_t>, dec);

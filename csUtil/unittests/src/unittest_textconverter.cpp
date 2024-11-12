@@ -1,7 +1,4 @@
-#include <cstdio>
-#include <cstdlib>
-
-#include <iostream>
+#include <print>
 
 #include <cs/Unicode/TextConverter.h>
 
@@ -13,7 +10,7 @@
 namespace test_unicode {
 
   TEST_CASE("Convert UTF-8 string to Unicode.", "[unicode]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     const cs::TextConverter conv = cs::TextConverter::createUtf8();
     REQUIRE( !conv.isNull() );
@@ -35,7 +32,7 @@ namespace test_unicode {
 namespace test_ascii {
 
   TEST_CASE("Convert Unicode string to ASCII.", "[ascii]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     const cs::TextConverter conv = cs::TextConverter::createAscii();
     REQUIRE( !conv.isNull() );
@@ -57,7 +54,7 @@ namespace test_ascii {
 namespace test_latin1 {
 
   TEST_CASE("Convert Unicode string to ISO 8859-1 / Latin-1.", "[latin1]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     const cs::TextConverter conv = cs::TextConverter::createLatin1();
     REQUIRE( !conv.isNull() );
@@ -79,7 +76,7 @@ namespace test_latin1 {
 namespace test_latin9 {
 
   TEST_CASE("Convert Unicode string to ISO 8859-15 / Latin-9.", "[latin9]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     const cs::TextConverter conv = cs::TextConverter::createLatin9();
     REQUIRE( !conv.isNull() );
@@ -103,7 +100,7 @@ namespace test_latin9 {
 namespace test_utf8 {
 
   TEST_CASE("Convert Unicode string to UTF-8.", "[utf8]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     const cs::TextConverter conv = cs::TextConverter::createUtf8();
     REQUIRE( !conv.isNull() );
@@ -131,7 +128,7 @@ namespace test_utf8 {
 namespace test_windows1252 {
 
   TEST_CASE("Convert Unicode string to Windows-1252.", "[windows1252]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     const cs::TextConverter conv = cs::TextConverter::createWindows1252();
     REQUIRE( !conv.isNull() );
