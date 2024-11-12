@@ -1,8 +1,5 @@
-#include <cstdio>
-#include <cstdlib>
-
-#include <iostream>
 #include <iterator>
+#include <print>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -11,7 +8,7 @@
 namespace text {
 
   TEST_CASE("Make key-value pairs.", "[keyvalue]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     const cs::KeyValuePairs<char> pairs
         = cs::makeKeyValuePairs(",,key1:value1,,:value2,key3:,,key4:value4,key5,,");

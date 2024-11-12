@@ -1,7 +1,7 @@
 #include <algorithm>
-#include <iostream>
 #include <iterator>
 #include <list>
+#include <print>
 #include <string>
 
 #include <catch2/catch_template_test_macros.hpp>
@@ -34,7 +34,7 @@ namespace test_accumulate {
   } obj_dot;
 
   TEMPLATE_TEST_CASE("Accumulate numeric arrays.", "[accumulate]", double, float, int) {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     using value_type = TestType;
 
@@ -49,7 +49,7 @@ namespace test_accumulate {
   }
 
   TEST_CASE("Concatenate strings.", "[accumulate]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     using String     = std::string;
     using StringList = std::list<String>;
@@ -103,7 +103,7 @@ namespace test_foreach {
   }
 
   TEMPLATE_TEST_CASE("Iterate over numeric arrays.", "[for_each]", double, float, int) {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     using value_type = TestType;
 
@@ -130,7 +130,7 @@ namespace test_foreach {
 namespace test_algorithm {
 
   TEMPLATE_TEST_CASE("Standard algorithms.", "[algorithm]", int, float) {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     using value_type = TestType;
 

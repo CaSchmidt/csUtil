@@ -1,5 +1,5 @@
 #include <format>
-#include <iostream>
+#include <print>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -8,7 +8,7 @@
 namespace test_bytearray {
 
   TEST_CASE("Conversion from/to hexadecimal string.", "[hexstring]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     { // Case 1 - Even Length
       const std::string  s1 = std::format("{:X}", uint16_t{0xabcd});

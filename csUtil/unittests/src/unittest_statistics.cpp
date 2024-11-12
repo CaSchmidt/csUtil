@@ -1,8 +1,5 @@
-#include <cstdio>
-#include <cstdlib>
-
 #include <array>
-#include <iostream>
+#include <print>
 
 #include <catch2/catch_template_test_macros.hpp>
 
@@ -11,7 +8,7 @@
 namespace test_mean {
 
   TEMPLATE_TEST_CASE("Compute mean of values.", "[mean]", double, float) {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     using real_T = TestType;
 

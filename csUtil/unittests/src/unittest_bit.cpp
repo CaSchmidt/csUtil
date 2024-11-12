@@ -1,7 +1,4 @@
-#include <cstdio>
-#include <cstdlib>
-
-#include <iostream>
+#include <print>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -10,7 +7,7 @@
 namespace test_bit {
 
   TEST_CASE("Move single bit.", "[movebit]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     {
       REQUIRE( cs::moveBitR<4,1>(27) == 2 );

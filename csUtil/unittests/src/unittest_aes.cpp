@@ -1,5 +1,4 @@
 #include <array>
-#include <iostream>
 #include <print>
 
 #include <catch2/catch_test_macros.hpp>
@@ -119,7 +118,7 @@ namespace test_aeskeyexp {
   }
 
   TEST_CASE("AES key expansion.", "[aeskeyexp]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     std::array<uint32_t,60> schedule;
 
@@ -219,7 +218,7 @@ namespace test_aeskeyexp {
 namespace test_aescrypt {
 
   TEST_CASE("AES de-/encryption.", "[aescrypt]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     REQUIRE( test_util::test_cavp(cs::BlockCipher::AES128, "./testdata/ECBVarKey128.rsp") );
     REQUIRE( test_util::test_cavp(cs::BlockCipher::AES128, "./testdata/ECBVarTxt128.rsp") );

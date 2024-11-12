@@ -1,8 +1,5 @@
-#include <cstdio>
-#include <cstdlib>
-
-#include <iostream>
 #include <iterator>
+#include <print>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -17,7 +14,7 @@ namespace test_fileio {
   using StringList = std::list<String>;
 
   TEST_CASE("Read lines from text file.", "[lines]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     // (1) Setup /////////////////////////////////////////////////////////////
 
@@ -81,7 +78,7 @@ namespace test_fileio {
 namespace test_path {
 
   TEST_CASE("Formatting of std::filesystem::path.", "[format]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     const std::filesystem::path p("/path/to/file/filename.txt");
 

@@ -1,7 +1,4 @@
-#include <cstdio>
-#include <cstdlib>
-
-#include <iostream>
+#include <print>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -10,7 +7,7 @@
 namespace numeric {
 
   TEST_CASE("Count digits of integral value.", "[digits]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     REQUIRE( cs::countDigits(99)  == 2 );
     REQUIRE( cs::countDigits(1)   == 1 );
@@ -26,7 +23,7 @@ namespace numeric {
   }
 
   TEST_CASE("Test parity of integral value.", "[parity]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     REQUIRE( cs::isOdd(1) );
     REQUIRE( !cs::isEven(1) );

@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include <iostream>
+#include <print>
 
 #include <functional>
 #include <iterator>
@@ -56,7 +56,7 @@ namespace container {
   ////////////////////////////////////////////////////////////////////////////
 
   TEST_CASE("Extract elements from containers.", "[extract]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     MultiMap m;
     m.insert({"a", 11});
@@ -112,7 +112,7 @@ namespace container {
   } // TEST_CASE
 
   TEST_CASE("Reserve capacity of containers.", "[reserve]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     constexpr size_type SIZE = 127;
 
@@ -132,7 +132,7 @@ namespace container {
   } // TEST_CASE
 
   TEST_CASE("Sort containers.", "[sort]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     {
       REQUIRE( cs::is_sortable_v<List> );

@@ -1,6 +1,6 @@
 #include <emmintrin.h>
 
-#include <iostream>
+#include <print>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -24,7 +24,7 @@ namespace test_pointer {
   using PTR = cs::Pointer;
 
   TEST_CASE("Check alignment of pointers.", "[is_aligned]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     constexpr std::size_t OFFSET = 32;
 
@@ -71,7 +71,7 @@ namespace test_pointer {
   } // TEST_CASE
 
   TEST_CASE("Align to boundary.", "[align_to]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     constexpr std::size_t OFFSET = 32;
 

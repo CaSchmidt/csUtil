@@ -1,8 +1,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include <iostream>
-#include <iterator>
+#include <print>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -13,7 +12,7 @@
 namespace bufferedreader {
 
   TEST_CASE("Read buffered file line-by-line.", "[stringreader]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     constexpr std::size_t SIZE_BUFFER = 16;
 

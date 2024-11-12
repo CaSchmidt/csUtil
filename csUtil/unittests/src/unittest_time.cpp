@@ -1,4 +1,3 @@
-#include <iostream>
 #include <print>
 
 #include <catch2/catch_test_macros.hpp>
@@ -10,7 +9,7 @@ namespace test_time {
   using namespace std::literals::chrono_literals;
 
   TEST_CASE("Operations on the TimeVal class.", "[timeval]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     REQUIRE( cs::TimeVal(3s, 2001us).value() == 3002001 );
 

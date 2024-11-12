@@ -1,4 +1,3 @@
-#include <iostream>
 #include <print>
 
 #include <catch2/catch_test_macros.hpp>
@@ -8,7 +7,7 @@
 namespace test_maxab {
 
   TEST_CASE("Convert to signed/unsigned.", "[convert]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     REQUIRE( cs::toSigned<int16_t,uint16_t>(0)      == int16_t{0} );
     REQUIRE( cs::toSigned<int16_t,uint16_t>(7)      == int16_t{7} );
@@ -20,7 +19,7 @@ namespace test_maxab {
   }
 
   TEST_CASE("Maximum positive value of types A and B.", "[maxab]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     REQUIRE( cs::maxab_v<int16_t,int8_t>   == int16_t{0x007F} );
     REQUIRE( cs::maxab_v<int16_t,uint8_t>  == int16_t{0x00FF} );

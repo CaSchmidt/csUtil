@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include <iostream>
+#include <print>
 
 #undef HAVE_BENCHMARK
 
@@ -318,7 +318,7 @@ void convert(double *dest, const DataT *src, const int count,
 template<typename DataT>
 void benchmark()
 {
-  const int N = 500000000;
+  const int N = 0xfffffff;
 
   DataT  *raw = new DataT[N];
   double *phy = new double[N];
@@ -350,7 +350,7 @@ void benchmark()
 #endif
   const uint64_t end = cs::tickCountMs();
 
-  std::cout << "duration = " << end - beg << "ms" << std::endl;
+  std::println("duration = {}ms", end - beg);
 
   delete[] raw;
   delete[] phy;

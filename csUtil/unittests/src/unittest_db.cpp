@@ -1,7 +1,3 @@
-#include <cstdio>
-
-#include <iostream>
-
 #include <list>
 #include <print>
 #include <unordered_map>
@@ -77,7 +73,7 @@ namespace db_integral {
   using key_type = DB::key_type;
 
   TEST_CASE("Various DB operations (integral key).", "[integral]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     DB db;
 
@@ -190,7 +186,7 @@ namespace db_string {
   using key_type = DB::key_type;
 
   TEST_CASE("Various DB operations (string key).", "[string]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     DB db;
 
