@@ -1,5 +1,4 @@
 #include <array>
-#include <iostream>
 #include <numeric>
 #include <print>
 
@@ -156,21 +155,21 @@ namespace util {
   void print(ForwardIt first, ForwardIt last, const char *prefix = nullptr)
   {
     if( prefix != nullptr ) {
-      std::cout << prefix;
+      std::print("{}", prefix);
     }
 
     if( first != last ) {
-      std::cout << *first;
+      std::print("{}", *first);
       ++first;
     }
 
     for(; first != last; ++first) {
-      std::cout << ", " << *first;
+      std::print(", {}", *first);
     }
 
-    std::cout << std::endl;
+    std::println("");
 
-    std::cout.flush();
+    fflush(stdout);
   }
 
   void print(const int *ptr, const std::size_t siz, const char *prefix = nullptr)
@@ -183,7 +182,7 @@ namespace util {
 namespace test_map {
 
   TEST_CASE("Map sequence in-place.", "[map]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     constexpr std::size_t COUNT = 7;
 
@@ -204,7 +203,7 @@ namespace test_map {
       REQUIRE( util::isEqualSequence(v.begin(), v.end(), 2) );
     }
 
-    std::cout << "---------------------------------------------" << std::endl;
+    std::println("---------------------------------------------------------");
 
     {
       int a[COUNT];
@@ -222,11 +221,11 @@ namespace test_map {
       REQUIRE( util::isEqualSequence(a, COUNT, 2) );
     }
 
-    std::cout << std::endl;
+    std::println("");
   }
 
   TEST_CASE("Map sequence to sorted sequence.", "[mapsorted]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     constexpr std::size_t COUNT = 7;
     constexpr std::size_t EXTRA = 3;
@@ -234,7 +233,7 @@ namespace test_map {
 
     util::print(data.begin(), data.end(), "data = ");
 
-    std::cout << "---------------------------------------------" << std::endl;
+    std::println("---------------------------------------------------------");
 
     {
       std::vector<int> v(COUNT + EXTRA, 0);
@@ -249,7 +248,7 @@ namespace test_map {
       REQUIRE( util::isEqualSequence(v.begin(), std::next(v.begin(), COUNT), 2) );
     }
 
-    std::cout << "---------------------------------------------" << std::endl;
+    std::println("---------------------------------------------------------");
 
     {
       int a[COUNT + EXTRA] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -265,18 +264,18 @@ namespace test_map {
       REQUIRE( util::isEqualSequence(a, COUNT, 2) );
     }
 
-    std::cout << std::endl;
+    std::println("");
   }
 
   TEST_CASE("Map sequence to unsorted sequence.", "[mapunsorted]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     constexpr std::size_t COUNT = 7;
     const std::array<int,COUNT> data{1, 2, 3, 4, 5, 6, 7};
 
     util::print(data.begin(), data.end(), "data = ");
 
-    std::cout << "---------------------------------------------" << std::endl;
+    std::println("---------------------------------------------------------");
 
     {
       std::vector<int> v;
@@ -291,7 +290,7 @@ namespace test_map {
       REQUIRE( util::accumulate(v.begin(), v.end()) == 35 );
     }
 
-    std::cout << "---------------------------------------------" << std::endl;
+    std::println("---------------------------------------------------------");
 
     {
       int a[COUNT];
@@ -307,7 +306,7 @@ namespace test_map {
       REQUIRE( util::accumulate(a, COUNT) == 35 );
     }
 
-    std::cout << std::endl;
+    std::println("");
   }
 
 } // namespace test_map
@@ -315,14 +314,14 @@ namespace test_map {
 namespace test_mapreduce {
 
   TEST_CASE("Sorted map-reduce.", "[mapreducesorted]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     constexpr std::size_t COUNT = 7;
     const std::array<int,COUNT> data{1, 2, 3, 4, 5, 6, 7};
 
     util::print(data.begin(), data.end(), "data = ");
 
-    std::cout << "---------------------------------------------" << std::endl;
+    std::println("---------------------------------------------------------");
 
     {
       const std::string reduced =
@@ -334,7 +333,7 @@ namespace test_mapreduce {
       REQUIRE( reduced == "2345678" );
     }
 
-    std::cout << "---------------------------------------------" << std::endl;
+    std::println("---------------------------------------------------------");
 
     {
       auto f = conc::mapReduceSortedAsync<std::string>(NUM_THREADS,
@@ -346,18 +345,18 @@ namespace test_mapreduce {
       REQUIRE( reduced == "2345678" );
     }
 
-    std::cout << std::endl;
+    std::println("");
   }
 
   TEST_CASE("Unsorted map-reduce.", "[mapreduceunsorted]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     constexpr std::size_t COUNT = 7;
     const std::array<int,COUNT> data{1, 2, 3, 4, 5, 6, 7};
 
     util::print(data.begin(), data.end(), "data = ");
 
-    std::cout << "---------------------------------------------" << std::endl;
+    std::println("---------------------------------------------------------");
 
     {
       const std::string unsorted =
@@ -375,7 +374,7 @@ namespace test_mapreduce {
       REQUIRE( sorted == "2345678" );
     }
 
-    std::cout << "---------------------------------------------" << std::endl;
+    std::println("---------------------------------------------------------");
 
     {
       auto f = conc::mapReduceUnsortedAsync<std::string>(NUM_THREADS,
@@ -393,7 +392,7 @@ namespace test_mapreduce {
       REQUIRE( sorted == "2345678" );
     }
 
-    std::cout << std::endl;
+    std::println("");
   }
 
 } // namespace test_mapreduce

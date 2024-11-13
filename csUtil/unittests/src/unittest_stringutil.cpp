@@ -1,8 +1,5 @@
-#include <cstdio>
-#include <cstdlib>
-
-#include <iostream>
 #include <iterator>
+#include <print>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -14,7 +11,7 @@ namespace stringutil {
   using StringList = std::list<String>;
 
   TEST_CASE("Length of a string.", "[strlen]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     const char *PTR_abcd    = "abcd";
     const char *PTR_null    = nullptr;
@@ -38,7 +35,7 @@ namespace stringutil {
   }
 
   TEST_CASE("String contains pattern.", "[contains]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     REQUIRE(  cs::contains("abcd", 'a') );
     REQUIRE( !cs::contains("abcd", 'A') );
@@ -56,7 +53,7 @@ namespace stringutil {
   }
 
   TEST_CASE("String ends with pattern.", "[endsWith]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     REQUIRE(  cs::endsWith("abcd", "bcd") );
     REQUIRE( !cs::endsWith("abcd", "BCD") );
@@ -73,7 +70,7 @@ namespace stringutil {
   }
 
   TEST_CASE("Two strings are equal.", "[equals]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     REQUIRE(  cs::equals("abc", "abc") );
     REQUIRE( !cs::equals("abc", "ABC") );
@@ -85,7 +82,7 @@ namespace stringutil {
   }
 
   TEST_CASE("Classify string's contents.", "[classify]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     REQUIRE(  cs::isHexString("0123456789abcdefABCDEF") );
     REQUIRE( !cs::isHexString("0123456789abcdefABCDEFx") );
@@ -108,7 +105,7 @@ namespace stringutil {
   }
 
   TEST_CASE("Detect digets in various radices.", "[isDigit]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     constexpr char succ9 = '9' + 1;
 
@@ -134,7 +131,7 @@ namespace stringutil {
   }
 
   TEST_CASE("Remove patterns in string.", "[removeAll]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     const char *PTR_input1 = ".ab.cd.";
     const char *PTR_input2 = "abcabc";
@@ -160,7 +157,7 @@ namespace stringutil {
   }
 
   TEST_CASE("Remove trailing zeros.", "[removeTrailingZeros]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     String s;
 
@@ -222,7 +219,7 @@ namespace stringutil {
   }
 
   TEST_CASE("Replace part(s) of string.", "[replaceAll]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     const char *PTR_input1 = " abc abc ";
     const char *PTR_input2 = "abcabc";
@@ -259,7 +256,7 @@ namespace stringutil {
   }
 
   TEST_CASE("Simplification of a string.", "[simplify]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     REQUIRE( cs::toSimplified("\fa\nb\rc\td\v") == "a b c d" );
     REQUIRE( cs::toSimplified("abcd") == "abcd" );
@@ -268,7 +265,7 @@ namespace stringutil {
   }
 
   TEST_CASE("Split string at delimiter.", "[split]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     const char *PTR_split1 = "/abc//ABC/";
 
@@ -351,7 +348,7 @@ namespace stringutil {
   }
 
   TEST_CASE("String starts with pattern.", "[startsWith]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     REQUIRE(  cs::startsWith("abcd", "abc") );
     REQUIRE( !cs::startsWith("abcd", "ABC") );
@@ -368,21 +365,21 @@ namespace stringutil {
   }
 
   TEST_CASE("Convert to lower case.", "[toLower]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     REQUIRE( cs::toLower("ABCD") == "abcd" );
     REQUIRE( cs::toLower(String()).empty() );
   }
 
   TEST_CASE("Convert to upper case.", "[toUpper]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     REQUIRE( cs::toUpper("abcd") == "ABCD" );
     REQUIRE( cs::toUpper(String()).empty() );
   }
 
   TEST_CASE("Trim string.", "[trim]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     REQUIRE( cs::toTrimmed("\nabc\r") == "abc" );
     REQUIRE( cs::toTrimmed("abc") == "abc" );
@@ -391,7 +388,7 @@ namespace stringutil {
   }
 
   TEST_CASE("Narrowing/Widening of strings.", "[narrowwiden]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     { // narrow
       REQUIRE( cs::narrow(u"Hello, World!") == "Hello, World!" );

@@ -1,5 +1,5 @@
-#include <iostream>
 #include <numeric>
+#include <print>
 #include <unordered_set>
 
 #include <cs/Text/TextIO.h>
@@ -131,7 +131,7 @@ namespace priv {
     }
     const StringList::value_type front = result.front();
     result.pop_front();
-    std::cout << "File I/O: " << front << "/" << result.size() << " words" << std::endl;
+    std::println("File I/O: {}/{} words", front, result.size());
     return result;
   }
 
@@ -140,19 +140,19 @@ namespace priv {
 namespace test_compiler {
 
   TEST_CASE("Compiler information.", "[compiler]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
-    std::cout << "sizeof(csTrieNode): " << sizeof(cs::TrieNode) << std::endl;
+    std::println("sizeof(cs::TrieNode): {}", sizeof(cs::TrieNode));
 
-    std::cout << "sizeof(std::string): " << sizeof(std::string) << std::endl;
+    std::println("sizeof(std::string): {}", sizeof(std::string));
 
-    std::cout << "sizeof(std::list<int>): " << sizeof(std::list<int>) << std::endl;
+    std::println("sizeof(std::list<int>): {}", sizeof(std::list<int>));
 
-    std::cout << "sizeof(std::list<std::string>): " << sizeof(std::list<std::string>) << std::endl;
+    std::println("sizeof(std::list<std::string>): {}", sizeof(std::list<std::string>));
 
-    std::cout << "sizeof(std::vector<int>): " << sizeof(std::vector<int>) << std::endl;
+    std::println("sizeof(std::vector<int>): {}", sizeof(std::vector<int>));
 
-    std::cout << "sizeof(std::vector<std::string>): " << sizeof(std::vector<std::string>) << std::endl;
+    std::println("sizeof(std::vector<std::string>): {}", sizeof(std::vector<std::string>));
   }
 
 } // namespace test_compiler
@@ -160,7 +160,7 @@ namespace test_compiler {
 namespace test_basic {
 
   TEST_CASE("csTrie functionality.", "[trie]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     // (1) File I/O //////////////////////////////////////////////////////////
 
@@ -171,7 +171,7 @@ namespace test_basic {
     // (2) Insertion /////////////////////////////////////////////////////////
 
     const cs::Trie trie = priv::insertAll(words);
-    std::cout << "size(trie): " << trie.size() << ", nodes: " << trie.nodeCount() << std::endl;
+    std::println("size(trie): {}, nodes: {}", trie.size(), trie.nodeCount());
 
     REQUIRE( priv::findAll(trie, words) );
 
@@ -197,7 +197,7 @@ namespace test_basic {
 namespace test_fileio {
 
   TEST_CASE("File I/O functionality.", "[fileio]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     // (1) File I/O //////////////////////////////////////////////////////////
 
@@ -213,7 +213,7 @@ namespace test_fileio {
 namespace test_flat {
 
   TEST_CASE("csFlatTrie functionality.", "[flattrie]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     // (1) File I/O //////////////////////////////////////////////////////////
 
@@ -224,14 +224,14 @@ namespace test_flat {
     // (2) Insertion /////////////////////////////////////////////////////////
 
     const cs::Trie trie = priv::insertAll(words);
-    std::cout << "size(trie): " << trie.size() << ", nodes: " << trie.nodeCount() << std::endl;
+    std::println("size(trie): {}, nodes: {}", trie.size(), trie.nodeCount());
 
     REQUIRE( priv::findAll(trie, words) );
 
     // (3) Flatten ///////////////////////////////////////////////////////////
 
     const cs::FlatTrie flat = trie.flattened();
-    std::cout << "size(flat): " << flat.size() << ", nodes: " << flat.nodeCount() << std::endl;
+    std::println("size(flat): {}, nodes: {}", flat.size(), flat.nodeCount());
 
     REQUIRE( priv::findAll(flat, words) );
 
@@ -254,7 +254,7 @@ namespace test_flat {
     // (5) Output ////////////////////////////////////////////////////////////
 
     const double ratio = static_cast<double>(flat.size())/static_cast<double>(trie.size());
-    std::cout << "flat vs. trie: " << ratio*100.0 << "%" << std::endl;
+    std::println("flat vs. trie: {:.3}%", ratio*100.0);
   }
 
 } // namespace test_flat
@@ -262,7 +262,7 @@ namespace test_flat {
 namespace test_flatset {
 
   TEST_CASE("FlatSet functionality.", "[flatset]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     // (1) File I/O //////////////////////////////////////////////////////////
 
@@ -294,7 +294,7 @@ namespace test_flatset {
 
     // (4) Output ////////////////////////////////////////////////////////////
 
-    std::cout << "size(flatset): " << flatset.size() << std::endl;
+    std::println("size(flatset): {}", flatset.size());
   }
 
 } // namespace test_flatset
@@ -302,7 +302,7 @@ namespace test_flatset {
 namespace test_unordered_set {
 
   TEST_CASE("std::unordered_set<> functionality.", "[unordered_set]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     // (1) File I/O //////////////////////////////////////////////////////////
 

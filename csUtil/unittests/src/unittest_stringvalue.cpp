@@ -1,10 +1,6 @@
 #include <cstdio>
-#include <cstdlib>
 
-#include <iomanip>
-#include <iostream>
-#include <iterator>
-#include <sstream>
+#include <print>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -50,16 +46,8 @@ namespace util {
                                      const char fmt,
                                      const int prec)
   {
-    std::cout << "value = ";
-    std::cout << value;
-    std::cout << " (std) vs. ";
-    std::cout << cs::toString(value, fmt, prec);
-    std::cout << " (";
-    std::cout << "format = " << fmt;
-    std::cout << ", ";
-    std::cout << "precision = " << prec;
-    std::cout << ")";
-    std::cout << std::endl;
+    std::println("value = {} (std) vs. {} (format = {}, precision = {})",
+                 value, cs::toString(value, fmt, prec), fmt, prec);
   }
 
   template<typename T>
@@ -69,7 +57,7 @@ namespace util {
     print(value, fmt, 0);
     print(value, fmt, 3);
     print(value, fmt, 6);
-    std::cout << std::endl;
+    std::println("");
   }
 
 } // namespace util
@@ -77,7 +65,7 @@ namespace util {
 namespace stringvalue {
 
   TEST_CASE("Integral value to string.", "[integraltostr]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     using ValueT = int16_t;
 
@@ -122,7 +110,7 @@ namespace stringvalue {
   } // TEST_CASE
 
   TEST_CASE("Real value to string.", "[realtostr]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     using ValueT = double;
 
@@ -144,7 +132,7 @@ namespace stringvalue {
   }
 
   TEST_CASE("String to integral value.", "[strtointegral]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     using ValueT = int16_t;
 
@@ -210,7 +198,7 @@ namespace stringvalue {
   } // TEST_CASE
 
   TEST_CASE("String to real value.", "[strtoreal]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     using ValueT = double;
 
