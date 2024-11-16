@@ -46,18 +46,21 @@ namespace n4 {
 
   class alignas(SIMD128::block_type) Matrix4f {
   public:
+    using  size_type = std::size_t;
+    using value_type = real_t;
+
     ////// Destructor ////////////////////////////////////////////////////////
 
     ~Matrix4f() noexcept = default;
 
     ////// Constructor ///////////////////////////////////////////////////////
 
-    Matrix4f(const real_t val = 0) noexcept
+    Matrix4f(const value_type val = 0) noexcept
     {
       set(val);
     }
 
-    Matrix4f& operator=(const real_t val)
+    Matrix4f& operator=(const value_type val)
     {
       set(val);
       return *this;
@@ -65,12 +68,12 @@ namespace n4 {
 
     ////// Initialize (Row-Major List!) //////////////////////////////////////
 
-    Matrix4f(const std::initializer_list<real_t>& list) noexcept
+    Matrix4f(const std::initializer_list<value_type>& list) noexcept
     {
       initialize(list);
     }
 
-    Matrix4f& operator=(const std::initializer_list<real_t>& list)
+    Matrix4f& operator=(const std::initializer_list<value_type>& list)
     {
       initialize(list);
       return *this;
@@ -104,39 +107,39 @@ namespace n4 {
 
     ////// Data Access ///////////////////////////////////////////////////////
 
-    inline const real_t *data() const
+    inline const value_type *data() const
     {
       return _data;
     }
 
-    inline real_t *data()
+    inline value_type *data()
     {
       return _data;
     }
 
     ////// Element Access ////////////////////////////////////////////////////
 
-    constexpr size_t size() const
+    constexpr size_type size() const
     {
       return 16;
     }
 
-    constexpr size_t rows() const
+    constexpr size_type rows() const
     {
       return 4;
     }
 
-    constexpr size_t columns() const
+    constexpr size_type columns() const
     {
       return 4;
     }
 
-    inline real_t operator()(const size_t i, const size_t j) const
+    inline value_type operator()(const size_type i, const size_type j) const
     {
       return _data[i + j*4]; // Column-Major!
     }
 
-    inline real_t& operator()(const size_t i, const size_t j)
+    inline value_type& operator()(const size_type i, const size_type j)
     {
       return _data[i + j*4]; // Column-Major!
     }
@@ -150,7 +153,7 @@ namespace n4 {
       return result;
     }
 
-    inline bool isZero(const real_t epsilon0 = EPSILON0_VECTOR) const
+    inline bool isZero(const value_type epsilon0 = EPSILON0_VECTOR) const
     {
       const block_t _epsilon0 = S::set(epsilon0);
       return
@@ -178,19 +181,19 @@ namespace n4 {
       S::store(_data + 12, S::load(other._data + 12));
     }
 
-    inline void initialize(const std::initializer_list<real_t>& list)
+    inline void initialize(const std::initializer_list<value_type>& list)
     {
       set(0);
-      const size_t s = std::min<size_t>(list.size(), size());
-      for(size_t l = 0; l < s; l++) {
+      const size_type s = std::min<size_type>(list.size(), size());
+      for(size_type l = 0; l < s; l++) {
         // NOTE: Row-Major Notation: l = i*4 + j
-        const size_t i = l/4;
-        const size_t j = l%4;
+        const size_type i = l/4;
+        const size_type j = l%4;
         operator()(i, j) = list.begin()[l];
       }
     }
 
-    inline void set(const real_t val)
+    inline void set(const value_type val)
     {
       const block_t col = S::set(val);
       S::store(_data +  0, col);
@@ -199,7 +202,7 @@ namespace n4 {
       S::store(_data + 12, col);
     }
 
-    real_t _data[16];
+    value_type _data[16];
   };
 
   ////// 4x4 Matrix - Binary Operators ///////////////////////////////////////

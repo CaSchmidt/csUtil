@@ -63,12 +63,12 @@ namespace n4 {
 
     ////// Constructor ///////////////////////////////////////////////////////
 
-    Vector4f(const real_t val = 0) noexcept
+    Vector4f(const value_type val = 0) noexcept
     {
       set(val);
     }
 
-    Vector4f& operator=(const real_t val)
+    Vector4f& operator=(const value_type val)
     {
       set(val);
       return *this;
@@ -76,12 +76,12 @@ namespace n4 {
 
     ////// Initialize ////////////////////////////////////////////////////////
 
-    Vector4f(const std::initializer_list<real_t>& list) noexcept
+    Vector4f(const std::initializer_list<value_type>& list) noexcept
     {
       initialize(list);
     }
 
-    Vector4f& operator=(const std::initializer_list<real_t>& list)
+    Vector4f& operator=(const std::initializer_list<value_type>& list)
     {
       initialize(list);
       return *this;
@@ -159,7 +159,7 @@ namespace n4 {
       return *this;
     }
 
-    inline Vector4f& operator*=(const real_t val)
+    inline Vector4f& operator*=(const value_type val)
     {
       store(S::mul(load(), S::set(val)));
       reset_w();
@@ -174,7 +174,7 @@ namespace n4 {
       return *this;
     }
 
-    inline Vector4f& operator/=(const real_t val)
+    inline Vector4f& operator/=(const value_type val)
     {
       store(S::div(load(), S::set(val)));
       reset_w();
@@ -183,12 +183,12 @@ namespace n4 {
 
     ////// Data Access ///////////////////////////////////////////////////////
 
-    inline const real_t *data() const
+    inline const value_type *data() const
     {
       return Vector4f::_data;
     }
 
-    inline real_t *data()
+    inline value_type *data()
     {
       return Vector4f::_data;
     }
@@ -200,12 +200,12 @@ namespace n4 {
       return 4;
     }
 
-    inline real_t operator()(const size_t i) const
+    inline value_type operator()(const size_t i) const
     {
       return Vector4f::_data[i];
     }
 
-    inline real_t& operator()(const size_t i)
+    inline value_type& operator()(const size_t i)
     {
       return Vector4f::_data[i];
     }
@@ -220,25 +220,25 @@ namespace n4 {
           m::isNaN(Vector4f::_data[2]);
     }
 
-    inline bool isZero(const real_t epsilon0 = EPSILON0_VECTOR) const
+    inline bool isZero(const value_type epsilon0 = EPSILON0_VECTOR) const
     {
       return cs::simd::isZero<S,false>(load(), epsilon0);
     }
 
-    inline real_t max() const
+    inline value_type max() const
     {
-      const real_t x = std::max<real_t>(Vector4f::_data[0], Vector4f::_data[1]);
-      return std::max<real_t>(x, Vector4f::_data[2]);
+      const value_type x = std::max<value_type>(Vector4f::_data[0], Vector4f::_data[1]);
+      return std::max<value_type>(x, Vector4f::_data[2]);
     }
 
-    inline real_t min() const
+    inline value_type min() const
     {
-      const real_t x = std::min<real_t>(Vector4f::_data[0], Vector4f::_data[1]);
-      return std::min<real_t>(x, Vector4f::_data[2]);
+      const value_type x = std::min<value_type>(Vector4f::_data[0], Vector4f::_data[1]);
+      return std::min<value_type>(x, Vector4f::_data[2]);
     }
 
   private:
-    using m = cs::Math<real_t>;
+    using m = cs::Math<value_type>;
     using S = SIMD128;
 
     static constexpr bool ALIGNED = true;
@@ -258,7 +258,7 @@ namespace n4 {
       reset_w();
     }
 
-    inline void initialize(const std::initializer_list<real_t>& list)
+    inline void initialize(const std::initializer_list<value_type>& list)
     {
       if /*constexpr*/( list.size() > 0 ) {
         Vector4f::_data[0] = list.begin()[0];
@@ -292,7 +292,7 @@ namespace n4 {
       }
     }
 
-    inline void set(const real_t val)
+    inline void set(const value_type val)
     {
       store(S::set(val));
       reset_w();

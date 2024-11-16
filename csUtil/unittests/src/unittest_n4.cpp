@@ -1,9 +1,10 @@
-#include <iostream>
+#include <print>
 
 #include <catch2/catch_test_macros.hpp>
 
 #include <cs/SIMD/SIMD128Ray4f.h>
 
+#include <N4/Formatter.h>
 #include <N4/N4.h>
 #include <N4/Optics.h>
 #include <N4/Util.h>
@@ -26,55 +27,41 @@ using m = cs::Math<real_t>;
 
 namespace test_print {
 
-  inline void do_print(const real_t x)
+  using namespace std::string_view_literals;
+
+  constexpr std::string_view REAL_FMT = "{:8.3f}"sv;
+
+  void print(const real_t x,
+             const std::string_view& ident = std::string_view())
   {
-    if( m::abs(x) == real_t(0) ) {
-      printf("%8.3f", 0.0);
-    } else {
-      printf("%8.3f", x);
+    if( !ident.empty() ) {
+      std::println("{} =", ident);
     }
+    std::println(REAL_FMT, x);
+    std::println("");
   }
 
-  void print(const real_t v, const char *ident = nullptr)
+  void print(const Vec4f& v,
+             const std::string_view& ident = std::string_view())
   {
-    if( ident != nullptr ) {
-      printf("%s = \n", ident);
+    if( !ident.empty() ) {
+      std::println("{} =", ident);
     }
-    do_print(v); printf("\n");
-    printf("\n");
-    fflush(stdout);
+    std::println(REAL_FMT, v);
   }
 
-  void print(const Vec4f& v, const char *ident = nullptr)
+  void print(const Mat4f& M,
+             const std::string_view ident = std::string_view())
   {
-    if( ident != nullptr ) {
-      printf("%s =\n", ident);
+    if( !ident.empty() ) {
+      std::println("{} =", ident);
     }
-    for(std::size_t i = 0; i < v.size(); i++) {
-      do_print(v(i)); printf("\n");
-    }
-    printf("\n");
-    fflush(stdout);
+    std::println(REAL_FMT, M);
   }
 
-  void print(const Mat4f& M, const char *ident = nullptr)
+  void print(const std::string_view& s, const double d)
   {
-    if( ident != nullptr ) {
-      printf("%s =\n", ident);
-    }
-    for(std::size_t i = 0; i < M.rows(); i++) {
-      for(std::size_t j = 0; j < M.columns(); j++) {
-        printf("  "); do_print(M(i, j));
-      }
-      printf("\n");
-    }
-    printf("\n");
-    fflush(stdout);
-  }
-
-  void print(const char *s, const double d)
-  {
-    printf("%-16s = %26.24f (%a)\n", s, d, d);
+    std::println("{:<16} = {:26.24f} (0x{:.13a})", s, d, d);
   }
 
 } // namespace test_print
@@ -167,24 +154,24 @@ namespace test_n4 {
   // End Global Constants ////////////////////////////////////////////////////
 
   TEST_CASE("N4 global constants.", "[N4][global]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
-    std::cout << "sizeof(real_t) = " << sizeof(real_t) << std::endl;
+    std::println("sizeof(real_t) = {}", sizeof(real_t));
     REQUIRE( sizeof(real_t) == 4 );
 
-    std::cout << "sizeof(Mat4f) = " << sizeof(Mat4f) << std::endl;
+    std::println("sizeof(Mat4f) = {}", sizeof(Mat4f));
     REQUIRE( sizeof(Mat4f) == sizeof(real_t)*4*4 );
 
-    std::cout << "alignof(Mat4f) = " << alignof(Mat4f) << std::endl;
+    std::println("alignof(Mat4f) = {}", alignof(Mat4f));
     REQUIRE( alignof(Mat4f) == alignof(SIMD128::block_type) );
 
-    std::cout << "sizeof(Vec4f) = " << sizeof(Vec4f) << std::endl;
+    std::println("sizeof(Vec4f) = {}", sizeof(Vec4f));
     REQUIRE( sizeof(Vec4f) == sizeof(real_t)*4 );
 
-    std::cout << "alignof(Vec4f) = " << alignof(Vec4f) << std::endl;
+    std::println("alignof(Vec4f) = {}", alignof(Vec4f));
     REQUIRE( alignof(Vec4f) == alignof(SIMD128::block_type) );
 
-    std::cout << std::endl;
+    std::println("");
 
     PRINTexpr(a);
     PRINTexpr(b);
@@ -197,7 +184,7 @@ namespace test_n4 {
   }
 
   TEST_CASE("N4 global base.", "[N4][base]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     {
       Vec4f v_set(5);
@@ -278,7 +265,7 @@ namespace test_n4 {
   }
 
   TEST_CASE("N4 Vector4f assignment.", "[Vector4f][assign]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     REQUIRE( equals(Vec4f(a) += b, {3, 5, 7, W0}          , 0) );
     REQUIRE( equals(Vec4f(b) -= a, {1, 1, 1, W0}          , 0) );
@@ -298,7 +285,7 @@ namespace test_n4 {
   }
 
   TEST_CASE("N4 Vector4f binary operators.", "[Vector4f][binary]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     REQUIRE( equals(a + b    , {3, 5, 7, W0}                              , 0) );
     REQUIRE( equals(a - b    , {-1, -1, -1, W0}                           , 0) );
@@ -312,7 +299,7 @@ namespace test_n4 {
   }
 
   TEST_CASE("N4 Vector4f functions.", "[Vector4f][functions]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     const Vec4f A{1, 3, 3};
     const Vec4f B{2, 2, 4};
@@ -344,7 +331,7 @@ namespace test_n4 {
   }
 
   TEST_CASE("N4 Vector4f manipulators.", "[Vector4f][manipulator]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     n4::Vertex4f v;
     v.x = 1;
@@ -363,14 +350,14 @@ namespace test_n4 {
   }
 
   TEST_CASE("N4 Vector4f unary operators.", "[Vector4f][unary]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     REQUIRE( equals(+a, {1, 2, 3, W0}   , 0) );
     REQUIRE( equals(-a, {-1, -2, -3, W0}, 0) );
   }
 
   TEST_CASE("N4 Matrix4f binary operators.", "[Matrix4f][binary]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     REQUIRE( equals(M*M, { 56,  62,  68,  74,
                           152, 174, 196, 218,
@@ -379,7 +366,7 @@ namespace test_n4 {
   }
 
   TEST_CASE("N4 Matrix4f functions.", "[Matrix4f][functions]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     REQUIRE( equals(M.transpose(), { 0, 4,  8, 12,
                                      1, 5,  9, 13,
@@ -448,7 +435,7 @@ namespace test_intersect {
   }
 
   TEST_CASE("Ray/Box intersection.", "[intersect]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     const Vec4f min{1, 1, 1};
     const Vec4f max{2, 2, 2};
@@ -542,7 +529,7 @@ namespace test_optics {
   }
 
   TEST_CASE("Optical reflection.", "[optics][reflect]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     const Direction I = make_I();
     REQUIRE( equals(n4::length(I), 1) );
@@ -555,7 +542,7 @@ namespace test_optics {
   }
 
   TEST_CASE("Optical refraction.", "[optics][refract]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     const Direction I = make_I();
     REQUIRE( equals(n4::length(I), 1) );
@@ -581,7 +568,7 @@ namespace test_util {
   using namespace test_equal;
 
   TEST_CASE("Frame from axis.", "[util][frame]") {
-    std::cout << "*** " << Catch::getResultCapture().getCurrentTestName() << std::endl;
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
     REQUIRE( equals(n4::util::frameFromZ(Vec4f{0, 0, 1}), { 0, 1, 0, 0,
                                                            -1, 0, 0, 0,
