@@ -4,8 +4,9 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <cs/Text/KeyValue.h>
+#include <cs/Text/MixIn.h>
 
-namespace text {
+namespace test_keyvalue {
 
   TEST_CASE("Make key-value pairs.", "[keyvalue]") {
     std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
@@ -30,6 +31,46 @@ namespace text {
     const auto p5 = std::next(pairs.begin(), 3);
     REQUIRE( p5->first == "key5" );
     REQUIRE( p5->second.empty() );
+  } // TEST_CASE
+
+} // namespace test_keyvalue
+
+struct Object : public cs::ToStringMixIn<Object> {
+  Object(const unsigned int a, const int b) noexcept
+    : a{a}
+    , b{b}
+  {
   }
 
-} // namespace text
+  auto elements() const
+  {
+    return std::forward_as_tuple(a, b);
+  }
+
+  unsigned int a{0};
+  int b{0};
+};
+
+namespace std {
+
+  template<typename CharT>
+  struct formatter<Object,CharT> : public cs::ToString_formatter<Object,CharT> {
+  };
+
+} // namespace std
+
+namespace test_mixin {
+
+  TEST_CASE("Render object to string.", "[mixin]") {
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
+
+    const Object obj(7, -1);
+
+    REQUIRE( obj.toString()  ==  "7, -1" );
+    REQUIRE( obj.toWString() == L"7, -1" );
+
+    REQUIRE( std::format( "{}", obj) ==  "7, -1" );
+    REQUIRE( std::format(L"{}", obj) == L"7, -1" );
+  } // TEST_CASE
+
+} // namespace test_mixin

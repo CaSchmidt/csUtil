@@ -31,12 +31,38 @@
 
 #pragma once
 
-#include <sstream>
+#include <format>
+#include <iterator>
+#include <string_view>
 #include <tuple>
 
 #include <cs/Core/CRTPbase.h>
 
 namespace cs {
+
+  namespace impl_mixin {
+    using namespace std::string_view_literals;
+
+    template<typename CharT>
+    struct FormatTo {
+      // SFINAE
+    };
+
+    template<>
+    struct FormatTo<char> {
+      static constexpr std::string_view FMT = "{}{}"sv;
+
+      static constexpr std::string_view SEP = ", "sv;
+    };
+
+    template<>
+    struct FormatTo<wchar_t> {
+      static constexpr std::wstring_view FMT = L"{}{}"sv;
+
+      static constexpr std::wstring_view SEP = L", "sv;
+    };
+
+  } // namespace impl_mixin
 
   /*
    * NOTE: 'DerivedT' must implement:
@@ -53,27 +79,45 @@ namespace cs {
     template<typename CharT>
     std::basic_string<CharT> toString(const std::basic_string_view<CharT>& sep) const
     {
+      using FormatTo   = impl_mixin::FormatTo<CharT>;
+      using String     = std::basic_string<CharT>;
       using StringView = std::basic_string_view<CharT>;
 
-      std::basic_ostringstream<CharT> stream;
+      String buffer;
 
       const auto& elems = this->as_derived().elements();
-      std::apply([&stream,sep](const auto& ...args) -> void {
+      std::apply([&buffer,sep](const auto& ...args) -> void {
         std::size_t i{0};
-        ((stream << args << (++i != sizeof...(args) ? sep : StringView())), ...);
+        (std::format_to(std::back_inserter(buffer), FormatTo::FMT,
+                        args,
+                        ++i != sizeof...(args) ? sep : StringView()), ...);
       }, elems);
 
-      return stream.str();
+      return buffer;
     }
 
     inline std::string toString() const
     {
-      return toString<char>(", ");
+      return toString<char>(impl_mixin::FormatTo<char>::SEP);
     }
 
     inline std::wstring toWString() const
     {
-      return toString<wchar_t>(L", ");
+      return toString<wchar_t>(impl_mixin::FormatTo<wchar_t>::SEP);
+    }
+  }; // struct ToStringMixIn<>
+
+  template<typename DerivedT, typename CharT>
+  struct ToString_formatter : public std::formatter<std::basic_string_view<CharT>,CharT> {
+    using Formatter = std::formatter<std::basic_string_view<CharT>,CharT>;
+
+    template<class FormatContext>
+    inline typename FormatContext::iterator format(const ToStringMixIn<DerivedT>& mixin,
+                                                   FormatContext& ctx) const
+    {
+      using FormatTo = impl_mixin::FormatTo<CharT>;
+
+      return Formatter::format(mixin.template toString<CharT>(FormatTo::SEP), ctx);
     }
   };
 
