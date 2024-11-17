@@ -1,6 +1,5 @@
 #include <cstdlib>
 
-#include <iostream>
 #include <print>
 #include <type_traits>
 
@@ -20,7 +19,7 @@ public:
   explicit Property(const value_type& value = value_type())
     : _value(value)
   {
-    std::cout << "ctor(" << value << ")" << std::endl;
+    std::println("ctor({})", value);
   }
 
   Property(const Property&) = default;
@@ -50,16 +49,6 @@ private:
 
   value_type _value{};
 };
-
-template<typename T>
-std::ostream& operator<<(std::ostream& stream,
-                         const Property<T>& prop)
-{
-  using value_type = typename Property<T>::value_type;
-
-  stream << static_cast<value_type>(prop);
-  return stream;
-}
 
 ////// PropertyRef ///////////////////////////////////////////////////////////
 
@@ -111,7 +100,7 @@ public:
   explicit PropertyRef(object_type *object)
     : _object{object}
   {
-    std::cout << "ctor(" << impl_cref() << ")" << std::endl;
+    std::println("ctor({})", impl_cref());
   }
 
   /*
@@ -160,33 +149,40 @@ private:
 ////// Object ////////////////////////////////////////////////////////////////
 
 struct Object {
-  int i;
+  using value_type = int;
+
+  value_type i;
 
 #if 0
-  inline const int& int_cref() const
+  inline const value_type& cref() const
   {
     return i;
   }
 
-  inline int& int_ref()
+  inline value_type& ref()
   {
     return i;
   }
 #endif
 };
 
-#if 1
-using ObjectGetSet = ReadWriteMemberTraits<int,Object,&Object::i>;
+#if 0
+using ObjectGetSet = GetSetTraits<Object::value_type,Object,&Object::cref,&Object::ref>;
 #else
-using ObjectGetSet = GetSetTraits<int,Object,&Object::int_cref,&Object::int_ref>;
+using ObjectGetSet = ReadWriteMemberTraits<Object::value_type,Object,&Object::i>;
 #endif
+
 
 ////// Vector ////////////////////////////////////////////////////////////////
 
 template<typename T> requires std::is_arithmetic_v<T>
 struct Vec
     : public cs::ToStringMixIn<Vec<T>> {
-  Vec(const T x = T{}, const T y = T{}, const T z = T{}) noexcept
+  using value_type = T;
+
+  Vec(const value_type x = value_type{},
+      const value_type y = value_type{},
+      const value_type z = value_type{}) noexcept
     : x{x}
     , y{y}
     , z{z}
@@ -204,7 +200,7 @@ struct Vec
     return std::forward_as_tuple(x, y, z);
   }
 
-  T x{}, y{}, z{};
+  value_type x{}, y{}, z{};
 };
 
 ////// Access ////////////////////////////////////////////////////////////////
@@ -250,6 +246,62 @@ using IntProperty = Property<int>;
 template<typename T = int>
 using VecProperty = Property<Vec<T>>;
 
+namespace std {
+
+  template<typename CharT> ///////////////////////////////////////////////////
+  struct formatter<IntProperty,CharT>
+      : public std::formatter<IntProperty::value_type,CharT> {
+    using Formatter = std::formatter<IntProperty::value_type,CharT>;
+
+    template<class FormatContext>
+    inline typename FormatContext::iterator format(const IntProperty& prop,
+                                                   FormatContext& ctx) const
+    {
+      const IntProperty::value_type value = prop;
+      return Formatter::format(value, ctx);
+    }
+  };
+
+  template<typename CharT> ///////////////////////////////////////////////////
+  struct formatter<Vec<int>,CharT>
+      : public cs::ToString_formatter<Vec<int>,CharT> {
+  };
+
+  template<typename CharT> ///////////////////////////////////////////////////
+  struct formatter<VecProperty<int>,CharT>
+      : public std::formatter<std::basic_string_view<CharT>,CharT> {
+    using Formatter = std::formatter<std::basic_string_view<CharT>,CharT>;
+
+    template<class FormatContext>
+    inline typename FormatContext::iterator format(const VecProperty<int>& prop,
+                                                   FormatContext& ctx) const
+    {
+      const VecProperty<int>::value_type value = prop;
+
+      auto&& out = ctx.out();
+
+      format_to(out, "{}", value);
+
+      return out;
+    }
+  };
+
+  template<typename CharT> ///////////////////////////////////////////////////
+  struct formatter<PropertyRef<ObjectGetSet>,CharT>
+      : std::formatter<PropertyRef<ObjectGetSet>::value_type,CharT> {
+    using Formatter = std::formatter<PropertyRef<ObjectGetSet>::value_type,CharT>;
+
+    template<class FormatContext>
+    inline typename FormatContext::iterator format(const PropertyRef<ObjectGetSet>& prop,
+                                                   FormatContext& ctx) const
+    {
+      const PropertyRef<ObjectGetSet>::value_type value = prop;
+      return Formatter::format(value, ctx);
+    }
+  };
+
+} // namespace std
+
 int main(int /*argc*/, char ** /*argv*/)
 {
   {
@@ -257,7 +309,7 @@ int main(int /*argc*/, char ** /*argv*/)
 
     i = 7;
 
-    std::cout << "i = " << i << std::endl;
+    std::println("i = {}", i);
   }
 
   {
@@ -267,7 +319,7 @@ int main(int /*argc*/, char ** /*argv*/)
     v->y = 8;
     v->z = 9;
 
-    std::cout << "v = " << v << std::endl;
+    std::println("v = {}", v);
   }
 
   {
@@ -276,7 +328,7 @@ int main(int /*argc*/, char ** /*argv*/)
 
     i = 7;
 
-    std::cout << "o.i = " << i << std::endl;
+    std::println("o.i = {}", i);
   }
 
   return EXIT_SUCCESS;
