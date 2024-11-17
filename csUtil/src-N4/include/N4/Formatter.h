@@ -64,7 +64,7 @@ namespace std {
     };
 
     template<typename Vec4f, typename CharT>
-    struct vec4f_formatter : public std::formatter<typename Vec4f::value_type,CharT> {
+    struct Vector4f_formatter : public std::formatter<typename Vec4f::value_type,CharT> {
       using     Konst = konst<CharT>;
       using Formatter = std::formatter<typename Vec4f::value_type,CharT>;
 
@@ -90,15 +90,15 @@ namespace std {
   } // namespace impl_formatter
 
   template<typename CharT>
-  struct formatter<n4::Color3f,CharT> : public impl_formatter::vec4f_formatter<n4::Color3f,CharT> {
+  struct formatter<n4::Color3f,CharT> : public impl_formatter::Vector4f_formatter<n4::Color3f,CharT> {
   };
 
   template<typename CharT>
-  struct formatter<n4::Normal3f,CharT> : public impl_formatter::vec4f_formatter<n4::Normal3f,CharT> {
+  struct formatter<n4::Normal3f,CharT> : public impl_formatter::Vector4f_formatter<n4::Normal3f,CharT> {
   };
 
   template<typename CharT>
-  struct formatter<n4::Vertex4f,CharT> : public impl_formatter::vec4f_formatter<n4::Vertex4f,CharT> {
+  struct formatter<n4::Vertex4f,CharT> : public impl_formatter::Vector4f_formatter<n4::Vertex4f,CharT> {
   };
 
   template<typename CharT>
