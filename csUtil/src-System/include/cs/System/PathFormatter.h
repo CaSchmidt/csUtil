@@ -52,12 +52,12 @@ namespace std {
   namespace impl_formatter {
 
     template<typename CharT>
-    struct converter {
+    struct Converter {
       // SFINAE
     };
 
     template<>
-    struct converter<char> {
+    struct Converter<char> {
       inline static std::string to_string(const std::filesystem::path& path)
       {
         return path.string();
@@ -65,7 +65,7 @@ namespace std {
     };
 
     template<>
-    struct converter<wchar_t> {
+    struct Converter<wchar_t> {
       inline static std::wstring to_string(const std::filesystem::path& path)
       {
         return path.wstring();
@@ -77,7 +77,7 @@ namespace std {
   template<typename CharT>
   struct formatter<std::filesystem::path,CharT>
       : public std::formatter<std::basic_string_view<CharT>,CharT> {
-    using Converter = impl_formatter::converter<CharT>;
+    using Converter = impl_formatter::Converter<CharT>;
     using Formatter = formatter<std::basic_string_view<CharT>,CharT>;
 
     template<class FormatContext>

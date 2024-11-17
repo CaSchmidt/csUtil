@@ -45,27 +45,28 @@ namespace std {
     using namespace string_view_literals;
 
     template<typename CharT>
-    struct konst {
+    struct Konst {
       // SFINAE
     };
 
     template<>
-    struct konst<char> {
+    struct Konst<char> {
       static constexpr std::string_view EOL = "\n"sv;
 
       static constexpr std::string_view SEP = "  "sv;
     };
 
     template<>
-    struct konst<wchar_t> {
+    struct Konst<wchar_t> {
       static constexpr std::wstring_view EOL = L"\n"sv;
 
       static constexpr std::wstring_view SEP = L"  "sv;
     };
 
     template<typename Vec4f, typename CharT>
-    struct Vector4f_formatter : public std::formatter<typename Vec4f::value_type,CharT> {
-      using     Konst = konst<CharT>;
+    struct Vector4f_formatter
+        : public std::formatter<typename Vec4f::value_type,CharT> {
+      using     Konst = Konst<CharT>;
       using Formatter = std::formatter<typename Vec4f::value_type,CharT>;
 
       template<class FormatContext>
@@ -90,20 +91,24 @@ namespace std {
   } // namespace impl_formatter
 
   template<typename CharT>
-  struct formatter<n4::Color3f,CharT> : public impl_formatter::Vector4f_formatter<n4::Color3f,CharT> {
+  struct formatter<n4::Color3f,CharT>
+      : public impl_formatter::Vector4f_formatter<n4::Color3f,CharT> {
   };
 
   template<typename CharT>
-  struct formatter<n4::Normal3f,CharT> : public impl_formatter::Vector4f_formatter<n4::Normal3f,CharT> {
+  struct formatter<n4::Normal3f,CharT>
+      : public impl_formatter::Vector4f_formatter<n4::Normal3f,CharT> {
   };
 
   template<typename CharT>
-  struct formatter<n4::Vertex4f,CharT> : public impl_formatter::Vector4f_formatter<n4::Vertex4f,CharT> {
+  struct formatter<n4::Vertex4f,CharT>
+      : public impl_formatter::Vector4f_formatter<n4::Vertex4f,CharT> {
   };
 
   template<typename CharT>
-  struct formatter<n4::Matrix4f,CharT> : public std::formatter<n4::Matrix4f::value_type,CharT> {
-    using     Konst = impl_formatter::konst<CharT>;
+  struct formatter<n4::Matrix4f,CharT>
+      : public std::formatter<n4::Matrix4f::value_type,CharT> {
+    using     Konst = impl_formatter::Konst<CharT>;
     using Formatter = std::formatter<n4::Matrix4f::value_type,CharT>;
 
     template<class FormatContext>
