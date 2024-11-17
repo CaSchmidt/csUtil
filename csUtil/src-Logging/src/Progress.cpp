@@ -30,10 +30,10 @@
 *****************************************************************************/
 
 #include <algorithm>
+#include <print>
 
 #include "cs/Logging/Progress.h"
 
-#include "cs/Core/Convert.h"
 #include "cs/Math/Numeric.h"
 
 namespace cs {
@@ -83,11 +83,11 @@ namespace cs {
     const std::size_t span = _max - _min;
 
     if( pos%_step == ZERO  ||  pos == span ) {
-      const std::size_t pct = (pos*HUNDRED)/span;
-      const int       width = int(countDigits(span));
+      const std::size_t   pct = (pos*HUNDRED)/span;
+      const std::size_t width = countDigits(span);
 
-      fprintf(_file, "Progress: %3d%% (%*d/%d)\n",
-              toSigned<int>(pct), width, toSigned<int>(pos), toSigned<int>(span));
+      std::println(_file, "Progress: {0:3}% ({1:{3}}/{2})",
+                   pct, pos, span, width);
     }
   }
 

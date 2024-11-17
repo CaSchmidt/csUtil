@@ -20,6 +20,7 @@
 #include <cs/Concurrent/SyncCondition.h>
 #include <cs/Concurrent/SyncValue.h>
 #include <cs/Concurrent/ThreadPool.h>
+#include <cs/Logging/Progress.h>
 #include <cs/System/Random.h>
 #include <cs/System/Time.h>
 
@@ -104,6 +105,21 @@ void run_SyncValue()
   }
 
   pool.finish();
+}
+
+// Progress //////////////////////////////////////////////////////////////////
+
+void run_Progress()
+{
+  constexpr std::size_t MIN =  10;
+  constexpr std::size_t MAX = 333;
+
+  cs::ProgressPtr progress = cs::Progress::make();
+  progress->setProgressRange(MIN, MAX);
+
+  for(std::size_t i = 0; i <= MAX; i++) {
+    progress->setProgressValue(i);
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
