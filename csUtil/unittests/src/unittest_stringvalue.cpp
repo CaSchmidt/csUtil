@@ -9,39 +9,6 @@
 namespace util {
 
   template<typename T>
-  inline std::string to_hexstr(const T value)
-  {
-#if 0
-    std::ostringstream stream;
-    stream << std::hex << value;
-    return stream.str();
-#else
-    std::string str(128, '\0');
-    snprintf(str.data(), str.size(), "%x", value);
-    cs::impl_strval::shrink(str, true);
-    while( str.size() > sizeof(T)*2 ) {
-      str.erase(0, 1);
-    }
-    return str;
-#endif
-  }
-
-  template<typename T>
-  inline std::string to_octstr(const T value)
-  {
-#if 0
-    std::ostringstream stream;
-    stream << std::oct << value;
-    return stream.str();
-#else
-    std::string str(128, '\0');
-    snprintf(str.data(), str.size(), "%o", value);
-    cs::impl_strval::shrink(str, true);
-    return str;
-#endif
-  }
-
-  template<typename T>
   inline cs::if_real_t<T,void> print(const T value,
                                      const char fmt,
                                      const int prec)
