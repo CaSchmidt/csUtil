@@ -29,6 +29,8 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
+#include <print>
+
 #include "cs/Concurrent/ThreadPool.h"
 
 namespace cs {
@@ -141,7 +143,7 @@ namespace cs {
   void ThreadPool::worker(const size_type id)
   {
 #ifdef HAVE_WORKER_DEBUG
-    fprintf(stderr, "Starting %d...\n", int(id));
+    std::println(stderr, "Starting {}...", id);
     fflush(stderr);
 #else
     static_cast<void>(id); // silence warning of unused 'id'
@@ -172,7 +174,7 @@ namespace cs {
     } // while( true )
 
 #ifdef HAVE_WORKER_DEBUG
-    fprintf(stderr, "Exiting %d...\n", int(id));
+    std::println(stderr, "Exiting {}...", id);
     fflush(stderr);
 #endif
   }
