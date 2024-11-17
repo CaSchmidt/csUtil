@@ -1,5 +1,4 @@
-#include <cstdio>
-#include <cstdlib>
+#include <print>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -9,7 +8,7 @@ template<typename EnumT>
 void print(const cs::Flags<EnumT>& flags)
 {
   const typename cs::Flags<EnumT>::value_type v = flags;
-  printf("value = 0x%X\n", v);
+  std::println("value = 0x{:X}", v);
 }
 
 namespace flags {

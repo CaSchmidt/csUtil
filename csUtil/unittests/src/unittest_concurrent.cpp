@@ -62,7 +62,8 @@ namespace util {
 
       const int old = i;
       i += 1;
-      printf("%d -> %d\n", old, i); fflush(stdout);
+      std::println("{} -> {}", old, i);
+      fflush(stdout);
     }
   };
 
@@ -77,7 +78,8 @@ namespace util {
     {
       delay();
 
-      printf("%d\n", i); fflush(stdout);
+      std::println("{}", i);
+      fflush(stdout);
     }
   };
 
@@ -89,7 +91,8 @@ namespace util {
 
     const int old = i;
     i += 1;
-    printf("%d -> %d\n", old, i); fflush(stdout);
+    std::println("{} -> {}", old, i);
+    fflush(stdout);
 
     return -1;
   }
@@ -99,7 +102,8 @@ namespace util {
     delay();
 
     const int out = in + 1;
-    printf("%d -> %d\n", in , out); fflush(stdout);
+    std::println("{} -> {}", in , out);
+    fflush(stdout);
 
     return out;
   }
