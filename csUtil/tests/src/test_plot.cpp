@@ -132,7 +132,7 @@ namespace test_csv {
       } else if( lineno >= LINE_VALUE ) {
         auto colIter = columns.begin();
         for(const std::string& field : fields) {
-          colIter->values.push_back(cs::toValue<double>(field));
+          colIter->values.push_back(cs::toValue<double>(field).value());
           ++colIter;
         }
 

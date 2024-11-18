@@ -102,7 +102,7 @@ namespace plot {
     const char fmt = std::get<0>(alf);
     const int prec = std::get<1>(alf);
 
-    std::string str = cs::toString(value, fmt, prec);
+    std::string str = cs::toString(value, fmt, prec).value();
     cs::removeTrailingZeros(str);
 
     return cs::toQString(cs::toUtf8StringView(str));

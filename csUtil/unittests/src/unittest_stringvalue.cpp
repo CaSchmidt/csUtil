@@ -1,5 +1,3 @@
-#include <cstdio>
-
 #include <print>
 
 #include <catch2/catch_test_macros.hpp>
@@ -14,7 +12,7 @@ namespace util {
                                      const int prec)
   {
     std::println("value = {} (std) vs. {} (format = {}, precision = {})",
-                 value, cs::toString(value, fmt, prec), fmt, prec);
+                 value, cs::toString(value, fmt, prec).value(), fmt, prec);
   }
 
   template<typename T>
@@ -103,64 +101,57 @@ namespace stringvalue {
 
     using ValueT = int16_t;
 
-    bool ok = false;
-
     { // empty string
-      ok = false;
-      REQUIRE( cs::toValue<ValueT>("", &ok) == ValueT{0} );
-      REQUIRE( !ok );
+      REQUIRE( !cs::toValue<ValueT>("").has_value() );
 
-      ok = false;
-      REQUIRE( cs::toValue<ValueT>("\t", &ok) == ValueT{0} );
-      REQUIRE( !ok );
+      REQUIRE( !cs::toValue<ValueT>("\t").has_value() );
     }
 
     { // unsigned
       using ValueT = uint16_t;
 
-      ok = false;
-      REQUIRE( cs::toValue<ValueT>("\t\v\f\n\r 255  ", &ok) == ValueT{255} );
-      REQUIRE( ok );
+      auto v1 = cs::toValue<ValueT>("\t\v\f\n\r 255  ");
+      REQUIRE( v1.has_value() );
+      REQUIRE( *v1 == ValueT{255} );
 
-      ok = false;
-      REQUIRE( cs::toValue<ValueT>("+255", &ok) == ValueT{255} );
-      REQUIRE( ok );
+      auto v2 = cs::toValue<ValueT>("+255");
+      REQUIRE( v2.has_value() );
+      REQUIRE( *v2 == ValueT{255} );
 
-      ok = false;
-      REQUIRE( cs::toValue<ValueT>("-255", &ok) == ValueT{0} );
-      REQUIRE( !ok );
+      auto v3 = cs::toValue<ValueT>("-255");
+      REQUIRE( !v3.has_value() );
     }
 
     { // signed decimal
-      ok = false;
-      REQUIRE( cs::toValue<ValueT>("+255", &ok) == ValueT{255} );
-      REQUIRE( ok );
+      auto v1 = cs::toValue<ValueT>("+255");
+      REQUIRE( v1.has_value() );
+      REQUIRE( *v1 == ValueT{255} );
 
-      ok = false;
-      REQUIRE( cs::toValue<ValueT>("-255", &ok) == ValueT{-255} );
-      REQUIRE( ok );
+      auto v2 = cs::toValue<ValueT>("-255");
+      REQUIRE( v2.has_value() );
+      REQUIRE( *v2 == ValueT{-255} );
     }
 
     { // signed hexadecimal
-      ok = false;
-      REQUIRE( cs::toValue<ValueT>("fF", &ok, 16) == ValueT{255} );
-      REQUIRE( ok );
+      auto v1 = cs::toValue<ValueT>("fF", 16);
+      REQUIRE( v1.has_value() );
+      REQUIRE( *v1 == ValueT{255} );
 
-      ok = false;
-      REQUIRE( cs::toValue<ValueT>("+fF", &ok, 16) == ValueT{255} );
-      REQUIRE( ok );
+      auto v2 = cs::toValue<ValueT>("+fF", 16);
+      REQUIRE( v2.has_value() );
+      REQUIRE( *v2 == ValueT{255} );
 
-      ok = false;
-      REQUIRE( cs::toValue<ValueT>("-fF", &ok, 16) == ValueT{-255} );
-      REQUIRE( ok );
+      auto v3 = cs::toValue<ValueT>("-fF", 16);
+      REQUIRE( v3.has_value() );
+      REQUIRE( *v3 == ValueT{-255} );
 
-      ok = false;
-      REQUIRE( cs::toValue<ValueT>("  +7fFF  ", &ok, 16) == ValueT{32767} );
-      REQUIRE( ok );
+      auto v4 = cs::toValue<ValueT>("  +7fFF  ", 16);
+      REQUIRE( v4.has_value() );
+      REQUIRE( *v4 == ValueT{32767} );
 
-      ok = false;
-      REQUIRE( cs::toValue<ValueT>("  -8000  ", &ok, 16) == ValueT{-32768} );
-      REQUIRE( ok );
+      auto v5 = cs::toValue<ValueT>("  -8000  ", 16);
+      REQUIRE( v5.has_value() );
+      REQUIRE( *v5 == ValueT{-32768} );
     }
   } // TEST_CASE
 
@@ -169,48 +160,42 @@ namespace stringvalue {
 
     using ValueT = double;
 
-    bool ok = false;
-
     { // emtpy string
-      ok = false;
-      REQUIRE( cs::toValue<ValueT>("", &ok) == ValueT{0} );
-      REQUIRE( !ok );
+      REQUIRE( !cs::toValue<ValueT>("").has_value() );
 
-      ok = false;
-      REQUIRE( cs::toValue<ValueT>("\t", &ok) == ValueT{0} );
-      REQUIRE( !ok );
+      REQUIRE( !cs::toValue<ValueT>("\t").has_value() );
     }
 
     { // decimal
-      ok = false;
-      REQUIRE( cs::toValue<ValueT>("\t\v\n\f\r +1.5", &ok) == ValueT{1.5} );
-      REQUIRE( ok );
+      auto v1 = cs::toValue<ValueT>("\t\v\n\f\r +1.5");
+      REQUIRE( v1.has_value() );
+      REQUIRE( *v1 == ValueT{1.5} );
 
-      ok = false;
-      REQUIRE( cs::toValue<ValueT>("-0.25", &ok) == ValueT{-0.25} );
-      REQUIRE( ok );
+      auto v2 = cs::toValue<ValueT>("-0.25");
+      REQUIRE( v2.has_value() );
+      REQUIRE( *v2 == ValueT{-0.25} );
 
-      ok = false;
-      REQUIRE( cs::toValue<ValueT>("+1.5E2", &ok) == ValueT{150.0} );
-      REQUIRE( ok );
+      auto v3 = cs::toValue<ValueT>("+1.5E2");
+      REQUIRE( v3.has_value() );
+      REQUIRE( *v3 == ValueT{150.0} );
 
-      ok = false;
-      REQUIRE( cs::toValue<ValueT>("-100e-2", &ok) == ValueT{-1.0} );
-      REQUIRE( ok );
+      auto v4 = cs::toValue<ValueT>("-100e-2");
+      REQUIRE( v4.has_value() );
+      REQUIRE( *v4 == ValueT{-1.0} );
     }
 
     { // hexadecimal
-      ok = false;
-      REQUIRE( cs::toValue<ValueT>("1.8", &ok, 16) == ValueT{1.5} );
-      REQUIRE( ok );
+      auto v1 = cs::toValue<ValueT>("1.8", 16);
+      REQUIRE( v1.has_value() );
+      REQUIRE( *v1 == ValueT{1.5} );
 
-      ok = false;
-      REQUIRE( cs::toValue<ValueT>("+1.8P+1", &ok, 16) == ValueT{3.0} );
-      REQUIRE( ok );
+      auto v2 = cs::toValue<ValueT>("+1.8P+1", 16);
+      REQUIRE( v2.has_value() );
+      REQUIRE( *v2 == ValueT{3.0} );
 
-      ok = false;
-      REQUIRE( cs::toValue<ValueT>("-1.8p-1", &ok, 16) == ValueT{-0.75} );
-      REQUIRE( ok );
+      auto v3 = cs::toValue<ValueT>("-1.8p-1", 16);
+      REQUIRE( v3.has_value() );
+      REQUIRE( *v3 == ValueT{-0.75} );
     }
   } // TEST_CASE
 

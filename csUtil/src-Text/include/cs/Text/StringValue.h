@@ -35,6 +35,7 @@
 
 #include <algorithm>
 #include <charconv>
+#include <expected>
 #include <string>
 
 #include <cs/Core/TypeTraits.h>
@@ -112,11 +113,11 @@ namespace cs {
 
   } // namespace impl_strval
 
-  ////// Public //////////////////////////////////////////////////////////////
+  ////// Public - Value-to-String ////////////////////////////////////////////
 
   template<typename T, bool RECLAIM = true>
-  inline if_integral_t<T,std::string> toString(const T value,
-                                               const int base = 10)
+  inline auto toString(const T value, const int base = 10)
+  -> std::expected<if_integral_t<T,std::string>,std::errc>
   {
     using namespace impl_strval;
 
@@ -124,7 +125,7 @@ namespace cs {
 
     std::string str;
     if( !resize(str, STR_SIZE) ) {
-      return std::string();
+      return std::unexpected(std::errc::not_enough_memory);
     }
 
     char *first = str.data();
@@ -133,7 +134,7 @@ namespace cs {
     // (1) Sanitize base /////////////////////////////////////////////////////
 
     if( base < 2  ||  base > 36 ) {
-      return std::string();
+      return std::unexpected(std::errc::invalid_argument);
     }
 
     // (2) Conversion ////////////////////////////////////////////////////////
@@ -142,7 +143,7 @@ namespace cs {
         ? std::to_chars(first, last, value, base)
         : std::to_chars(first, last, unsigned_cast(value), base);
     if( result.ec != std::errc{} ) {
-      return std::string();
+      return std::unexpected(result.ec);
     }
 
     *(result.ptr) = '\0';
@@ -155,9 +156,8 @@ namespace cs {
   }
 
   template<typename T, bool RECLAIM = true>
-  inline if_real_t<T,std::string> toString(const T value,
-                                           const char format = 'g',
-                                           const int precision = 6)
+  inline auto toString(const T value, const char format = 'g', const int precision = 6)
+  -> std::expected<if_real_t<T,std::string>,std::errc>
   {
     using namespace impl_strval;
 
@@ -165,7 +165,7 @@ namespace cs {
 
     std::string str;
     if( !resize(str, STR_SIZE) ) {
-      return std::string();
+      return std::unexpected(std::errc::not_enough_memory);
     }
 
     char *first = str.data();
@@ -180,7 +180,7 @@ namespace cs {
 
     const std::to_chars_result result = std::to_chars(first, last, value, fmt, prec);
     if( result.ec != std::errc{} ) {
-      return std::string();
+      return std::unexpected(result.ec);
     }
 
     *(result.ptr) = '\0';
@@ -192,22 +192,18 @@ namespace cs {
     return str;
   }
 
+  ////// Public - String-to-Value ////////////////////////////////////////////
+
   template<typename T, bool HAVE_SKIP = true>
-  inline if_integral_t<T> toValue(const std::string_view& str,
-                                  bool *ok = nullptr, const int base = 10)
+  inline auto toValue(const std::string_view& str, const int base = 10)
+  -> std::expected<if_integral_t<T>,std::errc>
   {
     using namespace impl_strval;
 
-    constexpr T ERROR_VALUE = T{0};
-
     // (0) Initialization ////////////////////////////////////////////////////
 
-    if( ok != nullptr ) {
-      *ok = false;
-    }
-
     if( str.empty() ) {
-      return ERROR_VALUE;
+      return std::unexpected(std::errc::invalid_argument);
     }
 
     const char *first = str.data();
@@ -216,7 +212,7 @@ namespace cs {
     // (1) Sanitize base /////////////////////////////////////////////////////
 
     if( base < 2  ||  base > 36 ) {
-      return ERROR_VALUE;
+      return std::unexpected(std::errc::invalid_argument);
     }
 
     // (2) Skip leading whitespace ///////////////////////////////////////////
@@ -225,7 +221,7 @@ namespace cs {
       first = skipSpace(first, last);
 
       if( first == last ) {
-        return ERROR_VALUE;
+        return std::unexpected(std::errc::invalid_argument);
       }
     } // HAVE_SKIP
 
@@ -237,43 +233,33 @@ namespace cs {
       }
 
       if( first == last ) {
-        return ERROR_VALUE;
+        return std::unexpected(std::errc::invalid_argument);
       }
     } // HAVE_SKIP
 
     // (4) Conversion ////////////////////////////////////////////////////////
 
-    T value = ERROR_VALUE;
+    T value{0};
     const std::from_chars_result result = std::from_chars(first, last, value, base);
     if( result.ec != std::errc{} ) {
-      return ERROR_VALUE;
+      return std::unexpected(result.ec);
     }
 
     // Done! /////////////////////////////////////////////////////////////////
-
-    if( ok != nullptr ) {
-      *ok = true;
-    }
 
     return value;
   }
 
   template<typename T, bool HAVE_SKIP = true>
-  inline if_real_t<T> toValue(const std::string_view& str,
-                              bool *ok = nullptr, const int base = 10)
+  inline auto toValue(const std::string_view& str, const int base = 10)
+  -> std::expected<if_real_t<T>,std::errc>
   {
     using namespace impl_strval;
 
-    constexpr T ERROR_VALUE = T{0};
-
     // (0) Initialization ////////////////////////////////////////////////////
 
-    if( ok != nullptr ) {
-      *ok = false;
-    }
-
     if( str.empty() ) {
-      return ERROR_VALUE;
+      return std::unexpected(std::errc::invalid_argument);
     }
 
     const char *first = str.data();
@@ -282,7 +268,7 @@ namespace cs {
     // (1) Sanitize base /////////////////////////////////////////////////////
 
     if( base != 10  &&  base != 16 ) {
-      return ERROR_VALUE;
+      return std::unexpected(std::errc::invalid_argument);
     }
 
     const std::chars_format fmt = base == 16
@@ -295,7 +281,7 @@ namespace cs {
       first = skipSpace(first, last);
 
       if( first == last ) {
-        return ERROR_VALUE;
+        return std::unexpected(std::errc::invalid_argument);
       }
     } // HAVE_SKIP
 
@@ -307,23 +293,19 @@ namespace cs {
       }
 
       if( first == last ) {
-        return ERROR_VALUE;
+        return std::unexpected(std::errc::invalid_argument);
       }
     } // HAVE_SKIP
 
     // (4) Conversion ////////////////////////////////////////////////////////
 
-    T value = ERROR_VALUE;
+    T value{0};
     const std::from_chars_result result = std::from_chars(first, last, value, fmt);
     if( result.ec != std::errc{} ) {
-      return ERROR_VALUE;
+      return std::unexpected(result.ec);
     }
 
     // Done! /////////////////////////////////////////////////////////////////
-
-    if( ok != nullptr ) {
-      *ok = true;
-    }
 
     return value;
   }

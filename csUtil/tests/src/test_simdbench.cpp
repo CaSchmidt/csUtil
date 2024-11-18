@@ -84,7 +84,7 @@ namespace util {
                           : double(dur)/double(ref))*100.0;
 
     std::println("{}({},{}) = {}, {}us, ratio = {}%",
-                 name, beg, end, sum, dur, cs::toString(rat, 'f', 2));
+                 name, beg, end, sum, dur, cs::toString(rat, 'f', 2).value());
 
     return dur;
   }
@@ -113,7 +113,7 @@ namespace util {
                           : double(dur)/double(ref))*100.0;
 
     std::println("{}({},{}) = {}, {}us, ratio = {}%",
-                 name, beg, end, sum, dur, cs::toString(rat, 'f', 2));
+                 name, beg, end, sum, dur, cs::toString(rat, 'f', 2).value());
 
     return dur;
   }
