@@ -33,15 +33,15 @@
 
 #include <iterator>
 
-#include <cs/Core/TypeTraits.h>
+#include <cs/Core/Buffer.h>
 
 namespace cs {
 
   class BufferView {
   public:
-    using difference_type = std::ptrdiff_t;
-    using       size_type = std::size_t;
-    using      value_type = byte_t;
+    using difference_type = Buffer::difference_type;
+    using       size_type = Buffer::size_type;
+    using      value_type = Buffer::value_type;
 
     using const_pointer = const value_type *;
 
@@ -59,18 +59,34 @@ namespace cs {
     {
     }
 
+    constexpr BufferView& operator=(const BufferView& other) noexcept
+    {
+      if( &other != this ) {
+        _data = other._data;
+        _size = other._size;
+      }
+
+      return *this;
+    }
+
+    constexpr BufferView(const Buffer& buffer) noexcept
+      : _data{buffer.data()}
+      , _size{buffer.size()}
+    {
+    }
+
+    constexpr BufferView& operator=(const Buffer& buffer) noexcept
+    {
+      _data = buffer.data();
+      _size = buffer.size();
+
+      return *this;
+    }
+
     BufferView(const void *data, const size_type size) noexcept
       : _data{reinterpret_cast<const_pointer>(data)}
       , _size{size}
     {
-    }
-
-    constexpr BufferView& operator=(const BufferView& other) noexcept
-    {
-      _data = other._data;
-      _size = other._size;
-
-      return *this;
     }
 
     // Iterator Support //////////////////////////////////////////////////////
@@ -85,16 +101,6 @@ namespace cs {
       return _data + _size;
     }
 
-    constexpr const_iterator cbegin() const
-    {
-      return _data;
-    }
-
-    constexpr const_iterator cend() const
-    {
-      return _data + _size;
-    }
-
     constexpr const_reverse_iterator rbegin() const
     {
       return std::make_reverse_iterator(end());
@@ -103,16 +109,6 @@ namespace cs {
     constexpr const_reverse_iterator rend() const
     {
       return std::make_reverse_iterator(begin());
-    }
-
-    constexpr const_reverse_iterator crbegin() const
-    {
-      return std::make_reverse_iterator(cend());
-    }
-
-    constexpr const_reverse_iterator crend() const
-    {
-      return std::make_reverse_iterator(cbegin());
     }
 
     // Capacity //////////////////////////////////////////////////////////////
