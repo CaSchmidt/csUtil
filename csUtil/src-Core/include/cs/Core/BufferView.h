@@ -31,11 +31,16 @@
 
 #pragma once
 
+#include <algorithm>
 #include <iterator>
+#include <limits>
+#include <string_view>
 
 #include <cs/Core/Buffer.h>
 
 namespace cs {
+
+  ////// Public //////////////////////////////////////////////////////////////
 
   class BufferView {
   public:
@@ -50,6 +55,10 @@ namespace cs {
     using const_iterator = const_pointer;
 
     using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+
+    // Constants /////////////////////////////////////////////////////////////
+
+    static constexpr size_type NPOS = std::numeric_limits<size_type>::max();
 
     // Construction and Assignment ///////////////////////////////////////////
 
@@ -87,6 +96,17 @@ namespace cs {
       : _data{reinterpret_cast<const_pointer>(data)}
       , _size{size}
     {
+    }
+
+    constexpr BufferView(const const_iterator first, const const_iterator last)
+      : _data{nullptr}
+      , _size{0}
+    {
+      const difference_type dist = std::distance(first, last);
+      if( dist > difference_type{0} ) {
+        _data = first;
+        _size = static_cast<size_type>(dist);
+      }
     }
 
     // Iterator Support //////////////////////////////////////////////////////
@@ -145,6 +165,16 @@ namespace cs {
       return _data[_size - ONE];
     }
 
+    // View Operations ///////////////////////////////////////////////////////
+
+    constexpr BufferView subview(const size_type pos = 0,
+                                 const size_type count = NPOS) const
+    {
+      return pos < _size
+          ? BufferView(_data + pos, std::min(count, _size - pos))
+          : BufferView();
+    }
+
   private:
     static constexpr size_type  ONE = 1;
     static constexpr size_type ZERO = 0;
@@ -152,5 +182,21 @@ namespace cs {
     const_pointer _data{nullptr};
     size_type     _size{0};
   };
+
+  ////// Conversion Helpers //////////////////////////////////////////////////
+
+  constexpr Buffer toBuffer(const BufferView& view)
+  {
+    return !view.empty()
+        ? Buffer(view.begin(), view.end())
+        : Buffer();
+  }
+
+  constexpr std::string_view toStringView(const BufferView& view)
+  {
+    return !view.empty()
+        ? std::string_view(reinterpret_cast<const char*>(view.data()), view.size())
+        : std::string_view();
+  }
 
 } // namespace cs
