@@ -121,7 +121,7 @@ std::string md5hexhash(const std::string& s)
   md5->update(s.data(), s.size());
   const cs::Buffer digest = md5->digest();
 
-  return cs::toString(digest);
+  return cs::toHexString(digest).value();
 }
 
 std::string mixhash(const std::string& first, const std::string& second)

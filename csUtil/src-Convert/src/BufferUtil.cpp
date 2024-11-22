@@ -34,7 +34,6 @@
 #include "cs/Core/CharUtil.h"
 #include "cs/Core/Constants.h"
 #include "cs/Core/Container.h"
-#include "cs/Core/Pointer.h"
 #include "cs/Text/StringUtil.h"
 
 namespace cs {
@@ -43,14 +42,21 @@ namespace cs {
 
   namespace impl_bytearray {
 
-    template<bool UPPER, typename T> requires is_char_v<T>
-    inline void toString(T *dest, const byte_t *src, const std::size_t lenSrc,
-                         const std::size_t dpos)
+    template<bool UPPER>
+    inline void toHexString(std::string::iterator d_first,
+                            const BufferView& data, const char sep)
     {
-      for(std::size_t inpos = 0, outpos = 0; inpos < lenSrc; inpos++, outpos += dpos) {
-        dest[outpos + 0] = toHexChar<T,UPPER>(src[inpos], true);
-        dest[outpos + 1] = toHexChar<T,UPPER>(src[inpos]);
-      }
+      for(const Buffer::value_type b : data) {
+        *d_first = toHexChar<char,UPPER>(b, true);
+        ++d_first;
+
+        *d_first = toHexChar<char,UPPER>(b);
+        ++d_first;
+
+        if( sep != '\0' ) {
+          ++d_first;
+        }
+      } // For Each Byte
     }
 
   } // namespace impl_bytearray
@@ -87,36 +93,40 @@ namespace cs {
     return result;
   }
 
-  CS_UTIL_EXPORT std::string toString(const void *data, const std::size_t sizData,
-                                      const char sep, const bool is_upper)
+  CS_UTIL_EXPORT auto toHexString(const BufferView& data,
+                                  const char sep,
+                                  const bool is_upper)
+  -> std::expected<std::string,std::errc>
   {
     using k = Konst<std::size_t>;
 
-    if( !Pointer::isValidRange(data, sizData) ) {
-      return std::string();
+    // (0) Sanitize Input ////////////////////////////////////////////////////
+
+    if( data.empty() ) {
+      return std::unexpected(std::errc::invalid_argument);
     }
+
+    // (1) Create Result /////////////////////////////////////////////////////
 
     // Reserve output length, including separator.
     const std::size_t length = sep != '\0'
-        ? sizData*k::THREE - k::ONE // sizeData*2 + (sizeData - 1)
-        : sizData*k::TWO;
+        ? data.size()*k::THREE - k::ONE // sizeData*2 + (sizeData - 1)
+        : data.size()*k::TWO;
 
     std::string result;
     if( !resize(result, length, sep) ) {
-      return std::string();
+      return std::unexpected(std::errc::not_enough_memory);
     }
 
-    // Adjust output position according to separator.
-    const std::size_t dpos = sep != '\0'
-        ? 3
-        : 2;
+    // (2) Conversion ////////////////////////////////////////////////////////
 
-    const byte_t *src = reinterpret_cast<const byte_t*>(data);
     if( is_upper ) {
-      impl_bytearray::toString<true>(result.data(), src, sizData, dpos);
+      impl_bytearray::toHexString<true>(result.begin(), data, sep);
     } else {
-      impl_bytearray::toString<false>(result.data(), src, sizData, dpos);
+      impl_bytearray::toHexString<false>(result.begin(), data, sep);
     }
+
+    // Done! /////////////////////////////////////////////////////////////////
 
     return result;
   }

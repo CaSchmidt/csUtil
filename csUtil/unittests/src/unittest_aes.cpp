@@ -113,7 +113,7 @@ namespace test_aeskeyexp {
 
   bool cmp_key(const std::size_t i, const uint32_t *w, const char *hexref)
   {
-    const std::string s = cs::toString(&w[i*AES_Nb], AES_BLKSIZE);
+    const std::string s = cs::toHexString(cs::BufferView(&w[i*AES_Nb], AES_BLKSIZE)).value();
     return s == hexref;
   }
 
