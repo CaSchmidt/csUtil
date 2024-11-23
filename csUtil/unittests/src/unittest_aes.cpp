@@ -74,11 +74,11 @@ namespace test_util {
         plain.clear();
         continue;
       } else if( cs::startsWith(line, prefix_KEY) ) {
-        key = cs::toBuffer(line.substr(cs::strlen(prefix_KEY)));
+        key = cs::fromHexString(line.substr(cs::strlen(prefix_KEY))).value();
       } else if( cs::startsWith(line, prefix_PLAIN) ) {
-        plain = cs::toBuffer(line.substr(cs::strlen(prefix_PLAIN)));
+        plain = cs::fromHexString(line.substr(cs::strlen(prefix_PLAIN))).value();
       } else if( cs::startsWith(line, prefix_CIPHER) ) {
-        cipher = cs::toBuffer(line.substr(cs::strlen(prefix_CIPHER)));
+        cipher = cs::fromHexString(line.substr(cs::strlen(prefix_CIPHER))).value();
       } else {
         continue;
       }

@@ -88,7 +88,7 @@ namespace test_util {
         cntMessages++;
 
       } else if( cs::startsWith(line, prefix_Msg) ) {
-        message = cs::toBuffer(line.substr(cs::strlen(prefix_Msg)));
+        message = cs::fromHexString(line.substr(cs::strlen(prefix_Msg))).value();
         if( length != 0  &&  message.size() != length ) {
           length = cs::MAX_SIZE_T;
           continue;
@@ -99,7 +99,7 @@ namespace test_util {
           continue;
         }
 
-        const cs::Buffer refDigest = cs::toBuffer(line.substr(cs::strlen(prefix_MD)));
+        const cs::Buffer refDigest = cs::fromHexString(line.substr(cs::strlen(prefix_MD))).value();
         if( refDigest.size() != hash->digestSize() ) {
           length = cs::MAX_SIZE_T;
           continue;

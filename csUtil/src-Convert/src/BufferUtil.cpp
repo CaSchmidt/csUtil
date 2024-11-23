@@ -34,7 +34,7 @@
 #include "cs/Core/CharUtil.h"
 #include "cs/Core/Constants.h"
 #include "cs/Core/Container.h"
-#include "cs/Text/StringUtil.h"
+#include "cs/Math/Numeric.h"
 
 namespace cs {
 
@@ -63,32 +63,46 @@ namespace cs {
 
   ////// Public //////////////////////////////////////////////////////////////
 
-  CS_UTIL_EXPORT Buffer toBuffer(const std::string_view& str)
+  CS_UTIL_EXPORT auto fromHexString(const std::string_view& str)
+  -> std::expected<Buffer,std::errc>
   {
-    using k = Konst<std::size_t>;
+    using difference_type = std::string_view::difference_type;
+    using       size_type = Buffer::size_type;
 
-    if( !isHexString(str) ) {
-      return Buffer();
+    using k = Konst<size_type>;
+
+    // (0) Sanitize Input ////////////////////////////////////////////////////
+
+    if( str.empty()  ||  isOdd(str.size()) ) {
+      return std::unexpected(std::errc::invalid_argument);
     }
+
+    const size_type numHexChars = std::max(difference_type{0},
+                                           std::count_if(str.begin(), str.end(),
+                                                         lambda_is_hex<char>()));
+    if( numHexChars != str.size() ) {
+      return std::unexpected(std::errc::invalid_argument);
+    }
+
+    // (1) Create Result /////////////////////////////////////////////////////
 
     Buffer result;
-    if( !resize(result, (str.size() + k::ONE)/k::TWO) ) {
-      return Buffer();
+    if( !resize(result, numHexChars/k::TWO) ) {
+      return std::unexpected(std::errc::not_enough_memory);
     }
 
-    const std::size_t i0 = result.size() != str.size()/k::TWO
-        ? 1
-        : 0;
+    // (2) Conversion ////////////////////////////////////////////////////////
 
-    if( i0 > k::ZERO ) {
-      result[0] = fromHexChar(str[0]);
+    auto src = str.begin();
+    for(byte_t& b : result) {
+      b  = fromHexChar(*src) << 4; // TODO
+      ++src;
+
+      b |= fromHexChar(*src);
+      ++src;
     }
 
-    for(std::size_t i = i0; i < result.size(); i++) {
-      const std::size_t idxStr = i*k::TWO - i0;
-      result[i]  = fromHexChar(str[idxStr + 0]) << 4;
-      result[i] |= fromHexChar(str[idxStr + 1]);
-    }
+    // Done! /////////////////////////////////////////////////////////////////
 
     return result;
   }

@@ -76,7 +76,7 @@ PlainInfo decrypt(const std::string& keystr, const cs::Buffer& cipher)
   }
   const std::size_t sizBlock = aes128->blockSize();
 
-  const cs::Buffer key = cs::toBuffer(keystr);
+  const cs::Buffer key = cs::fromHexString(keystr).value();
   if( key.size() != aes128->keySize() ) {
     return PlainInfo();
   }

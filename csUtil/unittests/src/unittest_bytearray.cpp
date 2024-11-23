@@ -13,7 +13,7 @@ namespace test_bytearray {
 
     { // Case 1 - Even Length
       const std::string  s1 = std::format("{:X}", uint16_t{0xabcd});
-      const cs::Buffer    a = cs::toBuffer(s1);
+      const cs::Buffer    a = cs::fromHexString(s1).value();
       const std::string  s2 = cs::toHexString(a, '\0', true).value();
 
       REQUIRE( s1 == s2 );
@@ -21,26 +21,17 @@ namespace test_bytearray {
 
     { // Case 2 - Odd Length
       const std::string  s1 = std::format("{:X}", uint32_t{0xabcde});
-      const cs::Buffer    a = cs::toBuffer(s1);
-      const std::string  s2 = cs::toHexString(a, '\0', true).value();
+      const auto          a = cs::fromHexString(s1);
 
-      REQUIRE( "0" + s1 == s2 );
+      REQUIRE( !a.has_value() );
     }
 
     { // Case 3 - Even Length with Fill
       const std::string  s1 = std::format("{:x}", uint16_t{0xabcd});
-      const cs::Buffer    a = cs::toBuffer(s1);
+      const cs::Buffer    a = cs::fromHexString(s1).value();
       const std::string  s2 = cs::toHexString(a, '-').value();
 
       REQUIRE( "ab-cd" == s2 );
-    }
-
-    { // Case 4 - Odd Length with Fill
-      const std::string  s1 = std::format("{:x}", uint32_t{0xabcde});
-      const cs::Buffer    a = cs::toBuffer(s1);
-      const std::string  s2 = cs::toHexString(a, '-').value();
-
-      REQUIRE( "0a-bc-de" == s2 );
     }
   } // TEST_CASE
 
