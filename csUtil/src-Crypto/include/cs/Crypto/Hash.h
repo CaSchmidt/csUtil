@@ -59,7 +59,7 @@ namespace cs {
     };
 
     Hash(const Function id) noexcept;
-    ~Hash() noexcept;
+    virtual ~Hash() noexcept;
 
     Function id() const;
 
