@@ -32,6 +32,7 @@
 #pragma once
 
 #include <algorithm>
+#include <iterator>
 #include <string_view>
 
 #include <cs/Core/CharUtil.h>
@@ -76,7 +77,7 @@ namespace cs {
     {
       return !text.empty()            &&
           isIdentFirst(text.front())  &&
-          std::all_of(++text.begin(), text.end(), lambda_is_ident<CharT>());
+          std::all_of(std::next(text.begin()), text.end(), lambda_is_ident<CharT>());
     }
 
     ////// String contains only whitespace... ////////////////////////////////

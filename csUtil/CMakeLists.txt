@@ -95,6 +95,12 @@ if(CMAKE_COMPILER_IS_GNUCC  OR  CMAKE_COMPILER_IS_GNUCXX)
   )
 endif()
 
+if(MINGW)
+  target_link_libraries(csUtil
+    PUBLIC stdc++exp
+  )
+endif()
+
 ### Modules ##################################################################
 
 add_subdirectory(src-Core)

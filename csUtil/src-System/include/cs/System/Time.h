@@ -52,7 +52,7 @@ namespace cs {
   inline constexpr bool is_clock_to_sys_v = is_clock_to_sys<ClockT>::value;
 
   template<typename ClockT>
-  inline std::chrono::system_clock::time_point toSystemTime(const typename ClockT::tim_point& clktim,
+  inline std::chrono::system_clock::time_point toSystemTime(const typename ClockT::time_point& clktim,
                                                             std::enable_if_t<is_clock_to_sys_v<ClockT>> * = nullptr)
   {
     return ClockT::to_sys(clktim);

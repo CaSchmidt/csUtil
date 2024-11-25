@@ -32,7 +32,7 @@ namespace container {
   template<typename C>
   inline typename C::value_type get(const C& c, const std::ptrdiff_t n)
   {
-    return *std::next(c.cbegin(), n);
+    return *std::next(c.begin(), n);
   }
 
   template<typename C>
@@ -48,9 +48,14 @@ namespace container {
     return kv.first;
   }
 
-  void print(const KeyValue& kv)
+  void printKeyValue(const KeyValue& kv)
   {
     std::println("{}: {}", kv.first, kv.second);
+  }
+
+  void printKey(const key_type& key)
+  {
+    std::println("{}", key);
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -66,22 +71,25 @@ namespace container {
     m.insert({"c", 31});
     m.insert({"b", 22});
 
-    std::for_each(m.cbegin(), m.cend(), print);
+    std::for_each(m.begin(), m.end(), printKeyValue);
 
     {
-      const auto keys = cs::toSequence<std::list>(m.cbegin(), m.cend(), extractor);
+      const auto keys = cs::toSequence<std::list>(m.begin(), m.end(), extractor);
+
+      std::println("keys (std::list<>, unsorted):");
+      std::for_each(keys.begin(), keys.end(), printKey);
 
       REQUIRE( keys.size() == m.size() );
-      REQUIRE( get(keys, 0) == "a" );
-      REQUIRE( get(keys, 1) == "a" );
-      REQUIRE( get(keys, 2) == "c" );
-      REQUIRE( get(keys, 3) == "c" );
-      REQUIRE( get(keys, 4) == "b" );
-      REQUIRE( get(keys, 5) == "b" );
+      REQUIRE( std::count(keys.begin(), keys.end(), "a") == std::ptrdiff_t{2} );
+      REQUIRE( std::count(keys.begin(), keys.end(), "b") == std::ptrdiff_t{2} );
+      REQUIRE( std::count(keys.begin(), keys.end(), "c") == std::ptrdiff_t{2} );
     }
 
     {
-      const auto keys = cs::toSequence<std::list>(m.cbegin(), m.cend(), extractor, true);
+      const auto keys = cs::toSequence<std::list>(m.begin(), m.end(), extractor, true);
+
+      std::println("keys (std::list<>, sorted):");
+      std::for_each(keys.begin(), keys.end(), printKey);
 
       REQUIRE( keys.size() == m.size() );
       REQUIRE( get(keys, 0) == "a" );
@@ -93,18 +101,24 @@ namespace container {
     }
 
     {
-      const auto keys = cs::toSequence<std::list>(m.cbegin(), m.cend(), extractor, false, true);
+      const auto keys = cs::toSequence<std::list>(m.begin(), m.end(), extractor, false, true);
 
-      REQUIRE( keys.size() == 3 );
+      std::println("keys (std::list<>, unique (implies sorted)):");
+      std::for_each(keys.begin(), keys.end(), printKey);
+
+      REQUIRE( keys.size() == std::size_t{3} );
       REQUIRE( get(keys, 0) == "a" );
       REQUIRE( get(keys, 1) == "b" );
       REQUIRE( get(keys, 2) == "c" );
     }
 
     {
-      const auto keys = cs::toSequence<std::vector>(m.cbegin(), m.cend(), extractor, false, true);
+      const auto keys = cs::toSequence<std::vector>(m.begin(), m.end(), extractor, false, true);
 
-      REQUIRE( keys.size() == 3 );
+      std::println("keys (std::vector<>, unique (implies sorted)):");
+      std::for_each(keys.begin(), keys.end(), printKey);
+
+      REQUIRE( keys.size() == std::size_t{3} );
       REQUIRE( get(keys, 0) == "a" );
       REQUIRE( get(keys, 1) == "b" );
       REQUIRE( get(keys, 2) == "c" );
