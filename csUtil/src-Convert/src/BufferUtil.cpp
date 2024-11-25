@@ -67,9 +67,8 @@ namespace cs {
   -> std::expected<Buffer,std::errc>
   {
     using difference_type = std::string_view::difference_type;
-    using       size_type = Buffer::size_type;
 
-    using k = Konst<size_type>;
+    using k = Konst<std::size_t>;
 
     // (0) Sanitize Input ////////////////////////////////////////////////////
 
@@ -77,9 +76,9 @@ namespace cs {
       return std::unexpected(std::errc::invalid_argument);
     }
 
-    const size_type numHexChars = std::max(difference_type{0},
-                                           std::count_if(str.begin(), str.end(),
-                                                         lambda_is_hex<char>()));
+    const std::size_t numHexChars = std::max(difference_type{0},
+                                             std::count_if(str.begin(), str.end(),
+                                                           lambda_is_hex<char>()));
     if( numHexChars != str.size() ) {
       return std::unexpected(std::errc::invalid_argument);
     }
@@ -95,7 +94,7 @@ namespace cs {
 
     auto src = str.begin();
     for(byte_t& b : result) {
-      b  = fromHexChar(*src) << 4; // TODO
+      b  = fromHexChar(*src) << 4;
       ++src;
 
       b |= fromHexChar(*src);
