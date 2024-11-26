@@ -33,12 +33,12 @@ namespace test_fileio {
     {
       const StringList lines = cs::readLines(filename);
       REQUIRE(  lines.size() == 6 );
-      REQUIRE(  std::next(lines.cbegin(), 0)->empty() );
-      REQUIRE( *std::next(lines.cbegin(), 1) == " abc " );
-      REQUIRE(  std::next(lines.cbegin(), 2)->empty() );
-      REQUIRE( *std::next(lines.cbegin(), 3) == " xyz " );
-      REQUIRE( *std::next(lines.cbegin(), 4) == "   " );
-      REQUIRE(  std::next(lines.cbegin(), 5)->empty() );
+      REQUIRE(  std::next(lines.begin(), 0)->empty() );
+      REQUIRE( *std::next(lines.begin(), 1) == " abc " );
+      REQUIRE(  std::next(lines.begin(), 2)->empty() );
+      REQUIRE( *std::next(lines.begin(), 3) == " xyz " );
+      REQUIRE( *std::next(lines.begin(), 4) == "   " );
+      REQUIRE(  std::next(lines.begin(), 5)->empty() );
     }
 
     // (3) Read & trim lines /////////////////////////////////////////////////
@@ -46,12 +46,12 @@ namespace test_fileio {
     {
       const StringList lines = cs::readLines(filename, cs::LineFlag::Trim);
       REQUIRE(  lines.size() == 6 );
-      REQUIRE(  std::next(lines.cbegin(), 0)->empty() );
-      REQUIRE( *std::next(lines.cbegin(), 1) == "abc" );
-      REQUIRE(  std::next(lines.cbegin(), 2)->empty() );
-      REQUIRE( *std::next(lines.cbegin(), 3) == "xyz" );
-      REQUIRE(  std::next(lines.cbegin(), 4)->empty() );
-      REQUIRE(  std::next(lines.cbegin(), 5)->empty() );
+      REQUIRE(  std::next(lines.begin(), 0)->empty() );
+      REQUIRE( *std::next(lines.begin(), 1) == "abc" );
+      REQUIRE(  std::next(lines.begin(), 2)->empty() );
+      REQUIRE( *std::next(lines.begin(), 3) == "xyz" );
+      REQUIRE(  std::next(lines.begin(), 4)->empty() );
+      REQUIRE(  std::next(lines.begin(), 5)->empty() );
     }
 
     // (4) Read & skip blank/empty lines /////////////////////////////////////
@@ -59,8 +59,8 @@ namespace test_fileio {
     {
       const StringList lines = cs::readLines(filename, cs::LineFlag::SkipBlank);
       REQUIRE(  lines.size() == 2 );
-      REQUIRE( *std::next(lines.cbegin(), 0) == " abc " );
-      REQUIRE( *std::next(lines.cbegin(), 1) == " xyz " );
+      REQUIRE( *std::next(lines.begin(), 0) == " abc " );
+      REQUIRE( *std::next(lines.begin(), 1) == " xyz " );
     }
 
     // (5) Read, trim & skip blank lines /////////////////////////////////////
@@ -68,8 +68,8 @@ namespace test_fileio {
     {
       const StringList lines = cs::readLines(filename, cs::LineFlag::All);
       REQUIRE(  lines.size() == 2 );
-      REQUIRE( *std::next(lines.cbegin(), 0) == "abc" );
-      REQUIRE( *std::next(lines.cbegin(), 1) == "xyz" );
+      REQUIRE( *std::next(lines.begin(), 0) == "abc" );
+      REQUIRE( *std::next(lines.begin(), 1) == "xyz" );
     }
   }
 

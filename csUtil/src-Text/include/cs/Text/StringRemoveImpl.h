@@ -105,7 +105,7 @@ namespace cs {
 
       // (2) Do not touch exponent notation! /////////////////////////////////
 
-      if( std::find_if(std::next(iterDot), text.cend(), lambda_is_exp) != text.end() ) {
+      if( std::find_if(std::next(iterDot), text.cend(), lambda_is_exp) != text.cend() ) {
         return;
       }
 

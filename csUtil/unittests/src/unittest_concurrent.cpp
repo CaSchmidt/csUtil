@@ -200,7 +200,7 @@ namespace test_map {
                               &util::inc);
       f.get();
 
-      // cs::blockingMap(NUM_THREADS, v.cbegin(), v.cend(), util::Print());
+      // cs::blockingMap(NUM_THREADS, v.begin(), v.end(), util::Print());
 
       util::print(v.begin(), v.end(), "vnew = ");
 

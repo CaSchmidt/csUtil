@@ -203,11 +203,11 @@ namespace cs {
 
     key_type nextKey() const
     {
-      const const_iterator hit = std::max_element(_store.cbegin(),
-                                                  _store.cend(),
+      const const_iterator hit = std::max_element(_store.begin(),
+                                                  _store.end(),
                                                   value_less);
 
-      return hit != _store.cend()
+      return hit != _store.end()
           ? traits_type::makeNext(hit->second.id())
           : traits_type::makeNext(traits_type::makeInvalid());
     }
@@ -253,7 +253,7 @@ namespace cs {
     {
       const const_iterator hit = _store.find(id);
 
-      return hit != _store.cend()
+      return hit != _store.end()
           ? hit->second
           : _dummy;
     }

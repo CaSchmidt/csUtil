@@ -49,25 +49,25 @@ namespace cs {
 
       // (0) Sanitize input //////////////////////////////////////////////////
 
-      if( std::all_of(text.cbegin(), text.cend(), ::cs::lambda_is_space<CharT>()) ) {
+      if( std::all_of(text.begin(), text.end(), ::cs::lambda_is_space<CharT>()) ) {
         text.clear();
         return;
       }
 
       // (1) Trim left ///////////////////////////////////////////////////////
 
-      const CIter lbegin = std::find_if_not(text.cbegin(), text.cend(),
+      const CIter lbegin = std::find_if_not(text.begin(), text.end(),
                                             ::cs::lambda_is_space<CharT>());
-      if( lbegin != text.cend() ) {
-        text.erase(text.cbegin(), lbegin);
+      if( lbegin != text.end() ) {
+        text.erase(text.begin(), lbegin);
       }
 
       // (2) Trim right //////////////////////////////////////////////////////
 
       const CIter rend = std::find_if_not(text.crbegin(), text.crend(),
                                           ::cs::lambda_is_space<CharT>()).base();
-      if( text.cbegin() != rend ) {
-        text.erase(rend, text.cend());
+      if( text.begin() != rend ) {
+        text.erase(rend, text.end());
       }
     }
 

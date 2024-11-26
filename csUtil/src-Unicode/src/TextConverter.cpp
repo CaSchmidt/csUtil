@@ -305,7 +305,7 @@ namespace cs {
       } // For each alias
     } // For each available name
 
-    return std::list<std::string>(names.cbegin(), names.cend());
+    return std::list<std::string>(names.begin(), names.end());
   }
 
   ////// Public //////////////////////////////////////////////////////////////

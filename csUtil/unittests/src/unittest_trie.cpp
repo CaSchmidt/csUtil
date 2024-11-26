@@ -57,7 +57,7 @@ public:
 
   std::size_t size() const
   {
-    return std::accumulate(_v.cbegin(), _v.cend(), sizeof(Store),
+    return std::accumulate(_v.begin(), _v.end(), sizeof(Store),
                            [](const std::size_t& init, const String& elem) -> std::size_t {
       return init + sizeof(String) + sizeof(String::value_type)*elem.size();
     });
@@ -66,7 +66,7 @@ public:
 private:
   Range range(const String& s) const
   {
-    return std::equal_range(_v.cbegin(), _v.cend(), s,
+    return std::equal_range(_v.begin(), _v.end(), s,
                             [&](const String& a, const String& b) -> bool {
       return a.substr(0, s.size()) < b.substr(0, s.size());
     });
@@ -272,7 +272,7 @@ namespace test_flatset {
 
     // (2) Insertion /////////////////////////////////////////////////////////
 
-    const FlatSet flatset{words.cbegin(), words.cend()};
+    const FlatSet flatset{words.begin(), words.end()};
 
     REQUIRE( priv::findAll(flatset, words) );
 
@@ -312,7 +312,7 @@ namespace test_unordered_set {
 
     // (2) Insertion /////////////////////////////////////////////////////////
 
-    const Set set{words.cbegin(), words.cend()};
+    const Set set{words.begin(), words.end()};
 
     REQUIRE( priv::findAll(set, words) );
 

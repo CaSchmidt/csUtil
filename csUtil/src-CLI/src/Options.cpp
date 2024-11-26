@@ -62,7 +62,7 @@ namespace cs {
 
   bool Options::isValid(std::ostream& output) const
   {
-    for(ConstOptionIter it = _options.cbegin(); it != _options.cend(); ++it) {
+    for(ConstOptionIter it = _options.begin(); it != _options.end(); ++it) {
       const IOption *opt = it->second.get();
       if( !opt->isValid() ) {
         std::println(output, "ERROR: Invalid value for option \"{}\"!", opt->name());
@@ -113,7 +113,7 @@ namespace cs {
   {
     std::println(output, "Usage: {}", argv[0]);
     std::println(output, "");
-    for(ConstOptionIter it = _options.cbegin(); it != _options.cend(); ++it) {
+    for(ConstOptionIter it = _options.begin(); it != _options.end(); ++it) {
       it->second->printUsage(output);
     }
     std::println(output, "");
@@ -129,7 +129,7 @@ namespace cs {
   const IOption *Options::get(const std::string& name) const
   {
     const ConstOptionIter it = _options.find(name);
-    return it != _options.cend()
+    return it != _options.end()
         ? it->second.get()
         : nullptr;
   }
