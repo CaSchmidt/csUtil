@@ -33,31 +33,27 @@
 
 #include <string_view>
 
+#include <cs/Core/csutil_config.h>
+
+#include <cs/Lexer/LexerConfig.h>
 #include <cs/Lexer/Token.h>
 
 namespace cs {
 
   ////// Scanner Interface ///////////////////////////////////////////////////
 
-  template<typename CharT>
-  class IScanner {
+  class CS_UTIL_EXPORT IScanner {
   public:
-    using StringView = std::basic_string_view<CharT>;
-    using  size_type = typename StringView::size_type;
-    using  char_type = typename StringView::value_type;
+    using StringView = std::basic_string_view<LexerConfig::char_type>;
+    using  size_type = StringView::size_type;
+    using  char_type = StringView::value_type;
 
-    IScanner() noexcept
-    {
-    }
-
-    virtual ~IScanner() noexcept
-    {
-    }
+    IScanner() noexcept;
+    virtual ~IScanner() noexcept;
 
     virtual TokenPtr scan(const StringView& input) const = 0;
   };
 
-  template<typename CharT>
-  using ScannerPtr = std::unique_ptr<IScanner<CharT>>;
+  using ScannerPtr = std::unique_ptr<IScanner>;
 
 } // namespace cs

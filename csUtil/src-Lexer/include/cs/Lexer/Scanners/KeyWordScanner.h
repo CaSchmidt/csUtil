@@ -32,63 +32,33 @@
 #pragma once
 
 #include <list>
-#include <memory>
+#include <string>
 #include <utility>
 
 #include <cs/Lexer/Scanner.h>
 
 namespace cs {
 
-  template<typename CharT>
-  class KeyWordScanner : public IScanner<CharT> {
+  class CS_UTIL_EXPORT KeyWordScanner : public IScanner {
   private:
     struct ctor_tag {
       ctor_tag() noexcept = default;
     };
 
   public:
-    using typename IScanner<CharT>::StringView;
-    using typename IScanner<CharT>::char_type;
-
-    using String = std::basic_string<CharT>;
+    using String = std::basic_string<char_type>;
 
     using KeyWord  = std::pair<tokenid_t,String>;
     using KeyWords = std::list<KeyWord>;
 
-    KeyWordScanner(const ctor_tag& = ctor_tag()) noexcept
-    {
-    }
+    KeyWordScanner(const ctor_tag& = ctor_tag()) noexcept;
+    ~KeyWordScanner() noexcept;
 
-    ~KeyWordScanner() noexcept
-    {
-    }
+    bool addWord(KeyWord word);
 
-    bool addWord(KeyWord word)
-    {
-      if( word.first < TOK_User  ||  word.second.empty() ) {
-        return false;
-      }
+    TokenPtr scan(const StringView& input) const;
 
-      _words.push_back(std::move(word));
-
-      return true;
-    }
-
-    TokenPtr scan(const StringView& input) const
-    {
-      for(const KeyWord& word : _words) {
-        if( input.starts_with(word.second) ) {
-          return TokenBase::make(word.first, word.second.size());
-        }
-      }
-
-      return TokenPtr();
-    }
-
-    static ScannerPtr<CharT> make()
-    {
-      return std::make_unique<KeyWordScanner<CharT>>();
-    }
+    static ScannerPtr make();
 
   private:
     KeyWords _words;

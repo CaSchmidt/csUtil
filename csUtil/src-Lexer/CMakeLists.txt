@@ -1,10 +1,11 @@
 list(APPEND csLexer_HEADERS
   include/cs/Lexer/AbstractParser.h
-  include/cs/Lexer/Context.h
   include/cs/Lexer/ConvWrapperImpl.h
   include/cs/Lexer/Lexer.h
+  include/cs/Lexer/LexerConfig.h
   include/cs/Lexer/ParseException.h
   include/cs/Lexer/Scanner.h
+  include/cs/Lexer/Scanners.h
   include/cs/Lexer/Scanners/CharLiteral.h
   include/cs/Lexer/Scanners/CIdentifier.h
   include/cs/Lexer/Scanners/CIntegral.h
@@ -17,7 +18,14 @@ list(APPEND csLexer_HEADERS
 )
 
 list(APPEND csLexer_SOURCES
+  src/AbstractParser.cpp
+  src/Lexer.cpp
   src/ParseException.cpp
+  src/Scanner.cpp
+  src/Scanners/CharLiteral.cpp
+  src/Scanners/CIdentifier.cpp
+  src/Scanners/CString.cpp
+  src/Scanners/KeyWordScanner.cpp
   src/Token.cpp
   src/main_lexer.cpp
 )

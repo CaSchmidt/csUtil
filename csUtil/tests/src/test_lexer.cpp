@@ -3,7 +3,8 @@
 
 #include <print>
 
-#include <cs/Lexer/Context.h>
+#include <cs/Lexer/Lexer.h>
+#include <cs/Lexer/Scanners.h>
 #include <cs/Lexer/TokenUtil.h>
 #include <cs/Math/Numeric.h>
 #include <cs/Text/StringUtil.h>
@@ -40,8 +41,6 @@ void printText(const std::string_view& text,
 
 int main(int argc, char **argv)
 {
-  using ctx = cs::LexerContext<char>;
-
   const char *input =
       "  \n"
       "\n"
@@ -51,10 +50,10 @@ int main(int argc, char **argv)
 
   printText(input, "input");
 
-  ctx::Lexer lexer;
-  lexer.addScanner(ctx::CIdentifierScanner::make(TOK_Identifier));
-  lexer.addScanner(ctx::CStringScanner::make(TOK_String));
-  lexer.addScanner(ctx::CIntegralScanner<unsigned>::make(TOK_UInt, true));
+  cs::Lexer lexer;
+  lexer.addScanner(cs::CIdentifierScanner::make(TOK_Identifier));
+  lexer.addScanner(cs::CStringScanner::make(TOK_String));
+  lexer.addScanner(cs::CIntegralScanner<unsigned>::make(TOK_UInt, true));
   lexer.initialize(input);
 
   constexpr bool DISP_UNKNOWN = false;

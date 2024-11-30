@@ -31,57 +31,29 @@
 
 #pragma once
 
+#include <string>
+
 #include <cs/Lexer/Scanner.h>
 #include <cs/Lexer/TokenUtil.h>
 
 namespace cs {
 
-  template<typename CharT>
-  class CharLiteralScanner : public IScanner<CharT> {
+  class CS_UTIL_EXPORT CharLiteralScanner : public IScanner {
   private:
     struct ctor_tag {
       ctor_tag() noexcept = default;
     };
 
   public:
-    using typename IScanner<CharT>::StringView;
-    using typename IScanner<CharT>::size_type;
-    using typename IScanner<CharT>::char_type;
-
     using String = std::basic_string<char_type>;
 
-    CharLiteralScanner(const String& charset,
-                       const ctor_tag& = ctor_tag()) noexcept
-      : _charset(charset)
-    {
-    }
+    CharLiteralScanner(const StringView& charset,
+                       const ctor_tag& = ctor_tag()) noexcept;
+    ~CharLiteralScanner() noexcept;
 
-    ~CharLiteralScanner() noexcept
-    {
-    }
+    TokenPtr scan(const StringView& input) const;
 
-    TokenPtr scan(const StringView& input) const
-    {
-      // (1) Sanity Check ////////////////////////////////////////////////////
-
-      if( input.empty() ) {
-        return TokenPtr();
-      }
-
-      // (2) input[0] part of set? ///////////////////////////////////////////
-
-      const char_type ch = input[0];
-      if( _charset.find_first_of(ch) == String::npos ) {
-        return TokenPtr();
-      }
-
-      return Token::make_literal(ch);
-    }
-
-    static ScannerPtr<char_type> make(const String& charset)
-    {
-      return std::make_unique<CharLiteralScanner<char_type>>(charset);
-    }
+    static ScannerPtr make(const StringView& charset);
 
   private:
     String _charset;

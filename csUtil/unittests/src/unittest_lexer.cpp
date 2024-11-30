@@ -2,7 +2,8 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-#include <cs/Lexer/Context.h>
+#include <cs/Lexer/Lexer.h>
+#include <cs/Lexer/Scanners.h>
 
 namespace lexer {
 
@@ -13,13 +14,11 @@ namespace lexer {
     TOK_String
   };
 
-  using ctx = cs::LexerContext<char>;
-
   TEST_CASE("Scan character literals.", "[charliteral]") {
     std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
-    ctx::Lexer lexer;
-    lexer.addScanner(ctx::CharLiteralScanner::make("{}+-"));
+    cs::Lexer lexer;
+    lexer.addScanner(cs::CharLiteralScanner::make("{}+-"));
     lexer.initialize(" { - + }   ");
 
     cs::TokenPtr tok;
@@ -43,8 +42,8 @@ namespace lexer {
   TEST_CASE("Scan identifiers.", "[identifier]") {
     std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
-    ctx::Lexer lexer;
-    lexer.addScanner(ctx::CIdentifierScanner::make(TOK_Identifier));
+    cs::Lexer lexer;
+    lexer.addScanner(cs::CIdentifierScanner::make(TOK_Identifier));
     lexer.initialize(" 0_0ident9 _ ");
 
     cs::TokenPtr tok;
@@ -67,8 +66,8 @@ namespace lexer {
   TEST_CASE("Scan integral values.", "[integral]") {
     std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
-    ctx::Lexer lexer;
-    lexer.addScanner(ctx::CIntegralScanner<unsigned>::make(TOK_Integral, true));
+    cs::Lexer lexer;
+    lexer.addScanner(cs::CIntegralScanner<unsigned>::make(TOK_Integral, true));
     lexer.initialize(" +0 123456789 01777 0xFf 0XfF ");
 
     cs::TokenPtr tok;
@@ -110,8 +109,8 @@ namespace lexer {
     constexpr auto _100p0   = 0x64.0p0;
     constexpr auto _125p0   = 0x7d.0p0;
 
-    ctx::Lexer lexer;
-    lexer.addScanner(ctx::CRealScanner<double>::make(TOK_Real));
+    cs::Lexer lexer;
+    lexer.addScanner(cs::CRealScanner<double>::make(TOK_Real));
     lexer.initialize(" eE1 125E-2 .25 1.25 1. .25e2 1.25e2 1.E2  ");
 
     cs::TokenPtr tok;
@@ -163,8 +162,8 @@ namespace lexer {
   TEST_CASE("Scan strings.", "[string]") {
     std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
-    ctx::Lexer lexer;
-    lexer.addScanner(ctx::CStringScanner::make(TOK_String));
+    cs::Lexer lexer;
+    lexer.addScanner(cs::CStringScanner::make(TOK_String));
     lexer.initialize(" \"Hello, World!\" \"\" ");
 
     cs::TokenPtr tok;
@@ -184,7 +183,7 @@ namespace lexer {
   TEST_CASE("Skip whitespace.", "[whitespace]") {
     std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
-    ctx::Lexer lexer;
+    cs::Lexer lexer;
     lexer.setFlags(cs::LexerFlag::ScanHT | cs::LexerFlag::ScanLF);
     lexer.initialize(" \t\vX\n\f\r");
 

@@ -31,81 +31,29 @@
 
 #pragma once
 
-#include <cs/Core/CharUtil.h>
+#include <string>
+
 #include <cs/Lexer/Scanner.h>
 #include <cs/Lexer/ValueToken.h>
 
 namespace cs {
 
-  template<typename CharT>
-  class CIdentifierScanner : public IScanner<CharT> {
+  class CS_UTIL_EXPORT CIdentifierScanner : public IScanner {
   private:
     struct ctor_tag {
       ctor_tag() noexcept = default;
     };
 
   public:
-    using typename IScanner<CharT>::StringView;
-    using typename IScanner<CharT>::size_type;
-    using typename IScanner<CharT>::char_type;
-
     using String = std::basic_string<char_type>;
 
     CIdentifierScanner(const tokenid_t id, const size_type reserve,
-                       const ctor_tag& = ctor_tag()) noexcept
-      : _id{id}
-    {
-      _reserve = reserve > 0
-          ? reserve
-          : RESERVE;
-    }
+                       const ctor_tag& = ctor_tag()) noexcept;
+    ~CIdentifierScanner() noexcept;
 
-    ~CIdentifierScanner() noexcept
-    {
-    }
+    TokenPtr scan(const StringView& input) const;
 
-    TokenPtr scan(const StringView& input) const
-    {
-      // (1) Sanity Check ////////////////////////////////////////////////////
-
-      if( input.empty()  ||  !isIdentFirst(input[0]) ) {
-        return TokenPtr();
-      }
-
-      // (2) Reserve String //////////////////////////////////////////////////
-
-      String str;
-      try {
-        str.reserve(_reserve);
-      } catch( ... ) {
-        return TokenPtr();
-      }
-
-      // (3) Scan Input & Build String ///////////////////////////////////////
-
-      str.push_back(input[0]); // already checked; cf. above!
-
-      size_type pos = ONE; // start at the 2nd character!
-      for(; pos < input.size() ; pos++) {
-        const char_type ch = input[pos];
-
-        if( isIdent(ch) ) {
-          str.push_back(ch);
-        } else {
-          break;
-        }
-      } // For input[pos]
-
-      // Done! ///////////////////////////////////////////////////////////////
-
-      // NOTE: 'pos' is at the first non-identifier character OR input.size()!
-      return ValueToken<String>::make(_id, str, pos);
-    }
-
-    static ScannerPtr<char_type> make(const tokenid_t id, const size_type reserve = 0)
-    {
-      return std::make_unique<CIdentifierScanner<char_type>>(id, reserve);
-    }
+    static ScannerPtr make(const tokenid_t id, const size_type reserve = 0);
 
   private:
     CIdentifierScanner() noexcept = delete;

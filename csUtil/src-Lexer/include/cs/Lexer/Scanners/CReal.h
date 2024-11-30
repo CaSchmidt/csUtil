@@ -37,18 +37,14 @@
 
 namespace cs {
 
-  template<typename CharT, typename T>
-  class CRealScanner : public IScanner<CharT> {
+  template<typename T>
+  class CRealScanner : public IScanner {
   private:
     struct ctor_tag {
       ctor_tag() noexcept = default;
     };
 
   public:
-    using typename IScanner<CharT>::StringView;
-    using typename IScanner<CharT>::size_type;
-    using typename IScanner<CharT>::char_type;
-
     using real_type = T;
 
     CRealScanner(const tokenid_t id,
@@ -63,10 +59,9 @@ namespace cs {
 
     TokenPtr scan(const StringView& input) const
     {
-      using Conv = impl_lexer::ConvWrapper<CharT>;
+      using Conv = impl_lexer::ConvWrapper;
 
       const auto [value, consumed] = Conv::template toValue<real_type>(input);
-      {}
       if( consumed == 0 ) {
         return TokenPtr();
       }
@@ -74,9 +69,9 @@ namespace cs {
       return ValueToken<real_type>::make(_id, value, consumed);
     }
 
-    static ScannerPtr<char_type> make(const tokenid_t id)
+    static ScannerPtr make(const tokenid_t id)
     {
-      return std::make_unique<CRealScanner<char_type,real_type>>(id);
+      return std::make_unique<CRealScanner<real_type>>(id);
     }
 
   private:

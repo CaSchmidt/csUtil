@@ -29,49 +29,43 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#pragma once
-
-#include <string>
-
-#include <cs/Lexer/Scanner.h>
-#include <cs/Lexer/ValueToken.h>
+#include "cs/Lexer/Scanners/CharLiteral.h"
 
 namespace cs {
 
-  ////// C-String Scanner ////////////////////////////////////////////////////
+  ////// public //////////////////////////////////////////////////////////////
 
-  class CS_UTIL_EXPORT CStringScanner : public IScanner {
-  private:
-    struct ctor_tag {
-      ctor_tag() noexcept = default;
-    };
+  CharLiteralScanner::CharLiteralScanner(const StringView& charset,
+                                         const ctor_tag&) noexcept
+    : _charset(charset)
+  {
+  }
 
-  public:
-    using String = std::basic_string<char_type>;
+  CharLiteralScanner::~CharLiteralScanner() noexcept
+  {
+  }
 
-    CStringScanner(const tokenid_t id, const size_type reserve,
-                   const ctor_tag& = ctor_tag()) noexcept;
-    ~CStringScanner() noexcept;
+  TokenPtr CharLiteralScanner::scan(const StringView& input) const
+  {
+    // (1) Sanity Check //////////////////////////////////////////////////////
 
-    TokenPtr scan(const StringView& input) const;
+    if( input.empty() ) {
+      return TokenPtr();
+    }
 
-    static ScannerPtr make(const tokenid_t id, const size_type reserve = 0);
+    // (2) input[0] part of set? /////////////////////////////////////////////
 
-  private:
-    CStringScanner() noexcept = delete;
+    const char_type ch = input[0];
+    if( _charset.find_first_of(ch) == String::npos ) {
+      return TokenPtr();
+    }
 
-    static constexpr size_type ONE = 1;
-    static constexpr size_type TWO = 2;
+    return Token::make_literal(ch);
+  }
 
-    static constexpr size_type RESERVE = 1024;
-
-    char_type escape(const char_type ch) const;
-    bool isEscape(const char_type ch) const;
-    bool isExcept(const char_type ch) const;
-    char_type lookAhead(const size_type pos, const StringView& input) const;
-
-    tokenid_t _id{0};
-    size_type _reserve{0};
-  };
+  ScannerPtr CharLiteralScanner::make(const StringView& charset)
+  {
+    return std::make_unique<CharLiteralScanner>(charset);
+  }
 
 } // namespace cs

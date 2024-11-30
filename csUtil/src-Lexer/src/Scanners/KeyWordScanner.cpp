@@ -29,49 +29,46 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#pragma once
-
-#include <string>
-
-#include <cs/Lexer/Scanner.h>
-#include <cs/Lexer/ValueToken.h>
+#include "cs/Lexer/Scanners/KeyWordScanner.h"
 
 namespace cs {
 
-  ////// C-String Scanner ////////////////////////////////////////////////////
+  ////// public //////////////////////////////////////////////////////////////
 
-  class CS_UTIL_EXPORT CStringScanner : public IScanner {
-  private:
-    struct ctor_tag {
-      ctor_tag() noexcept = default;
-    };
+  KeyWordScanner::KeyWordScanner(const ctor_tag&) noexcept
+  {
+  }
 
-  public:
-    using String = std::basic_string<char_type>;
+  KeyWordScanner::~KeyWordScanner() noexcept
+  {
+  }
 
-    CStringScanner(const tokenid_t id, const size_type reserve,
-                   const ctor_tag& = ctor_tag()) noexcept;
-    ~CStringScanner() noexcept;
+  bool KeyWordScanner::addWord(KeyWord word)
+  {
+    if( word.first < TOK_User  ||  word.second.empty() ) {
+      return false;
+    }
 
-    TokenPtr scan(const StringView& input) const;
+    _words.push_back(std::move(word));
 
-    static ScannerPtr make(const tokenid_t id, const size_type reserve = 0);
+    return true;
+  }
 
-  private:
-    CStringScanner() noexcept = delete;
+  TokenPtr KeyWordScanner::scan(const StringView& input) const
+  {
+    for(const KeyWord& word : _words) {
+      // TODO: Check, if succeeding character is not an identifier?
+      if( input.starts_with(word.second) ) {
+        return TokenBase::make(word.first, word.second.size());
+      }
+    }
 
-    static constexpr size_type ONE = 1;
-    static constexpr size_type TWO = 2;
+    return TokenPtr();
+  }
 
-    static constexpr size_type RESERVE = 1024;
-
-    char_type escape(const char_type ch) const;
-    bool isEscape(const char_type ch) const;
-    bool isExcept(const char_type ch) const;
-    char_type lookAhead(const size_type pos, const StringView& input) const;
-
-    tokenid_t _id{0};
-    size_type _reserve{0};
-  };
+  ScannerPtr KeyWordScanner::make()
+  {
+    return std::make_unique<KeyWordScanner>();
+  }
 
 } // namespace cs

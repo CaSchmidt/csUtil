@@ -29,49 +29,18 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#pragma once
-
-#include <string>
-
-#include <cs/Lexer/Scanner.h>
-#include <cs/Lexer/ValueToken.h>
+#include "cs/Lexer/Scanner.h"
 
 namespace cs {
 
-  ////// C-String Scanner ////////////////////////////////////////////////////
+  ////// public //////////////////////////////////////////////////////////////
 
-  class CS_UTIL_EXPORT CStringScanner : public IScanner {
-  private:
-    struct ctor_tag {
-      ctor_tag() noexcept = default;
-    };
+  IScanner::IScanner() noexcept
+  {
+  }
 
-  public:
-    using String = std::basic_string<char_type>;
-
-    CStringScanner(const tokenid_t id, const size_type reserve,
-                   const ctor_tag& = ctor_tag()) noexcept;
-    ~CStringScanner() noexcept;
-
-    TokenPtr scan(const StringView& input) const;
-
-    static ScannerPtr make(const tokenid_t id, const size_type reserve = 0);
-
-  private:
-    CStringScanner() noexcept = delete;
-
-    static constexpr size_type ONE = 1;
-    static constexpr size_type TWO = 2;
-
-    static constexpr size_type RESERVE = 1024;
-
-    char_type escape(const char_type ch) const;
-    bool isEscape(const char_type ch) const;
-    bool isExcept(const char_type ch) const;
-    char_type lookAhead(const size_type pos, const StringView& input) const;
-
-    tokenid_t _id{0};
-    size_type _reserve{0};
-  };
+  IScanner::~IScanner() noexcept
+  {
+  }
 
 } // namespace cs

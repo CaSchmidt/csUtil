@@ -34,20 +34,20 @@
 #include <algorithm>
 #include <array>
 #include <charconv>
-#include <string>
+#include <string_view>
 #include <tuple>
 
 #include <cs/Core/CharUtil.h>
+#include <cs/Lexer/LexerConfig.h>
 
 namespace cs {
 
   namespace impl_lexer {
 
-    template<typename CharT> requires is_char_v<CharT>
     struct ConvWrapper {
-      using StringView = std::basic_string_view<CharT>;
-      using  size_type = typename StringView::size_type;
-      using  char_type = typename StringView::value_type;
+      using StringView = std::basic_string_view<LexerConfig::char_type>;
+      using  size_type = StringView::size_type;
+      using  char_type = StringView::value_type;
 
       using BasePrefix = std::tuple<int,size_type>; // [base, prefix]
 
@@ -63,14 +63,12 @@ namespace cs {
                                                        const bool have_prefix = false)
       {
         const auto [base, prefix] = scanBasePrefix(input, have_prefix);
-        {}
         if( base == 0 ) {
           return Result<T>{0, 0};
         }
 
         Buffer buffer;
         const auto [first, last] = makeRange(buffer, input, prefix);
-        {}
 
         T value{0};
         const std::from_chars_result result =
@@ -93,7 +91,6 @@ namespace cs {
 
         Buffer buffer;
         const auto [first, last] = makeRange(buffer, input, 0);
-        {}
 
         T value{0};
         const std::from_chars_result result =

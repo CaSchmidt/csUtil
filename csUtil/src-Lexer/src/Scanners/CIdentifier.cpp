@@ -29,34 +29,68 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#pragma once
+#include "cs/Lexer/Scanners/CIdentifier.h"
 
-#include <cs/Lexer/Lexer.h>
-#include <cs/Lexer/Scanners/CharLiteral.h>
-#include <cs/Lexer/Scanners/CIdentifier.h>
-#include <cs/Lexer/Scanners/CIntegral.h>
-#include <cs/Lexer/Scanners/CReal.h>
-#include <cs/Lexer/Scanners/CString.h>
-#include <cs/Lexer/Scanners/KeyWordScanner.h>
+#include "cs/Core/CharUtil.h"
 
 namespace cs {
 
-  template<typename CharT>
-  struct LexerContext {
-    using char_type = CharT;
+  ////// public //////////////////////////////////////////////////////////////
 
-    using Lexer = Lexer<char_type>;
+  CIdentifierScanner::CIdentifierScanner(const tokenid_t id, const size_type reserve,
+                                         const ctor_tag&) noexcept
+    : _id{id}
+  {
+    _reserve = reserve >= ONE
+        ? reserve
+        : RESERVE;
+  }
 
-    template<typename T>
-    using CIntegralScanner = CIntegralScanner<char_type,T>;
+  CIdentifierScanner::~CIdentifierScanner() noexcept
+  {
+  }
 
-    template<typename T>
-    using CRealScanner = CRealScanner<char_type,T>;
+  TokenPtr CIdentifierScanner::scan(const StringView& input) const
+  {
+    // (1) Sanity Check ////////////////////////////////////////////////////
 
-    using CharLiteralScanner = CharLiteralScanner<char_type>;
-    using CIdentifierScanner = CIdentifierScanner<char_type>;
-    using CStringScanner     = CStringScanner<char_type>;
-    using KeyWordScanner     = KeyWordScanner<char_type>;
-  };
+    if( input.empty()  ||  !isIdentFirst(input[0]) ) {
+      return TokenPtr();
+    }
+
+    // (2) Reserve String //////////////////////////////////////////////////
+
+    String str;
+    try {
+      str.reserve(_reserve);
+    } catch( ... ) {
+      return TokenPtr();
+    }
+
+    // (3) Scan Input & Build String ///////////////////////////////////////
+
+    str.push_back(input[0]); // already checked; cf. above!
+
+    size_type pos = ONE; // start at the 2nd character!
+    for(; pos < input.size() ; pos++) {
+      const char_type ch = input[pos];
+
+      if( isIdent(ch) ) {
+        str.push_back(ch);
+      } else {
+        break;
+      }
+    } // For input[pos]
+
+    // Done! ///////////////////////////////////////////////////////////////
+
+    // NOTE: 'pos' is at the first non-identifier character OR input.size()!
+    return ValueToken<String>::make(_id, str, pos);
+  }
+
+  ScannerPtr CIdentifierScanner::make(const tokenid_t id, const size_type reserve)
+  {
+    return std::make_unique<CIdentifierScanner>(id, reserve);
+  }
 
 } // namespace cs

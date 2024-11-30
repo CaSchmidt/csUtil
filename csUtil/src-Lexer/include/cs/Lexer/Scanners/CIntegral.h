@@ -37,18 +37,14 @@
 
 namespace cs {
 
-  template<typename CharT, typename T>
-  class CIntegralScanner : public IScanner<CharT> {
+  template<typename T>
+  class CIntegralScanner : public IScanner {
   private:
     struct ctor_tag {
       ctor_tag() noexcept = default;
     };
 
   public:
-    using typename IScanner<CharT>::StringView;
-    using typename IScanner<CharT>::size_type;
-    using typename IScanner<CharT>::char_type;
-
     using intergral_type = T;
 
     CIntegralScanner(const tokenid_t id, const bool prefix,
@@ -64,10 +60,9 @@ namespace cs {
 
     TokenPtr scan(const StringView& input) const
     {
-      using Conv = impl_lexer::ConvWrapper<CharT>;
+      using Conv = impl_lexer::ConvWrapper;
 
       const auto [value, consumed] = Conv::template toValue<intergral_type>(input, _prefix);
-      {}
       if( consumed == 0 ) {
         return TokenPtr();
       }
@@ -75,9 +70,9 @@ namespace cs {
       return ValueToken<intergral_type>::make(_id, value, consumed);
     }
 
-    static ScannerPtr<char_type> make(const tokenid_t id, const bool prefix = false)
+    static ScannerPtr make(const tokenid_t id, const bool prefix = false)
     {
-      return std::make_unique<CIntegralScanner<char_type,intergral_type>>(id, prefix);
+      return std::make_unique<CIntegralScanner<intergral_type>>(id, prefix);
     }
 
   private:
