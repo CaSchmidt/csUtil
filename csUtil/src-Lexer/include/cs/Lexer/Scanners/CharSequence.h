@@ -39,7 +39,7 @@
 
 namespace cs {
 
-  class CS_UTIL_EXPORT KeyWordScanner : public IScanner {
+  class CS_UTIL_EXPORT CharSequenceScanner : public IScanner {
   private:
     struct ctor_tag {
       ctor_tag() noexcept = default;
@@ -48,20 +48,20 @@ namespace cs {
   public:
     using String = std::basic_string<char_type>;
 
-    using KeyWord  = std::pair<tokenid_t,String>;
-    using KeyWords = std::list<KeyWord>;
+    using Sequence  = std::pair<tokenid_t,String>;
+    using Sequences = std::list<Sequence>;
 
-    KeyWordScanner(const ctor_tag& = ctor_tag()) noexcept;
-    ~KeyWordScanner() noexcept;
+    CharSequenceScanner(const ctor_tag& = ctor_tag()) noexcept;
+    ~CharSequenceScanner() noexcept;
 
-    bool addWord(KeyWord word);
+    bool addWord(Sequence sequence);
 
     TokenPtr scan(const StringView& input) const;
 
     static ScannerPtr make();
 
   private:
-    KeyWords _words;
+    Sequences _sequences;
   };
 
 } // namespace cs

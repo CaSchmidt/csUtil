@@ -32,8 +32,8 @@
 #pragma once
 
 #include <cs/Lexer/Scanners/CharLiteral.h>
+#include <cs/Lexer/Scanners/CharSequence.h>
 #include <cs/Lexer/Scanners/CIdentifier.h>
 #include <cs/Lexer/Scanners/CIntegral.h>
 #include <cs/Lexer/Scanners/CReal.h>
 #include <cs/Lexer/Scanners/CString.h>
-#include <cs/Lexer/Scanners/KeyWordScanner.h>

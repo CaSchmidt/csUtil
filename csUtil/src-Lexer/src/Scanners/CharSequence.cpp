@@ -29,46 +29,45 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *****************************************************************************/
 
-#include "cs/Lexer/Scanners/KeyWordScanner.h"
+#include "cs/Lexer/Scanners/CharSequence.h"
 
 namespace cs {
 
   ////// public //////////////////////////////////////////////////////////////
 
-  KeyWordScanner::KeyWordScanner(const ctor_tag&) noexcept
+  CharSequenceScanner::CharSequenceScanner(const ctor_tag&) noexcept
   {
   }
 
-  KeyWordScanner::~KeyWordScanner() noexcept
+  CharSequenceScanner::~CharSequenceScanner() noexcept
   {
   }
 
-  bool KeyWordScanner::addWord(KeyWord word)
+  bool CharSequenceScanner::addWord(Sequence sequence)
   {
-    if( word.first < TOK_User  ||  word.second.empty() ) {
+    if( sequence.first < TOK_User  ||  sequence.second.empty() ) {
       return false;
     }
 
-    _words.push_back(std::move(word));
+    _sequences.push_back(std::move(sequence));
 
     return true;
   }
 
-  TokenPtr KeyWordScanner::scan(const StringView& input) const
+  TokenPtr CharSequenceScanner::scan(const StringView& input) const
   {
-    for(const KeyWord& word : _words) {
-      // TODO: Check, if succeeding character is not an identifier?
-      if( input.starts_with(word.second) ) {
-        return TokenBase::make(word.first, word.second.size());
+    for(const Sequence& sequence : _sequences) {
+      if( input.starts_with(sequence.second) ) {
+        return TokenBase::make(sequence.first, sequence.second.size());
       }
     }
 
     return TokenPtr();
   }
 
-  ScannerPtr KeyWordScanner::make()
+  ScannerPtr CharSequenceScanner::make()
   {
-    return std::make_unique<KeyWordScanner>();
+    return std::make_unique<CharSequenceScanner>();
   }
 
 } // namespace cs

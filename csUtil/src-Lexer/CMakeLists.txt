@@ -7,11 +7,11 @@ list(APPEND csLexer_HEADERS
   include/cs/Lexer/Scanner.h
   include/cs/Lexer/Scanners.h
   include/cs/Lexer/Scanners/CharLiteral.h
+  include/cs/Lexer/Scanners/CharSequence.h
   include/cs/Lexer/Scanners/CIdentifier.h
   include/cs/Lexer/Scanners/CIntegral.h
   include/cs/Lexer/Scanners/CReal.h
   include/cs/Lexer/Scanners/CString.h
-  include/cs/Lexer/Scanners/KeyWordScanner.h
   include/cs/Lexer/Token.h
   include/cs/Lexer/TokenUtil.h
   include/cs/Lexer/ValueToken.h
@@ -23,9 +23,9 @@ list(APPEND csLexer_SOURCES
   src/ParseException.cpp
   src/Scanner.cpp
   src/Scanners/CharLiteral.cpp
+  src/Scanners/CharSequence.cpp
   src/Scanners/CIdentifier.cpp
   src/Scanners/CString.cpp
-  src/Scanners/KeyWordScanner.cpp
   src/Token.cpp
   src/main_lexer.cpp
 )
