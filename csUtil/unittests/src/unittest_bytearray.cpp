@@ -42,7 +42,7 @@ namespace test_bufferview {
   TEST_CASE("Operations on BufferView.", "[bufferview]") {
     std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 
-    const cs::BufferView view("Hello", 5);
+    const cs::BufferView view = cs::toBufferView("Hello", 5);
 
     {
       REQUIRE( view.front() == 'H' );
@@ -68,13 +68,15 @@ namespace test_bufferview {
     }
 
     {
-      REQUIRE( cs::toStringView(view.subview(5)).empty() );
+      REQUIRE( cs::subview(cs::BufferView(), 0).empty() );
 
-      REQUIRE( cs::toStringView(view.subview(2, 2)) == "ll" );
+      REQUIRE( cs::toStringView(cs::subview(view, 5)).empty() );
 
-      REQUIRE( cs::toStringView(view.subview(4, 5)) == "o" );
+      REQUIRE( cs::toStringView(cs::subview(view, 2, 2)) == "ll" );
 
-      REQUIRE( cs::toStringView(view.subview(4)) == "o" );
+      REQUIRE( cs::toStringView(cs::subview(view, 4, 1)) == "o" );
+
+      REQUIRE( cs::toStringView(cs::subview(view, 4, 5)) == "o" );
     }
 
     {
