@@ -36,6 +36,7 @@
 #include "cs/Text/StringCaseImpl.h"
 #include "cs/Text/StringCastImpl.h"
 #include "cs/Text/StringClassifyImpl.h"
+#include "cs/Text/StringJoinImpl.h"
 #include "cs/Text/StringSplitImpl.h"
 
 namespace cs {
@@ -88,6 +89,20 @@ namespace cs {
   bool CS_UTIL_EXPORT isSpace(const std::string_view& text)
   {
     return impl_string::isSpace<char>(text);
+  }
+
+  // join() //////////////////////////////////////////////////////////////////
+
+  std::string CS_UTIL_EXPORT join(const std::list<std::string>& list,
+                                  const char pattern)
+  {
+    return impl_string::join<char>(list, pattern);
+  }
+
+  std::string CS_UTIL_EXPORT join(const std::list<std::string>& list,
+                                  const std::string_view& pattern)
+  {
+    return impl_string::join<char>(list, pattern);
   }
 
   // lower() /////////////////////////////////////////////////////////////////

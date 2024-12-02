@@ -130,6 +130,26 @@ namespace stringutil {
     REQUIRE( !cs::isOctDigit('8') );
   }
 
+  TEST_CASE("Join string list.", "[join]") {
+    std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
+
+    const StringList list{"a", "b", "c"};
+
+    REQUIRE( cs::join(StringList()).empty() );
+
+    REQUIRE( cs::join(list) == "abc" );
+
+    REQUIRE( cs::join(list, '.') == "a.b.c" );
+
+    REQUIRE( cs::join(StringList(), "::").empty() );
+
+    REQUIRE( cs::join(list, String()).empty() );
+
+    REQUIRE( cs::join(list, "").empty() );
+
+    REQUIRE( cs::join(list, "::") == "a::b::c" );
+  } // TEST_CASE
+
   TEST_CASE("Remove patterns in string.", "[removeAll]") {
     std::println("*** {}", Catch::getResultCapture().getCurrentTestName());
 

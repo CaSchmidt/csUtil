@@ -4,6 +4,7 @@ list(APPEND csText_HEADERS
   include/cs/Text/StringCaseImpl.h
   include/cs/Text/StringCastImpl.h
   include/cs/Text/StringClassifyImpl.h
+  include/cs/Text/StringJoinImpl.h
   include/cs/Text/StringQueryImpl.h
   include/cs/Text/StringRemoveImpl.h
   include/cs/Text/StringReplaceImpl.h

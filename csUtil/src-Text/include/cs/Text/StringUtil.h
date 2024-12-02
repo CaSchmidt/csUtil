@@ -110,6 +110,14 @@ namespace cs {
 
   bool CS_UTIL_EXPORT isSpace(const std::string_view& text);
 
+  ////// Join string list... /////////////////////////////////////////////////
+
+  std::string CS_UTIL_EXPORT join(const std::list<std::string>& list,
+                                  const char pattern = '\0');
+
+  std::string CS_UTIL_EXPORT join(const std::list<std::string>& list,
+                                  const std::string_view& pattern);
+
   ////// Remove character/pattern/predicate from string... ///////////////////
 
   void CS_UTIL_EXPORT removeAll(std::string& text,
