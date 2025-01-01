@@ -39,4 +39,8 @@ namespace cs {
 
   using Buffer = std::vector<byte_t>;
 
+  ////// Assertion ///////////////////////////////////////////////////////////
+
+  static_assert( sizeof(Buffer::value_type) == 1 ); // TODO: 1uz
+
 } // namespace cs

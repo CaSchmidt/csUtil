@@ -39,7 +39,11 @@
 
 namespace cs {
 
-  using BufferView = std::span<const byte_t,std::dynamic_extent>;
+  using BufferView = std::span<const Buffer::value_type,std::dynamic_extent>;
+
+  ////// Assertion ///////////////////////////////////////////////////////////
+
+  static_assert( std::is_const_v<BufferView::element_type> );
 
   ////// View Operations /////////////////////////////////////////////////////
 
@@ -63,7 +67,7 @@ namespace cs {
 
   inline BufferView toBufferView(const void *data, const std::size_t size)
   {
-    return BufferView(reinterpret_cast<const byte_t*>(data), size);
+    return BufferView(reinterpret_cast<BufferView::pointer>(data), size);
   }
 
   constexpr std::string_view toStringView(const BufferView& view)
